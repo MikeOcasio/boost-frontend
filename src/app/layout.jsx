@@ -13,9 +13,9 @@ const akronim = Akronim({
 });
 
 export const metadata = {
-  title: "Operation Boost",
+  title: "RavenBoost",
   description:
-    "A collection of resources to help you build and grow your next gaming project",
+    "Boost Your Game, Your Way! Choose your dream team and leave the rest to us.",
   icons: {
     icon: "/logo.svg",
   },

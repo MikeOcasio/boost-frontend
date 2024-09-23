@@ -6,7 +6,6 @@ import { ContactForm } from "@/components/home/ContactForm";
 import GameCard from "@/components/GameCard";
 import HomePageAboutArea from "@/components/home/HomePageAboutArea";
 
-import image1 from "@/images/characters.png";
 import burningCity from "@/images/cityBurn2.png";
 import purpleLane from "@/images/purpleLane.png";
 import { games } from "@/lib/data";
