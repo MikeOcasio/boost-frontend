@@ -1,9 +1,9 @@
-import { Providers } from "@/app/providers";
 import { Akronim } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
-
-import "@/styles/tailwind.css";
 import { Toaster } from "react-hot-toast";
+
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const akronim = Akronim({
   subsets: ["latin"],
@@ -29,7 +29,12 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <body className="bg-RussianViolet">
-        <Providers>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
           <NextTopLoader
             color="#C28D04"
             initialPosition={0.2}
@@ -44,7 +49,7 @@ export default function RootLayout({ children }) {
           <Toaster position="bottom-right" reverseOrder={false} />
 
           {children}
-        </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

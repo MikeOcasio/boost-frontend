@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { InstagramIcon, XIcon } from "@/components/SocialIcons";
 
 import { BiLogoTiktok } from "react-icons/bi";
+import { BsInstagram, BsTwitterX } from "react-icons/bs";
 
 function SocialLink({ icon: Icon, ...props }) {
   return (
@@ -21,13 +21,13 @@ export function Footer() {
             href="https://x.com/RavenBoost_"
             aria-label="Follow on X"
             target="_blank"
-            icon={XIcon}
+            icon={BsTwitterX}
           />
           <SocialLink
             href="https://www.instagram.com/raven.boost?igsh=YTQwZjQ0NmI0OA%3D%3D&utm_source=qr"
             aria-label="Follow on Instagram"
             target="_blank"
-            icon={InstagramIcon}
+            icon={BsInstagram}
           />
           <SocialLink
             href="https://www.tiktok.com/@raven.boost?_t=8pqqPZh07h9&_r=1"

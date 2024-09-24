@@ -1,7 +1,3 @@
-import APEX from "@/images/photos/apexLogo.png";
-import DESTINY from "@/images/photos/destinyLogo.png";
-import COD from "@/images/photos/codLogo.png";
-
 import {
   ShieldCheckIcon,
   ShoppingBagIcon,
@@ -9,6 +5,10 @@ import {
 } from "@heroicons/react/20/solid";
 import { GiProgression } from "react-icons/gi";
 import { MdAssignment } from "react-icons/md";
+
+import APEX from "@/images/photos/apexLogo.png";
+import DESTINY from "@/images/photos/destinyLogo.png";
+import COD from "@/images/photos/codLogo.png";
 
 export const games = [
   {
@@ -106,6 +106,13 @@ export const people = [
     name: "Halaven",
     role: "Skill Master",
     imageUrl: "/skillmasters/skillmaster5.webp",
+    xUrl: "#",
+    linkedinUrl: "#",
+  },
+  {
+    name: "xFlight On Kick",
+    role: "Skill Master",
+    imageUrl: "/skillmasters/skillmaster6.webp",
     xUrl: "#",
     linkedinUrl: "#",
   },

@@ -1,11 +1,10 @@
 import { Button } from "@/components/Button";
-import { Container } from "@/components/Container";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <Container className="flex min-h-screen items-center space-y-4">
+    <div className="flex flex-col justify-center p-4 min-h-screen items-center gap-4">
       <div className="h-96 w-fit overflow-hidden rounded-xl mx-auto">
         <Image
           src="/404.gif"
@@ -30,6 +29,6 @@ export default function NotFound() {
           </Button>
         </Link>
       </div>
-    </Container>
+    </div>
   );
 }
