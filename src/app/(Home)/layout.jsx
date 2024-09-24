@@ -1,7 +1,14 @@
-import { Layout } from "@/components/Layout";
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
 
 const HomeLayout = ({ children }) => {
-  return <Layout>{children}</Layout>;
+  return (
+    <>
+      <Header />
+      <main>{children}</main>
+      <Footer />
+    </>
+  );
 };
 
 export default HomeLayout;
