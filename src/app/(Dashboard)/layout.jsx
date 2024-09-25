@@ -8,16 +8,18 @@ import { useEffect } from "react";
 
 const DashboardLayout = ({ children }) => {
   // prod changes
-  const disable = true;
+  const disable = false;
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/");
+    if (disable) {
+      router.push("/");
+    }
   }, []);
 
   if (disable) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center text-center p-4">
         <div className="h-96 w-fit overflow-hidden rounded-xl mx-auto">
           <Image
             src="/disable.gif"
@@ -36,7 +38,7 @@ const DashboardLayout = ({ children }) => {
     <>
       <div className="absolute top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm" />
       <Navbar />
-      <div className="relative z-10 mt-28 min-h-[90vh] max-w-7xl mx-auto">
+      <div className="relative z-10 mt-28 min-h-[90vh] max-w-7xl mx-auto p-4">
         {children}
       </div>
       <Footer />
