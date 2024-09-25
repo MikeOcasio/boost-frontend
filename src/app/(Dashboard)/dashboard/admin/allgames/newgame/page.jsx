@@ -10,7 +10,6 @@ const NewGamePage = () => {
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  
   const handleCreateGame = async () => {
     if (
       !game.name ||
@@ -44,7 +43,7 @@ const NewGamePage = () => {
 
         <button
           onClick={handleCreateGame}
-          className="bg-Gold/60 hover:bg-Gold/80 border border-black rounded-lg p-2 flex items-center justify-center gap-2 w-fit mt-6 backdrop-blur-sm"
+          className="bg-Gold/60 hover:bg-Gold/80 border border-black rounded-lg p-2 flex items-center justify-center gap-2 w-fit backdrop-blur-sm"
         >
           {loading ? (
             <BiLoader className="h-5 w-5 animate-spin" />

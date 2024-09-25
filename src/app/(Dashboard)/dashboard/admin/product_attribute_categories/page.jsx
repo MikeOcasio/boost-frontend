@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { BiLoader, BiPencil, BiPlus } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
-import clsx from "clsx";
 import { fetchAttribute } from "@/lib/actions";
 import { AttributeDialog } from "../_components/AttributeDialog";
 
@@ -100,15 +99,6 @@ const ProductAttributePage = () => {
             >
               <div className="flex flex-wrap gap-4 items-center">
                 <p className="text-lg font-semibold">{attribute.name}</p>
-                {attribute.description && <p>{attribute.description}</p>}
-                <p
-                  className={clsx(
-                    "text-xs font-semibold px-2 rounded-full",
-                    attribute.is_active ? "bg-green-500" : "bg-gray-500"
-                  )}
-                >
-                  {attribute.is_active ? "Active" : "Inactive"}
-                </p>
               </div>
               <BiPencil className="h-8 w-8 ml-2 hover:bg-white/10 rounded-lg p-2" />
             </button>
