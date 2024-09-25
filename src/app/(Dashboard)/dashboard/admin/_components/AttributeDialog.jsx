@@ -1,4 +1,4 @@
-import { addCategory } from "@/lib/actions";
+import { addAttribute } from "@/lib/actions";
 import {
   Dialog,
   DialogPanel,
@@ -6,8 +6,6 @@ import {
   Field,
   Input,
   Label,
-  Switch,
-  Textarea,
 } from "@headlessui/react";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
@@ -15,55 +13,55 @@ import toast from "react-hot-toast";
 import { IoClose } from "react-icons/io5";
 
 export const AttributeDialog = ({ dialogData, dialogOpen, onClose }) => {
-  const [category, setCategory] = useState(dialogData || getDefaultCategory());
+  const [attribute, setAttribute] = useState(
+    dialogData || getDefaultAttribute()
+  );
   const [loading, setLoading] = useState(false);
 
-  function getDefaultCategory() {
+  function getDefaultAttribute() {
     return {
       name: "",
-      description: "",
-      is_active: true,
     };
   }
 
   // Effect to update the local state when dialogData changes (e.g., opening dialog for edit)
   useEffect(() => {
     if (dialogData) {
-      setCategory(dialogData);
+      setAttribute(dialogData);
     } else {
-      setCategory(getDefaultCategory());
+      setAttribute(getDefaultAttribute());
     }
   }, [dialogData]);
 
-  const handleSubmit = async (categoryData) => {
+  const handleSubmit = async (attributeData) => {
     setLoading(true);
     try {
-      if (categoryData.id) {
-        // Update existing category
-        // const response = await updateCategory(categoryData);
+      if (attributeData.id) {
+        // Update existing attribute
+        // const response = await updateAttribute(attributeData);
 
         // if (response.error) {
         //   toast.error(response.error);
         // } else {
-        //   toast.success("Category updated successfully!");
+        //   toast.success("attribute updated successfully!");
         // }
 
         toast.error("Not implemented yet");
       } else {
-        // Add new category
-        const response = await addCategory(categoryData);
+        // Add new attribute
+        const response = await addAttribute(attributeData);
 
         if (response.error) {
           toast.error(response.error);
         } else {
-          toast.success("Category added successfully!");
+          toast.success("Product attribute added successfully!");
         }
       }
 
       handleClosed();
     } catch (error) {
-      console.error("Error submitting category:", error);
-      toast.error("Failed to submit category.");
+      console.error("Error submitting attribute:", error);
+      toast.error("Failed to submit attribute.");
     } finally {
       setLoading(false);
     }
@@ -71,7 +69,7 @@ export const AttributeDialog = ({ dialogData, dialogOpen, onClose }) => {
 
   const handleClosed = () => {
     onClose();
-    setCategory(dialogData || getDefaultCategory());
+    setAttribute(dialogData || getDefaultAttribute());
   };
 
   return (
@@ -92,76 +90,44 @@ export const AttributeDialog = ({ dialogData, dialogOpen, onClose }) => {
           </button>
 
           <DialogTitle className="text-lg font-semibold">
-            {dialogData ? "Update Game Category" : "Add New Game Category"}
+            {dialogData
+              ? "Update product attribute"
+              : "Add New product attribute"}
           </DialogTitle>
 
           <div className="flex flex-col gap-4">
-            {/* Category Name Field */}
+            {/* attribute Name Field */}
             <Field className="flex flex-col gap-1 w-full">
-              <Label className="text-sm">Category Name</Label>
+              <Label className="text-sm">Attribute Name</Label>
               <Input
                 type="text"
-                placeholder="Game category name"
+                placeholder="Game attribute name"
                 autoFocus
                 className={clsx(
                   "rounded-lg border-none bg-white/10 py-1.5 px-3",
                   "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
                 )}
-                value={category.name}
+                value={attribute.name}
                 onChange={(e) =>
-                  setCategory({ ...category, name: e.target.value })
+                  setAttribute({ ...attribute, name: e.target.value })
                 }
               />
             </Field>
-
-            {/* Category Description Field */}
-            <Field className="flex flex-col gap-1 w-full">
-              <Label className="text-sm">Category Description</Label>
-              <Textarea
-                placeholder="Category Description"
-                className={clsx(
-                  "rounded-lg border-none bg-white/10 py-1.5 px-3",
-                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-                )}
-                rows={3}
-                value={category.description}
-                onChange={(e) =>
-                  setCategory({ ...category, description: e.target.value })
-                }
-              />
-            </Field>
-
-            {/* Active Status Switch */}
-            <div className="flex items-center gap-4 rounded-lg flex-1">
-              <p>Is Active</p>
-              <Switch
-                checked={category.is_active}
-                onChange={(checked) =>
-                  setCategory({ ...category, is_active: checked })
-                }
-                className="group relative flex h-7 min-w-14 w-14 cursor-pointer rounded-full bg-white/10 p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-Gold/80"
-              >
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none inline-block size-5 translate-x-0 rounded-full bg-white ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
-                />
-              </Switch>
-            </div>
 
             {/* Submit Button */}
             <button
-              onClick={() => handleSubmit(category)}
-              disabled={loading || !category.name.trim()} // Disable if loading or name is empty
+              onClick={() => handleSubmit(attribute)}
+              disabled={loading || !attribute.name.trim()} // Disable if loading or name is empty
               className={clsx(
                 "bg-Gold/80 p-2 rounded-lg hover:bg-Gold/60 disabled:bg-gray-500/20",
-                { "cursor-not-allowed": loading || !category.name.trim() }
+                { "cursor-not-allowed": loading || !attribute.name.trim() }
               )}
             >
               {loading
                 ? "Submitting..."
                 : dialogData
-                ? "Update Category"
-                : "Add Category"}
+                ? "Update attribute"
+                : "Add attribute"}
             </button>
           </div>
         </DialogPanel>

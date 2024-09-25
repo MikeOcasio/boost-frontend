@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { GiConsoleController } from "react-icons/gi";
-import { BsPeople } from "react-icons/bs";
+import { BsFillPeopleFill } from "react-icons/bs";
 import { BiReceipt } from "react-icons/bi";
+import { MdCategory } from "react-icons/md";
+import { CgAttribution } from "react-icons/cg";
 
 const AdminTabs = () => {
   const adminNav = [
@@ -13,7 +15,7 @@ const AdminTabs = () => {
     {
       name: "Users",
       href: "/dashboard/admin/allusers",
-      icon: <BsPeople size={22} />,
+      icon: <BsFillPeopleFill size={22} />,
     },
     {
       name: "Orders",
@@ -23,12 +25,12 @@ const AdminTabs = () => {
     {
       name: "Game Categories",
       href: "/dashboard/admin/game_categories",
-      icon: <BiReceipt size={22} />,
+      icon: <MdCategory size={22} />,
     },
     {
       name: "Game Attributes",
       href: "/dashboard/admin/product_attribute_categories",
-      icon: <BiReceipt size={22} />,
+      icon: <CgAttribution size={22} />,
     },
   ];
 
