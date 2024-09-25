@@ -7,22 +7,29 @@ import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 
 const NewGamePage = () => {
-
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  
   const handleCreateGame = async () => {
     if (
-      !game ||
       !game.name ||
-      !game.tagLine ||
       !game.description ||
+      !game.price ||
       !game.image ||
-      !game.altText ||
-      !game.bgImage ||
-      !game.primaryColor ||
-      !game.isActive ||
-      !game.mostPopular ||
+      !game.category_id ||
+      !game.product_attribute_category_id ||
+      !game.order_id ||
+      !game.cart_id ||
+      !game.is_priority ||
+      !game.tax ||
+      !game.platform ||
+      !game.is_active ||
+      !game.most_popular ||
+      !game.tag_line ||
+      !game.bg_image ||
+      !game.primary_color ||
+      !game.secondary_color ||
       !game.features.length
     ) {
       toast.error("Please fill all the required data properly!");
