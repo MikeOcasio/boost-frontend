@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { BiLoader, BiPencil, BiPlus } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
+
 import { fetchAttribute } from "@/lib/actions";
 import { AttributeDialog } from "../_components/AttributeDialog";
 
@@ -62,20 +63,13 @@ const ProductAttributePage = () => {
           disabled={loading}
           className="bg-Gold/60 hover:bg-Gold/80 border border-black rounded-lg p-2 flex items-center justify-center gap-2 w-fit mt-6 backdrop-blur-sm disabled:bg-gray-500/20"
         >
-          {loading ? (
-            <BiLoader className="h-5 w-5 animate-spin" />
-          ) : (
-            <BiPlus className="h-5 w-5" />
-          )}
+          <BiPlus className="h-5 w-5" />
           New Attribute
         </button>
       </div>
 
-      {loading && (
-        <div className="flex justify-center items-center w-full">
-          <BiLoader className="h-8 w-8 animate-spin" />
-        </div>
-      )}
+      {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
+
       {error && (
         <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
           <IoWarning className="h-5 w-5 mr-2" />
@@ -95,11 +89,11 @@ const ProductAttributePage = () => {
             <button
               key={index}
               onClick={() => editAttribute(attribute)}
-              className="flex justify-between items-center flex-1 min-w-fit flex-wrap rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
+              className="flex justify-between items-center flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
             >
-              <div className="flex flex-wrap gap-4 items-center">
-                <p className="text-lg font-semibold">{attribute.name}</p>
-              </div>
+              <p className="text-lg font-semibold break-all">
+                {attribute.name}
+              </p>
               <BiPencil className="h-8 w-8 ml-2 hover:bg-white/10 rounded-lg p-2" />
             </button>
           ))
@@ -111,6 +105,7 @@ const ProductAttributePage = () => {
         dialogData={dialogData}
         dialogOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
+        loadAttributes={loadAttribute}
       />
     </div>
   );
