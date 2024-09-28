@@ -1,6 +1,7 @@
 "use server";
 
 import axios from "axios";
+import { NextResponse } from "next/server";
 
 // validate csrf token
 const validateToken = async () => {
@@ -49,15 +50,11 @@ export const addCategory = async (categoryData) => {
 
     return response.data;
   } catch (error) {
-    console.log(
-      "Failed to add category:",
-      error.response ? error.response.data : error.message
-    );
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to add category:", errorMessage);
 
     return {
-      error:
-        JSON.stringify(error.response.data) ||
-        "An error occurred while adding the category.",
+      error: errorMessage || "An error occurred while adding the category.",
     };
   }
 };
@@ -77,15 +74,11 @@ export const updateCategory = async (categoryData) => {
 
     return response.data;
   } catch (error) {
-    console.log(
-      "Failed to update category:",
-      error.response ? error.response.data : error.message
-    );
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to update category:", errorMessage);
 
     return {
-      error:
-        JSON.stringify(error.response.data) ||
-        "An error occurred while updating the category.",
+      error: errorMessage || "An error occurred while updating the category.",
     };
   }
 };
@@ -100,15 +93,11 @@ export const deleteCategory = async (categoryId) => {
 
     return response.data;
   } catch (error) {
-    console.log(
-      "Failed to delete category:",
-      error.response ? error.response.data : error.message
-    );
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to delete category:", errorMessage);
 
     return {
-      error:
-        JSON.stringify(error.response.data) ||
-        "An error occurred while deleting the category.",
+      error: errorMessage || "An error occurred while deleting the category.",
     };
   }
 };
@@ -137,15 +126,11 @@ export const addAttribute = async (attributeData) => {
 
     return response.data;
   } catch (error) {
-    console.log(
-      "Failed to add attribute:",
-      error.response ? error.response.data : error.message
-    );
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to add attribute:", errorMessage);
 
     return {
-      error:
-        JSON.stringify(error.response.data) ||
-        "An error occurred while adding the attribute.",
+      error: errorMessage || "An error occurred while adding the attribute.",
     };
   }
 };
@@ -161,15 +146,11 @@ export const updateAttribute = async (attributeData) => {
 
     return response.data;
   } catch (error) {
-    console.log(
-      "Failed to update attribute:",
-      error.response ? error.response.data : error.message
-    );
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to update attribute:", errorMessage);
 
     return {
-      error:
-        JSON.stringify(error.response.data) ||
-        "An error occurred while updating the attribute.",
+      error: errorMessage || "An error occurred while updating the attribute.",
     };
   }
 };
@@ -184,15 +165,11 @@ export const deleteAttribute = async (attributeId) => {
 
     return response.data;
   } catch (error) {
-    console.log(
-      "Failed to delete attribute:",
-      error.response ? error.response.data : error.message
-    );
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to delete attribute:", errorMessage);
 
     return {
-      error:
-        JSON.stringify(error.response.data) ||
-        "An error occurred while deleting the attribute.",
+      error: errorMessage || "An error occurred while deleting the attribute.",
     };
   }
 };
@@ -251,15 +228,11 @@ export const addGame = async (gameData) => {
 
     return response.data;
   } catch (error) {
-    console.log(
-      "Failed to add game:",
-      error.response ? error.response.data : error.message
-    );
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to add game:", errorMessage);
 
     return {
-      error:
-        JSON.stringify(error.response.data) ||
-        "An error occurred while adding the game.",
+      error: errorMessage || "An error occurred while adding the game.",
     };
   }
 };
@@ -292,15 +265,11 @@ export const updateGame = async (gameData, gameId) => {
 
     return response.data;
   } catch (error) {
-    console.log(
-      "Failed to update game:",
-      error.response ? error.response.data : error.message
-    );
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to update game:", errorMessage);
 
     return {
-      error:
-        JSON.stringify(error.response.data) ||
-        "An error occurred while updating the game.",
+      error: errorMessage || "An error occurred while updating the game.",
     };
   }
 };
@@ -315,15 +284,11 @@ export const deleteGame = async (gameId) => {
 
     return response.data;
   } catch (error) {
-    console.log(
-      "Failed to delete game:",
-      error.response ? error.response.data : error.message
-    );
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to delete game:", errorMessage);
 
     return {
-      error:
-        JSON.stringify(error.response.data) ||
-        "An error occurred while deleting the game.",
+      error: errorMessage || "An error occurred while deleting the game.",
     };
   }
 };
@@ -339,5 +304,147 @@ export const fetchPlatforms = async () => {
   } catch (error) {
     console.log("error platforms ", error);
     return { error: "Failed to fetch platforms. Please try again!" };
+  }
+};
+
+// add platform
+export const addPlatform = async (platformData) => {
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/platforms`,
+      { name: platformData.name },
+      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to add platform:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while adding the platform.",
+    };
+  }
+};
+
+// update platform
+export const updatePlatform = async (platformData) => {
+  try {
+    const response = await axios.put(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/platforms/${platformData.id}`,
+      { name: platformData.name },
+      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to update platform:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while updating the platform.",
+    };
+  }
+};
+
+// delete platform
+export const deletePlatform = async (platformId) => {
+  try {
+    const response = await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/platforms/${platformId}`,
+      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to delete platform:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while deleting the platform.",
+    };
+  }
+};
+
+// login user
+export const loginUser = async (email, password) => {
+  try {
+    const { data } = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/login`,
+      { email, password }
+    );
+
+    const { token } = data;
+
+    if (token) {
+      const response = NextResponse.next(); // create a Next.js response
+      response.cookies.set({
+        name: "token",
+        value: token,
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        httpOnly: true,
+        secure: true,
+      });
+    }
+
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to login user:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while logging in the user.",
+    };
+  }
+};
+
+// current user
+export const fetchCurrentUser = async () => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/current_user`,
+      {
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo0fQ.obfHmpuEbPp-cMNGoQUmVpMqSQ5B7TOTmjKoHhetb58",
+      }
+    );
+
+    return data;
+  } catch (error) {
+    console.log("error fetchCurrentUser ", error);
+    return { error: "Failed to fetch current user. Please try again!" };
+  }
+};
+
+// sign in user
+export const signInUser = async ({
+  email,
+  password,
+  firstName,
+  lastName,
+  image,
+}) => {
+  try {
+    const { data } = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/create`,
+      {
+        email: email,
+        password: password,
+        image: image,
+        first_name: firstName,
+        last_name: lastName,
+        role: "customer",
+      }
+    );
+
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to sign in user:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while signing in the user.",
+    };
   }
 };

@@ -1,32 +1,140 @@
+"use client";
+
+import { Field, Input, Label } from "@headlessui/react";
+import clsx from "clsx";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { useRouter } from "next/navigation";
+import { BiLoader } from "react-icons/bi";
+import toast from "react-hot-toast";
+
+import { fetchCurrentUser, loginUser } from "@/lib/actions";
+
 export default function Login() {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+    try {
+      const response = await loginUser(email, password);
+
+      console.log("response", response);
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Login successful!");
+        router.push("/");
+      }
+    } catch (error) {
+      console.log("Error logging in user:", error.message);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCurrentUser = async () => {
+    try {
+      const response = await fetchCurrentUser();
+
+      console.log("response", response);
+    } catch (error) {
+      console.log("Error fetching current user:", error.message);
+      toast.error(error.message);
+    }
+  };
+
   return (
-    <div className="flex h-screen items-center justify-center bg-RussianViolet ">
-      <form className="w-64 rounded border-2 border-yellow-500 p-6 shadow">
-        <h2 className="mb-5 text-2xl font-bold text-yellow-500">Login</h2>
-
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          className="mb-4 block w-full rounded border border-yellow-500 bg-transparent p-2"
-          required
+    <div className="mt-16 max-w-7xl mx-auto min-h-screen p-4 flex flex-1 flex-col justify-center gap-6">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <Image
+          alt="Raven Boost"
+          src="/logo.svg"
+          width={150}
+          height={150}
+          className="mx-auto"
         />
+        <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-Gold">
+          Login to your account
+        </h2>
+      </div>
 
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          className="mb-4 block w-full rounded border border-yellow-500 bg-transparent p-2"
-          required
-        />
+      <div className="sm:mx-auto sm:w-full sm:max-w-lg">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Field className="flex flex-col gap-1 w-full">
+            <Label className="text-sm">Email</Label>
+            <Input
+              type="text"
+              placeholder="Email"
+              autoFocus
+              className={clsx(
+                "rounded-lg border-none bg-white/10 py-1.5 px-3",
+                "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
+              )}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </Field>
 
-        <button
-          type="submit"
-          className="w-full rounded bg-green-700 px-4 py-2 text-white hover:bg-green-600"
-        >
-          Login
-        </button>
-      </form>
+          <div className="flex flex-col gap-1 w-full">
+            <Field className="flex flex-col gap-1 w-full">
+              <Label className="text-sm">Password</Label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  className={clsx(
+                    "rounded-lg border-none bg-white/10 py-1.5 px-3 w-full",
+                    "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
+                  )}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+
+                <button
+                  type="button"
+                  className="absolute right-1 top-1/2 h-7 w-8 p-1.5 rounded-lg hover:bg-white/10 -translate-y-1/2 text-gray-400 hover:text-gray-500 flex items-center justify-center"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <BsEyeSlash /> : <BsEye />}
+                </button>
+              </div>
+            </Field>
+            <button type="button" className="text-end text-sm text-blue-600">
+              Forgot your password?
+            </button>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex w-full justify-center rounded-md bg-Gold px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-Gold/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Gold gap-2 items-center"
+          >
+            {loading && <BiLoader className="h-5 w-5 animate-spin" />}
+            Sign in
+          </button>
+        </form>
+
+        <p className="mt-10 text-center text-sm text-gray-500">
+          Not a member?{" "}
+          <Link
+            href="/signin"
+            className="font-semibold leading-6 text-blue-600 hover:text-blue-500"
+          >
+            create an account
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

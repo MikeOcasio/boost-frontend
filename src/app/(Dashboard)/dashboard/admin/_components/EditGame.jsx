@@ -12,7 +12,7 @@ import Image from "next/image";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { BiChevronDown, BiLoader, BiTrash } from "react-icons/bi";
+import { BiChevronDown, BiLoader, BiTrash, BiUpload } from "react-icons/bi";
 import { IoCopy } from "react-icons/io5";
 import { IoMdAdd, IoMdRemove, IoMdClose } from "react-icons/io";
 import { GrPowerReset } from "react-icons/gr";
@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation";
 export const EditGame = ({ data, setData }) => {
   const router = useRouter();
 
+  const [initialValues, setInitialValues] = useState(data || getDefaultGame());
   const [game, setGame] = useState(data || getDefaultGame());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -54,6 +55,8 @@ export const EditGame = ({ data, setData }) => {
       category_id: null,
       product_attribute_category_id: null,
       platform_ids: [],
+      remove_image: "false",
+      remove_bg_image: "false",
     };
   }
 
@@ -109,7 +112,13 @@ export const EditGame = ({ data, setData }) => {
   }, []);
 
   const addFeature = () => {
-    setGame({ ...game, features: [...game.features, ""] });
+    if (game.features[game.features.length - 1] !== "") {
+      setGame({ ...game, features: [...game.features, ""] });
+    } else {
+      toast.error(
+        "Please fill in the current feature before adding a new one."
+      );
+    }
   };
 
   const removeFeature = (index) => {
@@ -123,7 +132,10 @@ export const EditGame = ({ data, setData }) => {
     const updatedFeatures = [...game.features];
     updatedFeatures[index] = value;
 
-    setGame({ ...game, features: updatedFeatures });
+    // Prevent empty strings from being added
+    if (value.trim() !== "" || index < updatedFeatures.length - 1) {
+      setGame({ ...game, features: updatedFeatures });
+    }
   };
 
   const handleColorChange = (color, field) => {
@@ -136,7 +148,7 @@ export const EditGame = ({ data, setData }) => {
     if (!gameId) return;
 
     const confirmed = confirm(
-      "Are you sure you want to delete this game? This action cannot be undone."
+      "Are you sure you want to delete this product? This action cannot be undone."
     );
 
     if (!confirmed) return;
@@ -149,11 +161,11 @@ export const EditGame = ({ data, setData }) => {
         toast.error(response.error);
         // toast.error("Error deleting game!");
       } else {
-        toast.success("Game deleted successfully!");
+        toast.success("Product deleted successfully!");
         router.push("/dashboard/admin/allgames");
       }
     } catch (error) {
-      console.log("Error deleting game:", error.message);
+      console.log("Error deleting product:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -192,11 +204,11 @@ export const EditGame = ({ data, setData }) => {
         )}
 
         {/* Switches for Priority, Active, Popular */}
-        <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg">
+        <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20 ">
           {["is_priority", "is_active", "most_popular"].map((key, index) => (
             <div
               key={index}
-              className="flex min-w-fit items-center gap-4 bg-black/20 p-2 rounded-lg flex-1 justify-center"
+              className="flex min-w-fit items-center gap-4 bg-black/20 hover:bg-black/30 p-2 rounded-lg flex-1 justify-center"
             >
               <p>{key.replace("_", " ").toUpperCase()}</p>
               <Switch
@@ -211,7 +223,7 @@ export const EditGame = ({ data, setData }) => {
         </div>
 
         {/* Category and Product Attribute Dropdowns */}
-        <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg">
+        <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
           {/* category */}
           <Field className="flex min-w-fit flex-col gap-1 flex-1">
             <Label>Category</Label>
@@ -224,7 +236,7 @@ export const EditGame = ({ data, setData }) => {
                     category_id: Number(e.target.value),
                   });
                 }}
-                className="block w-full appearance-none rounded-lg bg-white/5 py-1.5 px-3"
+                className="block w-full appearance-none rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
               >
                 <option
                   value={null}
@@ -262,7 +274,7 @@ export const EditGame = ({ data, setData }) => {
                     product_attribute_category_id: Number(e.target.value),
                   });
                 }}
-                className="block w-full appearance-none rounded-lg bg-white/5 py-1.5 px-3"
+                className="block w-full appearance-none rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
               >
                 <option
                   value={null}
@@ -296,10 +308,10 @@ export const EditGame = ({ data, setData }) => {
           <Input
             autoFocus
             type="text"
-            placeholder="Game name"
+            placeholder="Product name"
             value={game?.name}
             className={clsx(
-              "rounded-lg border-none bg-white/10 py-1.5 px-3 text-xl",
+              "rounded-lg bg-white/10 py-1.5 px-3 text-xl border border-white/10 hover:border-white/20",
               "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
             )}
             onChange={(e) => {
@@ -309,15 +321,18 @@ export const EditGame = ({ data, setData }) => {
         </Field>
 
         {/* platform */}
-        <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg">
+        <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
           <Label>Platform</Label>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap gap-4 items-center">
             {platforms.map((platform) => (
-              <label key={platform.id} className="flex items-center gap-2">
+              <label
+                key={platform.id}
+                className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-wrap flex-1"
+              >
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 checked:bg-blue-600 focus:checked:border-blue-600"
+                  className="h-4 w-4"
                   value={platform.id}
                   checked={game?.platform_ids?.includes(platform.id) || false}
                   onChange={() => {
@@ -340,10 +355,10 @@ export const EditGame = ({ data, setData }) => {
           <Label>Tag Line</Label>
           <Input
             type="text"
-            placeholder="Game tagline"
+            placeholder="Product tagline"
             value={game?.tag_line}
             className={clsx(
-              "rounded-lg border-none bg-white/10 py-1.5 px-3",
+              "rounded-lg border border-white/10 hover:border-white/20 bg-white/10 py-1.5 px-3",
               "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
             )}
             onChange={(e) => {
@@ -356,10 +371,10 @@ export const EditGame = ({ data, setData }) => {
         <Field className="flex flex-col gap-1 w-full">
           <Label>Description</Label>
           <Textarea
-            placeholder="Game description"
+            placeholder="Product description"
             value={game?.description}
             className={clsx(
-              "rounded-lg border-none bg-white/10 py-1.5 px-3",
+              "rounded-lg bg-white/10 py-1.5 px-3 border border-white/10 hover:border-white/20",
               "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
             )}
             rows={3}
@@ -379,7 +394,7 @@ export const EditGame = ({ data, setData }) => {
               placeholder="$200"
               value={game?.price}
               className={clsx(
-                "rounded-lg border-none bg-white/10 py-1.5 px-3",
+                "rounded-lg border border-white/10 hover:border-white/20 bg-white/10 py-1.5 px-3",
                 "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
               )}
               onChange={(e) => {
@@ -396,7 +411,7 @@ export const EditGame = ({ data, setData }) => {
               placeholder="0.2"
               value={game?.tax}
               className={clsx(
-                "rounded-lg border-none bg-white/10 py-1.5 px-3",
+                "rounded-lg border border-white/10 hover:border-white/20 bg-white/10 py-1.5 px-3",
                 "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
               )}
               onChange={(e) => {
@@ -407,50 +422,67 @@ export const EditGame = ({ data, setData }) => {
         </div>
 
         {/* image */}
-        <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg">
+        <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
           <Label>Image</Label>
-          <div className="flex flex-wrap gap-1 flex-1 items-center">
+          <div className="flex flex-wrap gap-4 flex-1 items-center">
             {game?.image && (
               <div className="group relative cursor-pointer">
                 <Image
                   src={game?.image}
-                  alt="game image"
+                  alt="Product image"
                   width={200}
                   height={200}
                   className="rounded-lg"
                 />
                 <IoMdClose
                   className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
-                  onClick={() => setGame({ ...game, image: null })}
+                  onClick={() =>
+                    setGame({ ...game, image: null, remove_image: "true" })
+                  }
                 />
               </div>
             )}
-            <Input
-              type="file"
-              accept="image/*"
-              className={clsx(
-                "rounded-lg border-none bg-white/10 py-1.5 px-3 flex-1",
-                "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-              )}
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    setGame({ ...game, image: reader.result });
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-            />
+            <div className="flex flex-col gap-2 flex-1">
+              <label
+                for="dropzone-file"
+                className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
+              >
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <BiUpload className="h-8 w-8 text-gray-500" />
+                  <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                    Click or drag and drop your image here
+                  </p>
+                </div>
+                <input
+                  id="dropzone-file"
+                  type="file"
+                  accept="image/*"
+                  className="absolute border h-full w-full opacity-0"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setGame({
+                          ...game,
+                          image: reader.result,
+                          remove_image: "false",
+                        });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+              </label>
+            </div>
           </div>
         </Field>
 
         {/* bg_image */}
-        <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg">
+        <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
           <Label>Background Image</Label>
 
-          <div className="flex flex-wrap gap-1 flex-1 items-center">
+          <div className="flex flex-wrap gap-4 flex-1 items-center">
             {game?.bg_image && (
               <div className="group relative cursor-pointer">
                 <Image
@@ -462,36 +494,55 @@ export const EditGame = ({ data, setData }) => {
                 />
                 <IoMdClose
                   className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
-                  onClick={() => setGame({ ...game, bg_image: null })}
+                  onClick={() =>
+                    setGame({
+                      ...game,
+                      bg_image: null,
+                      remove_bg_image: "true",
+                    })
+                  }
                 />
               </div>
             )}
 
-            <Input
-              type="file"
-              accept="image/*"
-              className={clsx(
-                "rounded-lg border-none bg-white/10 py-1.5 px-3 flex-1",
-                "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-              )}
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    setGame({ ...game, bg_image: reader.result });
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-            />
+            <label
+              for="dropzone-file"
+              className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
+            >
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <BiUpload className="h-8 w-8 text-gray-500" />
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  Click or drag and drop your image here
+                </p>
+              </div>
+              <input
+                id="dropzone-file"
+                type="file"
+                accept="image/*"
+                className="absolute border h-full w-full opacity-0"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setGame({
+                        ...game,
+                        bg_image: reader.result,
+                        remove_bg_image: "false",
+                      });
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+            </label>
           </div>
         </Field>
 
         {/* primary & secondary color */}
         <div className="flex flex-wrap gap-4 w-full">
           {/* primary color */}
-          <Field className="flex flex-col gap-1 flex-1 bg-white/10 p-4 rounded-lg">
+          <Field className="flex flex-col gap-1 flex-1 bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
             <Label>Primary color</Label>
             <div className="flex flex-wrap gap-1 flex-1 items-center">
               <Input
@@ -499,7 +550,7 @@ export const EditGame = ({ data, setData }) => {
                 placeholder="#FFFFFF"
                 value={game?.primary_color}
                 className={clsx(
-                  "rounded-lg border-none bg-white/10 py-1.5 px-3 flex-1",
+                  "rounded-lg border-none bg-black/20 hover:bg-black/30 py-1.5 px-3 flex-1",
                   "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
                 )}
                 onChange={(e) => {
@@ -518,7 +569,7 @@ export const EditGame = ({ data, setData }) => {
           </Field>
 
           {/* secondary color */}
-          <Field className="flex flex-col gap-1 flex-1 bg-white/10 p-4 rounded-lg">
+          <Field className="flex flex-col gap-1 flex-1 bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
             <Label>Secondary color</Label>
             <div className="flex flex-wrap gap-1 flex-1 items-center">
               <Input
@@ -526,7 +577,7 @@ export const EditGame = ({ data, setData }) => {
                 placeholder="#000000"
                 value={game?.secondary_color}
                 className={clsx(
-                  "rounded-lg border-none bg-white/10 py-1.5 px-3 flex-1",
+                  "rounded-lg border-none bg-black/20 hover:bg-black/30 py-1.5 px-3 flex-1",
                   "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
                 )}
                 onChange={(e) => {
@@ -565,7 +616,7 @@ export const EditGame = ({ data, setData }) => {
                 type="text"
                 value={feature}
                 placeholder={`Feature ${index + 1}`}
-                className="rounded-lg bg-white/10 py-1.5 px-3 flex-1"
+                className="rounded-lg bg-white/10 py-1.5 px-3 flex-1 border border-white/10 hover:border-white/20"
                 onChange={(e) => handleFeatureChange(index, e.target.value)}
               />
               <button
@@ -580,7 +631,7 @@ export const EditGame = ({ data, setData }) => {
 
         {/* Reset Buttons */}
         <button
-          onClick={() => setGame(getDefaultGame())}
+          onClick={() => setGame(initialValues)}
           className="p-2 rounded-lg hover:bg-white/10 border border-white/10 flex flex-wrap items-center gap-2"
         >
           <GrPowerReset className="w-5 h-5" />
@@ -594,7 +645,7 @@ export const EditGame = ({ data, setData }) => {
             className="p-2 rounded-lg border border-red-600 flex flex-wrap items-center gap-2 w-full text-red-600 hover:bg-red-600 hover:text-white justify-center"
           >
             <BiTrash className="w-5 h-5" />
-            Delete Game
+            Delete Product
           </button>
         )}
       </div>

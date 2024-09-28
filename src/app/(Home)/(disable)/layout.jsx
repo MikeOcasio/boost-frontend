@@ -8,7 +8,7 @@ const DisableLayout = ({ children }) => {
   // prod changes
   const route = useRouter();
 
-  const disable = true;
+  const disable = false;
   useEffect(() => {
     if (disable) {
       route.push("/");
