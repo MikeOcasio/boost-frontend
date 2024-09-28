@@ -62,12 +62,12 @@ const GameEditPage = ({ params }) => {
   };
 
   const handleUpdateGame = async () => {
-    console.log("game", game);
+    console.log("game id page", gameId, game);
     if (!validateGame()) return;
 
     setLoading(true);
     try {
-      const response = await updateGame(gameId, game); // Update the game using gameId and new game data
+      const response = await updateGame(game, gameId);
 
       if (response.error) {
         toast.error(response.error);

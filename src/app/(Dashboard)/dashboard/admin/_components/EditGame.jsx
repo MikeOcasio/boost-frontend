@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Field,
   Input,
@@ -10,22 +12,29 @@ import Image from "next/image";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { BiChevronDown, BiLoader } from "react-icons/bi";
+import { BiChevronDown, BiLoader, BiTrash } from "react-icons/bi";
 import { IoCopy } from "react-icons/io5";
 import { IoMdAdd, IoMdRemove, IoMdClose } from "react-icons/io";
 import { GrPowerReset } from "react-icons/gr";
 
 import { Button } from "@/components/Button";
-import { fetchAttribute, fetchCategories, fetchPlatforms } from "@/lib/actions";
+import {
+  deleteGame,
+  fetchAttribute,
+  fetchCategories,
+  fetchPlatforms,
+} from "@/lib/actions";
+import { useRouter } from "next/navigation";
 
 export const EditGame = ({ data, setData }) => {
+  const router = useRouter();
+
   const [game, setGame] = useState(data || getDefaultGame());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [categories, setCategories] = useState([]);
   const [attribute, setAttribute] = useState([]);
   const [platforms, setPlatforms] = useState([]);
-  const [selectedPlatforms, setSelectedPlatforms] = useState([]);
 
   function getDefaultGame() {
     return {
@@ -44,8 +53,6 @@ export const EditGame = ({ data, setData }) => {
       features: [""],
       category_id: null,
       product_attribute_category_id: null,
-      category: {},
-      product_attribute_category: {},
       platform_ids: [],
     };
   }
@@ -92,9 +99,9 @@ export const EditGame = ({ data, setData }) => {
 
   const loadData = async () => {
     setLoading(true);
-    setError(null); // Reset error
+    setError(null);
     await Promise.all([loadCategories(), loadAttribute(), loadPlatforms()]);
-    setLoading(false); // Stop loading once both are fetched
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -125,22 +132,32 @@ export const EditGame = ({ data, setData }) => {
     }, 1000);
   };
 
-  const handlePlatformChange = (platformId) => {
-    setSelectedPlatforms((prevSelected) => {
-      if (prevSelected.includes(platformId)) {
-        setGame((prevGame) => ({
-          ...prevGame,
-          platform_ids: prevGame.platform_ids.filter((id) => id !== platformId),
-        }));
-        return prevSelected.filter((id) => id !== platformId);
+  const handleDeleteGame = async (gameId) => {
+    if (!gameId) return;
+
+    const confirmed = confirm(
+      "Are you sure you want to delete this game? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    setLoading(true);
+    try {
+      const response = await deleteGame(gameId);
+
+      if (response.error) {
+        toast.error(response.error);
+        // toast.error("Error deleting game!");
       } else {
-        setGame((prevGame) => ({
-          ...prevGame,
-          platform_ids: [...prevGame.platform_ids, platformId],
-        }));
-        return [...prevSelected, platformId];
+        toast.success("Game deleted successfully!");
+        router.push("/dashboard/admin/allgames");
       }
-    });
+    } catch (error) {
+      console.log("Error deleting game:", error.message);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
@@ -202,14 +219,9 @@ export const EditGame = ({ data, setData }) => {
               <Select
                 value={game?.category_id}
                 onChange={(e) => {
-                  const selectedCategory = categories.find(
-                    (cat) => cat.id === Number(e.target.value)
-                  );
-
                   setGame({
                     ...game,
                     category_id: Number(e.target.value),
-                    category: { name: selectedCategory?.name },
                   });
                 }}
                 className="block w-full appearance-none rounded-lg bg-white/5 py-1.5 px-3"
@@ -245,16 +257,9 @@ export const EditGame = ({ data, setData }) => {
               <Select
                 value={game?.product_attribute_category_id}
                 onChange={(e) => {
-                  const selectedAttribute = attribute.find(
-                    (attr) => attr.id === Number(e.target.value)
-                  );
-
                   setGame({
                     ...game,
                     product_attribute_category_id: Number(e.target.value),
-                    product_attribute_category: {
-                      name: selectedAttribute.name,
-                    },
                   });
                 }}
                 className="block w-full appearance-none rounded-lg bg-white/5 py-1.5 px-3"
@@ -312,10 +317,17 @@ export const EditGame = ({ data, setData }) => {
               <label key={platform.id} className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  value={platform.id}
-                  checked={game?.platform_ids?.includes(platform.id) || false} // Ensure this is checking the game state
-                  onChange={() => handlePlatformChange(platform.id)} // Use the updated handler
                   className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 checked:bg-blue-600 focus:checked:border-blue-600"
+                  value={platform.id}
+                  checked={game?.platform_ids?.includes(platform.id) || false}
+                  onChange={() => {
+                    setGame({
+                      ...game,
+                      platform_ids: game.platform_ids.includes(platform.id)
+                        ? game.platform_ids.filter((id) => id !== platform.id)
+                        : [...game.platform_ids, platform.id],
+                    });
+                  }}
                 />
                 {platform.name}
               </label>
@@ -371,7 +383,7 @@ export const EditGame = ({ data, setData }) => {
                 "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
               )}
               onChange={(e) => {
-                setGame({ ...game, price: Number(e.target.value) });
+                setGame({ ...game, price: e.target.value });
               }}
             />
           </Field>
@@ -388,7 +400,7 @@ export const EditGame = ({ data, setData }) => {
                 "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
               )}
               onChange={(e) => {
-                setGame({ ...game, tax: Number(e.target.value) });
+                setGame({ ...game, tax: e.target.value });
               }}
             />
           </Field>
@@ -574,6 +586,17 @@ export const EditGame = ({ data, setData }) => {
           <GrPowerReset className="w-5 h-5" />
           Reset values
         </button>
+
+        {/* delete game */}
+        {game.id && (
+          <button
+            onClick={() => handleDeleteGame(game.id)}
+            className="p-2 rounded-lg border border-red-600 flex flex-wrap items-center gap-2 w-full text-red-600 hover:bg-red-600 hover:text-white justify-center"
+          >
+            <BiTrash className="w-5 h-5" />
+            Delete Game
+          </button>
+        )}
       </div>
     </div>
   );
