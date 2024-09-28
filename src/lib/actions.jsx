@@ -225,7 +225,6 @@ export const fetchGameById = async (gameId) => {
 
 // add game
 export const addGame = async (gameData) => {
-  console.log("gameData", gameData);
   try {
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
@@ -245,8 +244,6 @@ export const addGame = async (gameData) => {
         features: gameData.features,
         category_id: gameData.category_id,
         product_attribute_category_id: gameData.product_attribute_category_id,
-        product_attribute_category: gameData.product_attribute_category,
-        category: gameData.category,
         platform_ids: gameData.platform_ids,
       },
       { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
@@ -268,10 +265,10 @@ export const addGame = async (gameData) => {
 };
 
 // update game
-export const updateGame = async (gameData) => {
+export const updateGame = async (gameData, gameId) => {
   try {
     const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/products/${gameData.id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/products/${gameId}`,
       {
         name: gameData.name,
         description: gameData.description,
@@ -288,8 +285,6 @@ export const updateGame = async (gameData) => {
         features: gameData.features,
         category_id: gameData.category_id,
         product_attribute_category_id: gameData.product_attribute_category_id,
-        product_attribute_category: gameData.product_attribute_category,
-        category: gameData.category,
         platform_ids: gameData.platform_ids,
       },
       { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
