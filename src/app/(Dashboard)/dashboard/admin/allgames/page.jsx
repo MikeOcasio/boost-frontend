@@ -1,10 +1,48 @@
-import { games } from "@/lib/data";
-import { AdminGameCard } from "../_components/AdminGameCard";
+"use client";
+
 import Link from "next/link";
 import { PlusIcon } from "@heroicons/react/20/solid";
+import { fetchAllGames } from "@/lib/actions";
+import { useEffect, useState } from "react";
+import { BiLoader } from "react-icons/bi";
+import { IoWarning } from "react-icons/io5";
+
+import { AdminGameCard } from "../_components/AdminGameCard";
+import toast from "react-hot-toast";
 
 const AllGames = () => {
   const user = { name: "Nikhil", isAdmin: true };
+
+  const [games, setGames] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  // Fetch games from API
+  const loadGames = async () => {
+    setLoading(true);
+    setError(false);
+
+    try {
+      const result = await fetchAllGames();
+
+      if (result.error) {
+        setError(true);
+        toast.error(result.error);
+      } else {
+        setGames(result);
+      }
+    } catch (e) {
+      setError(true);
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadGames();
+  }, []);
+
   if (!user.isAdmin) return <div>You are not authorized to view this page</div>;
 
   return (
@@ -20,10 +58,23 @@ const AllGames = () => {
         </Link>
       </div>
 
+      {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
+
+      {error && (
+        <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
+          <IoWarning className="h-5 w-5 mr-2" />
+          Failed to load Games. Please try again!
+        </p>
+      )}
+
       <div className="flex flex-col gap-4">
-        {games.map((game, index) => (
-          <AdminGameCard key={index} game={game} />
-        ))}
+        {games?.length < 1 ? (
+          <p className="text-center w-full">No Games have been added yet!</p>
+        ) : (
+          !loading &&
+          !error &&
+          games?.map((game, index) => <AdminGameCard key={index} game={game} />)
+        )}
       </div>
     </div>
   );
