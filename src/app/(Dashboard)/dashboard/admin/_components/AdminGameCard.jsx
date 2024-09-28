@@ -106,7 +106,7 @@ export const AdminGameCard = ({ game, key }) => {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <div className="space-y-2 border rounded-lg border-white/10 p-2">
+        <div className="space-y-2 border rounded-lg border-white/10 p-2 bg-white/10">
           <p className="font-semibold">Features</p>
 
           {game.features.map((feature, index) => (
@@ -120,7 +120,7 @@ export const AdminGameCard = ({ game, key }) => {
           ))}
         </div>
 
-        <div className="text-sm break-all border rounded-lg border-white/10 p-2 flex-1">
+        <div className="text-sm break-all border rounded-lg border-white/10 p-2 flex-1 bg-white/10">
           <p className="font-semibold text-base">Description</p>
           <p>{game.description}</p>
         </div>

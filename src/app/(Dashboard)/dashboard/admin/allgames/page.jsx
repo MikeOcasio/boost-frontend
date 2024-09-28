@@ -48,12 +48,12 @@ const AllGames = () => {
   return (
     <div className="space-y-6 mx-auto max-w-7xl p-4 pt-0">
       <div className="flex gap-4 justify-between items-center">
-        <h2 className="text-center text-lg font-semibold">All Games</h2>
+        <h2 className="text-center text-lg font-semibold">All Products</h2>
 
         <Link href="/dashboard/admin/allgames/newgame">
           <button className="bg-Gold/60 hover:bg-Gold/80 border border-black rounded-lg p-2 px-4 flex items-center justify-center gap-2 w-fit backdrop-blur-sm">
             <PlusIcon className="mr-2 h-5 w-5" />
-            Add New Game
+            Add New Product
           </button>
         </Link>
       </div>
@@ -63,13 +63,13 @@ const AllGames = () => {
       {error && (
         <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
           <IoWarning className="h-5 w-5 mr-2" />
-          Failed to load Games. Please try again!
+          Failed to load Products. Please try again!
         </p>
       )}
 
       <div className="flex flex-col gap-4">
         {games?.length < 1 ? (
-          <p className="text-center w-full">No Games have been added yet!</p>
+          <p className="text-center w-full">No Products have been added yet!</p>
         ) : (
           !loading &&
           !error &&

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GiConsoleController } from "react-icons/gi";
+import { GiConsoleController, GiPlatform } from "react-icons/gi";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { BiReceipt } from "react-icons/bi";
 import { MdCategory } from "react-icons/md";
@@ -31,6 +31,11 @@ const AdminTabs = () => {
       name: "Game Attributes",
       href: "/dashboard/admin/product_attribute_categories",
       icon: <CgAttribution size={22} />,
+    },
+    {
+      name: "Platforms",
+      href: "/dashboard/admin/platforms",
+      icon: <GiPlatform size={22} />,
     },
   ];
 

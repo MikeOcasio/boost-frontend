@@ -29,7 +29,7 @@ const GameEditPage = ({ params }) => {
           platform_ids: platformArr,
         });
       } catch (error) {
-        toast.error("Failed to fetch game data.");
+        toast.error("Failed to fetch product data.");
       } finally {
         setLoading(false);
       }
@@ -41,21 +41,22 @@ const GameEditPage = ({ params }) => {
   const validateGame = () => {
     const errors = [];
 
-    if (!game?.name) errors.push("Game name");
-    if (!game?.description) errors.push("Game description");
-    if (!game?.price) errors.push("Game price");
-    if (!game?.category_id) errors.push("Game category");
+    if (!game?.name) errors.push("Product name");
+    if (!game?.description) errors.push("Product description");
+    if (!game?.price) errors.push("Product price");
+    if (!game?.category_id) errors.push("Product category");
     if (!game?.product_attribute_category_id)
       errors.push("Product attribute category");
-    if (game?.is_priority === null) errors.push("Game priority");
-    if (!game?.tax) errors.push("Game tax");
+    if (game?.is_priority === null) errors.push("Product priority");
+    if (!game?.tax) errors.push("Product tax");
     if (!game?.platform_ids.length) errors.push("At least one platform");
-    if (game?.is_active === null) errors.push("Game active status");
+    if (game?.is_active === null) errors.push("Product active status");
     if (game?.most_popular === null) errors.push("Most popular status");
-    if (!game?.tag_line) errors.push("Game tag line");
+    if (!game?.tag_line) errors.push("Product tag line");
     if (!game?.primary_color) errors.push("Primary color");
     if (!game?.secondary_color) errors.push("Secondary color");
-    if (game?.features?.length === 0) errors.push("At least one game feature");
+    if (game?.features?.length === 0)
+      errors.push("At least one product feature");
 
     setMissingFields(errors);
     return errors.length === 0;
@@ -63,6 +64,7 @@ const GameEditPage = ({ params }) => {
 
   const handleUpdateGame = async () => {
     console.log("game id page", gameId, game);
+
     if (!validateGame()) return;
 
     setLoading(true);
@@ -72,7 +74,7 @@ const GameEditPage = ({ params }) => {
       if (response.error) {
         toast.error(response.error);
       } else {
-        toast.success("Game updated successfully!");
+        toast.success("Product updated successfully!");
         router.push("/dashboard/admin/allgames");
       }
     } catch (error) {
@@ -85,7 +87,7 @@ const GameEditPage = ({ params }) => {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h1 className="text-xl font-semibold">Edit Game</h1>
+        <h1 className="text-xl font-semibold">Edit Product</h1>
 
         <button
           onClick={handleUpdateGame}
@@ -97,7 +99,7 @@ const GameEditPage = ({ params }) => {
           ) : (
             <BiUpload className="h-5 w-5" />
           )}
-          Update Game
+          Update Product
         </button>
       </div>
 
