@@ -9,7 +9,7 @@ const UserDashboard = () => {
   const user = { name: "Nikhil", isAdmin: true };
 
   return (
-    <div className="px-4 space-y-6">
+    <div className="space-y-6">
       <h2 className="text-center text-lg font-semibold">
         Welcome, {user.name}
       </h2>
@@ -18,7 +18,7 @@ const UserDashboard = () => {
       {user.isAdmin && <AdminTabs />}
 
       {/* Recent Orders */}
-      <div className="flex flex-col gap-y-4 mt-4">
+      <div className="flex flex-col gap-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">Recent Orders</h2>
           <Link href="/dashboard/orders">

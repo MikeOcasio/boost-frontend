@@ -7,27 +7,25 @@ import {
   Field,
   Input,
   Label,
-  Switch,
-  Textarea,
 } from "@headlessui/react";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
 
-import { addCategory, deleteCategory, updateCategory } from "@/lib/actions";
+import { addOrder, deleteOrder, updateOrder } from "@/lib/actions";
 import { BiLoader, BiTrash } from "react-icons/bi";
 
-export const CategoryDialog = ({
+export const orderDialog = ({
   dialogData,
   dialogOpen,
   onClose,
-  loadCategories,
+  loadOrders,
 }) => {
-  const [category, setCategory] = useState(dialogData || getDefaultCategory());
+  const [order, setOrder] = useState(dialogData || getDefaultOrder());
   const [loading, setLoading] = useState(false);
 
-  function getDefaultCategory() {
+  function getDefaultOrder() {
     return {
       name: "",
       description: "",
@@ -38,91 +36,91 @@ export const CategoryDialog = ({
   // Effect to update the local state when dialogData changes (e.g., opening dialog for edit)
   useEffect(() => {
     if (dialogData) {
-      setCategory(dialogData);
+      setOrder(dialogData);
     } else {
-      setCategory(getDefaultCategory());
+      setOrder(getDefaultOrder());
     }
   }, [dialogData]);
 
-  // Function to check if the category data is unchanged
+  // Function to check if the order data is unchanged
   const isDataUnchanged = () => {
     return (
-      category.name === dialogData?.name &&
-      category.description === dialogData?.description &&
-      category.is_active === dialogData?.is_active
+      order.name === dialogData?.name &&
+      order.description === dialogData?.description &&
+      order.is_active === dialogData?.is_active
     );
   };
 
-  const handleSubmit = async (categoryData) => {
-    if (categoryData.id && isDataUnchanged()) {
+  const handleSubmit = async (orderData) => {
+    if (orderData.id && isDataUnchanged()) {
       toast.error("No changes were made.");
       return;
     }
 
     setLoading(true);
     try {
-      if (categoryData.id) {
-        // Update existing category
-        const response = await updateCategory(categoryData);
+      if (orderData.id) {
+        // Update existing order
+        const response = await updateOrder(orderData);
 
         if (response.error) {
           toast.error(response.error);
         } else {
-          toast.success("Category updated successfully!");
+          toast.success("Order updated successfully!");
         }
       } else {
-        // Add new category
-        const response = await addCategory(categoryData);
+        // Add new order
+        const response = await addOrder(orderData);
 
         if (response.error) {
           toast.error(response.error);
         } else {
-          toast.success("Category added successfully!");
+          toast.success("Order added successfully!");
         }
       }
 
       handleClosed();
     } catch (error) {
-      console.log("Error submitting category:", error.message);
+      console.log("Error submitting order:", error.message);
       toast.error(error.message);
     } finally {
-      loadCategories();
+      loadOrders();
       setLoading(false);
     }
   };
 
-  const handleDelete = async (categoryId) => {
-    if (!categoryId) return;
+  const handleDelete = async (orderId) => {
+    if (!orderId) return;
 
     const confirmed = confirm(
-      "Are you sure you want to delete this category? This action cannot be undone."
+      "Are you sure you want to delete this order? This action cannot be undone."
     );
 
     if (!confirmed) return;
 
     setLoading(true);
     try {
-      const response = await deleteCategory(categoryId);
+      const response = await deleteOrder(orderId);
 
       if (response.error) {
         // toast.error(response.error);
-        toast.error("Error deleting category!");
+        toast.error("Error deleting order!");
       } else {
-        toast.success("Category deleted successfully!");
+        toast.success("Order deleted successfully!");
         handleClosed();
       }
     } catch (error) {
-      console.log("Error deleting category:", error.message);
+      console.log("Error deleting order:", error.message);
       toast.error(error.message);
     } finally {
-      loadCategories();
+      loadOrders();
       setLoading(false);
     }
   };
 
   const handleClosed = () => {
     onClose();
-    setCategory(dialogData || getDefaultCategory());
+    setOrder(dialogData || getDefaultOrder());
   };
 
   return (
@@ -143,78 +141,45 @@ export const CategoryDialog = ({
           </button>
 
           <DialogTitle className="text-lg font-semibold">
-            {dialogData ? "Update Game Category" : "Add New Game Category"}
+            {dialogData ? "Update Order" : "Add New Game Order"}
           </DialogTitle>
 
           <div className="flex flex-col gap-4">
             {/* id */}
-            {category.id && (
+            {order.id && (
               <button
                 onClick={(e) => {
-                  navigator.clipboard.writeText(category.id);
+                  navigator.clipboard.writeText(order.id);
 
                   toast.success("Copied to clipboard!");
                 }}
                 className="flex gap-2 items-center rounded-lg bg-black/30 px-2 py-1 hover:bg-black/40 w-fit"
               >
                 <span className="text-sm font-semibold break-all">
-                  ID: {category.id}
+                  ID: {order.id}
                 </span>
                 <IoCopy className="h-8 w-8 ml-2 p-2 hover:bg-white/10 rounded-lg" />
               </button>
             )}
 
-            {/* Category Name Field */}
+            {/* order Name Field */}
             <Field className="flex flex-col gap-1 w-full">
-              <Label className="text-sm">Category Name</Label>
+              <Label className="text-sm">Order Name</Label>
               <Input
                 type="text"
-                placeholder="Game category name"
+                placeholder="Order name"
                 autoFocus
                 className="input-field"
-                value={category.name}
-                onChange={(e) =>
-                  setCategory({ ...category, name: e.target.value })
-                }
+                value={order.name}
+                onChange={(e) => setOrder({ ...order, name: e.target.value })}
               />
             </Field>
-
-            {/* Category Description Field */}
-            <Field className="flex flex-col gap-1 w-full">
-              <Label className="text-sm">Category Description</Label>
-              <Textarea
-                placeholder="Category Description"
-                className="input-field"
-                rows={3}
-                value={category.description}
-                onChange={(e) =>
-                  setCategory({ ...category, description: e.target.value })
-                }
-              />
-            </Field>
-
-            {/* Active Status Switch */}
-            <div className="flex items-center gap-4 rounded-lg flex-1">
-              <p>Is Active</p>
-              <Switch
-                checked={category.is_active}
-                onChange={(checked) =>
-                  setCategory({ ...category, is_active: checked })
-                }
-                className="group relative flex h-7 min-w-14 w-14 cursor-pointer rounded-full bg-white/10 p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-Gold/80"
-              >
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none inline-block size-5 translate-x-0 rounded-full bg-white ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
-                />
-              </Switch>
-            </div>
 
             <div className="flex items-center justify-between gap-4">
               {/* Delete Button */}
               {dialogData && (
                 <button
-                  onClick={() => handleDelete(category.id)}
+                  onClick={() => handleDelete(order.id)}
                   disabled={loading}
                   className="p-2 rounded-lg hover:bg-white/10 disabled:bg-gray-500/20"
                 >
@@ -228,21 +193,20 @@ export const CategoryDialog = ({
 
               {/* Submit Button */}
               <button
-                onClick={() => handleSubmit(category)}
-                disabled={loading || !category.name.trim() || isDataUnchanged()} // Disable if loading, name is empty, or category is unchanged
+                onClick={() => handleSubmit(order)}
+                disabled={loading || isDataUnchanged()}
                 className={clsx(
                   "bg-Gold/80 p-2 rounded-lg hover:bg-Gold/60 disabled:bg-gray-500/20 flex-1",
                   {
-                    "cursor-not-allowed":
-                      loading || !category.name.trim() || isDataUnchanged(),
+                    "cursor-not-allowed": loading || isDataUnchanged(),
                   }
                 )}
               >
                 {loading
                   ? "Submitting..."
                   : dialogData
-                  ? "Update Category"
-                  : "Add Category"}
+                  ? "Update Order"
+                  : "Add Order"}
               </button>
             </div>
           </div>

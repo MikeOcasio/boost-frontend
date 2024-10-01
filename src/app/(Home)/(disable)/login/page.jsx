@@ -77,10 +77,7 @@ export default function Login() {
               type="text"
               placeholder="Email"
               autoFocus
-              className={clsx(
-                "rounded-lg border-none bg-white/10 py-1.5 px-3",
-                "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-              )}
+              className="input-field"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -93,10 +90,7 @@ export default function Login() {
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  className={clsx(
-                    "rounded-lg border-none bg-white/10 py-1.5 px-3 w-full",
-                    "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-                  )}
+                  className="input-field w-full"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -110,7 +104,10 @@ export default function Login() {
                 </button>
               </div>
             </Field>
-            <button type="button" className="text-end text-sm text-blue-600">
+            <button
+              type="button"
+              className="text-end text-sm text-blue-600 hover:text-blue-500"
+            >
               Forgot your password?
             </button>
           </div>

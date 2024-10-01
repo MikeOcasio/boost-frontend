@@ -310,10 +310,7 @@ export const EditGame = ({ data, setData }) => {
             type="text"
             placeholder="Product name"
             value={game?.name}
-            className={clsx(
-              "rounded-lg bg-white/10 py-1.5 px-3 text-xl border border-white/10 hover:border-white/20",
-              "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-            )}
+            className="input-field"
             onChange={(e) => {
               setGame({ ...game, name: e.target.value });
             }}
@@ -357,10 +354,7 @@ export const EditGame = ({ data, setData }) => {
             type="text"
             placeholder="Product tagline"
             value={game?.tag_line}
-            className={clsx(
-              "rounded-lg border border-white/10 hover:border-white/20 bg-white/10 py-1.5 px-3",
-              "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-            )}
+            className="input-field"
             onChange={(e) => {
               setGame({ ...game, tag_line: e.target.value });
             }}
@@ -373,10 +367,7 @@ export const EditGame = ({ data, setData }) => {
           <Textarea
             placeholder="Product description"
             value={game?.description}
-            className={clsx(
-              "rounded-lg bg-white/10 py-1.5 px-3 border border-white/10 hover:border-white/20",
-              "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-            )}
+            className="input-field"
             rows={3}
             onChange={(e) => {
               setGame({ ...game, description: e.target.value });
@@ -393,10 +384,7 @@ export const EditGame = ({ data, setData }) => {
               type="number"
               placeholder="$200"
               value={game?.price}
-              className={clsx(
-                "rounded-lg border border-white/10 hover:border-white/20 bg-white/10 py-1.5 px-3",
-                "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-              )}
+              className="input-field"
               onChange={(e) => {
                 setGame({ ...game, price: e.target.value });
               }}
@@ -410,10 +398,7 @@ export const EditGame = ({ data, setData }) => {
               type="number"
               placeholder="0.2"
               value={game?.tax}
-              className={clsx(
-                "rounded-lg border border-white/10 hover:border-white/20 bg-white/10 py-1.5 px-3",
-                "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-              )}
+              className="input-field"
               onChange={(e) => {
                 setGame({ ...game, tax: e.target.value });
               }}
@@ -549,10 +534,7 @@ export const EditGame = ({ data, setData }) => {
                 type="text"
                 placeholder="#FFFFFF"
                 value={game?.primary_color}
-                className={clsx(
-                  "rounded-lg border-none bg-black/20 hover:bg-black/30 py-1.5 px-3 flex-1",
-                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-                )}
+                className="input-field"
                 onChange={(e) => {
                   setGame({ ...game, primary_color: e.target.value });
                 }}
@@ -576,10 +558,7 @@ export const EditGame = ({ data, setData }) => {
                 type="text"
                 placeholder="#000000"
                 value={game?.secondary_color}
-                className={clsx(
-                  "rounded-lg border-none bg-black/20 hover:bg-black/30 py-1.5 px-3 flex-1",
-                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-                )}
+                className="input-field"
                 onChange={(e) => {
                   setGame({ ...game, secondary_color: e.target.value });
                 }}
@@ -616,7 +595,7 @@ export const EditGame = ({ data, setData }) => {
                 type="text"
                 value={feature}
                 placeholder={`Feature ${index + 1}`}
-                className="rounded-lg bg-white/10 py-1.5 px-3 flex-1 border border-white/10 hover:border-white/20"
+                className="input-field"
                 onChange={(e) => handleFeatureChange(index, e.target.value)}
               />
               <button
