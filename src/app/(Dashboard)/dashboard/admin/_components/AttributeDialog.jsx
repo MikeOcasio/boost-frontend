@@ -164,10 +164,7 @@ export const AttributeDialog = ({
                 type="text"
                 placeholder="Game attribute name"
                 autoFocus
-                className={clsx(
-                  "rounded-lg border-none bg-white/10 py-1.5 px-3",
-                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-                )}
+                className="input-field"
                 value={attribute.name}
                 onChange={(e) =>
                   setAttribute({ ...attribute, name: e.target.value })

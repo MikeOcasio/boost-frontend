@@ -417,8 +417,77 @@ export const fetchCurrentUser = async () => {
   }
 };
 
-// sign in user
-export const signInUser = async ({
+// get all users
+export const fetchAllUsers = async () => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users`
+    );
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch all users. Please try again!" };
+  }
+};
+
+// get user by id
+export const fetchUserById = async (userId) => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`
+    );
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch user. Please try again!" };
+  }
+};
+
+// update user
+export const updateUser = async (userData) => {
+  try {
+    const response = await axios.put(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userData.id}`,
+      {
+        name: userData.name,
+        description: userData.description,
+        is_active: userData.is_active,
+      },
+      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to update user:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while updating the user.",
+    };
+  }
+};
+
+// delete user
+export const deleteUser = async (userId) => {
+  try {
+    const response = await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`,
+      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to delete user:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while deleting the user.",
+    };
+  }
+};
+
+// create new user
+export const createUser = async ({
   email,
   password,
   firstName,
@@ -446,5 +515,18 @@ export const signInUser = async ({
     return {
       error: errorMessage || "An error occurred while signing in the user.",
     };
+  }
+};
+
+// get all orders
+export const fetchAllOrders = async () => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/orders`
+    );
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch all orders. Please try again!" };
   }
 };

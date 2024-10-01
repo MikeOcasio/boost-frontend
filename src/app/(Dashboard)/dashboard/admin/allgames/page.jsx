@@ -46,8 +46,8 @@ const AllGames = () => {
   if (!user.isAdmin) return <div>You are not authorized to view this page</div>;
 
   return (
-    <div className="space-y-6 mx-auto max-w-7xl p-4 pt-0">
-      <div className="flex gap-4 justify-between items-center">
+    <div className="space-y-6 mx-auto max-w-7xl">
+      <div className="flex flex-wrap gap-4 justify-between items-center">
         <h2 className="text-center text-lg font-semibold">All Products</h2>
 
         <Link href="/dashboard/admin/allgames/newgame">

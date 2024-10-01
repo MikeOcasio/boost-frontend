@@ -10,8 +10,7 @@ import { useRouter } from "next/navigation";
 import { BiLoader, BiUpload } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { IoMdClose } from "react-icons/io";
-
-import { signInUser } from "@/lib/actions";
+import { createUser } from "@/lib/actions";
 
 export default function SignIn() {
   const router = useRouter();
@@ -30,7 +29,7 @@ export default function SignIn() {
 
     setLoading(true);
     try {
-      const response = await signInUser({
+      const response = await createUser({
         firstName,
         lastName,
         email,
@@ -132,10 +131,7 @@ export default function SignIn() {
                 type="text"
                 placeholder="Jone"
                 autoFocus
-                className={clsx(
-                  "rounded-lg border-none bg-white/10 py-1.5 px-3",
-                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-                )}
+                className="input-field"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
               />
@@ -146,10 +142,7 @@ export default function SignIn() {
               <Input
                 type="text"
                 placeholder="Doe"
-                className={clsx(
-                  "rounded-lg border-none bg-white/10 py-1.5 px-3",
-                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-                )}
+                className="input-field"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
               />
@@ -162,10 +155,7 @@ export default function SignIn() {
             <Input
               type="text"
               placeholder="Email"
-              className={clsx(
-                "rounded-lg border-none bg-white/10 py-1.5 px-3",
-                "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-              )}
+              className="input-field"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -178,10 +168,7 @@ export default function SignIn() {
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className={clsx(
-                  "rounded-lg border-none bg-white/10 py-1.5 px-3 w-full",
-                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
-                )}
+                className="input-field w-full"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
