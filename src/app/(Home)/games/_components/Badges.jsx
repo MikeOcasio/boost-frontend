@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 
 import {
   fetchProductByAttribute,
@@ -11,11 +12,17 @@ import {
 } from "@/lib/actions";
 import RelatedGameCard from "./RelatedGameCard";
 
-const Badges = ({ categoryId, attributeId }) => {
+const Badges = ({
+  categoryId,
+  attributeId,
+  primary_color,
+  secondary_color,
+}) => {
   const [productCategories, setProductCategories] = useState([]);
   const [productAttribute, setProductAttribute] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const scrollContainerRef = useRef(null);
 
   const loadCategories = async () => {
     try {
@@ -62,8 +69,22 @@ const Badges = ({ categoryId, attributeId }) => {
     loadRelatedGames();
   }, []);
 
+  // Scroll left function
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -300, behavior: "smooth" });
+    }
+  };
+
+  // Scroll right function
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 300, behavior: "smooth" });
+    }
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 
       {error && (
@@ -73,23 +94,61 @@ const Badges = ({ categoryId, attributeId }) => {
           again!
         </p>
       )}
-      {!loading && !error && (
-        <div className="space-y-4 ">
-          <h3 className="text-lg font-semibold">
-            {categoryId ? "Recommendations" : "Similar Products"}
-          </h3>
+      {!loading &&
+        !error &&
+        (productCategories?.length > 0 || productAttribute?.length > 0) && (
+          <div className="space-y-4">
+            <div className="flex flex-wrap justify-between items-center gap-4">
+              <h3 className="text-lg font-semibold">
+                {categoryId ? "Recommendations" : "Similar Products"}
+              </h3>
 
-          <div className="gap-12 flex items-center max-w-[500px] mx-auto">
-            {categoryId
-              ? productCategories?.map((game) => (
-                  <RelatedGameCard key={game.id} game={game} />
-                ))
-              : productAttribute?.map((game) => (
-                  <RelatedGameCard key={game.id} game={game} />
-                ))}
+              <div className="flex items-center gap-4 w-fit">
+                {/* Left Scroll Button */}
+                <button
+                  onClick={scrollLeft}
+                  className="z-10 bg-white/10 border-white/10 border rounded-full p-2 hover:border-white/20"
+                >
+                  <MdChevronLeft className="h-6 w-6" />
+                </button>
+
+                {/* Right Scroll Button */}
+                <button
+                  onClick={scrollRight}
+                  className="z-10 bg-white/10 border-white/10 border rounded-full p-2 hover:border-white/20"
+                >
+                  <MdChevronRight className="h-6 w-6" />
+                </button>
+              </div>
+            </div>
+
+            {/* Scrollable Game Cards */}
+            <div
+              ref={scrollContainerRef}
+              className="flex items-center gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar"
+            >
+              {categoryId
+                ? productCategories?.map((game, index) => (
+                    <RelatedGameCard
+                      key={game.id}
+                      index={index}
+                      game={game}
+                      primary_color={primary_color}
+                      secondary_color={secondary_color}
+                    />
+                  ))
+                : productAttribute?.map((game, index) => (
+                    <RelatedGameCard
+                      key={game.id}
+                      index={index}
+                      game={game}
+                      primary_color={primary_color}
+                      secondary_color={secondary_color}
+                    />
+                  ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };

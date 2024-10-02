@@ -374,20 +374,6 @@ export const loginUser = async (email, password) => {
       { email, password }
     );
 
-    const { token } = data;
-
-    if (token) {
-      const response = NextResponse.next(); // create a Next.js response
-      response.cookies.set({
-        name: "token",
-        value: token,
-        path: "/",
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-        httpOnly: true,
-        secure: true,
-      });
-    }
-
     return data;
   } catch (error) {
     const errorMessage = error.response?.data || error.message;
@@ -400,19 +386,23 @@ export const loginUser = async (email, password) => {
 };
 
 // current user
-export const fetchCurrentUser = async () => {
+export const fetchCurrentUser = async (token) => {
   try {
     const { data } = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/api/current_user`,
       {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.EN0QUrm3Q2OtAItzgopWcpdfZwOcUo_4AD8gdjnIZnY`,
+        Authorization: `Bearer ${token}`,
       }
     );
 
     return data;
   } catch (error) {
-    console.log("error fetchCurrentUser ", error);
-    return { error: "Failed to fetch current user. Please try again!" };
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to fetch current user:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while fetching the current user.",
+    };
   }
 };
 
