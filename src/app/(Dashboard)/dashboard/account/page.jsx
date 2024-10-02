@@ -1,11 +1,18 @@
 "use client";
 
-import { fetchUserById } from "@/lib/actions";
-import { Field, Input, Label, Select } from "@headlessui/react";
+import {
+  fetchPlatforms,
+  fetchSkillMasters,
+  fetchUserById,
+  updateUser,
+} from "@/lib/actions";
+import { Field, Input, Label } from "@headlessui/react";
+import clsx from "clsx";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { BiChevronDown, BiLoader, BiPencil, BiUpload } from "react-icons/bi";
+import { BiLoader, BiPencil, BiUpload } from "react-icons/bi";
+import { BsUpload } from "react-icons/bs";
 import { IoMdClose } from "react-icons/io";
 import { IoWarning } from "react-icons/io5";
 
@@ -18,9 +25,6 @@ const AccountPage = () => {
   const [platforms, setPlatforms] = useState([]);
 
   const loadUser = async () => {
-    setLoading(true);
-    setError(false);
-
     try {
       const result = await fetchUserById(1);
       if (result.error) {
@@ -32,15 +36,10 @@ const AccountPage = () => {
     } catch (e) {
       setError(true);
       toast.error("An unexpected error occurred.");
-    } finally {
-      setLoading(false);
     }
   };
 
   const loadPlatforms = async () => {
-    setLoading(true);
-    setError(false);
-
     try {
       const result = await fetchPlatforms();
       if (result.error) {
@@ -52,14 +51,58 @@ const AccountPage = () => {
     } catch (e) {
       setError(true);
       toast.error("An unexpected error occurred.");
+    }
+  };
+
+  //  load user data by default and if edititng is true, load the platform data
+  const loadData = async () => {
+    setLoading(true);
+    setError(false);
+
+    if (isEditing) {
+      await loadPlatforms();
+    }
+    await loadUser();
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleUpdateProfile = async () => {
+    if (!user?.id) return;
+
+    setLoading(true);
+    setError(false);
+
+    try {
+      const result = await updateUser(user.id);
+
+      if (result.error) {
+        setError(true);
+        toast.error(result.error);
+      } else {
+        toast.success("Profile updated successfully!");
+      }
+    } catch (e) {
+      setError(true);
+      toast.error("An unexpected error occurred.");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadUser();
-  }, []);
+  const handleEdit = () => {
+    if (isEditing) {
+      setIsEditing(false);
+      handleUpdateProfile();
+    } else {
+      setIsEditing(true);
+      loadData();
+    }
+  };
 
   if (!user) return null;
 
@@ -69,11 +112,18 @@ const AccountPage = () => {
         <h1 className="text-2xl font-semibold">{user?.first_name}'s Account</h1>
 
         <button
-          onClick={() => setIsEditing(true)}
-          className="flex flex-wrap gap-2 items-center rounded-lg p-2 hover:bg-white/10 border border-white/10"
+          onClick={handleEdit}
+          className={clsx(
+            "flex flex-wrap gap-2 items-center rounded-lg p-2 hover:bg-white/10 border border-white/10",
+            isEditing && "bg-Gold/80 hover:bg-Gold/60"
+          )}
         >
-          <BiPencil className="h-5 w-5" />
-          Edit Details
+          {isEditing ? (
+            <BsUpload className="h-5 w-5" />
+          ) : (
+            <BiPencil className="h-5 w-5" />
+          )}
+          {isEditing ? "Save Changes" : "Edit Details"}
         </button>
       </div>
 
@@ -90,71 +140,85 @@ const AccountPage = () => {
         <div className="flex flex-col gap-4 max-w-2xl mx-auto">
           <div className="flex flex-wrap gap-4">
             {/* user image */}
-            <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-              <Label className="text-sm">Image</Label>
-              {!user.image ? (
-                <div className="group relative cursor-pointer rounded-lg w-fit mx-auto">
-                  <Image
-                    src={user.image || "/logo.svg"}
-                    alt="User Image"
-                    width={200}
-                    height={200}
-                    className="mx-auto rounded-lg object-cover bg-white/10"
-                  />
-                  <IoMdClose
-                    type="button"
-                    className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
-                    onClick={() =>
-                      setUser({
-                        ...user,
-                        image: null,
-                        remove_image: "true",
-                      })
-                    }
-                  />
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2 justify-center w-full">
-                  <label
-                    for="dropzone-file"
-                    className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
-                  >
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <BiUpload className="h-8 w-8 text-gray-500" />
-                      <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                        Click or drag and drop your image here
-                      </p>
-                    </div>
-                    <input
-                      id="dropzone-file"
-                      type="file"
-                      accept="image/*"
-                      className="absolute border h-full w-full opacity-0"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setUser({
-                              ...user,
-                              image: reader.result,
-                              remove_image: "false",
-                            });
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
+            {isEditing ? (
+              <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                <Label className="text-sm">Profile Image</Label>
+                {!user.image ? (
+                  <div className="group relative cursor-pointer rounded-lg w-fit mx-auto">
+                    <Image
+                      src={user.image || "/logo.svg"}
+                      alt="User Image"
+                      width={200}
+                      height={200}
+                      className="mx-auto rounded-lg object-cover bg-white/10"
                     />
-                  </label>
-                </div>
-              )}
-            </Field>
+                    <IoMdClose
+                      type="button"
+                      className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
+                      onClick={() =>
+                        setUser({
+                          ...user,
+                          image: null,
+                          remove_image: "true",
+                        })
+                      }
+                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2 justify-center w-full">
+                    <label
+                      for="dropzone-file"
+                      className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <BiUpload className="h-8 w-8 text-gray-500" />
+                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                          Click or drag and drop your image here
+                        </p>
+                      </div>
+                      <input
+                        id="dropzone-file"
+                        type="file"
+                        accept="image/*"
+                        className="absolute border h-full w-full opacity-0"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setUser({
+                                ...user,
+                                image: reader.result,
+                                remove_image: "false",
+                              });
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                )}
+              </Field>
+            ) : (
+              <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                <Label className="text-sm">Profile Image</Label>
+                <Image
+                  src={user.image || "/logo.svg"}
+                  alt="User Image"
+                  width={150}
+                  height={150}
+                  className="mx-auto rounded-lg object-cover bg-white/10"
+                />
+              </Field>
+            )}
 
             {/* name */}
             <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
               <Field className="flex flex-col gap-1 flex-1">
                 <Label className="text-sm">First name</Label>
                 <Input
+                  disabled={!isEditing}
                   type="text"
                   placeholder="First name"
                   autoFocus
@@ -169,6 +233,7 @@ const AccountPage = () => {
               <Field className="flex flex-col gap-1 flex-1">
                 <Label className="text-sm">Last name</Label>
                 <Input
+                  disabled={!isEditing}
                   type="text"
                   placeholder="Last name"
                   autoFocus
@@ -185,6 +250,7 @@ const AccountPage = () => {
             <Field className="flex flex-col gap-1 w-full">
               <Label className="text-sm">Email</Label>
               <Input
+                disabled={!isEditing}
                 type="email"
                 placeholder="john@doe.com"
                 autoFocus
@@ -195,44 +261,95 @@ const AccountPage = () => {
             </Field>
 
             {/* platforms */}
-            <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-              <Field className="flex flex-col gap-1 flex-1">
-                <Label className="text-sm">Platforms</Label>
+            {isEditing ? (
+              <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                <Label>Platform</Label>
 
-                <div className="relative">
-                  <Select
-                    value={user?.platforms}
-                    onChange={(e) => {
-                      setUser({ ...user, platforms: e.target.value });
-                    }}
-                    className="block w-full appearance-none rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
-                  >
-                    <option
-                      value={null}
-                      className="bg-neutral-800"
-                      unselectable="on"
+                <div className="flex flex-wrap gap-4 items-center">
+                  {platforms.map((platform) => (
+                    <label
+                      key={platform.id}
+                      className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-wrap flex-1"
                     >
-                      Select a platform
-                    </option>
-
-                    {platforms.map((item, index) => (
-                      <option
-                        key={index}
-                        value={item}
-                        className="bg-neutral-800"
-                      >
-                        {item}
-                      </option>
-                    ))}
-                  </Select>
-
-                  <BiChevronDown
-                    className="group absolute top-1.5 right-4 size-6 fill-white/60"
-                    aria-hidden="true"
-                  />
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4"
+                        value={platform.id}
+                        checked={user?.platforms.includes(platform.id) || false}
+                        onChange={() => {
+                          setUser({
+                            ...user,
+                            platforms: user.platforms.includes(platform.id)
+                              ? user.platforms.filter(
+                                  (id) => id !== platform.id
+                                )
+                              : [...user.platforms, platform.id],
+                          });
+                        }}
+                      />
+                      {platform.name}
+                    </label>
+                  ))}
                 </div>
               </Field>
-            </div>
+            ) : (
+              <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                <Label>Preferred Platforms</Label>
+
+                <div className="flex flex-wrap gap-4 items-center">
+                  {user.platforms.map((platform) => (
+                    <p
+                      key={platform}
+                      className="text-xs text-gray-300 bg-black/10 px-1 rounded-md"
+                    >
+                      {platform} asd
+                    </p>
+                  ))}
+                </div>
+              </Field>
+            )}
+
+            {/* preferred skill masters */}
+            {/* <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+              <Label>Preferred Skill Masters</Label>
+
+              <div className="flex flex-wrap gap-4 items-center">
+                {skillMasters.map((skillMaster) => (
+                  <label
+                    key={skillMaster.id}
+                    className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-wrap flex-1"
+                  >
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4"
+                      value={skillMaster.id}
+                      checked={
+                        user?.preferred_skill_master_ids.includes(
+                          skillMaster.id
+                        ) || false
+                      }
+                      onChange={() => {
+                        setUser({
+                          ...user,
+                          preferred_skill_master_ids:
+                            user.preferred_skill_masters.includes(
+                              skillMaster.id
+                            )
+                              ? user.preferred_skill_master_ids.filter(
+                                  (id) => id !== skillMaster.id
+                                )
+                              : [
+                                  ...user.preferred_skill_master_ids,
+                                  skillMaster.id,
+                                ],
+                        });
+                      }}
+                    />
+                    {skillMaster.name}
+                  </label>
+                ))}
+              </div>
+            </Field> */}
           </div>
         </div>
       )}

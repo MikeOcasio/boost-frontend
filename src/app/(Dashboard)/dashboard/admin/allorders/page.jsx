@@ -33,7 +33,7 @@ const AllOrders = () => {
   };
 
   useEffect(() => {
-    loadOrders();
+    // loadOrders();
   }, []);
 
   return (

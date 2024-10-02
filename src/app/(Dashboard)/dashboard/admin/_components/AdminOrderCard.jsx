@@ -12,6 +12,7 @@ export const AdminOrderCard = ({ order, key }) => {
         <h3 className="text-lg font-semibold">Order #{order.order_id}</h3>
         <BiPencil className="h-8 w-8 hover:bg-white/10 rounded-lg p-2" />
       </div>
+
       <div className="flex flex-col gap-1">
         {order.product.map((product, index) => (
           <div

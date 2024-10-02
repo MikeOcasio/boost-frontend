@@ -405,8 +405,7 @@ export const fetchCurrentUser = async () => {
     const { data } = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/api/current_user`,
       {
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo0fQ.obfHmpuEbPp-cMNGoQUmVpMqSQ5B7TOTmjKoHhetb58",
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
       }
     );
 
@@ -528,5 +527,18 @@ export const fetchAllOrders = async () => {
     return data;
   } catch (error) {
     return { error: "Failed to fetch all orders. Please try again!" };
+  }
+};
+
+// fetch skill masters
+export const fetchSkillMasters = async () => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/skillmasters`
+    );
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch skill masters. Please try again!" };
   }
 };
