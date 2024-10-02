@@ -405,7 +405,7 @@ export const fetchCurrentUser = async () => {
     const { data } = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/api/current_user`,
       {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.EN0QUrm3Q2OtAItzgopWcpdfZwOcUo_4AD8gdjnIZnY`,
       }
     );
 
@@ -415,6 +415,8 @@ export const fetchCurrentUser = async () => {
     return { error: "Failed to fetch current user. Please try again!" };
   }
 };
+
+fetchCurrentUser();
 
 // get all users
 export const fetchAllUsers = async () => {
@@ -540,5 +542,33 @@ export const fetchSkillMasters = async () => {
     return data;
   } catch (error) {
     return { error: "Failed to fetch skill masters. Please try again!" };
+  }
+};
+
+// get product by categories
+export const fetchProductByCategories = async (categoryId) => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/categories/${categoryId}/products`
+    );
+
+    return data;
+  } catch (error) {
+    return {
+      error: "Failed to fetch product by categories. Please try again!",
+    };
+  }
+};
+
+// get product by attribute
+export const fetchProductByAttribute = async (attributeId) => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/product_attribute_categories/${attributeId}/products`
+    );
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch product by attribute. Please try again!" };
   }
 };

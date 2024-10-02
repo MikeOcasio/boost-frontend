@@ -21,12 +21,9 @@ function MobileNavItem({ href, children }) {
 export const MobileNavigation = ({ resources }) => {
   return (
     <Popover>
-      {/* Prod Changes */}
-      <IoMenu className="h-8 w-8" />
-
-      {/* <PopoverButton>
+      <PopoverButton>
         <IoMenu className="h-8 w-8" />
-      </PopoverButton> */}
+      </PopoverButton>
 
       <PopoverBackdrop
         transition

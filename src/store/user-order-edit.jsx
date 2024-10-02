@@ -1,7 +1,6 @@
 import { create } from "zustand";
 
-export const useOrderEdit = create((set) => ({
-  isOpen: false,
-  onOpen: () => set({ isOpen: true }),
-  onClose: () => set({ isOpen: false }),
+export const useCartStore = create((set) => ({
+  cartItems: [],
+  setCartItems: (cartItems) => set({ cartItems }),
 }));
