@@ -3,7 +3,7 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import Link from "next/link";
 
-const GameCard = ({ game, boost }) => {
+const GameCard = ({ game }) => {
   return (
     <div key={game.id} className="relative inline-block font-medium group">
       <span className="absolute inset-0 w-full h-full transition duration-400 ease-out transform md:translate-x-3 md:translate-y-3 translate-x-2 translate-y-2 bg-Gold group-hover:-translate-x-0 group-hover:-translate-y-0 rounded-md" />
@@ -45,7 +45,7 @@ const GameCard = ({ game, boost }) => {
         </ul>
 
         {game.is_active ? (
-          <Link href={`/${boost ? "boost" : "games"}/${game.id}`}>
+          <Link href={`/games/${game.id}`}>
             <button
               aria-describedby={game.id}
               aria-label="Boost Button"

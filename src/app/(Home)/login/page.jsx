@@ -32,6 +32,14 @@ export default function Login() {
       if (response.error) {
         toast.error(response.error);
       } else {
+        const { token } = response;
+
+        if (token) {
+          localStorage.setItem("jwtToken", token);
+        }
+
+        console.log("Login successful, token:", token);
+
         toast.success("Login successful!");
         router.push("/");
       }
@@ -45,7 +53,14 @@ export default function Login() {
 
   const handleCurrentUser = async () => {
     try {
-      const response = await fetchCurrentUser();
+      const token = localStorage.getItem("jwtToken");
+
+      if (!token) {
+        toast.error("No token found. Please login again.");
+        return;
+      }
+
+      const response = await fetchCurrentUser(token);
 
       console.log("response", response);
     } catch (error) {
@@ -122,9 +137,7 @@ export default function Login() {
           </button>
         </form>
 
-        <button onClick={handleCurrentUser}>
-          call
-        </button>
+        <button onClick={handleCurrentUser}>call</button>
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Not a member?{" "}

@@ -138,11 +138,19 @@ const GamePage = ({ params }) => {
 
             {/* game badges */}
             <div className="flex flex-col gap-y-12">
-              <Badges categoryId={game.category_id} />
+              <Badges
+                categoryId={game.category_id}
+                primary_color={game.primary_color}
+                secondary_color={game.secondary_color}
+              />
 
               <hr className="border-white/10 w-full" />
 
-              <Badges attributeId={game.product_attribute_category_id} />
+              <Badges
+                attributeId={game.product_attribute_category_id}
+                primary_color={game.primary_color}
+                secondary_color={game.secondary_color}
+              />
             </div>
           </div>
         )
