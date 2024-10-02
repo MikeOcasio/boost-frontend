@@ -19,16 +19,17 @@ const UserDashboard = () => {
 
       {/* Recent Orders */}
       <div className="flex flex-col gap-y-4">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center flex-wrap gap-2">
           <h2 className="text-lg font-semibold">Recent Orders</h2>
+
           <Link href="/dashboard/orders">
-            <button className="px-3 py-2 transition-all hover:bg-neutral-500/50 text-white rounded-md">
+            <button className="px-3 py-2 transition-all hover:bg-white/10 text-white rounded-lg border border-white/10">
               View All
             </button>
           </Link>
         </div>
 
-        <div className="flex flex-wrap gap-4">
+        <div className="space-y-4">
           {orders.map((order, index) => (
             <OrderCard key={index} order={order} />
           ))}

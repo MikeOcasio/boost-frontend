@@ -8,7 +8,7 @@ import { CgAttribution } from "react-icons/cg";
 const AdminTabs = () => {
   const adminNav = [
     {
-      name: "Games",
+      name: "Products",
       href: "/dashboard/admin/allgames",
       icon: <GiConsoleController size={22} />,
     },
@@ -23,12 +23,12 @@ const AdminTabs = () => {
       icon: <BiReceipt size={22} />,
     },
     {
-      name: "Game Categories",
+      name: "Products Categories",
       href: "/dashboard/admin/game_categories",
       icon: <MdCategory size={22} />,
     },
     {
-      name: "Game Attributes",
+      name: "Products Attributes",
       href: "/dashboard/admin/product_attribute_categories",
       icon: <CgAttribution size={22} />,
     },

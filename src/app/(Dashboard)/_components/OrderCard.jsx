@@ -1,30 +1,48 @@
-import Image from "next/image";
-import React from "react";
-import { FaExternalLinkAlt } from "react-icons/fa";
+"use client";
 
-const OrderCard = ({ order }) => {
+import Image from "next/image";
+import React, { useState } from "react";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { OrderDialog } from "./OrderDialog";
+
+const OrderCard = ({ key, order }) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const onClose = () => {
+    setDialogOpen(false);
+  };
+
   return (
-    <div className="bg-Plum/70 rounded-lg shadow-md p-4 w-full space-y-4">
-      <div className="flex justify-between items-center">
+    <div
+      key={key}
+      className="space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20"
+    >
+      <div className="flex justify-between items-center gap-2 flex-wrap-reverse">
         <h3 className="text-lg font-semibold">Order #{order.order_id}</h3>
-        <FaExternalLinkAlt className="text-xl hover:text-gray-500 cursor-pointer" />
+
+        <button
+          onClick={() => setDialogOpen(true)}
+          className="p-2 rounded-lg hover:bg-white/10"
+        >
+          <FaExternalLinkAlt className="h-5 w-5" />
+        </button>
       </div>
 
       {/* Product Info */}
-      <div className="flex flex-col gap-y-2">
+      <div className="flex flex-col gap-1 w-full">
         {order.product.map((product, index) => (
           <div
             key={index}
-            className="flex flex-wrap justify-between items-center border-b border-gray-300/10 last:border-b-0 pb-2"
+            className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
           >
             <div className="flex flex-wrap items-center gap-x-2">
               <Image
                 src={product.image_url}
                 alt={product.product_name}
-                height={60}
-                width={60}
+                height={70}
+                width={70}
                 unoptimized
-                className="rounded-md object-contain bg-gray-500/30 p-2"
+                className="rounded-md object-contain bg-white/10 p-2"
               />
               <div className="flex flex-col gap-y-1">
                 <p className="text-sm font-semibold">
@@ -66,13 +84,15 @@ const OrderCard = ({ order }) => {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-4 justify-between">
+        <div className="flex flex-wrap gap-4 justify-between items-center">
           {/* Date */}
           <p className="text-sm text-gray-300">Order Date: {order.date}</p>
 
           {/* totol_price */}
           <p className="text-lg">Total Price: ${order.total_price}</p>
         </div>
+
+        <OrderDialog dialogOpen={dialogOpen} onClose={onClose} order={order} />
       </div>
     </div>
   );
