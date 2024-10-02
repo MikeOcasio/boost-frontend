@@ -1,17 +1,110 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import GameCard from "@/components/GameCard";
-import { games } from "@/lib/data";
+import { fetchAllGames } from "@/lib/actions";
+import toast from "react-hot-toast";
+import { BiLoader } from "react-icons/bi";
+import { IoWarning } from "react-icons/io5";
+import { SearchFilter } from "./_components/SearchFilter";
 
 const GamesPage = () => {
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState({
+    mostPopular: false,
+    active: false,
+    category: "",
+    platform: "",
+    attribute: "",
+  });
+
+  const loadGames = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await fetchAllGames();
+      if (result.error) {
+        setError(true);
+        toast.error(result.error);
+      } else {
+        setGames(result);
+      }
+    } catch (error) {
+      setError(true);
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadGames();
+  }, []);
+
+  // Filter and search logic
+  const filteredGames = games
+    .filter((game) =>
+      game.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((game) => (filter.mostPopular ? game.most_popular : true))
+    .filter((game) => (filter.active ? game.is_active : true))
+    .filter((game) =>
+      filter.category ? game.category_id === Number(filter.category) : true
+    )
+    .filter((game) =>
+      filter.platform
+        ? game.platforms.some(
+            (platform) => platform.id === Number(filter.platform)
+          )
+        : true
+    )
+    .filter((game) =>
+      filter.attribute
+        ? game.product_attribute_category_id === Number(filter.attribute)
+        : true
+    );
+
   return (
     <div className="mt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
       <h2 className="text-center text-4xl font-title text-white sm:text-5xl dark:text-white">
         All Games
       </h2>
 
+      {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
+
+      {error && (
+        <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
+          <IoWarning className="h-5 w-5 mr-2" />
+          Failed to load games. Please try again!
+        </p>
+      )}
+
+      {/* Search bar */}
+      {!loading && !error && filteredGames && (
+        <div className="flex flex-wrap items-center gap-4">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search games..."
+            className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+          />
+
+          <SearchFilter filter={filter} setFilter={setFilter} />
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
-        {games.map((game) => (
-          <GameCard key={game.id} game={game} />
-        ))}
+        {!loading && !error && filteredGames.length < 1 ? (
+          <p className="text-center w-full">No games match your search!</p>
+        ) : (
+          filteredGames?.map((game) => <GameCard key={game.id} game={game} />)
+        )}
       </div>
     </div>
   );

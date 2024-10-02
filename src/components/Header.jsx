@@ -13,18 +13,18 @@ import Link from "next/link";
 import { MdDashboard } from "react-icons/md";
 
 const resourcesData = [
-  // {
-  //   name: "Games",
-  //   href: "/games",
-  //   icon: <IoGameControllerOutline size={32} />,
-  // },
-  // {
-  //   name: "Skill Masters",
-  //   href: "/skillmasters",
-  //   icon: <GiSergeant size={32} />,
-  // },
-  // { name: "Boost", href: "/boost", icon: <HiOutlineBolt size={32} /> },
-  // { name: "Support", href: "/support", icon: <BiSupport size={32} /> },
+  {
+    name: "Games",
+    href: "/games",
+    icon: <IoGameControllerOutline size={32} />,
+  },
+  {
+    name: "Skill Masters",
+    href: "/skillmasters",
+    icon: <GiSergeant size={32} />,
+  },
+  { name: "Boost", href: "/boost", icon: <HiOutlineBolt size={32} /> },
+  { name: "Support", href: "/support", icon: <BiSupport size={32} /> },
 ];
 
 export function Header() {
@@ -38,30 +38,27 @@ export function Header() {
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  {
-    /* Prod Changes */
-  }
-  // useEffect(() => {
-  //   if (user.authenticated) {
-  //     setResources([
-  //       ...resourcesData,
-  //       {
-  //         name: "Dashboard",
-  //         href: "/dashboard",
-  //         icon: <MdDashboard size={32} />,
-  //       },
-  //     ]);
-  //   } else {
-  //     setResources([
-  //       ...resourcesData,
-  //       {
-  //         name: "Login",
-  //         href: "/login",
-  //         icon: <BiLogIn size={32} />,
-  //       },
-  //     ]);
-  //   }
-  // }, [!!user.authenticated]);
+  useEffect(() => {
+    if (user.authenticated) {
+      setResources([
+        ...resourcesData,
+        {
+          name: "Dashboard",
+          href: "/dashboard",
+          icon: <MdDashboard size={32} />,
+        },
+      ]);
+    } else {
+      setResources([
+        ...resourcesData,
+        {
+          name: "Login",
+          href: "/login",
+          icon: <BiLogIn size={32} />,
+        },
+      ]);
+    }
+  }, [!!user.authenticated]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -100,23 +97,18 @@ export function Header() {
           <MobileNavigation resources={resources} user={user} />
         </div>
 
-        <div className="hidden md:block">
-          <div className="flex items-center gap-x-4">
-            {/* Prod Changes */}
-            <IoMenu className="h-7 w-7" />
-
-            {resources.map((item, index) => (
-              <Link
-                href={item.href}
-                className="text-lg font-semibold"
-                key={index}
-              >
-                <div className="group relative flex items-center gap-x-2 rounded-lg p-2 hover:bg-Plum/30">
-                  {item.name}
-                </div>
-              </Link>
-            ))}
-          </div>
+        <div className="hidden md:flex items-center gap-x-4">
+          {resources.map((item, index) => (
+            <Link
+              href={item.href}
+              className="text-lg font-semibold"
+              key={index}
+            >
+              <div className="group relative flex items-center gap-x-2 rounded-lg p-2 hover:bg-Plum/30">
+                {item.name}
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </nav>

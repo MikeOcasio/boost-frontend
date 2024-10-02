@@ -27,7 +27,7 @@ export const AdminGameCard = ({ game, key }) => {
       <div className="flex justify-between items-center flex-wrap-reverse">
         <h3 className="text-lg font-semibold">{game.name}</h3>
         <Link href={`/dashboard/admin/allgames/${game.id}`}>
-          <button className="flex items-center gap-2 px-3 py-2 transition-all hover:bg-neutral-500/50 text-white rounded-md">
+          <button className="flex items-center gap-2 px-3 py-2 transition-all hover:bg-white/10 rounded-lg">
             <BiPencil />
             Edit
           </button>
@@ -83,7 +83,7 @@ export const AdminGameCard = ({ game, key }) => {
           </div>
 
           <div className="flex flex-wrap justify-between items-center gap-2">
-            <p>Tax: {game.tax}</p>
+            <p>Tax: ${game.tax}</p>
 
             <p className="text-lg font-semibold text-right flex-1">
               Price: ${game.price}

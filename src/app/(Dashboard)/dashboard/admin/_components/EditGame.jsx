@@ -368,7 +368,7 @@ export const EditGame = ({ data, setData }) => {
             placeholder="Product description"
             value={game?.description}
             className="input-field"
-            rows={3}
+            rows={5}
             onChange={(e) => {
               setGame({ ...game, description: e.target.value });
             }}
@@ -417,7 +417,7 @@ export const EditGame = ({ data, setData }) => {
                   alt="Product image"
                   width={200}
                   height={200}
-                  className="rounded-lg"
+                  className="rounded-lg bg-white/10 p-2"
                 />
                 <IoMdClose
                   className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
@@ -475,7 +475,7 @@ export const EditGame = ({ data, setData }) => {
                   alt="background image"
                   width={200}
                   height={200}
-                  className="rounded-lg"
+                  className="rounded-lg bg-white/10 p-2"
                 />
                 <IoMdClose
                   className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
