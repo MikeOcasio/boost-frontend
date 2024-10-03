@@ -5,8 +5,9 @@ import {
   PopoverPanel,
 } from "@headlessui/react";
 import Link from "next/link";
-import { BiCross } from "react-icons/bi";
+import { BiCross, BiLoader, BiPowerOff } from "react-icons/bi";
 import { IoMenu } from "react-icons/io5";
+
 import { CartButton } from "../CartButton";
 
 function MobileNavItem({ href, children }) {
@@ -19,7 +20,12 @@ function MobileNavItem({ href, children }) {
   );
 }
 
-export const MobileNavigation = ({ resources }) => {
+export const MobileNavigation = ({
+  resources,
+  handleLogout,
+  user,
+  loading,
+}) => {
   return (
     <Popover>
       <PopoverButton>
@@ -61,7 +67,24 @@ export const MobileNavigation = ({ resources }) => {
               </MobileNavItem>
             ))}
 
-            <CartButton />
+            {user && (
+              <button
+                onClick={handleLogout}
+                disabled={loading}
+                className="w-full group relative flex flex-wrap items-center gap-x-6 rounded-lg p-2 hover:bg-yellow-600/30"
+              >
+                <div className="bg-inherit mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg">
+                  {loading ? (
+                    <BiLoader className="h-6 w-6 text-white animate-spin" />
+                  ) : (
+                    <BiPowerOff className="h-6 w-6 text-white" />
+                  )}
+                </div>
+                <div>Logout</div>
+              </button>
+            )}
+
+            <CartButton mobileNav />
           </ul>
         </nav>
       </PopoverPanel>

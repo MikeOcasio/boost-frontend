@@ -9,15 +9,22 @@ import { useCartStore } from "@/store/use-cart";
 import Link from "next/link";
 import Image from "next/image";
 
-export const CartButton = () => {
+export const CartButton = ({ mobileNav }) => {
   const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart } =
     useCartStore();
 
   return (
     <Popover>
-      <PopoverButton className="outline-none border-none">
-        <BiCart className="h-10 w-10 p-2 rounded-lg hover:bg-Plum/30 border border-white/10 -mb-1.5" />
-      </PopoverButton>
+      {mobileNav ? (
+        <PopoverButton className="w-full group relative flex flex-wrap items-center gap-x-6 rounded-lg my-2 p-2 hover:bg-yellow-600/30">
+          <BiCart className="bg-inherit p-2 h-11 w-11 rounded-lg" />
+          <p>Cart</p>
+        </PopoverButton>
+      ) : (
+        <PopoverButton className="outline-none border-none">
+          <BiCart className="h-10 w-10 p-2 rounded-lg hover:bg-Plum/30 border border-white/10 -mb-1.5" />
+        </PopoverButton>
+      )}
 
       <PopoverBackdrop
         transition
@@ -40,9 +47,10 @@ export const CartButton = () => {
         {cartItems.length > 0 ? (
           <div className="mt-4 space-y-4">
             {cartItems.map((item) => (
-              <div 
-              key={item.id}
-              className="flex flex-wrap gap-4 items-center border-b border-white/10 pb-2">
+              <div
+                key={item.id}
+                className="flex flex-wrap gap-4 items-center border-b border-white/10 pb-2"
+              >
                 <Image
                   src={item.image_url}
                   alt={item.name}
@@ -52,7 +60,7 @@ export const CartButton = () => {
                   className="mx-auto w-[100px] object-contain bg-white/10 rounded-md p-2"
                 />
 
-                <div  className="flex flex-col gap-2 flex-1">
+                <div className="flex flex-col gap-2 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-semibold">{item.name}</p>
                     <div className="flex flex-wrap items-center gap-2">

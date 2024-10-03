@@ -4,11 +4,12 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
-import { BiPowerOff, BiReceipt, BiSupport } from "react-icons/bi";
+import { BiLoader, BiPowerOff, BiReceipt, BiSupport } from "react-icons/bi";
 import { MdDashboard, MdPerson } from "react-icons/md";
 
 import { MobileNavigation } from "@/components/home/MobileNavigation";
 import { useUserStore } from "@/store/use-user";
+import { logoutSession } from "@/lib/actions";
 
 const resources = [
   {
@@ -33,8 +34,9 @@ const resources = [
 export function Navbar() {
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const { logoutUser } = useUserStore();
+  const { user, setUser } = useUserStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,14 +53,33 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  useEffect(() => {
+    getUserToken();
+  }, []);
+
   const handleLogout = async () => {
+    setLoading(true);
     try {
-      await logoutUser();
-      toast.success("Logged out!");
+      if (!user) {
+        toast.error("No token found. Please login again.");
+        return;
+      }
+
+      const response = await logoutSession({
+        token: user.token,
+      });
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        setUser(null);
+        toast.success("Logged out!");
+      }
     } catch (err) {
       toast.error("Failed to log out user.");
       console.log("Error logging out user:", err);
     } finally {
+      setLoading(false);
       router.push("/");
     }
   };
@@ -90,9 +111,14 @@ export function Navbar() {
               item.name === "Logout" ? (
                 <button
                   onClick={handleLogout}
+                  disabled={loading}
                   className="font-semibold rounded-lg p-2 hover:bg-Plum/30"
                 >
-                  {item.icon}
+                  {loading ? (
+                    <BiLoader className="h-6 w-6 text-white animate-spin" />
+                  ) : (
+                    item.icon
+                  )}
                 </button>
               ) : (
                 <Link

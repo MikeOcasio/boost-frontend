@@ -15,9 +15,4 @@ export const useUserStore = create((set) => ({
       set({ user: null });
     }
   },
-
-  logoutUser: async () => {
-    await logoutSession();
-    set({ user: null });
-  },
 }));
