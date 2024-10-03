@@ -402,7 +402,9 @@ export const fetchCurrentUser = async (token) => {
     const { data } = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/api/current_user`,
       {
-        Authorization: `Bearer ${token}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -584,7 +586,9 @@ export const logoutSession = async ({ token }) => {
     const { data } = await axios.delete(
       `${process.env.NEXT_PUBLIC_API_URL}/api/logout`,
       {
-        Authorization: `Bearer ${token}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 

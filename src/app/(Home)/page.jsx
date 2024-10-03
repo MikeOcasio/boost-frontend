@@ -5,38 +5,11 @@ import Image from "next/image";
 import { ContactForm } from "@/components/home/ContactForm";
 import GameCard from "@/components/GameCard";
 import HomePageAboutArea from "@/components/home/HomePageAboutArea";
-
 import burningCity from "@/images/cityBurn2.png";
 import purpleLane from "@/images/purpleLane.png";
 import { games } from "@/lib/data";
-import { fetchCurrentUser } from "@/lib/actions";
-import toast from "react-hot-toast";
-import { useUserStore } from "@/store/use-user";
-import { useEffect } from "react";
 
 export default function Home() {
-  const { user, getUserToken } = useUserStore();
-
-  useEffect(() => {
-    getUserToken();
-  }, []);
-
-  const handleCurrentUser = async () => {
-    try {
-      if (!user) {
-        toast.error("No token found. Please login again.");
-        return;
-      }
-
-      const response = await fetchCurrentUser(user);
-
-      console.log("response", response);
-    } catch (error) {
-      console.log("Error fetching current user:", error.message);
-      toast.error(error.message);
-    }
-  };
-
   return (
     <div className="mt-10">
       <div className="h-screen w-full">
@@ -70,13 +43,6 @@ export default function Home() {
           </p>
         </div>
       </div>
-
-      <button
-        onClick={handleCurrentUser}
-        className="p-2 rounded-lg hover:bg-Plum/30 border border-white/10"
-      >
-        current user
-      </button>
 
       <div className="h-screen w-full sticky top-0 -z-10">
         <Image

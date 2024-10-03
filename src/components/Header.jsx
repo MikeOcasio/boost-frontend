@@ -6,12 +6,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { IoGameControllerOutline } from "react-icons/io5";
 import { GiSergeant } from "react-icons/gi";
-import { BiLogIn, BiSupport } from "react-icons/bi";
+import { BiLoader, BiLogIn, BiPowerOff, BiSupport } from "react-icons/bi";
 import { MdDashboard } from "react-icons/md";
 
 import { MobileNavigation } from "./home/MobileNavigation";
 import { CartButton } from "./CartButton";
 import { useUserStore } from "@/store/use-user";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { logoutSession } from "@/lib/actions";
 
 const resourcesData = [
   {
@@ -28,11 +31,14 @@ const resourcesData = [
 ];
 
 export function Header() {
+  const router = useRouter();
+
   const [resources, setResources] = useState(resourcesData);
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const { user, getUserToken } = useUserStore();
+  const { user, getUserToken, setUser } = useUserStore();
 
   useEffect(() => {
     getUserToken();
@@ -75,6 +81,37 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  useEffect(() => {
+    getUserToken();
+  }, []);
+
+  const handleLogout = async () => {
+    setLoading(true);
+    try {
+      if (!user) {
+        toast.error("No token found. Please login again.");
+        return;
+      }
+
+      const response = await logoutSession({
+        token: user.token,
+      });
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        setUser(null);
+        toast.success("Logged out!");
+      }
+    } catch (err) {
+      toast.error("Failed to log out user.");
+      console.log("Error logging out user:", err);
+    } finally {
+      setLoading(false);
+      router.push("/");
+    }
+  };
+
   return (
     <nav
       className={clsx(
@@ -94,10 +131,15 @@ export function Header() {
         </Link>
 
         <div className="md:hidden">
-          <MobileNavigation resources={resources} />
+          <MobileNavigation
+            resources={resources}
+            user={user}
+            handleLogout={handleLogout}
+            loading={loading}
+          />
         </div>
 
-        <div className="hidden md:flex items-center gap-x-4">
+        <div className="hidden md:flex items-center gap-4">
           {resources.map((item, index) => (
             <Link
               href={item.href}
@@ -109,6 +151,20 @@ export function Header() {
               </div>
             </Link>
           ))}
+
+          {user && (
+            <button
+              onClick={handleLogout}
+              disabled={loading}
+              className="rounded-lg hover:bg-Plum/30 border border-white/10"
+            >
+              {loading ? (
+                <BiLoader className="h-10 w-10 animate-spin p-2" />
+              ) : (
+                <BiPowerOff className="h-10 w-10 p-2" />
+              )}
+            </button>
+          )}
 
           {/* cart */}
           <CartButton />
