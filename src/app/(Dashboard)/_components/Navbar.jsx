@@ -8,6 +8,7 @@ import { BiPowerOff, BiReceipt, BiSupport } from "react-icons/bi";
 import { MdDashboard, MdPerson } from "react-icons/md";
 
 import { MobileNavigation } from "@/components/home/MobileNavigation";
+import { useUserStore } from "@/store/use-user";
 
 const resources = [
   {
@@ -33,6 +34,8 @@ export function Navbar() {
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
+  const { logoutUser } = useUserStore();
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -47,6 +50,18 @@ export function Navbar() {
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      toast.success("Logged out!");
+    } catch (err) {
+      toast.error("Failed to log out user.");
+      console.log("Error logging out user:", err);
+    } finally {
+      router.push("/");
+    }
+  };
 
   return (
     <nav
@@ -71,17 +86,26 @@ export function Navbar() {
         </div>
         <div className="hidden md:block">
           <div className="flex items-center gap-x-4">
-            {resources.map((item, index) => (
-              <Link
-                href={item.href}
-                className="text-lg font-semibold"
-                key={index}
-              >
-                <div className="group relative flex items-center gap-x-2 rounded-lg p-2 hover:bg-Plum/30">
-                  {item.name}
-                </div>
-              </Link>
-            ))}
+            {resources.map((item, index) =>
+              item.name === "Logout" ? (
+                <button
+                  onClick={handleLogout}
+                  className="text-lg font-semibold rounded-lg p-2 hover:bg-Plum/30"
+                >
+                  {item.icon}
+                </button>
+              ) : (
+                <Link
+                  href={item.href}
+                  className="text-lg font-semibold"
+                  key={index}
+                >
+                  <div className="group relative flex items-center gap-x-2 rounded-lg p-2 hover:bg-Plum/30">
+                    {item.name}
+                  </div>
+                </Link>
+              )
+            )}
           </div>
         </div>
       </div>

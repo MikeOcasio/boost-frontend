@@ -1,7 +1,7 @@
 "use server";
 
 import axios from "axios";
-import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 // validate csrf token
 const validateToken = async () => {
@@ -374,6 +374,17 @@ export const loginUser = async (email, password) => {
       { email, password }
     );
 
+    const { token } = data;
+
+    if (token) {
+      cookies().set({
+        name: "jwtToken",
+        value: token,
+        maxAge: 60 * 60 * 24 * 3, // 3 days
+        secure: true,
+      });
+    }
+
     return data;
   } catch (error) {
     const errorMessage = error.response?.data || error.message;
@@ -401,12 +412,11 @@ export const fetchCurrentUser = async (token) => {
     console.error("Failed to fetch current user:", errorMessage);
 
     return {
-      error: errorMessage || "An error occurred while fetching the current user.",
+      error:
+        errorMessage || "An error occurred while fetching the current user.",
     };
   }
 };
-
-fetchCurrentUser();
 
 // get all users
 export const fetchAllUsers = async () => {
@@ -560,5 +570,38 @@ export const fetchProductByAttribute = async (attributeId) => {
     return data;
   } catch (error) {
     return { error: "Failed to fetch product by attribute. Please try again!" };
+  }
+};
+
+// get user token
+export const getUserToken = () => {
+  const token = cookies().get("jwtToken");
+  return token;
+};
+
+export const logoutSession = async ({ token }) => {
+  try {
+    const { data } = await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/logout`,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    cookies().set({
+      name: "jwtToken",
+      value: null,
+      maxAge: -1,
+      secure: true,
+    });
+
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to logout user:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while logout the user.",
+    };
   }
 };

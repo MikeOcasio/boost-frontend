@@ -1,16 +1,16 @@
 "use client";
 
 import { Field, Input, Label } from "@headlessui/react";
-import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { BiLoader } from "react-icons/bi";
 import toast from "react-hot-toast";
 
 import { fetchCurrentUser, loginUser } from "@/lib/actions";
+import { useUserStore } from "@/store/use-user";
 
 export default function Login() {
   const router = useRouter();
@@ -19,6 +19,18 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { user, getUserToken, setUser } = useUserStore();
+
+  useEffect(() => {
+    getUserToken();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,14 +44,7 @@ export default function Login() {
       if (response.error) {
         toast.error(response.error);
       } else {
-        const { token } = response;
-
-        if (token) {
-          localStorage.setItem("jwtToken", token);
-        }
-
-        console.log("Login successful, token:", token);
-
+        setUser(response.token);
         toast.success("Login successful!");
         router.push("/");
       }
@@ -53,14 +58,12 @@ export default function Login() {
 
   const handleCurrentUser = async () => {
     try {
-      const token = localStorage.getItem("jwtToken");
-
-      if (!token) {
+      if (!user) {
         toast.error("No token found. Please login again.");
         return;
       }
 
-      const response = await fetchCurrentUser(token);
+      const response = await fetchCurrentUser(user);
 
       console.log("response", response);
     } catch (error) {
@@ -133,7 +136,7 @@ export default function Login() {
             className="flex w-full justify-center rounded-md bg-Gold px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-Gold/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Gold gap-2 items-center"
           >
             {loading && <BiLoader className="h-5 w-5 animate-spin" />}
-            Sign in
+            LOGIN
           </button>
         </form>
 

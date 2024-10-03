@@ -4,32 +4,69 @@ import { Footer } from "@/components/Footer";
 import { Navbar } from "./_components/Navbar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useUserStore } from "@/store/use-user";
+import { BiLoader } from "react-icons/bi";
+import { IoWarning } from "react-icons/io5";
 
 const DashboardLayout = ({ children }) => {
-  // prod changes
-  const disable = false;
   const router = useRouter();
+  const { user, getUserToken } = useUserStore();
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (disable) {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        await getUserToken();
+      } catch (err) {
+        setError("Failed to fetch user token.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [getUserToken]);
+
+  useEffect(() => {
+    if (!user && !loading) {
       router.push("/");
     }
-  }, []);
+  }, [user, loading, router]);
 
-  if (disable) {
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <BiLoader className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="mt-4 w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
+        <IoWarning className="h-5 w-5 mr-2" />
+        {error} Please try again!
+      </p>
+    );
+  }
+
+  if (!user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center text-center p-4">
         <div className="h-96 w-fit overflow-hidden rounded-xl mx-auto">
           <Image
             src="/disable.gif"
-            alt="website under construction"
+            alt="Not authorized"
             height={500}
             width={700}
             className="h-96 w-full object-contain"
           />
         </div>
-        Website under construction
+        Not authorized, login to access this page
       </div>
     );
   }
