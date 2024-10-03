@@ -14,20 +14,20 @@ const resources = [
   {
     name: "Dashboard",
     href: "/dashboard",
-    icon: <MdDashboard size={32} />,
+    icon: <MdDashboard size={28} />,
   },
   {
     name: "Account",
     href: "/dashboard/account",
-    icon: <MdPerson size={32} />,
+    icon: <MdPerson size={28} />,
   },
   {
     name: "Orders",
     href: "/dashboard/orders",
-    icon: <BiReceipt size={32} />,
+    icon: <BiReceipt size={28} />,
   },
-  { name: "Support", href: "/support", icon: <BiSupport size={32} /> },
-  { name: "Logout", href: "/logout", icon: <BiPowerOff size={32} /> },
+  { name: "Support", href: "/support", icon: <BiSupport size={28} /> },
+  { name: "Logout", href: "/logout", icon: <BiPowerOff size={28} /> },
 ];
 
 export function Navbar() {
@@ -90,7 +90,7 @@ export function Navbar() {
               item.name === "Logout" ? (
                 <button
                   onClick={handleLogout}
-                  className="text-lg font-semibold rounded-lg p-2 hover:bg-Plum/30"
+                  className="font-semibold rounded-lg p-2 hover:bg-Plum/30"
                 >
                   {item.icon}
                 </button>
