@@ -9,7 +9,7 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
       <div
         key={game.id}
         className={clsx(
-          "flex flex-col justify-between min-w-[400px] max-w-[400px] min-h-[510px] h-full rounded-lg bg-CardPlum p-4 md:p-8 shadow-xl drop-shadow-xl hover:border-Gold"
+          "flex flex-col justify-between w-[300px] md:w-[400px] h-full rounded-lg bg-CardPlum p-4 md:px-6 shadow-xl drop-shadow-xl hover:border-Gold"
         )}
         style={{
           backgroundColor:
@@ -60,7 +60,7 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
               aria-describedby={game.id}
               aria-label="Boost Button"
               title="Boost Button"
-              className="mx-auto w-full h-14 bg-boostButton bg-contain bg-center bg-no-repeat px-3 py-2 transition-all hover:scale-110"
+              className="mx-auto w-full h-10 bg-boostButton bg-contain bg-center bg-no-repeat px-3 py-2 transition-all hover:scale-110"
             />
           </Link>
         ) : (

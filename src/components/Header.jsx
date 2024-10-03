@@ -1,16 +1,17 @@
 "use client";
 
-import { IoGameControllerOutline, IoMenu } from "react-icons/io5";
-import { GiSergeant } from "react-icons/gi";
-import { HiOutlineBolt } from "react-icons/hi2";
-import { BiLogIn, BiSupport } from "react-icons/bi";
-import Image from "next/image";
-
-import { MobileNavigation } from "./home/MobileNavigation";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import Link from "next/link";
+import Image from "next/image";
+import { IoGameControllerOutline } from "react-icons/io5";
+import { GiSergeant } from "react-icons/gi";
+import { BiLogIn, BiSupport } from "react-icons/bi";
 import { MdDashboard } from "react-icons/md";
+
+import { MobileNavigation } from "./home/MobileNavigation";
+import { CartButton } from "./CartButton";
+import { useUserStore } from "@/store/use-user";
 
 const resourcesData = [
   {
@@ -23,23 +24,22 @@ const resourcesData = [
     href: "/skillmasters",
     icon: <GiSergeant size={32} />,
   },
-  { name: "Boost", href: "/boost", icon: <HiOutlineBolt size={32} /> },
   { name: "Support", href: "/support", icon: <BiSupport size={32} /> },
 ];
 
 export function Header() {
-  const user = {
-    name: "Nikhil Sharma",
-    email: "mail@gmail.com",
-    authenticated: false,
-  };
-
   const [resources, setResources] = useState(resourcesData);
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
+  const { user, getUserToken } = useUserStore();
+
   useEffect(() => {
-    if (user.authenticated) {
+    getUserToken();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
       setResources([
         ...resourcesData,
         {
@@ -58,7 +58,7 @@ export function Header() {
         },
       ]);
     }
-  }, [!!user.authenticated]);
+  }, [user]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -94,7 +94,7 @@ export function Header() {
         </Link>
 
         <div className="md:hidden">
-          <MobileNavigation resources={resources} user={user} />
+          <MobileNavigation resources={resources} />
         </div>
 
         <div className="hidden md:flex items-center gap-x-4">
@@ -109,6 +109,9 @@ export function Header() {
               </div>
             </Link>
           ))}
+
+          {/* cart */}
+          <CartButton />
         </div>
       </div>
     </nav>

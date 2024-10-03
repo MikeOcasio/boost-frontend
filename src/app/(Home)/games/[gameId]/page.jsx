@@ -4,13 +4,14 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BiLoader } from "react-icons/bi";
+import { BiLoader, BiMinus, BiPlus } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 
 import { fetchGameById } from "@/lib/actions";
 import Badges from "../_components/Badges";
+import { useCartStore } from "@/store/use-cart";
 
 const GamePage = ({ params }) => {
   const router = useRouter();
@@ -18,6 +19,17 @@ const GamePage = ({ params }) => {
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
+  const [selectedPlatform, setSelectedPlatform] = useState(null);
+
+  useEffect(() => {
+    setSelectedPlatform(game?.platforms[0].id);
+  }, [game]);
+
+  const cartStore = useCartStore();
+
+  const cartItem =
+    game && cartStore.cartItems.find((item) => item.id === game.id);
 
   const loadGame = async () => {
     setLoading(true);
@@ -44,6 +56,26 @@ const GamePage = ({ params }) => {
   useEffect(() => {
     loadGame();
   }, []);
+
+  const handleAddToCart = () => {
+    if (!game) return;
+
+    const platform_obj = game?.platforms.find(
+      (platform) => platform.id === selectedPlatform
+    );
+
+    const product = {
+      id: game.id,
+      name: game.name,
+      price: game.price,
+      tax: game.tax,
+      platform: platform_obj,
+      image_url: game.image,
+      is_active: game.is_active,
+    };
+
+    cartStore.addToCart(product);
+  };
 
   return (
     <div className="mt-24 max-w-7xl mx-auto min-h-screen p-4">
@@ -86,7 +118,7 @@ const GamePage = ({ params }) => {
             </h2>
 
             {/* product details */}
-            <div className="flex flex-col lg:flex-row gap-6 justify-center p-8 rounded-xl bg-cover bg-center">
+            <div className="flex flex-col lg:flex-row gap-6 justify-center rounded-xl bg-cover bg-center">
               <div
                 className="relative z-10 bg-black/50 rounded-xl h-fit p-8 backdrop-blur-sm"
                 style={{ backgroundColor: game.primary_color + 80 }}
@@ -100,7 +132,10 @@ const GamePage = ({ params }) => {
                   className="h-full w-full max-w-[200px] object-contain mx-auto"
                 />
               </div>
+
               <div className="relative z-10 flex flex-col gap-4">
+                <p className="text-xs -mb-4">{game.category.name}</p>
+
                 <h3 className="text-2xl font-bold">{game.name}</h3>
                 <p className="text-lg text-gray-300">{game.tag_line}</p>
                 <p className="text-sm font-medium max-w-2xl">
@@ -119,13 +154,80 @@ const GamePage = ({ params }) => {
                   ))}
                 </ul>
 
+                {/* platform dropdown */}
+                <div className="flex flex-wrap justify-between gap-2 items-center">
+                  {/* price */}
+                  <div className="flex items-center gap-2 text-2xl">
+                    <p>Price: </p>
+                    <span className="font-bold text-green-500">
+                      ${game.price}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <p>Platform: </p>
+                    <select
+                      value={selectedPlatform}
+                      onChange={(e) => setSelectedPlatform(e.target.value)}
+                      className="px-2 py-1 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+                    >
+                      <option
+                        value=""
+                        className="bg-neutral-800"
+                        unselectable="on"
+                      >
+                        Select Platform
+                      </option>
+                      {game.platforms.map((platform) => (
+                        <option
+                          key={platform.id}
+                          value={platform.id}
+                          className="bg-neutral-800"
+                        >
+                          {platform.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
                 {!!game.is_active ? (
-                  <button
-                    className="p-2 rounded-lg"
-                    style={{ backgroundColor: game.secondary_color + 80 }}
-                  >
-                    Add to cart
-                  </button>
+                  <div>
+                    {cartItem ? (
+                      <div className="flex items-center gap-4 w-full">
+                        <button
+                          onClick={() => cartStore.decreaseQuantity(game.id)}
+                          className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
+                        >
+                          <BiMinus className="h-6 w-6" />
+                        </button>
+
+                        <span className="text-lg font-bold">
+                          {cartItem.quantity}
+                        </span>
+
+                        <button
+                          onClick={() => cartStore.increaseQuantity(game.id)}
+                          className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
+                        >
+                          <BiPlus className="h-6 w-6" />
+                        </button>
+
+                        <Link href="/checkout" className="flex-1">
+                          <button className="p-2 rounded-lg bg-Gold/90 w-full">
+                            Checkout
+                          </button>
+                        </Link>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={handleAddToCart}
+                        className="p-2 rounded-lg bg-Gold/90 w-full"
+                      >
+                        Add to cart
+                      </button>
+                    )}
+                  </div>
                 ) : (
                   <p className="text-md mx-4 cursor-wait rounded-md bg-white/20 py-2 text-center italic">
                     Coming Soon

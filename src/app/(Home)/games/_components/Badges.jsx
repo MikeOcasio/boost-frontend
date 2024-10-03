@@ -125,7 +125,7 @@ const Badges = ({
             {/* Scrollable Game Cards */}
             <div
               ref={scrollContainerRef}
-              className="flex items-center gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar"
+              className="flex h-full gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar"
             >
               {categoryId
                 ? productCategories?.map((game, index) => (
