@@ -23,7 +23,7 @@ function MobileNavItem({ href, children }) {
 export const MobileNavigation = ({
   resources,
   handleLogout,
-  user,
+  userToken,
   loading,
 }) => {
   return (
@@ -67,7 +67,7 @@ export const MobileNavigation = ({
               </MobileNavItem>
             ))}
 
-            {user && (
+            {userToken && (
               <button
                 onClick={handleLogout}
                 disabled={loading}

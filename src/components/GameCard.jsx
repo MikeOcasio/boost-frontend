@@ -11,9 +11,15 @@ const GameCard = ({ game }) => {
 
       <div
         className={clsx(
-          "flex flex-col justify-between w-full h-full rounded-md bg-CardPlum p-4 md:p-8 shadow-xl drop-shadow-xl hover:border-Gold"
+          "flex flex-col justify-between w-full h-full rounded-md bg-CardPlum p-4 shadow-xl drop-shadow-xl hover:border-Gold gap-4 relative"
         )}
       >
+        {game.most_popular && (
+          <p className="text-xs px-2 rounded-md bg-Gold/50 absolute top-0 right-0 m-2">
+            {game.most_popular && "Popular"}
+          </p>
+        )}
+
         <div className="flex h-[150px] items-center justify-between gap-x-4 bg-white/10 rounded-lg">
           <Image
             src={game.image}
@@ -21,17 +27,32 @@ const GameCard = ({ game }) => {
             quality={100}
             width={200}
             height={200}
-            className="mx-auto h-full w-full max-w-[200px] object-contain"
+            className="mx-auto w-full max-w-[200px] object-contain rounded-md"
           />
         </div>
 
-        <p className="py-4 text-center text-2xl font-bold leading-6 text-white">
-          {game.tag_line}
-        </p>
+        <div className="flex items-center gap-2 flex-wrap w-full text-xs -mt-2">
+          <span className="bg-white/10 px-2 rounded-md flex-1 text-center">
+            {game.category.name}
+          </span>
+          {game.platforms.map((platform) => (
+            <p
+              key={platform.id}
+              className="bg-black/20 px-2 rounded-md flex-1 text-center"
+            >
+              {platform.name}
+            </p>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-2 items-center">
+          <p className="text-xl font-bold leading-6 text-white">{game.name}</p>
+          <p className="text-xs text-white/70 font-semibold">{game.tag_line}</p>
+        </div>
 
         <ul
           role="list"
-          className="mt-6 space-y-3 pb-4 text-base leading-6 text-gray-300"
+          className="space-y-2 text-sm leading-6 text-white/90 px-2"
         >
           {game.features.map((feature) => (
             <li key={feature} className="flex gap-x-3">
@@ -50,7 +71,7 @@ const GameCard = ({ game }) => {
               aria-describedby={game.id}
               aria-label="Boost Button"
               title="Boost Button"
-              className="mx-auto w-full h-14 bg-boostButton bg-contain bg-center bg-no-repeat px-3 py-2 transition-all hover:scale-110"
+              className="mx-auto w-full h-12 bg-boostButton bg-contain bg-center bg-no-repeat px-3 py-2 transition-all hover:scale-110"
             />
           </Link>
         ) : (

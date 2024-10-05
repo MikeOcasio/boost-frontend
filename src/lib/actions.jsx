@@ -3,12 +3,18 @@
 import axios from "axios";
 import { cookies } from "next/headers";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+// get session token from cookie
+export const getSessionToken = async () => {
+  const token = cookies().get("jwtToken");
+  return token?.value || null;
+};
+
 // validate csrf token
 const validateToken = async () => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/csrf_token`
-    );
+    const { data } = await axios.get(`${apiUrl}/csrf_token`);
 
     return data;
   } catch (error) {
@@ -19,9 +25,7 @@ const validateToken = async () => {
 // get categories
 export const fetchCategories = async () => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/categories`
-    );
+    const { data } = await axios.get(`${apiUrl}/api/categories`);
 
     return data;
   } catch (error) {
@@ -38,14 +42,16 @@ export const addCategory = async (categoryData) => {
   // }
 
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/categories`,
+      `${apiUrl}/api/categories`,
       {
         name: categoryData.name,
         description: categoryData.description,
         is_active: categoryData.is_active,
       },
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -62,14 +68,16 @@ export const addCategory = async (categoryData) => {
 // update category
 export const updateCategory = async (categoryData) => {
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/categories/${categoryData.id}`,
+      `${apiUrl}/api/categories/${categoryData.id}`,
       {
         name: categoryData.name,
         description: categoryData.description,
         is_active: categoryData.is_active,
       },
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -86,9 +94,11 @@ export const updateCategory = async (categoryData) => {
 // delete category
 export const deleteCategory = async (categoryId) => {
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/categories/${categoryId}`,
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      `${apiUrl}/api/categories/${categoryId}`,
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -106,7 +116,7 @@ export const deleteCategory = async (categoryId) => {
 export const fetchAttribute = async () => {
   try {
     const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/product_attribute_categories`
+      `${apiUrl}/api/product_attribute_categories`
     );
 
     return data;
@@ -118,10 +128,12 @@ export const fetchAttribute = async () => {
 // ADD ATTRIBUTE
 export const addAttribute = async (attributeData) => {
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/product_attribute_categories`,
+      `${apiUrl}/api/product_attribute_categories`,
       { name: attributeData.name },
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -138,10 +150,12 @@ export const addAttribute = async (attributeData) => {
 // update attribute
 export const updateAttribute = async (attributeData) => {
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/product_attribute_categories/${attributeData.id}`,
+      `${apiUrl}/api/product_attribute_categories/${attributeData.id}`,
       { name: attributeData.name },
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -158,9 +172,11 @@ export const updateAttribute = async (attributeData) => {
 // delete attribute
 export const deleteAttribute = async (attributeId) => {
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/product_attribute_categories/${attributeId}`,
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      `${apiUrl}/api/product_attribute_categories/${attributeId}`,
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -177,9 +193,7 @@ export const deleteAttribute = async (attributeId) => {
 // get all games
 export const fetchAllGames = async () => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/products`
-    );
+    const { data } = await axios.get(`${apiUrl}/api/products`);
 
     return data;
   } catch (error) {
@@ -190,9 +204,7 @@ export const fetchAllGames = async () => {
 // get game by id
 export const fetchGameById = async (gameId) => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/products/${gameId}`
-    );
+    const { data } = await axios.get(`${apiUrl}/api/products/${gameId}`);
 
     return data;
   } catch (error) {
@@ -203,8 +215,10 @@ export const fetchGameById = async (gameId) => {
 // add game
 export const addGame = async (gameData) => {
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
+      `${apiUrl}/api/products`,
       {
         name: gameData.name,
         description: gameData.description,
@@ -223,7 +237,7 @@ export const addGame = async (gameData) => {
         product_attribute_category_id: gameData.product_attribute_category_id,
         platform_ids: gameData.platform_ids,
       },
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -240,8 +254,10 @@ export const addGame = async (gameData) => {
 // update game
 export const updateGame = async (gameData, gameId) => {
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/products/${gameId}`,
+      `${apiUrl}/api/products/${gameId}`,
       {
         name: gameData.name,
         description: gameData.description,
@@ -260,7 +276,7 @@ export const updateGame = async (gameData, gameId) => {
         product_attribute_category_id: gameData.product_attribute_category_id,
         platform_ids: gameData.platform_ids,
       },
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -277,10 +293,11 @@ export const updateGame = async (gameData, gameId) => {
 // delete game
 export const deleteGame = async (gameId) => {
   try {
-    const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/products/${gameId}`,
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
-    );
+    const sessionToken = getSessionToken();
+
+    const response = await axios.delete(`${apiUrl}/api/products/${gameId}`, {
+      headers: { "X-CSRF-Token": sessionToken },
+    });
 
     return response.data;
   } catch (error) {
@@ -296,9 +313,7 @@ export const deleteGame = async (gameId) => {
 // get platforms
 export const fetchPlatforms = async () => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/platforms`
-    );
+    const { data } = await axios.get(`${apiUrl}/api/platforms`);
 
     return data;
   } catch (error) {
@@ -310,10 +325,12 @@ export const fetchPlatforms = async () => {
 // add platform
 export const addPlatform = async (platformData) => {
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/platforms`,
+      `${apiUrl}/api/platforms`,
       { name: platformData.name },
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -330,10 +347,12 @@ export const addPlatform = async (platformData) => {
 // update platform
 export const updatePlatform = async (platformData) => {
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/platforms/${platformData.id}`,
+      `${apiUrl}/api/platforms/${platformData.id}`,
       { name: platformData.name },
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -350,9 +369,11 @@ export const updatePlatform = async (platformData) => {
 // delete platform
 export const deletePlatform = async (platformId) => {
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/platforms/${platformId}`,
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      `${apiUrl}/api/platforms/${platformId}`,
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -369,20 +390,15 @@ export const deletePlatform = async (platformId) => {
 // login user
 export const loginUser = async (email, password) => {
   try {
-    const { data } = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/login`,
-      { email, password }
-    );
+    const { data } = await axios.post(`${apiUrl}/api/login`, {
+      email,
+      password,
+    });
 
     const { token } = data;
 
     if (token) {
-      cookies().set({
-        name: "jwtToken",
-        value: token,
-        maxAge: 60 * 60 * 24 * 3, // 3 days
-        secure: true,
-      });
+      setCookie(token);
     }
 
     return data;
@@ -397,16 +413,23 @@ export const loginUser = async (email, password) => {
 };
 
 // current user
-export const fetchCurrentUser = async (token) => {
+export const fetchCurrentUser = async () => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/current_user`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const sessionToken = await getSessionToken();
+
+    console.log("sessionToken from actions", sessionToken);
+
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const { data } = await axios.get(`${apiUrl}/api/current_user`, {
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
+    });
+
+    console.log("data", data);
 
     return data;
   } catch (error) {
@@ -423,9 +446,7 @@ export const fetchCurrentUser = async (token) => {
 // get all users
 export const fetchAllUsers = async () => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/users`
-    );
+    const { data } = await axios.get(`${apiUrl}/api/users`);
 
     return data;
   } catch (error) {
@@ -436,9 +457,7 @@ export const fetchAllUsers = async () => {
 // get user by id
 export const fetchUserById = async (userId) => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`
-    );
+    const { data } = await axios.get(`${apiUrl}/api/users/${userId}`);
 
     return data;
   } catch (error) {
@@ -449,14 +468,16 @@ export const fetchUserById = async (userId) => {
 // update user
 export const updateUser = async (userData) => {
   try {
+    const sessionToken = getSessionToken();
+
     const response = await axios.put(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userData.id}`,
+      `${apiUrl}/api/users/${userData.id}`,
       {
         name: userData.name,
         description: userData.description,
         is_active: userData.is_active,
       },
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
+      { headers: { "X-CSRF-Token": sessionToken } }
     );
 
     return response.data;
@@ -473,10 +494,11 @@ export const updateUser = async (userData) => {
 // delete user
 export const deleteUser = async (userId) => {
   try {
-    const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`,
-      { headers: { "X-CSRF-Token": process.env.NEXT_PUBLIC_API_TOKEN } }
-    );
+    const sessionToken = getSessionToken();
+
+    const response = await axios.delete(`${apiUrl}/api/users/${userId}`, {
+      headers: { "X-CSRF-Token": sessionToken },
+    });
 
     return response.data;
   } catch (error) {
@@ -498,17 +520,14 @@ export const createUser = async ({
   image,
 }) => {
   try {
-    const { data } = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/users/create`,
-      {
-        email: email,
-        password: password,
-        image: image,
-        first_name: firstName,
-        last_name: lastName,
-        role: "customer",
-      }
-    );
+    const { data } = await axios.post(`${apiUrl}/api/users/create`, {
+      email: email,
+      password: password,
+      image: image,
+      first_name: firstName,
+      last_name: lastName,
+      role: "customer",
+    });
 
     return data;
   } catch (error) {
@@ -524,9 +543,7 @@ export const createUser = async ({
 // get all orders
 export const fetchAllOrders = async () => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/orders`
-    );
+    const { data } = await axios.get(`${apiUrl}/api/orders`);
 
     return data;
   } catch (error) {
@@ -537,9 +554,7 @@ export const fetchAllOrders = async () => {
 // fetch skill masters
 export const fetchSkillMasters = async () => {
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/users/skillmasters`
-    );
+    const { data } = await axios.get(`${apiUrl}/api/users/skillmasters`);
 
     return data;
   } catch (error) {
@@ -551,7 +566,7 @@ export const fetchSkillMasters = async () => {
 export const fetchProductByCategories = async (categoryId) => {
   try {
     const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/categories/${categoryId}/products`
+      `${apiUrl}/api/categories/${categoryId}/products`
     );
 
     return data;
@@ -566,7 +581,7 @@ export const fetchProductByCategories = async (categoryId) => {
 export const fetchProductByAttribute = async (attributeId) => {
   try {
     const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/product_attribute_categories/${attributeId}/products`
+      `${apiUrl}/api/product_attribute_categories/${attributeId}/products`
     );
 
     return data;
@@ -575,28 +590,25 @@ export const fetchProductByAttribute = async (attributeId) => {
   }
 };
 
-// get user token
-export const getUserToken = () => {
-  const token = cookies().get("jwtToken");
-  return token;
-};
-
-export const logoutSession = async ({ token }) => {
+export const logoutSession = async () => {
   try {
-    const { data } = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/logout`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const sessionToken = getSessionToken();
+
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
 
     cookies().set({
       name: "jwtToken",
       value: null,
       maxAge: -1,
       secure: true,
+    });
+
+    const { data } = await axios.delete(`${apiUrl}/api/logout`, {
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
     });
 
     return data;
@@ -608,4 +620,14 @@ export const logoutSession = async ({ token }) => {
       error: errorMessage || "An error occurred while logout the user.",
     };
   }
+};
+
+// set cookie
+export const setCookie = (value) => {
+  cookies().set({
+    name: "jwtToken",
+    value: value,
+    maxAge: 60 * 60 * 24 * 3, // 3 days
+    secure: true,
+  });
 };

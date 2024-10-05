@@ -9,7 +9,7 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
       <div
         key={game.id}
         className={clsx(
-          "flex flex-col justify-between w-[300px] md:w-[400px] h-full rounded-lg bg-CardPlum p-4 md:px-6 shadow-xl drop-shadow-xl hover:border-Gold"
+          "flex flex-col justify-between w-[300px] md:w-[400px] h-full rounded-lg bg-CardPlum p-4 md:px-6 shadow-xl drop-shadow-xl hover:border-Gold gap-4"
         )}
         style={{
           backgroundColor:
@@ -30,19 +30,17 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
               quality={100}
               width={200}
               height={200}
-              className="mx-auto h-full w-full max-w-[200px] object-contain"
+              className="mx-auto w-full max-w-[200px] object-contain rounded-md"
             />
           </div>
         </div>
 
-        <p className="py-4 text-center text-2xl font-bold leading-6 text-white">
-          {game.tag_line}
-        </p>
+        <div className="flex flex-col gap-2 items-center">
+          <p className="text-xl font-bold leading-6 text-white">{game.name}</p>
+          <p className="text-xs text-white/70 font-semibold">{game.tag_line}</p>
+        </div>
 
-        <ul
-          role="list"
-          className="mt-6 space-y-3 pb-4 text-base leading-6 text-gray-300"
-        >
+        <ul role="list" className="space-y-2 text-sm leading-6 text-white/90">
           {game.features.map((feature) => (
             <li key={feature} className="flex gap-x-3">
               <CheckIcon
@@ -55,14 +53,16 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
         </ul>
 
         {game.is_active ? (
-          <Link href={`/games/${game.id}`}>
-            <button
-              aria-describedby={game.id}
-              aria-label="Boost Button"
-              title="Boost Button"
-              className="mx-auto w-full h-10 bg-boostButton bg-contain bg-center bg-no-repeat px-3 py-2 transition-all hover:scale-110"
-            />
-          </Link>
+          <div>
+            <Link href={`/games/${game.id}`}>
+              <button
+                aria-describedby={game.id}
+                aria-label="Boost Button"
+                title="Boost Button"
+                className="mx-auto w-full h-10 bg-boostButton bg-contain bg-center bg-no-repeat px-3 py-2 transition-all hover:scale-110"
+              />
+            </Link>
+          </div>
         ) : (
           <p className="text-md mx-4 rounded-md bg-white/10 py-2 text-center italic cursor-wait">
             Coming Soon

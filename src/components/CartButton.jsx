@@ -18,7 +18,7 @@ export const CartButton = ({ mobileNav }) => {
       {mobileNav ? (
         <PopoverButton className="w-full group relative flex flex-wrap items-center gap-x-6 rounded-lg my-2 p-2 hover:bg-yellow-600/30">
           <BiCart className="bg-inherit p-2 h-11 w-11 rounded-lg" />
-          <p>Cart</p>
+          <span>Cart</span>
         </PopoverButton>
       ) : (
         <PopoverButton className="outline-none border-none">
@@ -63,9 +63,10 @@ export const CartButton = ({ mobileNav }) => {
                 <div className="flex flex-col gap-2 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-semibold">{item.name}</p>
+
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-sm px-2 bg-white/10 rounded-md">
-                        Platform: {item.platform.name}
+                        Platform: {item.platform?.name}
                       </p>
                     </div>
                   </div>
@@ -87,6 +88,7 @@ export const CartButton = ({ mobileNav }) => {
                       >
                         <BiPlus className="h-5 w-5" />
                       </button>
+
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => removeFromCart(item.id)}

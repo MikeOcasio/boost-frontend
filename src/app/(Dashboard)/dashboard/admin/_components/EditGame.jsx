@@ -467,7 +467,7 @@ export const EditGame = ({ data, setData }) => {
         <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
           <Label>Background Image</Label>
 
-          <div className="flex flex-wrap gap-4 flex-1 items-center">
+          <div className="flex flex-wrap gap-4 flex-1">
             {game?.bg_image && (
               <div className="group relative cursor-pointer">
                 <Image

@@ -17,6 +17,7 @@ const Badges = ({
   attributeId,
   primary_color,
   secondary_color,
+  currentGameId,
 }) => {
   const [productCategories, setProductCategories] = useState([]);
   const [productAttribute, setProductAttribute] = useState([]);
@@ -31,7 +32,12 @@ const Badges = ({
         setError(true);
         toast.error(result.error);
       } else {
-        setProductCategories(result);
+        // Filter out the current game from the categories list
+        const filteredCategories = result.filter(
+          (game) => game.id !== currentGameId
+        );
+
+        setProductCategories(filteredCategories);
       }
     } catch (error) {
       setError(true);
@@ -46,7 +52,12 @@ const Badges = ({
         setError(true);
         toast.error(result.error);
       } else {
-        setProductAttribute(result);
+        // Filter out the current game from the attributes list
+        const filteredAttributes = result.filter(
+          (game) => game.id !== currentGameId
+        );
+
+        setProductAttribute(filteredAttributes);
       }
     } catch (error) {
       setError(true);
@@ -94,10 +105,11 @@ const Badges = ({
           again!
         </p>
       )}
+
       {!loading &&
         !error &&
         (productCategories?.length > 0 || productAttribute?.length > 0) && (
-          <div className="space-y-4">
+          <div className="space-y-4 border-t border-white/10 pt-6">
             <div className="flex flex-wrap justify-between items-center gap-4">
               <h3 className="text-lg font-semibold">
                 {categoryId ? "Recommendations" : "Similar Products"}

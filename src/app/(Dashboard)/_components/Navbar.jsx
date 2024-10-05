@@ -6,6 +6,7 @@ import Link from "next/link";
 import clsx from "clsx";
 import { BiLoader, BiPowerOff, BiReceipt, BiSupport } from "react-icons/bi";
 import { MdDashboard, MdPerson } from "react-icons/md";
+import { useRouter } from "next/navigation";
 
 import { MobileNavigation } from "@/components/home/MobileNavigation";
 import { useUserStore } from "@/store/use-user";
@@ -32,11 +33,13 @@ const resources = [
 ];
 
 export function Navbar() {
+  const router = useRouter();
+
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const { user, setUser } = useUserStore();
+  const { userToken, removeToken } = useUserStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,32 +56,26 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  useEffect(() => {
-    getUserToken();
-  }, []);
-
   const handleLogout = async () => {
     setLoading(true);
     try {
-      if (!user) {
+      if (!userToken) {
         toast.error("No token found. Please login again.");
         return;
       }
 
-      const response = await logoutSession({
-        token: user.token,
-      });
+      const response = await logoutSession();
 
       if (response.error) {
-        toast.error(response.error);
+        toast.error(response.error || "An error occurred.");
       } else {
-        setUser(null);
         toast.success("Logged out!");
       }
     } catch (err) {
-      toast.error("Failed to log out user.");
+      toast.error(err.message || "Failed to log out user.");
       console.log("Error logging out user:", err);
     } finally {
+      removeToken();
       setLoading(false);
       router.push("/");
     }
@@ -103,13 +100,19 @@ export function Navbar() {
         </Link>
 
         <div className="md:hidden">
-          <MobileNavigation resources={resources} />
+          <MobileNavigation
+            resources={resources}
+            handleLogout={handleLogout}
+            userToken={userToken}
+            loading={loading}
+          />
         </div>
         <div className="hidden md:block">
           <div className="flex items-center gap-x-4">
             {resources.map((item, index) =>
               item.name === "Logout" ? (
                 <button
+                  key={index}
                   onClick={handleLogout}
                   disabled={loading}
                   className="font-semibold rounded-lg p-2 hover:bg-Plum/30"

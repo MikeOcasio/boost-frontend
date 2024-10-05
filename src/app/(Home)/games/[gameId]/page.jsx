@@ -61,7 +61,7 @@ const GamePage = ({ params }) => {
     if (!game) return;
 
     const platform_obj = game?.platforms.find(
-      (platform) => platform.id === selectedPlatform
+      (platform) => platform.id === Number(selectedPlatform)
     );
 
     const product = {
@@ -129,20 +129,22 @@ const GamePage = ({ params }) => {
                   quality={100}
                   width={200}
                   height={200}
-                  className="h-full w-full max-w-[200px] object-contain mx-auto"
+                  className="w-full max-w-[200px] object-contain mx-auto rounded-md"
                 />
               </div>
 
               <div className="relative z-10 flex flex-col gap-4">
-                <p className="text-xs -mb-4">{game.category.name}</p>
+                <p className="text-xs -mb-4 font-semibold">
+                  {game.category.name}
+                </p>
 
                 <h3 className="text-2xl font-bold">{game.name}</h3>
-                <p className="text-lg text-gray-300">{game.tag_line}</p>
+                <p className="text-lg text-white/80">{game.tag_line}</p>
                 <p className="text-sm font-medium max-w-2xl">
                   {game.description}
                 </p>
 
-                <ul role="list" className="space-y-3">
+                <ul role="list" className="space-y-2">
                   {game.features.map((feature) => (
                     <li key={feature} className="flex gap-x-3">
                       <CheckIcon
@@ -236,22 +238,20 @@ const GamePage = ({ params }) => {
               </div>
             </div>
 
-            <hr className="border-white/10 w-full" />
-
             {/* game badges */}
             <div className="flex flex-col gap-y-12">
               <Badges
                 categoryId={game.category_id}
                 primary_color={game.primary_color}
                 secondary_color={game.secondary_color}
+                currentGameId={game.id}
               />
-
-              <hr className="border-white/10 w-full" />
 
               <Badges
                 attributeId={game.product_attribute_category_id}
                 primary_color={game.primary_color}
                 secondary_color={game.secondary_color}
+                currentGameId={game.id}
               />
             </div>
           </div>
