@@ -13,7 +13,8 @@ import COD from "@/images/photos/codLogo.png";
 export const games = [
   {
     name: "Destiny 2",
-    id: "game-destiny-2",
+    id: 1,
+    slug: "game-destiny-2",
     href: "#",
     isActive: false,
     mostPopular: true,
@@ -33,7 +34,8 @@ export const games = [
   },
   {
     name: "Apex Legends",
-    id: "game-apex-legends",
+    id: 2,
+    slug: "game-apex-legends",
     href: "#",
     isActive: false,
     mostPopular: true,
@@ -53,7 +55,8 @@ export const games = [
   },
   {
     name: "Call of Duty",
-    id: "game-call-of-duty",
+    id: 3,
+    slug: "game-call-of-duty",
     href: "#",
     isActive: false,
     mostPopular: true,

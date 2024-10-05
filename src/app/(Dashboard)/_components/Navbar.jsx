@@ -4,34 +4,42 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
-import { BiPowerOff, BiReceipt, BiSupport } from "react-icons/bi";
+import { BiLoader, BiPowerOff, BiReceipt, BiSupport } from "react-icons/bi";
 import { MdDashboard, MdPerson } from "react-icons/md";
+import { useRouter } from "next/navigation";
 
 import { MobileNavigation } from "@/components/home/MobileNavigation";
+import { useUserStore } from "@/store/use-user";
+import { logoutSession } from "@/lib/actions";
 
 const resources = [
   {
     name: "Dashboard",
     href: "/dashboard",
-    icon: <MdDashboard size={32} />,
+    icon: <MdDashboard size={28} />,
   },
   {
     name: "Account",
     href: "/dashboard/account",
-    icon: <MdPerson size={32} />,
+    icon: <MdPerson size={28} />,
   },
   {
     name: "Orders",
     href: "/dashboard/orders",
-    icon: <BiReceipt size={32} />,
+    icon: <BiReceipt size={28} />,
   },
-  { name: "Support", href: "/support", icon: <BiSupport size={32} /> },
-  { name: "Logout", href: "/logout", icon: <BiPowerOff size={32} /> },
+  { name: "Support", href: "/support", icon: <BiSupport size={28} /> },
+  { name: "Logout", href: "/logout", icon: <BiPowerOff size={28} /> },
 ];
 
 export function Navbar() {
+  const router = useRouter();
+
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const { userToken, removeToken } = useUserStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,6 +55,31 @@ export function Navbar() {
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
+
+  const handleLogout = async () => {
+    setLoading(true);
+    try {
+      if (!userToken) {
+        toast.error("No token found. Please login again.");
+        return;
+      }
+
+      const response = await logoutSession();
+
+      if (response.error) {
+        toast.error(response.error || "An error occurred.");
+      } else {
+        toast.success("Logged out!");
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to log out user.");
+      console.log("Error logging out user:", err);
+    } finally {
+      removeToken();
+      setLoading(false);
+      router.push("/");
+    }
+  };
 
   return (
     <nav
@@ -67,21 +100,41 @@ export function Navbar() {
         </Link>
 
         <div className="md:hidden">
-          <MobileNavigation resources={resources} />
+          <MobileNavigation
+            resources={resources}
+            handleLogout={handleLogout}
+            userToken={userToken}
+            loading={loading}
+          />
         </div>
         <div className="hidden md:block">
           <div className="flex items-center gap-x-4">
-            {resources.map((item, index) => (
-              <Link
-                href={item.href}
-                className="text-lg font-semibold"
-                key={index}
-              >
-                <div className="group relative flex items-center gap-x-2 rounded-lg p-2 hover:bg-Plum/30">
-                  {item.name}
-                </div>
-              </Link>
-            ))}
+            {resources.map((item, index) =>
+              item.name === "Logout" ? (
+                <button
+                  key={index}
+                  onClick={handleLogout}
+                  disabled={loading}
+                  className="font-semibold rounded-lg p-2 hover:bg-Plum/30"
+                >
+                  {loading ? (
+                    <BiLoader className="h-6 w-6 text-white animate-spin" />
+                  ) : (
+                    item.icon
+                  )}
+                </button>
+              ) : (
+                <Link
+                  href={item.href}
+                  className="text-lg font-semibold"
+                  key={index}
+                >
+                  <div className="group relative flex items-center gap-x-2 rounded-lg p-2 hover:bg-Plum/30">
+                    {item.name}
+                  </div>
+                </Link>
+              )
+            )}
           </div>
         </div>
       </div>

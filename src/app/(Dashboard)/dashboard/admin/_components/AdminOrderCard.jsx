@@ -1,35 +1,19 @@
-"use client";
-
 import Image from "next/image";
-import React, { useState } from "react";
-import { FaExternalLinkAlt } from "react-icons/fa";
-import { OrderDialog } from "./OrderDialog";
+import React from "react";
+import { BiPencil } from "react-icons/bi";
 
-const OrderCard = ({ key, order }) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  const onClose = () => {
-    setDialogOpen(false);
-  };
-
+export const AdminOrderCard = ({ order, key }) => {
   return (
     <div
       key={key}
       className="space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20"
     >
-      <div className="flex justify-between items-center gap-2 flex-wrap-reverse">
+      <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Order #{order.order_id}</h3>
-
-        <button
-          onClick={() => setDialogOpen(true)}
-          className="p-2 rounded-lg hover:bg-white/10"
-        >
-          <FaExternalLinkAlt className="h-5 w-5" />
-        </button>
+        <BiPencil className="h-8 w-8 hover:bg-white/10 rounded-lg p-2" />
       </div>
 
-      {/* Product Info */}
-      <div className="flex flex-col gap-1 w-full">
+      <div className="flex flex-col gap-1">
         {order.product.map((product, index) => (
           <div
             key={index}
@@ -39,8 +23,8 @@ const OrderCard = ({ key, order }) => {
               <Image
                 src={product.image_url}
                 alt={product.product_name}
-                height={70}
-                width={70}
+                height={60}
+                width={60}
                 unoptimized
                 className="rounded-md object-contain bg-white/10 p-2"
               />
@@ -84,18 +68,14 @@ const OrderCard = ({ key, order }) => {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-4 justify-between items-center">
+        <div className="flex flex-wrap gap-4 justify-between">
           {/* Date */}
           <p className="text-sm text-gray-300">Order Date: {order.date}</p>
 
           {/* totol_price */}
           <p className="text-lg">Total Price: ${order.total_price}</p>
         </div>
-
-        <OrderDialog dialogOpen={dialogOpen} onClose={onClose} order={order} />
       </div>
     </div>
   );
 };
-
-export default OrderCard;
