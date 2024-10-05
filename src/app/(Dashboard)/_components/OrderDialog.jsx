@@ -78,9 +78,9 @@ export const OrderDialog = ({ dialogOpen, onClose, order }) => {
             {/* Product Info */}
             <div className="flex flex-col gap-1 w-full">
               {order.product.map((product, index) => (
-                <Link href={`/games/${product.product_id}`} target="_blank">
+                <Link  key={index} href={`/games/${product.product_id}`} target="_blank">
                   <div
-                    key={index}
+                   
                     className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
                   >
                     <div className="flex flex-wrap items-center gap-x-2">

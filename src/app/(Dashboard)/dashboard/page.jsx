@@ -1,21 +1,33 @@
 "use client";
 
+import Link from "next/link";
+import { BiLoader } from "react-icons/bi";
+
 import { orders } from "@/lib/data";
 import OrderCard from "../_components/OrderCard";
-import Link from "next/link";
 import AdminTabs from "../_components/AdminTabs";
+import { useUserStore } from "@/store/use-user";
 
 const UserDashboard = () => {
-  const user = { name: "Nikhil", isAdmin: true };
+  const { user } = useUserStore();
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        User details loading, please be patient...
+        <BiLoader className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <h2 className="text-center text-lg font-semibold">
-        Welcome, {user.name}
+        Welcome, {user?.first_name} {user?.last_name}
       </h2>
 
       {/* Admin tab*/}
-      {user.isAdmin && <AdminTabs />}
+      {(user.role === "admin" || user.role === "dev") && <AdminTabs />}
 
       {/* Recent Orders */}
       <div className="flex flex-col gap-y-4">

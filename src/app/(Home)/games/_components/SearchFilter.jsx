@@ -141,7 +141,13 @@ export const SearchFilter = ({ filter, setFilter }) => {
             <select
               value={filter.platform}
               onChange={(e) =>
-                setFilter((prev) => ({ ...prev, platform: e.target.value }))
+                setFilter((prev) => ({
+                  ...prev,
+                  platform: e.target.value,
+                  platformName: platforms.find(
+                    (platform) => platform.id === Number(e.target.value)
+                  )?.name,
+                }))
               }
               className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
             >
@@ -164,7 +170,13 @@ export const SearchFilter = ({ filter, setFilter }) => {
             <select
               value={filter.category}
               onChange={(e) =>
-                setFilter((prev) => ({ ...prev, category: e.target.value }))
+                setFilter((prev) => ({
+                  ...prev,
+                  category: e.target.value,
+                  categoryName: categories.find(
+                    (category) => category.id === Number(e.target.value)
+                  )?.name,
+                }))
               }
               className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
             >
@@ -186,7 +198,13 @@ export const SearchFilter = ({ filter, setFilter }) => {
             <select
               value={filter.attribute}
               onChange={(e) =>
-                setFilter((prev) => ({ ...prev, attribute: e.target.value }))
+                setFilter((prev) => ({
+                  ...prev,
+                  attribute: e.target.value,
+                  attributeName: attribute.find(
+                    (attr) => attr.id === Number(e.target.value)
+                  )?.name,
+                }))
               }
               className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
             >

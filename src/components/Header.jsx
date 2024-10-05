@@ -38,14 +38,11 @@ export function Header() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const { user, getUserToken, setUser } = useUserStore();
+  const { userToken, removeToken } = useUserStore();
 
   useEffect(() => {
-    getUserToken();
-  }, []);
-
-  useEffect(() => {
-    if (user) {
+    // Adjust navbar resources based on session token
+    if (userToken) {
       setResources([
         ...resourcesData,
         {
@@ -64,7 +61,7 @@ export function Header() {
         },
       ]);
     }
-  }, [user]);
+  }, [userToken]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -81,32 +78,26 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  useEffect(() => {
-    getUserToken();
-  }, []);
-
   const handleLogout = async () => {
     setLoading(true);
     try {
-      if (!user) {
+      if (!userToken) {
         toast.error("No token found. Please login again.");
         return;
       }
 
-      const response = await logoutSession({
-        token: user.token,
-      });
+      const response = await logoutSession();
 
       if (response.error) {
         toast.error(response.error);
       } else {
-        setUser(null);
         toast.success("Logged out!");
       }
     } catch (err) {
       toast.error("Failed to log out user.");
       console.log("Error logging out user:", err);
     } finally {
+      removeToken();
       setLoading(false);
       router.push("/");
     }
@@ -133,7 +124,7 @@ export function Header() {
         <div className="md:hidden">
           <MobileNavigation
             resources={resources}
-            user={user}
+            userToken={userToken}
             handleLogout={handleLogout}
             loading={loading}
           />
@@ -152,7 +143,7 @@ export function Header() {
             </Link>
           ))}
 
-          {user && (
+          {userToken && (
             <button
               onClick={handleLogout}
               disabled={loading}

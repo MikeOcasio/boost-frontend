@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { BiLoader } from "react-icons/bi";
 import toast from "react-hot-toast";
 
-import { fetchCurrentUser, loginUser } from "@/lib/actions";
+import { loginUser } from "@/lib/actions";
 import { useUserStore } from "@/store/use-user";
 
 export default function Login() {
@@ -20,31 +20,26 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { user, getUserToken, setUser } = useUserStore();
+  const { userToken, setUserToken } = useUserStore();
 
   useEffect(() => {
-    getUserToken();
-  }, []);
-
-  useEffect(() => {
-    if (user) {
+    if (userToken) {
       router.push("/");
     }
-  }, [user]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setLoading(true);
+
     try {
       const response = await loginUser(email, password);
-
-      console.log("response", response);
 
       if (response.error) {
         toast.error(response.error);
       } else {
-        setUser(response.token);
+        setUserToken(response.token);
+
         toast.success("Login successful!");
         router.push("/");
       }
@@ -53,22 +48,6 @@ export default function Login() {
       toast.error(error.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCurrentUser = async () => {
-    try {
-      if (!user) {
-        toast.error("No token found. Please login again.");
-        return;
-      }
-
-      const response = await fetchCurrentUser(user);
-
-      console.log("response", response);
-    } catch (error) {
-      console.log("Error fetching current user:", error.message);
-      toast.error(error.message);
     }
   };
 
@@ -139,8 +118,6 @@ export default function Login() {
             LOGIN
           </button>
         </form>
-
-        <button onClick={handleCurrentUser}>call</button>
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Not a member?{" "}

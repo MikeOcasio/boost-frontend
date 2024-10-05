@@ -80,8 +80,7 @@ const AllUsers = () => {
         ) : (
           !loading &&
           !error &&
-          users &&
-          [...users, ...users]?.map((user, index) => (
+          users?.map((user, index) => (
             <button
               key={index}
               onClick={() => editUser(user)}

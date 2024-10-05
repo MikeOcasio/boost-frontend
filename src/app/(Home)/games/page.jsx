@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import GameCard from "@/components/GameCard";
-import { fetchAllGames } from "@/lib/actions";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
+
+import GameCard from "@/components/GameCard";
+import { fetchAllGames } from "@/lib/actions";
 import { SearchFilter } from "./_components/SearchFilter";
+import { FilterButton } from "@/components/FilterButton";
 
 const GamesPage = () => {
   const [games, setGames] = useState([]);
@@ -21,6 +23,9 @@ const GamesPage = () => {
     category: "",
     platform: "",
     attribute: "",
+    platformName: "",
+    categoryName: "",
+    attributeName: "",
   });
 
   const loadGames = async () => {
@@ -96,6 +101,46 @@ const GamesPage = () => {
           />
 
           <SearchFilter filter={filter} setFilter={setFilter} />
+
+          <div className="flex items-center gap-2 w-full flex-wrap">
+            {/* show applied filters */}
+            {Object.keys(filter).length > 0 && (
+              <div className="flex items-center gap-2 flex-wrap">
+                {filter.mostPopular && (
+                  <FilterButton
+                    label="Most Popular"
+                    onRemove={() =>
+                      setFilter({ ...filter, mostPopular: false })
+                    }
+                  />
+                )}
+                {filter.active && (
+                  <FilterButton
+                    label="Active"
+                    onRemove={() => setFilter({ ...filter, active: false })}
+                  />
+                )}
+                {filter.category && (
+                  <FilterButton
+                    label={filter.categoryName}
+                    onRemove={() => setFilter({ ...filter, category: "" })}
+                  />
+                )}
+                {filter.platform && (
+                  <FilterButton
+                    label={filter.platformName}
+                    onRemove={() => setFilter({ ...filter, platform: "" })}
+                  />
+                )}
+                {filter.attribute && (
+                  <FilterButton
+                    label={filter.attributeName}
+                    onRemove={() => setFilter({ ...filter, attribute: "" })}
+                  />
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
