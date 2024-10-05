@@ -33,9 +33,9 @@ const GameCard = ({ game }) => {
 
         <div className="flex items-center gap-2 flex-wrap w-full text-xs -mt-2">
           <span className="bg-white/10 px-2 rounded-md flex-1 text-center">
-            {game.category.name}
+            {game.category?.name}
           </span>
-          {game.platforms.map((platform) => (
+          {game.platforms?.map((platform) => (
             <p
               key={platform.id}
               className="bg-black/20 px-2 rounded-md flex-1 text-center"

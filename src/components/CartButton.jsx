@@ -66,7 +66,7 @@ export const CartButton = ({ mobileNav }) => {
 
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-sm px-2 bg-white/10 rounded-md">
-                        Platform: {item.platform?.name}
+                        {item.platform?.name}
                       </p>
                     </div>
                   </div>
