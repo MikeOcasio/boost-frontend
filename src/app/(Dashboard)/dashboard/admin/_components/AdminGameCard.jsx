@@ -24,7 +24,13 @@ export const AdminGameCard = ({ game }) => {
       )}
 
       <div className="flex justify-between items-center flex-wrap-reverse">
-        <h3 className="text-lg font-semibold">{game.name}</h3>
+        <div className="text-xs font-semibold">
+          <span>{game.category.name} / </span>
+          <span>{game.category.description} | </span>
+          <span>
+            {game.platforms.map((platform) => platform.name).join(", ")}
+          </span>
+        </div>
         <Link href={`/dashboard/admin/allgames/${game.id}`}>
           <button className="flex items-center gap-2 px-3 py-2 transition-all hover:bg-white/10 rounded-lg">
             <BiPencil />
@@ -47,7 +53,8 @@ export const AdminGameCard = ({ game }) => {
         )}
 
         <div className="flex-col flex gap-2 flex-1">
-          <p className="text-lg break-all">{game.tag_line}</p>
+          <p className="text-lg font-semibold">{game.name}</p>
+          <p className="text-sm break-all">{game.tag_line}</p>
 
           {/* badge */}
           <div className="flex gap-2 items-center text-xs flex-wrap">
