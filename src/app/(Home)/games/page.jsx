@@ -12,7 +12,7 @@ import { FilterButton } from "@/components/FilterButton";
 
 const GamesPage = () => {
   const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Search and filter states
@@ -76,8 +76,11 @@ const GamesPage = () => {
 
   return (
     <div className="mt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
+      {/* Background */}
+      <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
+
       <h2 className="text-center text-4xl font-title text-white sm:text-5xl dark:text-white">
-        All Games
+        GAMES
       </h2>
 
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
@@ -90,67 +93,93 @@ const GamesPage = () => {
       )}
 
       {/* Search bar */}
-      {!loading && !error && filteredGames && (
-        <div className="flex flex-wrap items-center gap-4">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search games..."
-            className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
-          />
+      {!loading && !error && games.length < 1 ? (
+        <p className="w-full">No games found!</p>
+      ) : (
+        games.length > 0 && (
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center gap-4">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search games..."
+                className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+              />
 
-          <SearchFilter filter={filter} setFilter={setFilter} />
+              <SearchFilter filter={filter} setFilter={setFilter} />
 
-          <div className="flex items-center gap-2 w-full flex-wrap">
-            {/* show applied filters */}
-            {Object.keys(filter).length > 0 && (
-              <div className="flex items-center gap-2 flex-wrap">
-                {filter.mostPopular && (
-                  <FilterButton
-                    label="Most Popular"
-                    onRemove={() =>
-                      setFilter({ ...filter, mostPopular: false })
-                    }
-                  />
-                )}
-                {filter.active && (
-                  <FilterButton
-                    label="Active"
-                    onRemove={() => setFilter({ ...filter, active: false })}
-                  />
-                )}
-                {filter.category && (
-                  <FilterButton
-                    label={filter.categoryName}
-                    onRemove={() => setFilter({ ...filter, category: "" })}
-                  />
-                )}
-                {filter.platform && (
-                  <FilterButton
-                    label={filter.platformName}
-                    onRemove={() => setFilter({ ...filter, platform: "" })}
-                  />
-                )}
-                {filter.attribute && (
-                  <FilterButton
-                    label={filter.attributeName}
-                    onRemove={() => setFilter({ ...filter, attribute: "" })}
-                  />
+              <div className="flex items-center gap-2 w-full flex-wrap">
+                {/* show applied filters */}
+                {Object.keys(filter).length > 0 && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {filter.mostPopular && (
+                      <FilterButton
+                        label="Most Popular"
+                        onRemove={() =>
+                          setFilter({ ...filter, mostPopular: false })
+                        }
+                      />
+                    )}
+                    {filter.active && (
+                      <FilterButton
+                        label="Active"
+                        onRemove={() => setFilter({ ...filter, active: false })}
+                      />
+                    )}
+                    {filter.category && (
+                      <FilterButton
+                        label={filter.categoryName}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            category: "",
+                            categoryName: "",
+                          })
+                        }
+                      />
+                    )}
+                    {filter.platform && (
+                      <FilterButton
+                        label={filter.platformName}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            platform: "",
+                            platformName: "",
+                          })
+                        }
+                      />
+                    )}
+                    {filter.attribute && (
+                      <FilterButton
+                        label={filter.attributeName}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            attribute: "",
+                            attributeName: "",
+                          })
+                        }
+                      />
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
-        </div>
-      )}
+            </div>
 
-      <div className="grid grid-cols-1 gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
-        {!loading && !error && filteredGames.length < 1 ? (
-          <p className="text-center w-full">No games match your search!</p>
-        ) : (
-          filteredGames?.map((game) => <GameCard key={game.id} game={game} />)
-        )}
-      </div>
+            <div className="grid grid-cols-1 gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+              {!loading && !error && filteredGames.length < 1 ? (
+                <p className="text-center w-full">No games found!</p>
+              ) : (
+                filteredGames?.map((game) => (
+                  <GameCard key={game.id} game={game} />
+                ))
+              )}
+            </div>
+          </div>
+        )
+      )}
     </div>
   );
 };

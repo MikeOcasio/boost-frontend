@@ -37,10 +37,12 @@ export function Header() {
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const { userToken, removeToken } = useUserStore();
 
   useEffect(() => {
+    setMounted(true);
     // Adjust navbar resources based on session token
     if (userToken) {
       setResources([
@@ -143,7 +145,7 @@ export function Header() {
             </Link>
           ))}
 
-          {userToken && (
+          {mounted && userToken && (
             <button
               onClick={handleLogout}
               disabled={loading}

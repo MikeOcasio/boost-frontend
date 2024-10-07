@@ -631,3 +631,27 @@ export const setCookie = (value) => {
     secure: true,
   });
 };
+
+// get all skillmasters
+export const fetchAllSkillmasters = async () => {
+  try {
+    const { data } = await axios.get(`${apiUrl}/api/users/skillmasters`);
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch all skillmasters. Please try again!" };
+  }
+};
+
+// get skillmaster by id
+export const fetchSkillmasterById = async (skillmasterId) => {
+  try {
+    const { data } = await axios.get(
+      `${apiUrl}/api/users/skillmasters/${skillmasterId}`
+    );
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch skillmaster. Please try again!" };
+  }
+};

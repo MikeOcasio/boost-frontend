@@ -144,7 +144,7 @@ const GamePage = ({ params }) => {
                   {game.description}
                 </p>
 
-                <ul role="list" className="space-y-2">
+                <ul role="list" className="space-y-2 ms-2">
                   {game.features.map((feature) => (
                     <li key={feature} className="flex gap-x-3">
                       <CheckIcon

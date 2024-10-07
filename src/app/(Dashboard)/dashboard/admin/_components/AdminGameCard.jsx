@@ -26,7 +26,6 @@ export const AdminGameCard = ({ game }) => {
       <div className="flex justify-between items-center flex-wrap-reverse">
         <div className="text-xs font-semibold">
           <span>{game.category.name} / </span>
-          <span>{game.category.description} | </span>
           <span>
             {game.platforms.map((platform) => platform.name).join(", ")}
           </span>

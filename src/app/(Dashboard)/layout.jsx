@@ -91,7 +91,8 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm" />
+      {/* Background */}
+      <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
       <Navbar />
       <div className="relative z-10 mt-28 min-h-[90vh] max-w-7xl mx-auto p-4">
         {children}

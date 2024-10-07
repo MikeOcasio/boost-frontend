@@ -27,7 +27,7 @@ const GameCard = ({ game }) => {
             quality={100}
             width={200}
             height={200}
-            className="mx-auto w-full max-w-[200px] object-contain rounded-md"
+            className="mx-auto w-fit max-h-[120px] object-contain rounded-md"
           />
         </div>
 
