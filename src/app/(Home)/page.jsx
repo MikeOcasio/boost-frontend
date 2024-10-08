@@ -3,11 +3,10 @@
 import Image from "next/image";
 
 import { ContactForm } from "@/components/home/ContactForm";
-import GameCard from "@/components/GameCard";
 import HomePageAboutArea from "@/components/home/HomePageAboutArea";
 import burningCity from "@/images/cityBurn2.png";
 import purpleLane from "@/images/purpleLane.png";
-import { games } from "@/lib/data";
+import { HomeGameCarousel } from "@/components/home/HomeGameCarousel";
 
 export default function Home() {
   return (
@@ -53,18 +52,11 @@ export default function Home() {
         />
       </div>
 
-      <div className="mx-auto grid grid-cols-1 gap-10 px-4 text-xl lg:max-w-7xl lg:grid-cols-3 lg:-mt-[110vh] -mt-[90vh]">
-        {/* Embla Carousel package for scrollable */}
-
-        {games.map((game) => (
-          <GameCard key={game.id} game={game} />
-        ))}
-      </div>
+      <HomeGameCarousel />
 
       <HomePageAboutArea />
 
-      {/* Prod Changes */}
-      {/* <ContactForm /> */}
+      <ContactForm />
     </div>
   );
 }

@@ -4,14 +4,14 @@ import Link from "next/link";
 export const SkillmasterCard = ({ skillMaster }) => {
   return (
     <div className="flex flex-wrap w-full gap-4 pb-8 border-b hover:border-Gold">
-      <div className="flex max-w-[250px] max-h-[250px] items-center justify-between gap-x-4 bg-white/10 rounded-lg">
+      <div className="flex w-fit max-h-[200px] items-center justify-between gap-x-4 bg-white/10 rounded-lg">
         <Image
-          src={skillMaster.image_url || "/skillmasters/skillmaster2.webp"}
+          src={skillMaster.image_url}
           alt={skillMaster.first_name}
           quality={100}
           width={200}
           height={200}
-          className="mx-auto h-full w-full object-cover rounded-lg"
+          className="mx-auto h-full w-full object-contain rounded-lg"
         />
       </div>
 

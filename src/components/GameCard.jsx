@@ -5,7 +5,10 @@ import Link from "next/link";
 
 const GameCard = ({ game }) => {
   return (
-    <div key={game.id} className="relative inline-block font-medium group">
+    <div
+      key={game.id}
+      className="relative inline-block font-medium group w-full"
+    >
       <span className="absolute inset-0 w-full h-full transition duration-400 ease-out transform md:translate-x-3 md:translate-y-3 translate-x-2 translate-y-2 bg-Gold group-hover:-translate-x-0 group-hover:-translate-y-0 rounded-md" />
       <span className="absolute inset-0 w-full h-full bg-Plum border border-Plum group-hover:bg-Plum/80 rounded-md" />
 
@@ -27,7 +30,7 @@ const GameCard = ({ game }) => {
             quality={100}
             width={200}
             height={200}
-            className="mx-auto w-fit max-h-[120px] object-contain rounded-md"
+            className="mx-auto w-fit max-h-[120px] max-w-[250px] object-contain rounded-md"
           />
         </div>
 
@@ -52,7 +55,7 @@ const GameCard = ({ game }) => {
 
         <ul
           role="list"
-          className="space-y-2 text-sm leading-6 text-white/90 px-2"
+          className="space-y-2 text-sm text-left leading-6 text-white/90 px-2"
         >
           {game.features.map((feature) => (
             <li key={feature} className="flex gap-x-3">

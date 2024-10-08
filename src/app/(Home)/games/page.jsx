@@ -75,7 +75,7 @@ const GamesPage = () => {
     );
 
   return (
-    <div className="mt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
+    <div className="mt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4 overflow-hidden">
       {/* Background */}
       <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
 
@@ -168,7 +168,7 @@ const GamesPage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
               {!loading && !error && filteredGames.length < 1 ? (
                 <p className="text-center w-full">No games found!</p>
               ) : (

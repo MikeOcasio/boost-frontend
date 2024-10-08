@@ -19,7 +19,7 @@ const SkillMastersPage = () => {
       role: "dev",
       created_at: "2024-09-19T19:45:48.040Z",
       updated_at: "2024-10-03T21:42:10.430Z",
-      image_url: null,
+      image_url: "/skillmasters/profile.png",
       platforms: [{ id: 5 }, { id: 8, name: "Switch" }],
       gamesIds: [1, 23],
       about:
@@ -33,7 +33,7 @@ const SkillMastersPage = () => {
       role: "dev",
       created_at: "2024-09-19T19:45:48.040Z",
       updated_at: "2024-10-03T21:42:10.430Z",
-      image_url: null,
+      image_url: "/skillmasters/profile.png",
       platforms: [
         { id: 5, name: "PC" },
         { id: 6, name: "PlayStation" },
