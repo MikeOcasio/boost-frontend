@@ -21,7 +21,14 @@ const SkillMastersPage = () => {
       updated_at: "2024-10-03T21:42:10.430Z",
       image_url: "/skillmasters/profile.png",
       platforms: [{ id: 5 }, { id: 8, name: "Switch" }],
-      gamesIds: [1, 23],
+      perv_orders: [1, 2],
+      prev_games: [
+        {
+          product_id: 1,
+          order_id: 1,
+        },
+      ],
+      is_available: true,
       about:
         "I am a skill master and I love to help people learn new skills and improve their existing ones.",
     },
@@ -146,74 +153,76 @@ const SkillMastersPage = () => {
       )}
 
       {/* Search and Filters */}
-      {!loading && !error && skillMasters.length < 1 ? (
-        <p className="w-full">No skill masters found!</p>
-      ) : (
-        skillMasters.length > 0 && (
-          <div className="space-y-6">
-            <div className="flex flex-wrap items-center gap-4">
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search skill masters..."
-                className="flex-1 p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
-              />
+      {!loading &&
+        !error &&
+        (skillMasters.length < 1 ? (
+          <p className="w-full">No skill masters found!</p>
+        ) : (
+          skillMasters.length > 0 && (
+            <div className="space-y-6">
+              <div className="flex flex-wrap items-center gap-4">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search skill masters..."
+                  className="flex-1 p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+                />
 
-              <SkillmasterFilter filter={filter} setFilter={setFilter} />
+                <SkillmasterFilter filter={filter} setFilter={setFilter} />
 
-              <div className="flex items-center gap-2 w-full flex-wrap">
-                {/* Show applied filters */}
-                {Object.keys(filter).length > 0 && (
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {filter.platformName && (
-                      <FilterButton
-                        label={filter.platformName}
-                        onRemove={() =>
-                          setFilter({
-                            ...filter,
-                            platform: "",
-                            platformName: "",
-                          })
-                        }
-                      />
-                    )}
-                    {filter.categoryName && (
-                      <FilterButton
-                        label={filter.categoryName}
-                        onRemove={() =>
-                          setFilter({
-                            ...filter,
-                            category: "",
-                            categoryName: "",
-                          })
-                        }
-                      />
-                    )}
+                <div className="flex items-center gap-2 w-full flex-wrap">
+                  {/* Show applied filters */}
+                  {Object.keys(filter).length > 0 && (
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {filter.platformName && (
+                        <FilterButton
+                          label={filter.platformName}
+                          onRemove={() =>
+                            setFilter({
+                              ...filter,
+                              platform: "",
+                              platformName: "",
+                            })
+                          }
+                        />
+                      )}
+                      {filter.categoryName && (
+                        <FilterButton
+                          label={filter.categoryName}
+                          onRemove={() =>
+                            setFilter({
+                              ...filter,
+                              category: "",
+                              categoryName: "",
+                            })
+                          }
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Skill Masters List */}
+              <div className="space-y-6">
+                {filteredSkillmasters.length === 0 && (
+                  <div className="text-center text-sm text-gray-500">
+                    No skill masters found
                   </div>
                 )}
+
+                {filteredSkillmasters.length > 0 &&
+                  filteredSkillmasters.map((skillMaster) => (
+                    <SkillmasterCard
+                      key={skillMaster.id}
+                      skillMaster={skillMaster}
+                    />
+                  ))}
               </div>
             </div>
-
-            {/* Skill Masters List */}
-            <div className="space-y-6">
-              {filteredSkillmasters.length === 0 && (
-                <div className="text-center text-sm text-gray-500">
-                  No skill masters found
-                </div>
-              )}
-
-              {filteredSkillmasters.length > 0 &&
-                filteredSkillmasters.map((skillMaster) => (
-                  <SkillmasterCard
-                    key={skillMaster.id}
-                    skillMaster={skillMaster}
-                  />
-                ))}
-            </div>
-          </div>
-        )
-      )}
+          )
+        ))}
     </div>
   );
 };

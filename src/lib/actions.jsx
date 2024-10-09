@@ -42,7 +42,7 @@ export const addCategory = async (categoryData) => {
   // }
 
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.post(
       `${apiUrl}/api/categories`,
@@ -68,7 +68,7 @@ export const addCategory = async (categoryData) => {
 // update category
 export const updateCategory = async (categoryData) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.put(
       `${apiUrl}/api/categories/${categoryData.id}`,
@@ -94,7 +94,7 @@ export const updateCategory = async (categoryData) => {
 // delete category
 export const deleteCategory = async (categoryId) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.delete(
       `${apiUrl}/api/categories/${categoryId}`,
@@ -128,7 +128,7 @@ export const fetchAttribute = async () => {
 // ADD ATTRIBUTE
 export const addAttribute = async (attributeData) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.post(
       `${apiUrl}/api/product_attribute_categories`,
@@ -150,7 +150,7 @@ export const addAttribute = async (attributeData) => {
 // update attribute
 export const updateAttribute = async (attributeData) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.put(
       `${apiUrl}/api/product_attribute_categories/${attributeData.id}`,
@@ -172,7 +172,7 @@ export const updateAttribute = async (attributeData) => {
 // delete attribute
 export const deleteAttribute = async (attributeId) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.delete(
       `${apiUrl}/api/product_attribute_categories/${attributeId}`,
@@ -215,7 +215,7 @@ export const fetchGameById = async (gameId) => {
 // add game
 export const addGame = async (gameData) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.post(
       `${apiUrl}/api/products`,
@@ -254,7 +254,7 @@ export const addGame = async (gameData) => {
 // update game
 export const updateGame = async (gameData, gameId) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.put(
       `${apiUrl}/api/products/${gameId}`,
@@ -293,7 +293,7 @@ export const updateGame = async (gameData, gameId) => {
 // delete game
 export const deleteGame = async (gameId) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.delete(`${apiUrl}/api/products/${gameId}`, {
       headers: { "X-CSRF-Token": sessionToken },
@@ -325,7 +325,7 @@ export const fetchPlatforms = async () => {
 // add platform
 export const addPlatform = async (platformData) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.post(
       `${apiUrl}/api/platforms`,
@@ -347,7 +347,7 @@ export const addPlatform = async (platformData) => {
 // update platform
 export const updatePlatform = async (platformData) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.put(
       `${apiUrl}/api/platforms/${platformData.id}`,
@@ -369,7 +369,7 @@ export const updatePlatform = async (platformData) => {
 // delete platform
 export const deletePlatform = async (platformId) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.delete(
       `${apiUrl}/api/platforms/${platformId}`,
@@ -388,11 +388,10 @@ export const deletePlatform = async (platformId) => {
 };
 
 // login user
-export const loginUser = async (email, password) => {
+export const loginUser = async ({ email, password }) => {
   try {
-    const { data } = await axios.post(`${apiUrl}/api/login`, {
-      email,
-      password,
+    const { data } = await axios.post(`${apiUrl}/users/sign_in`, {
+      user: { email, password },
     });
 
     const { token } = data;
@@ -417,19 +416,18 @@ export const fetchCurrentUser = async () => {
   try {
     const sessionToken = await getSessionToken();
 
-    console.log("sessionToken from actions", sessionToken);
-
     if (!sessionToken) {
       return { error: "No token found. Please login again." };
     }
 
-    const { data } = await axios.get(`${apiUrl}/api/current_user`, {
-      headers: {
-        Authorization: `Bearer ${sessionToken}`,
-      },
-    });
-
-    console.log("data", data);
+    const { data } = await axios.get(
+      `${apiUrl}/users/member-data/signed_in_user`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
 
     return data;
   } catch (error) {
@@ -454,31 +452,28 @@ export const fetchAllUsers = async () => {
   }
 };
 
-// get user by id
-export const fetchUserById = async (userId) => {
-  try {
-    const { data } = await axios.get(`${apiUrl}/api/users/${userId}`);
-
-    return data;
-  } catch (error) {
-    return { error: "Failed to fetch user. Please try again!" };
-  }
-};
-
 // update user
-export const updateUser = async (userData) => {
+export const updateUser = async (user) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
-    const response = await axios.put(
-      `${apiUrl}/api/users/${userData.id}`,
+    const response = await axios.patch(
+      `${apiUrl}/api/users/${user.id}`,
       {
-        name: userData.name,
-        description: userData.description,
-        is_active: userData.is_active,
+        user: {
+          first_name: user.first_name,
+          last_name: user.last_name,
+          image_url: user.image,
+        },
       },
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
+
+    console.log("response", response);
 
     return response.data;
   } catch (error) {
@@ -494,7 +489,7 @@ export const updateUser = async (userData) => {
 // delete user
 export const deleteUser = async (userId) => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     const response = await axios.delete(`${apiUrl}/api/users/${userId}`, {
       headers: { "X-CSRF-Token": sessionToken },
@@ -513,20 +508,23 @@ export const deleteUser = async (userId) => {
 
 // create new user
 export const createUser = async ({
-  email,
-  password,
   firstName,
   lastName,
+  email,
+  password,
+  confirmPassword,
   image,
 }) => {
   try {
-    const { data } = await axios.post(`${apiUrl}/api/users/create`, {
-      email: email,
-      password: password,
-      image: image,
-      first_name: firstName,
-      last_name: lastName,
-      role: "customer",
+    const { data } = await axios.post(`${apiUrl}/users`, {
+      user: {
+        email: email,
+        first_name: firstName,
+        last_name: lastName,
+        password: password,
+        password_confirmation: confirmPassword,
+        image_url: image,
+      },
     });
 
     return data;
@@ -548,17 +546,6 @@ export const fetchAllOrders = async () => {
     return data;
   } catch (error) {
     return { error: "Failed to fetch all orders. Please try again!" };
-  }
-};
-
-// fetch skill masters
-export const fetchSkillMasters = async () => {
-  try {
-    const { data } = await axios.get(`${apiUrl}/api/users/skillmasters`);
-
-    return data;
-  } catch (error) {
-    return { error: "Failed to fetch skill masters. Please try again!" };
   }
 };
 
@@ -592,7 +579,7 @@ export const fetchProductByAttribute = async (attributeId) => {
 
 export const logoutSession = async () => {
   try {
-    const sessionToken = getSessionToken();
+    const sessionToken = await getSessionToken();
 
     if (!sessionToken) {
       return { error: "No token found. Please login again." };
@@ -605,7 +592,7 @@ export const logoutSession = async () => {
       secure: true,
     });
 
-    const { data } = await axios.delete(`${apiUrl}/api/logout`, {
+    const { data } = await axios.delete(`${apiUrl}/users/sign_out`, {
       headers: {
         Authorization: `Bearer ${sessionToken}`,
       },
@@ -635,7 +622,7 @@ export const setCookie = (value) => {
 // get all skillmasters
 export const fetchAllSkillmasters = async () => {
   try {
-    const { data } = await axios.get(`${apiUrl}/api/users/skillmasters`);
+    const { data } = await axios.get(`${apiUrl}/users/members/skillmasters`);
 
     return data;
   } catch (error) {
@@ -647,11 +634,66 @@ export const fetchAllSkillmasters = async () => {
 export const fetchSkillmasterById = async (skillmasterId) => {
   try {
     const { data } = await axios.get(
-      `${apiUrl}/api/users/skillmasters/${skillmasterId}`
+      `${apiUrl}/users/members/skillmasters/${skillmasterId}`
     );
 
     return data;
   } catch (error) {
     return { error: "Failed to fetch skillmaster. Please try again!" };
+  }
+};
+
+// Handle Stripe Payment
+export const stripePayment = async ({ token, order }) => {
+  try {
+    // Assume the Stripe amount is in cents
+    const stripeAmount = Math.round(totalPrice * 100);
+
+    const paymentResponse = await axios.post("/api/stripe-payment", {
+      token,
+      amount: stripeAmount,
+    });
+
+    if (paymentResponse.status === 200) {
+      const paymentStatus =
+        paymentResponse.data.status === "succeeded" ? "paid" : "failed";
+
+      // Send order to API
+      await sendOrderData(paymentStatus);
+    }
+  } catch (error) {
+    toast.error("Payment failed. Please try again!");
+  }
+};
+
+// send order data
+const sendOrderData = async (paymentStatus) => {
+  const orderPayload = {
+    order_id: 1, // Generate or get this from backend
+    internal_id: 1, // Generate or get this from backend
+    products: orders.map((order) => ({
+      product_id: order.id,
+      quantity: order.quantity,
+      platform_id: order.platform_id,
+    })),
+    total_price: totalPrice,
+    payment_status: paymentStatus,
+    promotion_id: null, // Add if applicable
+    date: new Date().toISOString().split("T")[0],
+  };
+
+  try {
+    const response = await axios.post("/api/order", orderPayload);
+
+    if (response.status === 201) {
+      toast.success("Order placed successfully!");
+    } else {
+      toast.error("Failed to place order. Please try again!");
+    }
+  } catch (error) {
+    toast.error("Failed to place order. Please try again!");
+  } finally {
+    // Reset the form
+    setTotalPrice(0);
   }
 };

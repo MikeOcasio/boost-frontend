@@ -24,14 +24,16 @@ const GameCard = ({ game }) => {
         )}
 
         <div className="flex h-[150px] items-center justify-between gap-x-4 bg-white/10 rounded-lg">
-          <Image
-            src={game.image}
-            alt={game.name}
-            quality={100}
-            width={200}
-            height={200}
-            className="mx-auto w-fit max-h-[120px] max-w-[250px] object-contain rounded-md"
-          />
+          {game?.image && (
+            <Image
+              src={game.image}
+              alt={game.name}
+              quality={100}
+              width={200}
+              height={200}
+              className="mx-auto w-fit max-h-[120px] max-w-[250px] object-contain rounded-md"
+            />
+          )}
         </div>
 
         <div className="flex items-center gap-2 flex-wrap w-full text-xs -mt-2">

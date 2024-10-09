@@ -1,5 +1,5 @@
+import OrderCard from "@/components/OrderCard";
 import { orders } from "@/lib/data";
-import OrderCard from "../../_components/OrderCard";
 
 const AllOrdersPage = () => {
   return (

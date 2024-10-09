@@ -3,13 +3,15 @@
 import { Field, Input, Label } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { BiLoader, BiUpload } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { IoMdClose } from "react-icons/io";
-import { createUser } from "@/lib/actions";
+
+import { createUser, loginUser } from "@/lib/actions";
+import { useUserStore } from "@/store/use-user";
 
 export default function SignIn() {
   const router = useRouter();
@@ -19,12 +21,42 @@ export default function SignIn() {
   const [image, setImage] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { userToken, setUserToken } = useUserStore();
+
+  useEffect(() => {
+    if (userToken) {
+      router.push("/");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!firstName || !email || !password || !confirmPassword) {
+      toast.error("All fields are required.");
+      return;
+    }
+
+    // Password complexity check: 8 characters, at least one uppercase, one special character
+    const passwordComplexityRegex = /^(?=.*[A-Z])(?=.*[!@#$&*]).{8,}$/;
+    if (!passwordComplexityRegex.test(password)) {
+      toast.error(
+        "Password must be at least 8 characters long, include one uppercase letter, and one special character."
+      );
+      return;
+    }
+
+    // Confirm password check
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -33,16 +65,35 @@ export default function SignIn() {
         lastName,
         email,
         password,
+        confirmPassword,
         image,
       });
 
       console.log("response", response);
 
       if (response.error) {
-        // toast.error(response.error);
         toast.error("Error signing in user!");
       } else {
-        toast.success("Sign in successful!");
+        await authenticateUser();
+      }
+    } catch (error) {
+      console.log("Error logging in user:", error.message);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const authenticateUser = async () => {
+    try {
+      const response = await loginUser({ email, password });
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        setUserToken(response.token);
+
+        toast.success("Login successful!");
         router.push("/");
       }
     } catch (error) {
@@ -93,7 +144,7 @@ export default function SignIn() {
             <div className="flex flex-col gap-2 justify-center w-full">
               <label htmlFor="dropzone-file">Profile Image</label>
               <label
-                for="dropzone-file"
+                htmlFor="dropzone-file"
                 className="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -130,6 +181,7 @@ export default function SignIn() {
                 type="text"
                 placeholder="Jone"
                 autoFocus
+                required
                 className="input-field"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
@@ -155,6 +207,7 @@ export default function SignIn() {
               type="text"
               placeholder="Email"
               className="input-field"
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -168,6 +221,7 @@ export default function SignIn() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 className="input-field w-full"
+                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -178,6 +232,29 @@ export default function SignIn() {
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <BsEyeSlash /> : <BsEye />}
+              </button>
+            </div>
+          </Field>
+
+          {/* confirm password */}
+          <Field className="flex flex-col gap-1 w-full">
+            <Label className="text-sm">Confirm password</Label>
+            <div className="relative">
+              <Input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm password"
+                className="input-field w-full"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+
+              <button
+                type="button"
+                className="absolute right-1 top-1/2 h-7 w-8 p-1.5 rounded-lg hover:bg-white/10 -translate-y-1/2 text-gray-400 hover:text-gray-500 flex items-center justify-center"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <BsEyeSlash /> : <BsEye />}
               </button>
             </div>
           </Field>

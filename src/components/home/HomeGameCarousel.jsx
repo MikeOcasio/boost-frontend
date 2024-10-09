@@ -84,36 +84,42 @@ export const HomeGameCarousel = () => {
         </p>
       )}
 
-      {!loading && !error && data?.length < 1 ? (
-        <p className="w-full">No games found!</p>
-      ) : (
-        data?.length > 0 && (
-          <Carousel
-            autoPlay={true}
-            infiniteLoop={true}
-            emulateTouch={true}
-            onChange={handleChange}
-            interval={3000}
-            showStatus={false}
-            showIndicators={false}
-            centerMode={true}
-            centerSlidePercentage={centerSlidePercentage}
-          >
-            {data.map((game, index) => (
-              <div key={game.id} className="flex justify-center w-full h-full">
+      {!loading &&
+        !error &&
+        (data?.length < 1 ? (
+          <p className="w-full">No games found!</p>
+        ) : (
+          data?.length > 0 && (
+            <Carousel
+              autoPlay={true}
+              infiniteLoop={true}
+              emulateTouch={true}
+              onChange={handleChange}
+              interval={3000}
+              showStatus={false}
+              showIndicators={false}
+              centerMode={true}
+              showThumbs={false} 
+              centerSlidePercentage={centerSlidePercentage}
+            >
+              {data?.map((game, index) => (
                 <div
-                  className={clsx(
-                    "h-full w-full duration-500 ease-in-out scale-90 flex-1",
-                    index === currentIndex && "scale-95"
-                  )}
+                  key={game.id}
+                  className="flex justify-center w-full h-full"
                 >
-                  <GameCard game={game} />
+                  <div
+                    className={clsx(
+                      "h-full w-full duration-500 ease-in-out scale-90 flex-1",
+                      index === currentIndex && "scale-95"
+                    )}
+                  >
+                    <GameCard game={game} />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </Carousel>
-        )
-      )}
+              ))}
+            </Carousel>
+          )
+        ))}
     </div>
   );
 };

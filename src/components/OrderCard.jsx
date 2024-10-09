@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { OrderDialog } from "./OrderDialog";
+import { OrderDialog } from "../app/(Dashboard)/_components/OrderDialog";
 
 const OrderCard = ({ key, order }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -18,7 +18,7 @@ const OrderCard = ({ key, order }) => {
       className="space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20"
     >
       <div className="flex justify-between items-center gap-2 flex-wrap-reverse">
-        <h3 className="text-lg font-semibold">Order #{order.order_id}</h3>
+        <h3 className="text-lg font-semibold">Order #{order?.order_id}</h3>
 
         <button
           onClick={() => setDialogOpen(true)}
@@ -30,7 +30,7 @@ const OrderCard = ({ key, order }) => {
 
       {/* Product Info */}
       <div className="flex flex-col gap-1 w-full">
-        {order.product.map((product, index) => (
+        {order?.product?.map((product, index) => (
           <div
             key={index}
             className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"

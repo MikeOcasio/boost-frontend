@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  fetchPlatforms,
-  fetchSkillMasters,
-  fetchUserById,
-  updateUser,
-} from "@/lib/actions";
+import { fetchCurrentUser, fetchPlatforms, updateUser } from "@/lib/actions";
 import { Field, Input, Label } from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
@@ -13,7 +8,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader, BiPencil, BiUpload } from "react-icons/bi";
 import { BsUpload } from "react-icons/bs";
-import { IoMdClose } from "react-icons/io";
+import { IoMdClose, IoMdPerson } from "react-icons/io";
 import { IoWarning } from "react-icons/io5";
 
 const AccountPage = () => {
@@ -26,7 +21,7 @@ const AccountPage = () => {
 
   const loadUser = async () => {
     try {
-      const result = await fetchUserById(1);
+      const result = await fetchCurrentUser();
       if (result.error) {
         setError(true);
         toast.error(result.error);
@@ -59,12 +54,9 @@ const AccountPage = () => {
     setLoading(true);
     setError(false);
 
-    if (isEditing) {
-      await loadPlatforms();
-    }
-    await loadUser();
-
-    setLoading(false);
+    Promise.all([loadPlatforms(), loadUser()]).then(() => {
+      setLoading(false);
+    });
   };
 
   useEffect(() => {
@@ -78,7 +70,7 @@ const AccountPage = () => {
     setError(false);
 
     try {
-      const result = await updateUser(user.id);
+      const result = await updateUser(user);
 
       if (result.error) {
         setError(true);
@@ -100,8 +92,12 @@ const AccountPage = () => {
       handleUpdateProfile();
     } else {
       setIsEditing(true);
-      loadData();
     }
+  };
+
+  const handleDiscardChanges = () => {
+    setIsEditing(false);
+    loadData();
   };
 
   if (!user) return null;
@@ -112,6 +108,7 @@ const AccountPage = () => {
         <h1 className="text-2xl font-semibold">{user?.first_name}'s Account</h1>
 
         <button
+          type="button"
           onClick={handleEdit}
           className={clsx(
             "flex flex-wrap gap-2 items-center rounded-lg p-2 hover:bg-white/10 border border-white/10",
@@ -143,10 +140,10 @@ const AccountPage = () => {
             {isEditing ? (
               <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
                 <Label className="text-sm">Profile Image</Label>
-                {!user.image ? (
+                {user.image_url ? (
                   <div className="group relative cursor-pointer rounded-lg w-fit mx-auto">
                     <Image
-                      src={user.image || "/logo.svg"}
+                      src={user.image_url}
                       alt="User Image"
                       width={200}
                       height={200}
@@ -203,13 +200,17 @@ const AccountPage = () => {
             ) : (
               <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
                 <Label className="text-sm">Profile Image</Label>
-                <Image
-                  src={user.image || "/logo.svg"}
-                  alt="User Image"
-                  width={150}
-                  height={150}
-                  className="mx-auto rounded-lg object-cover bg-white/10"
-                />
+                {user.image_url ? (
+                  <Image
+                    src={user.image_url}
+                    alt="User Image"
+                    width={150}
+                    height={150}
+                    className="mx-auto rounded-lg object-cover bg-white/10"
+                  />
+                ) : (
+                  <IoMdPerson className="h-28 w-28 bg-white/10 rounded-full p-4 mx-auto" />
+                )}
               </Field>
             )}
 
@@ -308,49 +309,18 @@ const AccountPage = () => {
                 </div>
               </Field>
             )}
-
-            {/* preferred skill masters */}
-            {/* <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-              <Label>Preferred Skill Masters</Label>
-
-              <div className="flex flex-wrap gap-4 items-center">
-                {skillMasters.map((skillMaster) => (
-                  <label
-                    key={skillMaster.id}
-                    className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-wrap flex-1"
-                  >
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4"
-                      value={skillMaster.id}
-                      checked={
-                        user?.preferred_skill_master_ids.includes(
-                          skillMaster.id
-                        ) || false
-                      }
-                      onChange={() => {
-                        setUser({
-                          ...user,
-                          preferred_skill_master_ids:
-                            user.preferred_skill_masters.includes(
-                              skillMaster.id
-                            )
-                              ? user.preferred_skill_master_ids.filter(
-                                  (id) => id !== skillMaster.id
-                                )
-                              : [
-                                  ...user.preferred_skill_master_ids,
-                                  skillMaster.id,
-                                ],
-                        });
-                      }}
-                    />
-                    {skillMaster.name}
-                  </label>
-                ))}
-              </div>
-            </Field> */}
           </div>
+
+          {isEditing && (
+            <button
+              onClick={handleDiscardChanges}
+              disabled={loading}
+              type="button"
+              className="border border-red-500 p-2 px-4 text-red-500 hover:bg-red-500/10 hover:text-white rounded-lg"
+            >
+              Discard Changes
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -7,6 +7,7 @@ import clsx from "clsx";
 import { BiLoader, BiPowerOff, BiReceipt, BiSupport } from "react-icons/bi";
 import { MdDashboard, MdPerson } from "react-icons/md";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 import { MobileNavigation } from "@/components/home/MobileNavigation";
 import { useUserStore } from "@/store/use-user";
@@ -70,6 +71,7 @@ export function Navbar() {
         toast.error(response.error || "An error occurred.");
       } else {
         toast.success("Logged out!");
+        router.push("/");
       }
     } catch (err) {
       toast.error(err.message || "Failed to log out user.");

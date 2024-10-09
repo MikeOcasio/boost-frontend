@@ -33,7 +33,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await loginUser(email, password);
+      const response = await loginUser({email, password});
 
       if (response.error) {
         toast.error(response.error);

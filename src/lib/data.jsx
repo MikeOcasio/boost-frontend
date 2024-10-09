@@ -207,6 +207,8 @@ export const orders = [
         image_url: "/badges/kill.png",
       },
     ],
+    open:true,
+    
     total_price: 100,
     order_status: "Pending",
     payment_status: "paid",

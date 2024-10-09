@@ -14,8 +14,27 @@ const getInitialCart = () => {
   return [];
 };
 
+// Helper function to calculate total price
+const calculateTotalPrice = (cartItems) => {
+  return cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+};
+
+// get total price from localStorage
+const getTotalPrice = () => {
+  if (typeof window !== "undefined") {
+    const storedTotalPrice = localStorage.getItem("totalPrice");
+    return storedTotalPrice ? parseFloat(storedTotalPrice) : 0;
+  }
+  return 0;
+};
+
 export const useCartStore = create((set) => ({
-  // Initialize cart from localStorage
+  totalPrice: getTotalPrice(),
+  setTotalPrice: (totalPrice) => set({ totalPrice }),
+
   cartItems: getInitialCart(),
 
   // Add item to cart (only specific keys)
@@ -44,24 +63,27 @@ export const useCartStore = create((set) => ({
         };
         updatedCart = [...state.cartItems, newItem];
       }
-      // Update localStorage
+
+      // Update localStorage and total price
       updateLocalStorage(updatedCart);
-      return { cartItems: updatedCart };
+      const newTotalPrice = calculateTotalPrice(updatedCart);
+      return { cartItems: updatedCart, totalPrice: newTotalPrice };
     }),
 
   // Remove item from cart
   removeFromCart: (id) =>
     set((state) => {
       const updatedCart = state.cartItems.filter((item) => item.id !== id);
-      // Update localStorage
+      // Update localStorage and total price
       updateLocalStorage(updatedCart);
-      return { cartItems: updatedCart };
+      const newTotalPrice = calculateTotalPrice(updatedCart);
+      return { cartItems: updatedCart, totalPrice: newTotalPrice };
     }),
 
   // Empty cart
   emptyCart: () => {
     updateLocalStorage([]);
-    return { cartItems: [] };
+    return { cartItems: [], totalPrice: 0 };
   },
 
   // Increase item quantity
@@ -70,9 +92,10 @@ export const useCartStore = create((set) => ({
       const updatedCart = state.cartItems.map((item) =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       );
-      // Update localStorage
+      // Update localStorage and total price
       updateLocalStorage(updatedCart);
-      return { cartItems: updatedCart };
+      const newTotalPrice = calculateTotalPrice(updatedCart);
+      return { cartItems: updatedCart, totalPrice: newTotalPrice };
     }),
 
   // Decrease item quantity
@@ -83,8 +106,9 @@ export const useCartStore = create((set) => ({
           item.id === id ? { ...item, quantity: item.quantity - 1 } : item
         )
         .filter((item) => item.quantity > 0); // Remove item if quantity is 0
-      // Update localStorage
+      // Update localStorage and total price
       updateLocalStorage(updatedCart);
-      return { cartItems: updatedCart };
+      const newTotalPrice = calculateTotalPrice(updatedCart);
+      return { cartItems: updatedCart, totalPrice: newTotalPrice };
     }),
 }));

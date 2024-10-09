@@ -10,8 +10,13 @@ import Link from "next/link";
 import Image from "next/image";
 
 export const CartButton = ({ mobileNav }) => {
-  const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart } =
-    useCartStore();
+  const {
+    cartItems,
+    increaseQuantity,
+    decreaseQuantity,
+    removeFromCart,
+    totalPrice,
+  } = useCartStore();
 
   return (
     <Popover>
@@ -107,6 +112,9 @@ export const CartButton = ({ mobileNav }) => {
                 </div>
               </div>
             ))}
+
+            {/* total price */}
+            <p className="text-lg font-semibold text-right">${totalPrice}</p>
 
             <Link href="/checkout">
               <button className="w-full mt-4 p-2 rounded-lg bg-Gold/90">
