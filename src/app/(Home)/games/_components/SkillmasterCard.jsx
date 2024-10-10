@@ -1,18 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
+import { IoMdPerson } from "react-icons/io";
 
 export const SkillmasterCard = ({ skillMaster }) => {
   return (
     <div className="flex flex-wrap w-full pb-8 border-b hover:border-Gold">
-      <div className="flex max-h-[200px] mx-auto bg-white/10 rounded-lg">
-        <Image
-          src={skillMaster.image_url}
-          alt={skillMaster.first_name}
-          quality={100}
-          width={200}
-          height={200}
-          className="mx-auto h-full object-contain rounded-lg"
-        />
+      <div className="flex max-h-[200px] mx-auto bg-white/10 rounded-lg p-2">
+        {skillMaster.image_url ? (
+          <Image
+            src={skillMaster.image_url}
+            alt={skillMaster.first_name}
+            quality={100}
+            width={200}
+            height={200}
+            className="mx-auto h-full object-contain rounded-lg"
+          />
+        ) : (
+          <IoMdPerson className="h-28 w-28 rounded-full mx-auto" />
+        )}
       </div>
 
       <div className="flex min-w-[210px] flex-col gap-2 flex-1 justify-between m-6">

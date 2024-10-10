@@ -11,17 +11,6 @@ export const getSessionToken = async () => {
   return token?.value || null;
 };
 
-// validate csrf token
-const validateToken = async () => {
-  try {
-    const { data } = await axios.get(`${apiUrl}/csrf_token`);
-
-    return data;
-  } catch (error) {
-    return { error: "Failed to validate token. Please try again!" };
-  }
-};
-
 // get categories
 export const fetchCategories = async () => {
   try {
@@ -51,7 +40,11 @@ export const addCategory = async (categoryData) => {
         description: categoryData.description,
         is_active: categoryData.is_active,
       },
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return response.data;
@@ -77,7 +70,11 @@ export const updateCategory = async (categoryData) => {
         description: categoryData.description,
         is_active: categoryData.is_active,
       },
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return response.data;
@@ -98,7 +95,11 @@ export const deleteCategory = async (categoryId) => {
 
     const response = await axios.delete(
       `${apiUrl}/api/categories/${categoryId}`,
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return response.data;
@@ -133,7 +134,11 @@ export const addAttribute = async (attributeData) => {
     const response = await axios.post(
       `${apiUrl}/api/product_attribute_categories`,
       { name: attributeData.name },
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return response.data;
@@ -155,7 +160,11 @@ export const updateAttribute = async (attributeData) => {
     const response = await axios.put(
       `${apiUrl}/api/product_attribute_categories/${attributeData.id}`,
       { name: attributeData.name },
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return response.data;
@@ -176,7 +185,11 @@ export const deleteAttribute = async (attributeId) => {
 
     const response = await axios.delete(
       `${apiUrl}/api/product_attribute_categories/${attributeId}`,
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return response.data;
@@ -237,7 +250,11 @@ export const addGame = async (gameData) => {
         product_attribute_category_id: gameData.product_attribute_category_id,
         platform_ids: gameData.platform_ids,
       },
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return response.data;
@@ -276,7 +293,11 @@ export const updateGame = async (gameData, gameId) => {
         product_attribute_category_id: gameData.product_attribute_category_id,
         platform_ids: gameData.platform_ids,
       },
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return response.data;
@@ -296,7 +317,9 @@ export const deleteGame = async (gameId) => {
     const sessionToken = await getSessionToken();
 
     const response = await axios.delete(`${apiUrl}/api/products/${gameId}`, {
-      headers: { "X-CSRF-Token": sessionToken },
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
     });
 
     return response.data;
@@ -330,7 +353,11 @@ export const addPlatform = async (platformData) => {
     const response = await axios.post(
       `${apiUrl}/api/platforms`,
       { name: platformData.name },
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return response.data;
@@ -352,7 +379,11 @@ export const updatePlatform = async (platformData) => {
     const response = await axios.put(
       `${apiUrl}/api/platforms/${platformData.id}`,
       { name: platformData.name },
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return response.data;
@@ -373,7 +404,11 @@ export const deletePlatform = async (platformId) => {
 
     const response = await axios.delete(
       `${apiUrl}/api/platforms/${platformId}`,
-      { headers: { "X-CSRF-Token": sessionToken } }
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return response.data;
@@ -492,7 +527,9 @@ export const deleteUser = async (userId) => {
     const sessionToken = await getSessionToken();
 
     const response = await axios.delete(`${apiUrl}/api/users/${userId}`, {
-      headers: { "X-CSRF-Token": sessionToken },
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
     });
 
     return response.data;
@@ -622,7 +659,20 @@ export const setCookie = (value) => {
 // get all skillmasters
 export const fetchAllSkillmasters = async () => {
   try {
-    const { data } = await axios.get(`${apiUrl}/users/members/skillmasters`);
+    const sessionToken = await getSessionToken();
+
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const { data } = await axios.get(
+      `${apiUrl}/users/member-data/skillmasters`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
 
     return data;
   } catch (error) {
@@ -633,8 +683,19 @@ export const fetchAllSkillmasters = async () => {
 // get skillmaster by id
 export const fetchSkillmasterById = async (skillmasterId) => {
   try {
+    const sessionToken = await getSessionToken();
+
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
     const { data } = await axios.get(
-      `${apiUrl}/users/members/skillmasters/${skillmasterId}`
+      `${apiUrl}/users/member-data/:id/skillmasters/${skillmasterId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
     );
 
     return data;
