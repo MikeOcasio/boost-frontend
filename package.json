@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "browserslist": "defaults, not ie <= 11",
   "dependencies": {
     "@headlessui/react": "^2.1.8",
     "@heroicons/react": "^2.1.5",

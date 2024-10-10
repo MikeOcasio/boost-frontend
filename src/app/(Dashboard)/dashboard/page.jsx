@@ -7,7 +7,7 @@ import { orders } from "@/lib/data";
 import AdminTabs from "../_components/AdminTabs";
 import { useUserStore } from "@/store/use-user";
 import OrderCard from "@/components/OrderCard";
-import { OrdersGraveyardCard } from "../_components/OrdersGraveyardCard";
+import OrdersGraveyardCard from "../_components/OrdersGraveyardCard";
 
 const UserDashboard = () => {
   const { user } = useUserStore();
@@ -44,11 +44,12 @@ const UserDashboard = () => {
       </div>
 
       <div className="space-y-4">
-        {!(
-          user.role === "admin" ||
+        {(user.role === "admin" ||
           user.role === "dev" ||
-          user.role === "skillmaster"
-        ) && <OrdersGraveyardCard />}
+          user.role === "skillmaster") &&
+          orders.map((order, index) => (
+            <OrdersGraveyardCard key={index} order={order} />
+          ))}
       </div>
 
       {/* Recent Orders */}

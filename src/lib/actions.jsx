@@ -479,7 +479,16 @@ export const fetchCurrentUser = async () => {
 // get all users
 export const fetchAllUsers = async () => {
   try {
-    const { data } = await axios.get(`${apiUrl}/api/users`);
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const { data } = await axios.get(`${apiUrl}/users/member-data`, {
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
+    });
 
     return data;
   } catch (error) {
@@ -491,6 +500,9 @@ export const fetchAllUsers = async () => {
 export const updateUser = async (user) => {
   try {
     const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
 
     const response = await axios.patch(
       `${apiUrl}/api/users/${user.id}`,
@@ -525,6 +537,9 @@ export const updateUser = async (user) => {
 export const deleteUser = async (userId) => {
   try {
     const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
 
     const response = await axios.delete(`${apiUrl}/api/users/${userId}`, {
       headers: {

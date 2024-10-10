@@ -251,7 +251,7 @@ const AccountPage = () => {
             <Field className="flex flex-col gap-1 w-full">
               <Label className="text-sm">Email</Label>
               <Input
-                disabled={!isEditing}
+                disabled
                 type="email"
                 placeholder="john@doe.com"
                 autoFocus
