@@ -114,7 +114,10 @@ export const CartButton = ({ mobileNav }) => {
             ))}
 
             {/* total price */}
-            <p className="text-lg font-semibold text-right">${totalPrice}</p>
+            <div className="flex flex-wrap gap-4 justify-between items-center">
+              <p>Total Price</p>
+              <p className="text-lg font-semibold">${totalPrice}</p>
+            </div>
 
             <Link href="/checkout">
               <button className="w-full mt-4 p-2 rounded-lg bg-Gold/90">

@@ -541,7 +541,7 @@ export const deleteUser = async (userId) => {
       return { error: "No token found. Please login again." };
     }
 
-    const response = await axios.delete(`${apiUrl}/api/users/${userId}`, {
+    const response = await axios.delete(`${apiUrl}/api/users`, {
       headers: {
         Authorization: `Bearer ${sessionToken}`,
       },

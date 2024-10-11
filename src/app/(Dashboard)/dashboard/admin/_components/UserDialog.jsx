@@ -18,12 +18,15 @@ import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
 
 import { createUser, deleteUser, updateUser } from "@/lib/actions";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
   const [user, setUser] = useState(dialogData || getDefaultUser());
   const [loading, setLoading] = useState(false);
 
   const [role, setRole] = useState(["customer", "admin", "skillmaster", "dev"]);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   function getDefaultUser() {
     return {
@@ -31,14 +34,11 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
       first_name: "",
       last_name: "",
       role: "customer",
-      encrypted_data: null,
-      encrypted_symmetric_key: null,
       preferred_skill_master_ids: [],
-      otp_secret: null,
-      consumed_timestep: null,
-      otp_required_for_login: null,
       platforms: [],
       image_url: null,
+      password: null,
+      confirmPassword: null,
     };
   }
 
@@ -53,23 +53,17 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
   // Function to check if the user data is unchanged
   const isDataUnchanged = () => {
     return (
-      user.email === dialogData?.name &&
+      user.email === dialogData?.email &&
       user.first_name === dialogData?.first_name &&
       user.last_name === dialogData?.last_name &&
       user.role === dialogData?.role &&
-      user.encrypted_data === dialogData?.encrypted_data &&
-      user.encrypted_symmetric_key === dialogData?.encrypted_symmetric_key &&
-      user.preferred_skill_master_ids ===
-        dialogData?.preferred_skill_master_ids &&
-      user.otp_secret === dialogData?.otp_secret &&
-      user.consumed_timestep === dialogData?.consumed_timestep &&
-      user.otp_required_for_login === dialogData?.otp_required_for_login &&
-      user.platforms === dialogData?.platforms &&
       user.image_url === dialogData?.image_url
     );
   };
 
   const handleSubmit = async (userData) => {
+    console.log("userData ", userData);
+
     if (userData.id && isDataUnchanged()) {
       toast.error("No changes were made.");
       return;
@@ -82,16 +76,23 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
         const response = await updateUser(userData);
 
         if (response.error) {
-          toast.error(response.error);
+          toast.error(JSON.stringify(response.error));
         } else {
           toast.success("User updated successfully!");
         }
       } else {
         // Add new user
-        const response = await createUser(userData);
+        const response = await createUser({
+          firstName: user.first_name,
+          lastName: user.last_name,
+          email: user.email,
+          password: user.password,
+          confirmPassword: user.confirmPassword,
+          image: user.image_url,
+        });
 
         if (response.error) {
-          toast.error(response.error);
+          toast.error(JSON.stringify(response.error));
         } else {
           toast.success("User added successfully!");
         }
@@ -103,6 +104,8 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
       toast.error(error.message);
     } finally {
       loadUsers();
+      setShowPassword(false);
+      setShowConfirmPassword(false);
       setLoading(false);
     }
   };
@@ -132,12 +135,16 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
       toast.error(error.message);
     } finally {
       loadUsers();
+      setShowPassword(false);
+      setShowConfirmPassword(false);
       setLoading(false);
     }
   };
 
   const handleClosed = () => {
     onClose();
+    setShowPassword(false);
+    setShowConfirmPassword(false);
     setUser(dialogData || getDefaultUser());
   };
 
@@ -264,6 +271,59 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
               </Field>
             </div>
 
+            {/* password & confirm password */}
+            {!user?.id && (
+              <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                <Field className="flex flex-col gap-1 flex-1">
+                  <Label className="text-sm">Password</Label>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      autoFocus
+                      className="input-field"
+                      value={user.password}
+                      onChange={(e) =>
+                        setUser({ ...user, password: e.target.value })
+                      }
+                    />
+
+                    <button
+                      type="button"
+                      className="absolute right-1 top-1/2 h-7 w-8 p-1.5 rounded-lg hover:bg-white/10 -translate-y-1/2 text-gray-400 hover:text-gray-500 flex items-center justify-center"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <BsEyeSlash /> : <BsEye />}
+                    </button>
+                  </div>
+                </Field>
+
+                <Field className="flex flex-col gap-1 flex-1">
+                  <Label className="text-sm">Confirm Password</Label>
+                  <div className="relative">
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm Password"
+                      autoFocus
+                      className="input-field"
+                      value={user.confirmPassword}
+                      onChange={(e) =>
+                        setUser({ ...user, confirmPassword: e.target.value })
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-1 top-1/2 h-7 w-8 p-1.5 rounded-lg hover:bg-white/10 -translate-y-1/2 text-gray-400 hover:text-gray-500 flex items-center justify-center"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                    >
+                      {showConfirmPassword ? <BsEyeSlash /> : <BsEye />}
+                    </button>
+                  </div>
+                </Field>
+              </div>
+            )}
             {/* user image */}
             <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
               <Label className="text-sm">Image</Label>

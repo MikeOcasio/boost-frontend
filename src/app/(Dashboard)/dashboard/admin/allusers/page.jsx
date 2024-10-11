@@ -7,6 +7,7 @@ import { UserDialog } from "../_components/UserDialog";
 import { BiLoader, BiPencil, BiPlus } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import Image from "next/image";
+import { IoMdPerson } from "react-icons/io";
 
 const AllUsers = () => {
   const [users, setUsers] = useState(null);
@@ -87,13 +88,19 @@ const AllUsers = () => {
               className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30 gap-2"
             >
               <div className="flex flex-wrap items-center gap-4">
-                <Image
-                  src={user.image_url || "/logo.svg"}
-                  alt="User Image"
-                  width={150}
-                  height={150}
-                  className="rounded-lg bg-black/20"
-                />
+                <div className="flex max-h-[200px] mx-auto bg-white/10 rounded-lg p-2">
+                  {user.image_url ? (
+                    <Image
+                      src={user.image_url || "/logo.svg"}
+                      alt="User Image"
+                      width={150}
+                      height={150}
+                      className="mx-auto h-full object-contain rounded-lg"
+                    />
+                  ) : (
+                    <IoMdPerson className="h-28 w-28 rounded-full mx-auto" />
+                  )}
+                </div>
 
                 <div className="flex flex-col gap-2 items-start">
                   <p className="text-lg">
@@ -105,31 +112,33 @@ const AllUsers = () => {
 
                   <p className="text-sm font-semibold break-all">
                     Platforms:{" "}
-                    {user.platforms.map((platform) => (
+                    {user.platforms.length < 1 ? (
                       <span className="bg-black/20 px-2 py-1 rounded-md">
-                        {platform.name}
+                        N/A
                       </span>
-                    ))}
-                    <span className="bg-black/20 px-2 py-1 rounded-md">PC</span>
+                    ) : (
+                      user.platforms.map((platform) => (
+                        <span className="bg-black/20 px-2 py-1 rounded-md">
+                          {platform.name}
+                        </span>
+                      ))
+                    )}
                   </p>
 
                   <p className="text-sm font-semibold break-all flex flex-wrap gap-2">
                     Preferred Skill Masters:{" "}
-                    {user.preferred_skill_master_ids.map((skillMaster) => (
+                    {user.preferred_skill_master_ids.length < 1 ? (
                       <span className="bg-black/20 px-2 py-1 rounded-md">
-                        {skillMaster.name}
-                        name
+                        N/A
                       </span>
-                    ))}
-                    <span className="bg-black/20 px-2 py-1 rounded-md">
-                      Nik
-                    </span>
-                    <span className="bg-black/20 px-2 py-1 rounded-md">
-                      Rick
-                    </span>
-                    <span className="bg-black/20 px-2 py-1 rounded-md">
-                      Sick
-                    </span>
+                    ) : (
+                      user.preferred_skill_master_ids.map((skillMaster) => (
+                        <span className="bg-black/20 px-2 py-1 rounded-md">
+                          {skillMaster.name}
+                          name
+                        </span>
+                      ))
+                    )}
                   </p>
 
                   <p className="text-sm font-semibold break-all border border-white/10 rounded-lg px-2 py-1">

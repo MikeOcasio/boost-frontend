@@ -43,7 +43,7 @@ const UserDashboard = () => {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="flex flex-wrap gap-4">
         {(user.role === "admin" ||
           user.role === "dev" ||
           user.role === "skillmaster") &&

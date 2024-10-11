@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-// import StripeCheckout from "react-stripe-checkout";
-
 import { useUserStore } from "@/store/use-user";
 import { useCartStore } from "@/store/use-cart";
 import { fetchGameById, fetchCurrentUser } from "@/lib/actions";
@@ -85,7 +83,7 @@ const CheckoutPage = () => {
     if (userToken) {
       loadOrders();
     }
-  }, [userToken]);
+  }, [userToken, cartItems]); // Watch for changes in cartItems
 
   // Handle Stripe Payment
   const handlePayment = async (token) => {
@@ -163,10 +161,10 @@ const CheckoutPage = () => {
           <p className="w-full">No order found!</p>
         ) : (
           orders.length > 0 && (
-            <div>
+            <div className="space-y-4">
               <div className="flex flex-col gap-4">
                 {orders.map((order, index) => (
-                  <CheckoutOrderCard key={index} order={{ ...order }} />
+                  <CheckoutOrderCard key={index} order={order} />
                 ))}
               </div>
 
