@@ -37,6 +37,9 @@ export const useCartStore = create((set) => ({
 
   cartItems: getInitialCart(),
 
+  // set cart items
+  setCartItems: (cartItems) => set({ cartItems }),
+
   // Add item to cart (only specific keys)
   addToCart: (product) =>
     set((state) => {
@@ -59,7 +62,11 @@ export const useCartStore = create((set) => ({
           quantity: 1,
           price: product.price,
           platform: product.platform,
-          image_url: product.image_url,
+          image: product.image,
+          is_active: product.is_active,
+          tax: product.tax,
+          category_id: product.category_id,
+          product_attribute_category_id: product.product_attribute_category_id,
         };
         updatedCart = [...state.cartItems, newItem];
       }

@@ -9,21 +9,24 @@ export const CheckoutOrderCard = ({ order }) => {
 
   return (
     <div key={order.id} className="flex flex-col gap-1 w-full">
-      <div className="flex flex-wrap justify-between items-center bg-white/10 rounded-lg p-2 border border-white/10 hover:border-white/20">
+      <div className="flex flex-wrap justify-between bg-white/10 rounded-lg p-2 border border-white/10 hover:border-white/20">
         <div className="flex flex-wrap items-center gap-x-2">
-          {order.image_url && (
+          {order.image && (
             <Image
-              src={order.image_url}
+              src={order.image}
               alt={order.name}
-              height={70}
-              width={70}
+              height={150}
+              width={150}
               unoptimized
-              className="rounded-md object-contain bg-white/10 p-2"
+              className="rounded-md object-contain bg-black/20 p-4"
             />
           )}
-          <div className="flex flex-col gap-y-1">
+          <div className="flex flex-col gap-y-1 justify-between">
             <p className="text-sm font-semibold">
-              {order.name} / {order.platform.name}
+              {order.name}{" "}
+              <span className="px-2 py-1 rounded-md bg-black/30">
+                {order.platform.name}
+              </span>
             </p>
 
             <div className="flex flex-wrap gap-2 items-center">
@@ -48,7 +51,8 @@ export const CheckoutOrderCard = ({ order }) => {
             </div>
           </div>
         </div>
-        <p className="text-sm font-semibold">${order.price * order.quantity}</p>
+
+        <p className="text-lg font-semibold">${order.price * order.quantity}</p>
       </div>
     </div>
   );

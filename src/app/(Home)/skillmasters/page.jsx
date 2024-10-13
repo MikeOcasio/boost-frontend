@@ -8,6 +8,7 @@ import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import { fetchAllSkillmasters } from "@/lib/actions";
 import { SkillmasterCard } from "../games/_components/SkillmasterCard";
+import toast from "react-hot-toast";
 
 const SkillMastersPage = () => {
   const [skillMasters, setSkillMasters] = useState([]);
@@ -149,6 +150,12 @@ const SkillMastersPage = () => {
         <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
           <IoWarning className="h-5 w-5 mr-2" />
           Failed to load games. Please try again!
+          <button
+            onClick={() => loadSkillmasters()}
+            className="bg-white/10 p-2 rounded-lg hover:bg-white/20"
+          >
+            Try Again
+          </button>
         </p>
       )}
 

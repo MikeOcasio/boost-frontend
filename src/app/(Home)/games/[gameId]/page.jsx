@@ -19,17 +19,18 @@ const GamePage = ({ params }) => {
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
   const [selectedPlatform, setSelectedPlatform] = useState(null);
 
+  const { cartItems, addToCart, increaseQuantity, decreaseQuantity } =
+    useCartStore();
+
   useEffect(() => {
-    setSelectedPlatform(game?.platforms[0].id);
+    if (game) {
+      setSelectedPlatform(game?.platforms[0].id);
+    }
   }, [game]);
 
-  const cartStore = useCartStore();
-
-  const cartItem =
-    game && cartStore.cartItems.find((item) => item.id === game.id);
+  const cartItem = game && cartItems.find((item) => item.id === game.id);
 
   const loadGame = async () => {
     setLoading(true);
@@ -60,6 +61,9 @@ const GamePage = ({ params }) => {
   const handleAddToCart = () => {
     if (!game) return;
 
+    // only add to cart if game is active
+    if (!game.is_active) return;
+
     const platform_obj = game?.platforms.find(
       (platform) => platform.id === Number(selectedPlatform)
     );
@@ -70,11 +74,15 @@ const GamePage = ({ params }) => {
       price: game.price,
       tax: game.tax,
       platform: platform_obj,
-      image_url: game.image,
+      image: game.image,
       is_active: game.is_active,
+      category_id: game.category_id,
+      product_attribute_category_id: game.product_attribute_category_id,
     };
 
-    cartStore.addToCart(product);
+    addToCart(product);
+
+    console.log("product data for add to cart ", product);
   };
 
   return (
@@ -174,7 +182,7 @@ const GamePage = ({ params }) => {
                       className="px-2 py-1 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
                     >
                       <option
-                        value=""
+                        value={null}
                         className="bg-neutral-800"
                         unselectable="on"
                       >
@@ -198,7 +206,7 @@ const GamePage = ({ params }) => {
                     {cartItem ? (
                       <div className="flex items-center gap-4 w-full">
                         <button
-                          onClick={() => cartStore.decreaseQuantity(game.id)}
+                          onClick={() => decreaseQuantity(game.id)}
                           className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
                         >
                           <BiMinus className="h-6 w-6" />
@@ -209,7 +217,7 @@ const GamePage = ({ params }) => {
                         </span>
 
                         <button
-                          onClick={() => cartStore.increaseQuantity(game.id)}
+                          onClick={() => increaseQuantity(game.id)}
                           className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
                         >
                           <BiPlus className="h-6 w-6" />

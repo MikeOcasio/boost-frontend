@@ -59,9 +59,7 @@ export const MobileNavigation = ({
                     {item.icon}
                   </div>
                   <div>
-                    <Link href={item.href} className="font-semibold">
-                      {item.name}
-                    </Link>
+                    <p className="font-semibold">{item.name}</p>
                   </div>
                 </div>
               </MobileNavItem>

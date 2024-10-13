@@ -446,7 +446,7 @@ export const loginUser = async ({ email, password }) => {
   }
 };
 
-// current user
+// current user get data of the current/login user
 export const fetchCurrentUser = async () => {
   try {
     const sessionToken = await getSessionToken();
@@ -496,7 +496,7 @@ export const fetchAllUsers = async () => {
   }
 };
 
-// update user
+// update user (Not working)
 export const updateUser = async (user) => {
   try {
     const sessionToken = await getSessionToken();
@@ -533,7 +533,7 @@ export const updateUser = async (user) => {
   }
 };
 
-// delete user
+// delete user (Not working)
 export const deleteUser = async (userId) => {
   try {
     const sessionToken = await getSessionToken();
@@ -689,9 +689,17 @@ export const fetchAllSkillmasters = async () => {
       }
     );
 
+    console.log("data", data);
+
     return data;
   } catch (error) {
-    return { error: "Failed to fetch all skillmasters. Please try again!" };
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to fetch all skillmasters:", errorMessage);
+
+    return {
+      error:
+        errorMessage || "An error occurred while fetching the skillmasters.",
+    };
   }
 };
 
@@ -715,61 +723,43 @@ export const fetchSkillmasterById = async (skillmasterId) => {
 
     return data;
   } catch (error) {
-    return { error: "Failed to fetch skillmaster. Please try again!" };
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to fetch skillmaster:", errorMessage);
+
+    return {
+      error:
+        errorMessage || "An error occurred while fetching the skillmaster.",
+    };
   }
 };
 
-// Handle Stripe Payment
-export const stripePayment = async ({ token, order }) => {
+// stripe checkout session
+export const checkoutSession = async (items) => {
   try {
-    // Assume the Stripe amount is in cents
-    const stripeAmount = Math.round(totalPrice * 100);
-
-    const paymentResponse = await axios.post("/api/stripe-payment", {
-      token,
-      amount: stripeAmount,
-    });
-
-    if (paymentResponse.status === 200) {
-      const paymentStatus =
-        paymentResponse.data.status === "succeeded" ? "paid" : "failed";
-
-      // Send order to API
-      await sendOrderData(paymentStatus);
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
     }
+
+    const { data } = await axios.post(
+      `http://localhost:3000/api/checkout_session`,
+      items,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    console.log("Checkout session data:", data);
+
+    return data;
   } catch (error) {
-    toast.error("Payment failed. Please try again!");
-  }
-};
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to checkout session:", errorMessage);
 
-// send order data
-const sendOrderData = async (paymentStatus) => {
-  const orderPayload = {
-    order_id: 1, // Generate or get this from backend
-    internal_id: 1, // Generate or get this from backend
-    products: orders.map((order) => ({
-      product_id: order.id,
-      quantity: order.quantity,
-      platform_id: order.platform_id,
-    })),
-    total_price: totalPrice,
-    payment_status: paymentStatus,
-    promotion_id: null, // Add if applicable
-    date: new Date().toISOString().split("T")[0],
-  };
-
-  try {
-    const response = await axios.post("/api/order", orderPayload);
-
-    if (response.status === 201) {
-      toast.success("Order placed successfully!");
-    } else {
-      toast.error("Failed to place order. Please try again!");
-    }
-  } catch (error) {
-    toast.error("Failed to place order. Please try again!");
-  } finally {
-    // Reset the form
-    setTotalPrice(0);
+    return {
+      error: errorMessage || "An error occurred while checkout session.",
+    };
   }
 };

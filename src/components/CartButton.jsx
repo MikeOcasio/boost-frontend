@@ -57,7 +57,7 @@ export const CartButton = ({ mobileNav }) => {
                 className="flex flex-wrap gap-4 items-center border-b border-white/10 pb-2"
               >
                 <Image
-                  src={item.image_url}
+                  src={item.image}
                   alt={item.name}
                   quality={100}
                   width={100}

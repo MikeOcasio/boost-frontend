@@ -31,7 +31,7 @@ export const SkillmasterCard = ({ skillMaster }) => {
         </div>
 
         <Link href={`/skillmasters/${skillMaster.id}`}>
-          <div className="relative hover:scale-110 transition-all">
+          <div className="relative hover:scale-105 transition-all">
             <button
               aria-describedby={skillMaster.id}
               aria-label="Boost Button"
