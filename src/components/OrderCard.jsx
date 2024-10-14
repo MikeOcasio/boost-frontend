@@ -1,25 +1,51 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { OrderDialog } from "../app/(Dashboard)/_components/OrderDialog";
+import clsx from "clsx";
+import toast from "react-hot-toast";
+import { fetchSkillmasterById } from "@/lib/actions/skillmasters-action";
 
-const OrderCard = ({ key, order }) => {
+const OrderCard = ({ order }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [skillMasterName, setSkillMasterName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const onClose = () => {
-    setDialogOpen(false);
+  const onClose = () => setDialogOpen(false);
+
+  const loadSkillMaster = async (id) => {
+    try {
+      setLoading(true);
+      setError(false);
+      const result = await fetchSkillmasterById(id);
+      if (result.error) {
+        setError(true);
+        // toast.error(JSON.stringify(result.error));
+      } else {
+        setSkillMasterName(result.first_name);
+      }
+    } catch (e) {
+      setError(true);
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return (
-    <div
-      key={key}
-      className="space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20"
-    >
-      <div className="flex justify-between items-center gap-2 flex-wrap-reverse">
-        <h3 className="text-lg font-semibold">Order #{order?.order_id}</h3>
+  // Fetch skill master when assigned_skill_master_id is present
+  useEffect(() => {
+    if (order.assigned_skill_master_id) {
+      loadSkillMaster(order.assigned_skill_master_id);
+    }
+  }, [order.assigned_skill_master_id]);
 
+  return (
+    <div className="space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20">
+      <div className="flex justify-between items-center gap-2 flex-wrap-reverse">
+        <h3 className="text-lg font-semibold">Order #{order?.internal_id}</h3>
         <button
           onClick={() => setDialogOpen(true)}
           className="p-2 rounded-lg hover:bg-white/10"
@@ -28,7 +54,6 @@ const OrderCard = ({ key, order }) => {
         </button>
       </div>
 
-      {/* Product Info */}
       <div className="flex flex-col gap-1 w-full">
         {order?.product?.map((product, index) => (
           <div
@@ -66,33 +91,53 @@ const OrderCard = ({ key, order }) => {
       </div>
 
       <div className="flex flex-col gap-y-2">
-        <div className="flex flex-wrap gap-4">
-          {/* Order Status */}
-          <p className="text-sm">
-            Order status:{" "}
-            <span className="font-semibold bg-yellow-500/80 px-1 rounded-md">
-              {order.order_status}
+        {/* Assigned Skill Master */}
+        {!error && order.assigned_skill_master_id && (
+          <div className="flex flex-wrap gap-2 text-sm items-center">
+            <span>Assigned Skill Master:</span>
+            <span className="font-semibold px-1 rounded-md border border-white/10">
+              {loading ? "Loading..." : skillMasterName}
             </span>
-          </p>
+          </div>
+        )}
 
-          {/* Payment Status */}
-          <p className="text-sm">
-            Payment status:{" "}
-            <span className="font-semibold bg-green-500/80 px-1 rounded-md">
-              {order.payment_status}
-            </span>
-          </p>
+        {/* Order Status */}
+        <div className="flex flex-wrap gap-2 text-sm items-center">
+          <span>Order status:</span>
+          <span
+            className={clsx(
+              "font-semibold px-1 rounded-md border border-white/10",
+              order.state === "assigned" && "bg-yellow-600",
+              order.state === "complete" && "bg-green-600",
+              order.state === "open" && "bg-white/10"
+            )}
+          >
+            {order.state}
+          </span>
         </div>
 
         <div className="flex flex-wrap gap-4 justify-between items-center">
-          {/* Date */}
-          <p className="text-sm text-gray-300">Order Date: {order.date}</p>
-
-          {/* totol_price */}
-          <p className="text-lg">Total Price: ${order.total_price}</p>
+          <p className="text-sm">
+            Order Date:{" "}
+            {new Date(order.created_at).toLocaleString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              hour12: true,
+            })}
+          </p>
+          <p className="text-lg font-semibold">Price: ${order.total_price}</p>
         </div>
 
-        <OrderDialog dialogOpen={dialogOpen} onClose={onClose} order={order} />
+        <OrderDialog
+          dialogOpen={dialogOpen}
+          onClose={onClose}
+          order={order}
+          skillMasterName={skillMasterName}
+        />
       </div>
     </div>
   );

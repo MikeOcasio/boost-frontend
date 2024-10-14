@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AdminOrderCard } from "../_components/AdminOrderCard";
-import { fetchAllOrders } from "@/lib/actions";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import toast from "react-hot-toast";
+
+import { AdminOrderCard } from "../_components/AdminOrderCard";
+import { fetchAllOrders } from "@/lib/actions/orders-action";
 
 const AllOrders = () => {
   const [orders, setOrders] = useState(null);

@@ -14,7 +14,12 @@ import { createUser, loginUser } from "@/lib/actions";
 import { useUserStore } from "@/store/use-user";
 
 export default function SignIn() {
+  // prod change
   const router = useRouter();
+
+  useEffect(() => {
+    router.push("/");
+  }, []);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");

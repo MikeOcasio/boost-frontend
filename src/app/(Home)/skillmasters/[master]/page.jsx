@@ -2,6 +2,7 @@
 
 import { fetchSkillmasterById } from "@/lib/actions";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
@@ -52,6 +53,13 @@ import { IoWarning } from "react-icons/io5";
 // }
 
 const MasterPage = ({ params }) => {
+  // prod change
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/");
+  }, []);
+
   const [skillMaster, setSkillMaster] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);

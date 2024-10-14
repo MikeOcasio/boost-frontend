@@ -9,8 +9,16 @@ import { IoWarning } from "react-icons/io5";
 import { fetchAllSkillmasters } from "@/lib/actions";
 import { SkillmasterCard } from "../games/_components/SkillmasterCard";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const SkillMastersPage = () => {
+  // prod change
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/");
+  }, []);
+
   const [skillMasters, setSkillMasters] = useState([]);
 
   // {

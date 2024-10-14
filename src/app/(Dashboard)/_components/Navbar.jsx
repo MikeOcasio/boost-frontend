@@ -131,7 +131,7 @@ export function Navbar() {
           <div className="flex items-center gap-x-4">
             {resources.map((item, index) =>
               item.name === "Orders" ? null : item.name === "Account" ? (
-                <div className="text-right">
+                <div key={index} className="text-right">
                   <Menu>
                     <MenuButton className="rounded-lg hover:bg-Plum/30 border border-white/10 h-full mt-1">
                       {loading ? (

@@ -66,7 +66,7 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
                 <p
                   className={clsx(
                     "px-2 rounded-full",
-                    order.order_status.toLowerCase() === "pending"
+                    order.state?.toLowerCase() === "pending"
                       ? "bg-yellow-500/80 text-white"
                       : "bg-green-500/80 text-white"
                   )}
@@ -92,7 +92,7 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
 
             {/* Product Info */}
             <div className="flex flex-col gap-1 w-full">
-              {order.product.map((product, index) => (
+              {order.product?.map((product, index) => (
                 <Link
                   key={index}
                   href={`/games/${product.product_id}`}
@@ -133,7 +133,7 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
                 <span>Price</span>
                 <span>
                   $
-                  {order.product.reduce(
+                  {order.product?.reduce(
                     (acc, curr) => acc + Number(curr.price * curr.quantity),
                     0
                   )}

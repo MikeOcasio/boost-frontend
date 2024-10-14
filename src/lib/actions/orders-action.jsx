@@ -1,3 +1,5 @@
+"use server";
+
 import axios from "axios";
 import { getSessionToken } from "./get-session-token";
 import { apiUrl } from "../api-url";
@@ -5,7 +7,16 @@ import { apiUrl } from "../api-url";
 // get all orders
 export const fetchAllOrders = async () => {
   try {
-    const { data } = await axios.get(`${apiUrl}/api/orders`);
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const { data } = await axios.get(`${apiUrl}/orders/info`, {
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
+    });
 
     return data;
   } catch (error) {
@@ -27,8 +38,6 @@ export const checkoutSession = async (items) => {
         headers: { Authorization: `Bearer ${sessionToken}` },
       }
     );
-
-    console.log("Checkout session data:", data);
 
     return data;
   } catch (error) {
@@ -55,8 +64,6 @@ export const fetchAllGraveyardOrders = async () => {
       },
     });
 
-    console.log("data", data);
-
     return data;
   } catch (error) {
     const errorMessage = error.response?.data || error.message;
@@ -69,30 +76,55 @@ export const fetchAllGraveyardOrders = async () => {
 };
 
 // create order
-export const createOrder = async (data) => {
-  console.log("data", data);
+export const createOrder = async (orderData) => {
+  try {
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
 
-  // try {
-  //   const sessionToken = await getSessionToken();
-  //   if (!sessionToken) {
-  //     return { error: "No token found. Please login again." };
-  //   }
+    const { data } = await axios.post(
+      `${apiUrl}/orders/info`,
+      { ...orderData },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
 
-  //   const { data } = await axios.post(`${apiUrl}/orders/info`, {
-  //     headers: {
-  //       Authorization: `Bearer ${sessionToken}`,
-  //     },
-  //   });
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to create order:", errorMessage);
 
-  //   console.log("data", data);
+    return {
+      error: errorMessage || "An error occurred while creating the order.",
+    };
+  }
+};
 
-  //   return data;
-  // } catch (error) {
-  //   const errorMessage = error.response?.data || error.message;
-  //   console.error("Failed to create order:", errorMessage);
+// fetch limited Orders
+export const fetchLimitedOrders = async (limit) => {
+  try {
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
 
-  //   return {
-  //     error: errorMessage || "An error occurred while creating the order.",
-  //   };
-  // }
+    const { data } = await axios.get(`${apiUrl}/orders/info?limit=${limit}`, {
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
+    });
+
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to fetch limited orders:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while fetching the orders.",
+    };
+  }
 };

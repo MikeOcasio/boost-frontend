@@ -56,7 +56,7 @@ export default function Home() {
 
       <HomePageAboutArea />
 
-      <ContactForm />
+      {/* <ContactForm /> */}
     </div>
   );
 }

@@ -71,25 +71,28 @@ const OrdersGraveyardCard = ({ key, order }) => {
           <p className="text-sm">
             Order status:{" "}
             <span className="font-semibold bg-yellow-500/80 px-1 rounded-md">
-              {order.order_status}
-            </span>
-          </p>
-
-          {/* Payment Status */}
-          <p className="text-sm">
-            Payment status:{" "}
-            <span className="font-semibold bg-green-500/80 px-1 rounded-md">
-              {order.payment_status}
+              {order.state}
             </span>
           </p>
         </div>
 
         <div className="flex flex-wrap gap-4 justify-between items-center">
           {/* Date */}
-          <p className="text-sm text-gray-300">Order Date: {order.date}</p>
+          <p className="text-sm text-gray-300">
+            Order Date:{" "}
+            {new Date(order.created_at).toLocaleString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              hour12: true,
+            })}
+          </p>
 
           {/* totol_price */}
-          <p className="text-lg">Total Price: ${order.total_price}</p>
+          <p className="text-lg">Price: ${order.total_price}</p>
         </div>
 
         <OrderGraveyardDialog

@@ -4,7 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoClose, IoCopy } from "react-icons/io5";
 
-export const OrderDialog = ({ dialogOpen, onClose, order }) => {
+export const OrderDialog = ({
+  dialogOpen,
+  onClose,
+  order,
+  skillMasterName,
+}) => {
   return (
     <Dialog
       open={dialogOpen}
@@ -28,7 +33,7 @@ export const OrderDialog = ({ dialogOpen, onClose, order }) => {
 
           <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             {/* id */}
-            {order.id && (
+            {order.internal_id && (
               <button
                 onClick={(e) => {
                   navigator.clipboard.writeText(order.id);
@@ -38,9 +43,9 @@ export const OrderDialog = ({ dialogOpen, onClose, order }) => {
                 className="flex gap-2 items-center rounded-lg bg-black/30 px-2 py-1 hover:bg-black/40 w-fit"
               >
                 <span className="text-sm font-semibold break-all">
-                  Order ID: #{order.id}
+                  Order ID: #{order.internal_id}
                 </span>
-                <IoCopy className="h-8 w-8 ml-2 p-2 hover:bg-white/10 rounded-lg" />
+                <IoCopy className="h-8 w-8 p-2 hover:bg-white/10 rounded-lg" />
               </button>
             )}
 
@@ -51,38 +56,36 @@ export const OrderDialog = ({ dialogOpen, onClose, order }) => {
                 <p
                   className={clsx(
                     "px-2 rounded-full",
-                    order.order_status.toLowerCase() === "pending"
-                      ? "bg-yellow-500/80 text-white"
-                      : "bg-green-500/80 text-white"
+                    order.state === "assigned" && "bg-yellow-600",
+                    order.state === "complete" && "bg-green-600",
+                    order.state === "open" && "bg-white/10"
                   )}
                 >
-                  {order.order_status}
+                  {order.state}
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1">
-                <p>Payment Status:</p>
-                <p
-                  className={clsx(
-                    "px-2 rounded-full",
-                    order.payment_status === "pending"
-                      ? "bg-yellow-500/80 text-white"
-                      : "bg-green-500/80 text-white"
-                  )}
-                >
-                  {order.payment_status}
-                </p>
-              </div>
+              {skillMasterName && (
+                <div className="flex flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1">
+                  <p>Assigned Skillmaster:</p>
+                  <p
+                    className={clsx("px-2 rounded-full border border-white/10")}
+                  >
+                    {skillMasterName}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
             <div className="flex flex-col gap-1 w-full">
-              {order.product.map((product, index) => (
-                <Link  key={index} href={`/games/${product.product_id}`} target="_blank">
-                  <div
-                   
-                    className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
-                  >
+              {order.product?.map((product, index) => (
+                <Link
+                  key={index}
+                  href={`/games/${product.product_id}`}
+                  target="_blank"
+                >
+                  <div className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30">
                     <div className="flex flex-wrap items-center gap-x-2">
                       <Image
                         src={product.image_url}
@@ -118,28 +121,35 @@ export const OrderDialog = ({ dialogOpen, onClose, order }) => {
             <div className="flex flex-col gap-2 border border-white/10 p-4 rounded-lg">
               <p className="text-sm flex flex-wrap gap-2 justify-between items-center border-b pb-2 border-white/10">
                 <span>Price</span>
-                <span>
-                  $
-                  {order.product.reduce(
-                    (acc, curr) => acc + Number(curr.price * curr.quantity),
-                    0
-                  )}
-                </span>
+                <span>${order.price}</span>
               </p>
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
+              {order.promotion_id && (
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
+                  Promotion
+                  <span>{order.promotion_id}</span>
+                </p>
+              )}
+              <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
                 Tax
                 <span>${order.tax}</span>
-              </p>
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
-                Promotion
-                <span>{order.promotion_id}</span>
               </p>
             </div>
 
             {/* data and price */}
             <div className="flex flex-wrap gap-4 justify-between items-center">
               {/* Date */}
-              <p className="text-sm text-gray-300">Order Date: {order.date}</p>
+              <p className="text-sm text-gray-300">
+                Order Date:{" "}
+                {new Date(order.created_at).toLocaleString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                  hour12: true,
+                })}
+              </p>
 
               {/* totol_price */}
               <p className="text-lg">Total Price: ${order.total_price}</p>

@@ -9,11 +9,7 @@ import { IoWarning } from "react-icons/io5";
 
 import { useUserStore } from "@/store/use-user";
 import { useCartStore } from "@/store/use-cart";
-import {
-  fetchGameById,
-  fetchCurrentUser,
-  checkoutSession,
-} from "@/lib/actions";
+import { fetchGameById, fetchCurrentUser } from "@/lib/actions";
 import { CheckoutOrderCard } from "./_components/CheckoutOrderCard";
 import { createOrder } from "@/lib/actions/orders-action";
 
@@ -22,10 +18,10 @@ import { createOrder } from "@/lib/actions/orders-action";
 
 const CheckoutPage = () => {
   const router = useRouter();
-  const { userToken, setUser, removeToken } = useUserStore();
-  const { cartItems, emptyCart, totalPrice, setTotalPrice } = useCartStore();
+  const { userToken, setUser, removeToken, user } = useUserStore();
+  const { cartItems, emptyCart, totalPrice, setTotalPrice, removeFromCart } =
+    useCartStore();
 
-  const [orders, setOrders] = useState([]);
   const [orderByPlatform, setOrderByPlatform] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -113,10 +109,7 @@ const CheckoutPage = () => {
       // Convert grouped orders to an array of arrays
       const groupedOrders = Object.values(platformOrders);
 
-      console.log("groupedOrders", groupedOrders);
-
       setOrderByPlatform(groupedOrders);
-      setOrders(validOrders);
       setTotalPrice(calculatedTotal.toFixed(2));
 
       localStorage.setItem("totalPrice", calculatedTotal.toFixed(2));
@@ -130,14 +123,12 @@ const CheckoutPage = () => {
   };
 
   const handlePayment = async () => {
-    console.log("orders ", orders);
-
     try {
       setLoading(true);
       const stripe = await stripePromise;
 
       // create checkout session
-      const data = await checkoutSession(orders);
+      // const data = await checkoutSession(orders);
 
       console.log("checkout res data ", data);
 
@@ -162,34 +153,41 @@ const CheckoutPage = () => {
     }
   };
 
-  const handleCheckout = async () => {
-    console.log("orders ", orders);
-    // order data must be like this
-    // {
-    //   "order": {
-    //     "user_id": 4,
-    //     "state": "open",
-    //     "platform": 6,
-    //   },
-    //   "product_ids": [
-    //     18,
-    //     20,
-    //     19,
-    //     18
-    //   ]
-    // }
-
-    const data = {
-      order: {
-        user_id: 4,
-        state: "open",
-        platform: 6,
-      },
-      product_ids: [18, 20, 19, 18],
-    };
+  const handleCheckout = async (orderDetails) => {
+    setLoading(true);
+    setError(false);
 
     try {
-    } catch (error) {}
+      const data = {
+        order: {
+          user_id: user.id,
+          state: "open",
+          platform: orderDetails[0].platform.id,
+        },
+        product_ids: orderDetails.map((order) => order.id),
+      };
+
+      const response = await createOrder(data);
+
+      if (response.error) {
+        toast.error(JSON.stringify(response.error));
+        setLoading(false);
+        return;
+      }
+
+      toast.success("Order placed successfully!");
+      setLoading(false);
+
+      // remove all item with same platform
+      orderDetails.forEach((order) => removeFromCart(order.id));
+
+      router.push(`/thank_you?order_id=${response.id}`);
+    } catch (error) {
+      toast.error(error.message || "Payment failed. Please try again.");
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -211,7 +209,7 @@ const CheckoutPage = () => {
       {error && (
         <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
           <IoWarning className="h-5 w-5 mr-2" />
-          Failed to load Orders. Please try again!
+          Some error occurred. Please try again!
           {/* reload */}
           <button onClick={loadOrders} className="p-2 rounded-lg bg-white/10">
             Reload
@@ -219,13 +217,19 @@ const CheckoutPage = () => {
         </p>
       )}
 
-      {(!loading && !error && orders?.length < 1) || cartItems?.length < 1 ? (
+      {!loading &&
+      !error &&
+      (orderByPlatform?.length < 1 || cartItems?.length < 1) ? (
         <p className="w-full">No order found!</p>
       ) : (
-        (orders.length > 0 || cartItems.length > 0) && (
-          <div className="space-y-4">
+        (orderByPlatform.length > 0 || cartItems.length > 0) &&
+        orderByPlatform.map((platformOrders, index) => (
+          <div
+            key={index}
+            className="space-y-4 bg-white/10 p-2 py-4 rounded-lg"
+          >
             <div className="flex flex-col gap-4">
-              {cartItems.map((order, index) => (
+              {platformOrders.map((order, index) => (
                 <CheckoutOrderCard key={index} order={order} />
               ))}
             </div>
@@ -235,7 +239,7 @@ const CheckoutPage = () => {
                 <span>Price</span>
                 <span>
                   $
-                  {orders.reduce(
+                  {platformOrders.reduce(
                     (acc, curr) => acc + Number(curr.price * curr.quantity),
                     0
                   )}
@@ -246,7 +250,7 @@ const CheckoutPage = () => {
                 Tax
                 <span>
                   $
-                  {orders.reduce(
+                  {platformOrders.reduce(
                     (acc, curr) => acc + Number(curr.tax) * curr.quantity,
                     0
                   )}
@@ -254,27 +258,37 @@ const CheckoutPage = () => {
               </p>
             </div>
 
-            <div className="text-right text-2xl font-bold flex items-center justify-between gap-2">
-              <span>Total Price</span>
-              <span>${totalPrice}</span>
-            </div>
-
             {/* pay now */}
-            <div className="w-full flex justify-center items-center">
-              <button
-                disabled={
-                  cartItems.length < 1 || loading || error || totalPrice < 1
-                }
-                type="button"
-                onClick={handleCheckout}
-                className="disabled:bg-gray-500/20 bg-Gold p-2 rounded-lg w-full max-w-xl hover:bg-Gold/80 text-xl font-bold"
-              >
-                Pay Now
-              </button>
-            </div>
+            <button
+              disabled={
+                cartItems.length < 1 || loading || error || totalPrice < 1
+              }
+              type="button"
+              onClick={() => handleCheckout(platformOrders)}
+              className="w-full flex items-center flex-wrap-reverse gap-4 text-xl font-bold disabled:bg-gray-500/20 bg-Gold p-2 max-w-xl px-4 rounded-lg hover:bg-Gold/80 justify-center mx-auto"
+            >
+              <span>Pay Now</span>
+              <span>
+                ${" "}
+                {totalPrice &&
+                  platformOrders?.reduce(
+                    (acc, curr) =>
+                      acc +
+                      Number(
+                        curr.price * curr.quantity + curr.tax * curr.quantity
+                      ),
+                    0
+                  )}
+              </span>
+            </button>
           </div>
-        )
+        ))
       )}
+
+      <div className="text-right text-2xl font-bold flex items-center justify-between gap-2 border border-white/10 rounded-lg p-4">
+        <span>Total Price</span>
+        <span>${totalPrice}</span>
+      </div>
     </div>
   );
 };
