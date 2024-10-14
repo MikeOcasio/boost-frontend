@@ -6,15 +6,29 @@ import Link from "next/link";
 import Image from "next/image";
 import { IoGameControllerOutline } from "react-icons/io5";
 import { GiSergeant } from "react-icons/gi";
-import { BiLoader, BiLogIn, BiPowerOff, BiSupport } from "react-icons/bi";
+import {
+  BiLoader,
+  BiLogIn,
+  BiPowerOff,
+  BiReceipt,
+  BiSupport,
+} from "react-icons/bi";
 import { MdDashboard } from "react-icons/md";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import {
+  Button,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+} from "@headlessui/react";
 
 import { MobileNavigation } from "./home/MobileNavigation";
 import { CartButton } from "./CartButton";
 import { useUserStore } from "@/store/use-user";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 import { logoutSession } from "@/lib/actions";
+import { FaRegUser } from "react-icons/fa";
 
 const resourcesData = [
   {
@@ -133,30 +147,74 @@ export function Header() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          {resources.map((item, index) => (
-            <Link
-              href={item.href}
-              className="text-lg font-semibold"
-              key={index}
-            >
-              <div className="group relative flex items-center gap-x-2 rounded-lg p-2 hover:bg-Plum/30">
-                {item.name}
-              </div>
-            </Link>
-          ))}
+          {resources.map((item, index) =>
+            item.name === "Dashboard" ? (
+              <div key={index} className="text-right">
+                <Menu>
+                  <MenuButton className="rounded-lg hover:bg-Plum/30 border border-white/10 h-full mt-1">
+                    {loading ? (
+                      <BiLoader className="h-10 w-10 p-2.5 animate-spin" />
+                    ) : (
+                      <FaRegUser className="h-10 w-10 p-2.5" />
+                    )}
+                  </MenuButton>
 
-          {mounted && userToken && (
-            <button
-              onClick={handleLogout}
-              disabled={loading}
-              className="rounded-lg hover:bg-Plum/30 border border-white/10"
-            >
-              {loading ? (
-                <BiLoader className="h-10 w-10 animate-spin p-2" />
-              ) : (
-                <BiPowerOff className="h-10 w-10 p-2" />
-              )}
-            </button>
+                  <MenuItems
+                    transition
+                    anchor="bottom end"
+                    className="w-52 origin-top-right rounded-xl border border-white/5 bg-neutral-800/90 backdrop-blur-lg p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0 z-50 mt-2"
+                  >
+                    <MenuItem
+                      as={Link}
+                      href="/dashboard"
+                      className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10"
+                    >
+                      <MdDashboard className="size-4 fill-white/30" />
+                      Dashboard
+                    </MenuItem>
+
+                    <div className="my-1 h-px bg-white/5" />
+
+                    {mounted && userToken && (
+                      <MenuItem
+                        onClick={handleLogout}
+                        disabled={loading}
+                        as={Button}
+                        className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10"
+                      >
+                        {loading ? (
+                          <BiLoader className="size-4 fill-white/30 animate-spin" />
+                        ) : (
+                          <BiPowerOff className="size-4 fill-white/30" />
+                        )}
+                        Logout
+                      </MenuItem>
+                    )}
+
+                    <div className="my-1 h-px bg-white/5" />
+
+                    <MenuItem
+                      as={Link}
+                      href="/dashboard/orders"
+                      className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10"
+                    >
+                      <BiReceipt className="size-4 fill-white/30" />
+                      Orders
+                    </MenuItem>
+                  </MenuItems>
+                </Menu>
+              </div>
+            ) : (
+              <Link
+                href={item.href}
+                className="text-lg font-semibold"
+                key={index}
+              >
+                <div className="group relative flex items-center gap-x-2 rounded-lg p-2 hover:bg-Plum/30">
+                  {item.name}
+                </div>
+              </Link>
+            )
           )}
 
           {/* cart */}

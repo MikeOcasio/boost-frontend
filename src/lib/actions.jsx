@@ -745,9 +745,7 @@ export const checkoutSession = async (items) => {
       `http://localhost:3000/api/checkout_session`,
       items,
       {
-        headers: {
-          Authorization: `Bearer ${sessionToken}`,
-        },
+        headers: { Authorization: `Bearer ${sessionToken}` },
       }
     );
 
@@ -760,6 +758,33 @@ export const checkoutSession = async (items) => {
 
     return {
       error: errorMessage || "An error occurred while checkout session.",
+    };
+  }
+};
+
+// fetch all graveyard orders
+export const fetchAllGraveyardOrders = async () => {
+  try {
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const { data } = await axios.get(`${apiUrl}/orders/info/graveyard_orders`, {
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
+    });
+
+    console.log("data", data);
+
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to fetch all orders:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while fetching the orders.",
     };
   }
 };

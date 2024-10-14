@@ -1,5 +1,6 @@
 import { useCartStore } from "@/store/use-cart";
 import Image from "next/image";
+import Link from "next/link";
 import { BiMinus, BiPlus } from "react-icons/bi";
 
 export const CheckoutOrderCard = ({ order }) => {
@@ -12,22 +13,26 @@ export const CheckoutOrderCard = ({ order }) => {
       <div className="flex flex-wrap justify-between bg-white/10 rounded-lg p-2 border border-white/10 hover:border-white/20">
         <div className="flex flex-wrap items-center gap-x-2">
           {order.image && (
-            <Image
-              src={order.image}
-              alt={order.name}
-              height={150}
-              width={150}
-              unoptimized
-              className="rounded-md object-contain bg-black/20 p-4"
-            />
+            <Link href={`/games/${order.id}`}>
+              <Image
+                src={order.image}
+                alt={order.name}
+                height={150}
+                width={150}
+                unoptimized
+                className="rounded-md object-contain bg-black/20 p-4"
+              />
+            </Link>
           )}
           <div className="flex flex-col gap-y-1 justify-between">
-            <p className="text-sm font-semibold">
-              {order.name}{" "}
-              <span className="px-2 py-1 rounded-md bg-black/30">
-                {order.platform.name}
-              </span>
-            </p>
+            <Link href={`/games/${order.id}`}>
+              <p className="text-base font-semibold">
+                {order.name}{" "}
+                <span className="px-2 py-1 rounded-md bg-black/30">
+                  {order.platform.name}
+                </span>
+              </p>
+            </Link>
 
             <div className="flex flex-wrap gap-2 items-center">
               {/* increment and decrement quantity */}

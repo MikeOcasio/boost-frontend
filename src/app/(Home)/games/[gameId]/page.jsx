@@ -177,17 +177,11 @@ const GamePage = ({ params }) => {
                   <div className="flex flex-wrap gap-2 items-center">
                     <p>Platform: </p>
                     <select
+                      disabled={cartItem?.quantity > 0}
                       value={selectedPlatform}
                       onChange={(e) => setSelectedPlatform(e.target.value)}
                       className="px-2 py-1 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
                     >
-                      <option
-                        value={null}
-                        className="bg-neutral-800"
-                        unselectable="on"
-                      >
-                        Select Platform
-                      </option>
                       {game.platforms.map((platform) => (
                         <option
                           key={platform.id}

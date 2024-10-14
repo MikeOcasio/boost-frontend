@@ -103,10 +103,15 @@ const AllUsers = () => {
                 </div>
 
                 <div className="flex flex-col gap-2 items-start">
-                  <p className="text-lg">
-                    {user.first_name} {user.last_name} |{" "}
+                  <p className="text-lg flex flex-wrap gap-2">
+                    <span>
+                      {user.first_name} {user.last_name}
+                    </span>
                     <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
                       {user.role}
+                    </span>
+                    <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
+                      {user.id}
                     </span>
                   </p>
 
