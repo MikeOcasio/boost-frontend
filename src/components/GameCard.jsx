@@ -7,7 +7,7 @@ const GameCard = ({ game }) => {
   return (
     <div
       key={game.id}
-      className="relative inline-block font-medium group w-full"
+      className="relative inline-block font-medium group w-full select-none"
     >
       <span className="absolute inset-0 w-full h-full transition duration-400 ease-out transform md:translate-x-3 md:translate-y-3 translate-x-2 translate-y-2 bg-Gold group-hover:-translate-x-0 group-hover:-translate-y-0 rounded-md" />
       <span className="absolute inset-0 w-full h-full bg-Plum border border-Plum group-hover:bg-Plum/80 rounded-md" />
@@ -31,13 +31,14 @@ const GameCard = ({ game }) => {
               quality={100}
               width={200}
               height={200}
+              priority
               className="mx-auto w-fit max-h-[120px] max-w-[250px] object-contain rounded-md"
             />
           )}
         </div>
 
         <div className="flex items-center gap-2 flex-wrap w-full text-xs -mt-2">
-          <span className="bg-white/10 px-2 rounded-md flex-1 text-center">
+          <span className="bg-white/10 px-2 rounded-md flex-1 text-center min-w-fit">
             {game.category?.name}
           </span>
           {game.platforms?.map((platform) => (

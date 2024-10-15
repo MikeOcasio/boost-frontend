@@ -1,3 +1,5 @@
+"use server";
+
 import axios from "axios";
 import { getSessionToken } from "./get-session-token";
 import { cookies } from "next/headers";
@@ -209,6 +211,43 @@ export const createUser = async ({
 
     return {
       error: errorMessage || "An error occurred while signing in the user.",
+    };
+  }
+};
+
+// add platform to user
+export const addPlatformCredentials = async ({
+  platform_id,
+  username,
+  password,
+}) => {
+  try {
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const { data } = await axios.post(
+      `${apiUrl}/api/platform_credentials`,
+      {
+        platform_id,
+        username,
+        password,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to add platform to user:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while adding platform to user.",
     };
   }
 };

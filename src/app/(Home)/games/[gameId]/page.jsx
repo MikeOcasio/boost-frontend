@@ -81,8 +81,6 @@ const GamePage = ({ params }) => {
     };
 
     addToCart(product);
-
-    console.log("product data for add to cart ", product);
   };
 
   return (
@@ -113,7 +111,7 @@ const GamePage = ({ params }) => {
                   src={game.bg_image}
                   alt={game.name}
                   fill
-                  unoptimized
+                  priority
                   className="h-full w-full fixed top-0 object-cover -z-10 blur-sm"
                 />
               )}

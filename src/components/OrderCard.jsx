@@ -3,9 +3,10 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { OrderDialog } from "../app/(Dashboard)/_components/OrderDialog";
 import clsx from "clsx";
 import toast from "react-hot-toast";
+
+import { OrderDialog } from "../app/(Dashboard)/_components/OrderDialog";
 import { fetchSkillmasterById } from "@/lib/actions/skillmasters-action";
 
 const OrderCard = ({ order }) => {
@@ -66,7 +67,7 @@ const OrderCard = ({ order }) => {
                 alt={product.product_name}
                 height={70}
                 width={70}
-                unoptimized
+                priority
                 className="rounded-md object-contain bg-white/10 p-2"
               />
               <div className="flex flex-col gap-y-1">

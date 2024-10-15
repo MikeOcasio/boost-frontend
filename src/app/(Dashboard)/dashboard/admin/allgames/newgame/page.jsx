@@ -62,7 +62,7 @@ const NewGamePage = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h1 className="text-xl font-semibold">Add New Game</h1>
+        <h1 className="text-xl font-semibold">Add New Product</h1>
 
         <button
           onClick={handleCreateGame}
@@ -74,7 +74,7 @@ const NewGamePage = () => {
           ) : (
             <PlusIcon className="h-5 w-5" />
           )}
-          Add Game
+          Add Product
         </button>
       </div>
 

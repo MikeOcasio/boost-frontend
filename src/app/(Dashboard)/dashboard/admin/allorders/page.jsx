@@ -23,7 +23,7 @@ const AllOrders = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setOrders(result);
+        setOrders(result?.orders);
       }
     } catch (e) {
       setError(true);
@@ -34,7 +34,7 @@ const AllOrders = () => {
   };
 
   useEffect(() => {
-    // loadOrders();
+    loadOrders();
   }, []);
 
   return (
@@ -50,7 +50,7 @@ const AllOrders = () => {
         </p>
       )}
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap gap-4">
         {orders?.length < 1 ? (
           <p className="text-center w-full">No orders have been created yet!</p>
         ) : (

@@ -18,7 +18,7 @@ export const AdminGameCard = ({ game }) => {
           alt={game.name}
           width={200}
           height={200}
-          unoptimized
+          priority
           className="top-0 left-0 h-full object-cover w-full absolute opacity-50 blur-sm -z-10"
         />
       )}
@@ -45,7 +45,7 @@ export const AdminGameCard = ({ game }) => {
             alt={game.name}
             width={200}
             height={200}
-            unoptimized
+            priority
             className="h-full object-contain max-w-[200px] w-full bg-gray-500/50 p-4 rounded-md"
             style={{ backgroundColor: game.primary_color + 70 }}
           />

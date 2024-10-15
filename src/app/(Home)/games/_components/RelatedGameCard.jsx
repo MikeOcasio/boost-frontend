@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
   return (
-    <div className="bg-black rounded-lg">
+    <div className="bg-black rounded-lg select-none">
       <div
         key={game.id}
         className={clsx(
@@ -35,7 +35,7 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
             quality={100}
             width={200}
             height={200}
-            className="mx-auto w-full max-w-[200px] object-contain rounded-md"
+            className="mx-auto w-full max-w-[200px] max-h-[130px] object-contain rounded-md"
           />
         </div>
 

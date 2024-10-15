@@ -183,15 +183,18 @@ export const SearchFilter = ({ filter, setFilter }) => {
               <option value="" className="bg-neutral-800" unselectable="on">
                 Select Category
               </option>
-              {categories?.map((category) => (
-                <option
-                  key={category.id}
-                  value={category.id}
-                  className="bg-neutral-800"
-                >
-                  {category.name}
-                </option>
-              ))}
+              {categories?.map(
+                (category) =>
+                  category.is_active && (
+                    <option
+                      key={category.id}
+                      value={category.id}
+                      className="bg-neutral-800"
+                    >
+                      {category.name}
+                    </option>
+                  )
+              )}
             </select>
 
             {/* attribute filter */}

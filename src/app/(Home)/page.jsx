@@ -31,7 +31,6 @@ export default function Home() {
             height={800}
             width={800}
             alt="group of video game characters"
-            unoptimized
             priority
             className="h-[50vh] md:scale-105 object-contain drop-shadow-[0_30px_5px_rgba(0,0,0,0.5)]"
           />

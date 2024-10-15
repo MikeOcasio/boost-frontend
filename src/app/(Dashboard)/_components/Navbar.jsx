@@ -108,7 +108,7 @@ export function Navbar() {
         isScrollDown ? "-translate-y-full" : "translate-y-0"
       )}
     >
-      <div className="lg:rounded-xl flex px-4 md:px-8 justify-between items-center bg-gradient-to-r from-Plum/50 to-Gold/50 backdrop-blur-2xl max-w-[1600px] w-full mx-auto">
+      <div className="lg:rounded-xl flex px-4 md:px-8 justify-between items-center bg-gradient-to-r from-Plum/60 to-Gold/60 backdrop-blur-sm max-w-[1600px] w-full mx-auto">
         <Link href="/">
           <Image
             src="/logo.svg"

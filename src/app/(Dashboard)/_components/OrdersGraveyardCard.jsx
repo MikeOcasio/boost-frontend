@@ -41,7 +41,7 @@ const OrdersGraveyardCard = ({ key, order }) => {
                 alt={product.product_name}
                 height={70}
                 width={70}
-                unoptimized
+                priority
                 className="rounded-md object-contain bg-white/10 p-2"
               />
               <div className="flex flex-col gap-y-1">

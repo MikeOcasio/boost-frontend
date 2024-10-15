@@ -51,11 +51,21 @@ const GamesPage = () => {
     loadGames();
   }, []);
 
+  // Helper function: Normalize strings (remove extra spaces and convert to lowercase)
+  const normalize = (str) => str?.toLowerCase().replace(/\s+/g, "").trim();
+
   // Filter and search logic
   const filteredGames = games
-    .filter((game) =>
-      game.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    .filter((game) => {
+      const term = normalize(searchTerm);
+      return (
+        !term ||
+        normalize(game.name).includes(term) ||
+        normalize(game.description).includes(term) ||
+        normalize(game.category.name).includes(term) ||
+        normalize(game.category.description).includes(term)
+      );
+    })
     .filter((game) => (filter.mostPopular ? game.most_popular : true))
     .filter((game) => (filter.active ? game.is_active : true))
     .filter((game) =>
@@ -178,9 +188,12 @@ const GamesPage = () => {
                   (filteredGames.length < 1 ? (
                     <p className="text-center w-full">No games found!</p>
                   ) : (
-                    filteredGames?.map((game) => (
-                      <GameCard key={game.id} game={game} />
-                    ))
+                    filteredGames?.map(
+                      (game) =>
+                        game?.is_active && (
+                          <GameCard key={game.id} game={game} />
+                        )
+                    )
                   ))}
               </div>
             </div>

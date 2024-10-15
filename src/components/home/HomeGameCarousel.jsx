@@ -28,7 +28,9 @@ export const HomeGameCarousel = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        const popularGames = result.filter((game) => game.most_popular);
+        const popularGames = result.filter(
+          (game) => game.is_active && game.most_popular
+        );
         setData(popularGames);
       }
     } catch (error) {
@@ -99,7 +101,7 @@ export const HomeGameCarousel = () => {
               showStatus={false}
               showIndicators={false}
               centerMode={true}
-              showThumbs={false} 
+              showThumbs={false}
               centerSlidePercentage={centerSlidePercentage}
             >
               {data?.map((game, index) => (

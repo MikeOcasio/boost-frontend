@@ -122,17 +122,18 @@ export function Header() {
   return (
     <nav
       className={clsx(
-        "z-50 fixed top-0 w-full lg:p-4 transition-all",
+        "z-50 fixed top-0 w-full lg:p-4 transition-all ",
         isScrollDown ? "-translate-y-full" : "translate-y-0"
       )}
     >
-      <div className="lg:rounded-xl flex px-4 md:px-8 justify-between items-center bg-gradient-to-r from-Plum/50 to-Gold/50 backdrop-blur-2xl max-w-[1600px] w-full mx-auto">
+      <div className="lg:rounded-xl flex px-4 md:px-8 justify-between items-center bg-gradient-to-r from-Plum/60 to-Gold/60 max-w-[1600px] w-full mx-auto backdrop-blur-sm">
         <Link href="/">
           <Image
             src="/logo.svg"
             height={150}
             width={150}
             alt="RavenBoost"
+            priority
             className="h-full w-16"
           />
         </Link>

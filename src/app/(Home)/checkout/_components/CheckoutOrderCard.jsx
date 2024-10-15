@@ -10,8 +10,8 @@ export const CheckoutOrderCard = ({ order }) => {
 
   return (
     <div key={order.id} className="flex flex-col gap-1 w-full">
-      <div className="flex flex-wrap justify-between bg-white/5 rounded-lg p-2 border border-white/10 hover:border-white/20">
-        <div className="flex flex-wrap items-center gap-x-2">
+      <div className="flex flex-wrap justify-between bg-white/5 rounded-lg p-2 border border-white/10 hover:border-white/20 gap-2">
+        <div className="flex flex-wrap items-center gap-4">
           {order.image && (
             <Link href={`/games/${order.id}`}>
               <Image
@@ -19,12 +19,12 @@ export const CheckoutOrderCard = ({ order }) => {
                 alt={order.name}
                 height={150}
                 width={150}
-                unoptimized
+                priority
                 className="rounded-md object-contain bg-black/20 p-4"
               />
             </Link>
           )}
-          <div className="flex flex-col gap-y-1 justify-between">
+          <div className="flex flex-col gap-1 justify-between">
             <Link href={`/games/${order.id}`}>
               <p className="text-base font-semibold">
                 {order.name}{" "}

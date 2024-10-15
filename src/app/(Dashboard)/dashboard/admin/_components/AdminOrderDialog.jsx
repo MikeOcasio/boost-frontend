@@ -2,14 +2,14 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
 
-export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
-  const handleAcceptOrder = () => {
-    toast.success("Order accepted!");
-  };
-
+export const AdminOrderDialog = ({
+  dialogOpen,
+  onClose,
+  order,
+  skillMasterName,
+}) => {
   return (
     <Dialog
       open={dialogOpen}
@@ -19,7 +19,7 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
     >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="w-full max-w-xl rounded-lg bg-Gold/20 backdrop-blur-lg p-6 space-y-4 relative">
+        <DialogPanel className="w-full max-w-xl rounded-lg bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
           <button
             onClick={() => onClose()}
             className="rounded-lg hover:bg-white/10 absolute right-0 top-0 m-4"
@@ -33,7 +33,7 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
 
           <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             {/* id */}
-            {order.id && (
+            {order.internal_id && (
               <button
                 onClick={(e) => {
                   navigator.clipboard.writeText(order.id);
@@ -43,21 +43,11 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
                 className="flex gap-2 items-center rounded-lg bg-black/30 px-2 py-1 hover:bg-black/40 w-fit"
               >
                 <span className="text-sm font-semibold break-all">
-                  Order ID: #{order.id}
+                  Order ID: #{order.internal_id}
                 </span>
-                <IoCopy className="h-8 w-8 ml-2 p-2 hover:bg-white/10 rounded-lg" />
+                <IoCopy className="h-8 w-8 p-2 hover:bg-white/10 rounded-lg" />
               </button>
             )}
-
-            {/* Accept Order */}
-            <div className="flex flex-wrap gap-2 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-              <button
-                onClick={handleAcceptOrder}
-                className="w-full bg-Gold p-2 rounded-full"
-              >
-                Accept Order
-              </button>
-            </div>
 
             {/* status */}
             <div className="flex flex-wrap gap-2 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
@@ -66,28 +56,25 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
                 <p
                   className={clsx(
                     "px-2 rounded-full",
-                    order.state?.toLowerCase() === "pending"
-                      ? "bg-yellow-500/80 text-white"
-                      : "bg-green-500/80 text-white"
+                    order.state === "assigned" && "bg-yellow-600",
+                    order.state === "complete" && "bg-green-600",
+                    order.state === "open" && "bg-white/10"
                   )}
                 >
-                  {order.order_status}
+                  {order.state}
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1">
-                <p>Payment Status:</p>
-                <p
-                  className={clsx(
-                    "px-2 rounded-full",
-                    order.payment_status === "pending"
-                      ? "bg-yellow-500/80 text-white"
-                      : "bg-green-500/80 text-white"
-                  )}
-                >
-                  {order.payment_status}
-                </p>
-              </div>
+              {skillMasterName && (
+                <div className="flex flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1">
+                  <p>Assigned Skillmaster:</p>
+                  <p
+                    className={clsx("px-2 rounded-full border border-white/10")}
+                  >
+                    {skillMasterName}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
@@ -114,6 +101,9 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
                         </p>
                         <div className="flex flex-wrap gap-1">
                           <p className="text-xs text-gray-300 bg-white/10 px-1 rounded-md">
+                            Skill Master: {product.skill_master_id}
+                          </p>
+                          <p className="text-xs text-gray-300 bg-white/10 px-1 rounded-md">
                             Qty: {product.quantity}
                           </p>
                         </div>
@@ -131,28 +121,35 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
             <div className="flex flex-col gap-2 border border-white/10 p-4 rounded-lg">
               <p className="text-sm flex flex-wrap gap-2 justify-between items-center border-b pb-2 border-white/10">
                 <span>Price</span>
-                <span>
-                  $
-                  {order.product?.reduce(
-                    (acc, curr) => acc + Number(curr.price * curr.quantity),
-                    0
-                  )}
-                </span>
+                <span>${order.price}</span>
               </p>
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
+              {order.promotion_id && (
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
+                  Promotion
+                  <span>{order.promotion_id}</span>
+                </p>
+              )}
+              <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
                 Tax
                 <span>${order.tax}</span>
-              </p>
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
-                Promotion
-                <span>{order.promotion_id}</span>
               </p>
             </div>
 
             {/* data and price */}
             <div className="flex flex-wrap gap-4 justify-between items-center">
               {/* Date */}
-              <p className="text-sm text-gray-300">Order Date: {order.date}</p>
+              <p className="text-sm text-gray-300">
+                Order Date:{" "}
+                {new Date(order.created_at).toLocaleString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                  hour12: true,
+                })}
+              </p>
 
               {/* totol_price */}
               <p className="text-lg">Total Price: ${order.total_price}</p>

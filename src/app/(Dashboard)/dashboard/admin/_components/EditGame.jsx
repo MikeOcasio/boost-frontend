@@ -138,11 +138,17 @@ export const EditGame = ({ data, setData }) => {
     }
   };
 
-  const handleColorChange = (color, field) => {
-    setTimeout(() => {
-      setGame({ ...game, [field]: color });
-    }, 1000);
+  const debounce = (func, delay) => {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => func(...args), delay);
+    };
   };
+
+  const handleColorChange = debounce((color, field) => {
+    setGame((prevGame) => ({ ...prevGame, [field]: color }));
+  }, 1000);
 
   const handleDeleteGame = async (gameId) => {
     if (!gameId) return;

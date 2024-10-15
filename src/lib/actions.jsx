@@ -734,33 +734,33 @@ export const fetchSkillmasterById = async (skillmasterId) => {
 };
 
 // stripe checkout session
-export const checkoutSession = async (items) => {
-  try {
-    const sessionToken = await getSessionToken();
-    if (!sessionToken) {
-      return { error: "No token found. Please login again." };
-    }
+// export const checkoutSession = async (items) => {
+//   try {
+//     const sessionToken = await getSessionToken();
+//     if (!sessionToken) {
+//       return { error: "No token found. Please login again." };
+//     }
 
-    const { data } = await axios.post(
-      `http://localhost:3000/api/checkout_session`,
-      items,
-      {
-        headers: { Authorization: `Bearer ${sessionToken}` },
-      }
-    );
+//     const { data } = await axios.post(
+//       `http://localhost:3000/api/checkout_session`,
+//       items,
+//       {
+//         headers: { Authorization: `Bearer ${sessionToken}` },
+//       }
+//     );
 
-    console.log("Checkout session data:", data);
+//     console.log("Checkout session data:", data);
 
-    return data;
-  } catch (error) {
-    const errorMessage = error.response?.data || error.message;
-    console.error("Failed to checkout session:", errorMessage);
+//     return data;
+//   } catch (error) {
+//     const errorMessage = error.response?.data || error.message;
+//     console.error("Failed to checkout session:", errorMessage);
 
-    return {
-      error: errorMessage || "An error occurred while checkout session.",
-    };
-  }
-};
+//     return {
+//       error: errorMessage || "An error occurred while checkout session.",
+//     };
+//   }
+// };
 
 // fetch all graveyard orders
 export const fetchAllGraveyardOrders = async () => {

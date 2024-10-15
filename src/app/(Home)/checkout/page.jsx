@@ -12,6 +12,8 @@ import { useCartStore } from "@/store/use-cart";
 import { fetchGameById, fetchCurrentUser } from "@/lib/actions";
 import { CheckoutOrderCard } from "./_components/CheckoutOrderCard";
 import { createOrder } from "@/lib/actions/orders-action";
+import { addPlatformCredentials } from "@/lib/actions/user-actions";
+import { PlatformCredentialDialog } from "./_components/PlatformCredentialDialog";
 
 // load stripe
 // const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
@@ -26,11 +28,18 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  // dialog
+  const [dialogId, setDialogId] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+
   // fetch user info
   const handleUserFetch = async () => {
     try {
       setLoading(true);
       const response = await fetchCurrentUser();
+
+      console.log("response", response);
+
       if (response?.error) {
         router.push("/login");
         throw new Error(response.error);
@@ -170,7 +179,8 @@ const CheckoutPage = () => {
       const response = await createOrder(data);
 
       if (response.error) {
-        toast.error(JSON.stringify(response.error));
+        toast.error(response.error);
+
         setLoading(false);
         return;
       }
@@ -198,6 +208,36 @@ const CheckoutPage = () => {
 
   const convertToSubCurrency = (amount) => {
     return Math.round(amount * 100);
+  };
+
+  const handleAddPlatform = async ({ platform_id, username, password }) => {
+    try {
+      setLoading(true);
+      const response = await addPlatformCredentials({
+        platform_id,
+        username,
+        password,
+      });
+
+      if (response.error) {
+        setError(true);
+        toast.error(response.error);
+      } else {
+        toast.success("Platform added successfully!");
+        loadOrders();
+      }
+    } catch (error) {
+      toast.error(error.message || "Payment failed. Please try again.");
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // credential dialog
+  const handleCredentialDialog = (platform_id) => {
+    setDialogId(platform_id);
+    setOpenDialog(true);
   };
 
   return (
@@ -228,6 +268,16 @@ const CheckoutPage = () => {
             key={index}
             className="space-y-4 bg-white/10 p-2 py-4 rounded-lg"
           >
+            {/* if user do not have platform credential for the game show message */}
+            {user.platforms.filter(
+              (platform) => platform.id === platformOrders[0].platform.id
+            ).length < 1 && (
+              <p className="text-center text-sm text-red-500">
+                You do not have any credential for this platform. Please add
+                your credential to continue.
+              </p>
+            )}
+
             <div className="flex flex-col gap-4">
               {platformOrders.map((order, index) => (
                 <CheckoutOrderCard key={index} order={order} />
@@ -259,28 +309,43 @@ const CheckoutPage = () => {
             </div>
 
             {/* pay now */}
-            <button
-              disabled={
-                cartItems.length < 1 || loading || error || totalPrice < 1
-              }
-              type="button"
-              onClick={() => handleCheckout(platformOrders)}
-              className="w-full flex items-center flex-wrap-reverse gap-4 text-xl font-bold disabled:bg-gray-500/20 bg-Gold p-2 max-w-xl px-4 rounded-lg hover:bg-Gold/80 justify-center mx-auto"
-            >
-              <span>Pay Now</span>
-              <span>
-                ${" "}
-                {totalPrice &&
-                  platformOrders?.reduce(
-                    (acc, curr) =>
-                      acc +
-                      Number(
-                        curr.price * curr.quantity + curr.tax * curr.quantity
-                      ),
-                    0
-                  )}
-              </span>
-            </button>
+            <div className="flex flex-wrap gap-4">
+              {user.platforms.filter(
+                (platform) => platform.id === platformOrders[0].platform.id
+              ).length < 1 && (
+                <button
+                  onClick={() =>
+                    handleCredentialDialog(platformOrders[0].platform)
+                  }
+                  className="flex-1 bg-Gold rounded-lg p-2 text-base font-bold"
+                >
+                  Add {platformOrders[0].platform.name} Credential
+                </button>
+              )}
+
+              <button
+                disabled={
+                  cartItems.length < 1 || loading || error || totalPrice < 1
+                }
+                type="button"
+                onClick={() => handleCheckout(platformOrders)}
+                className="w-full flex items-center flex-wrap-reverse gap-4 text-xl font-bold disabled:bg-gray-500/20 bg-Gold p-2 flex-1 max-w-xl px-4 rounded-lg hover:bg-Gold/80 justify-center mx-auto"
+              >
+                <span>Pay Now</span>
+                <span>
+                  $
+                  {totalPrice &&
+                    platformOrders?.reduce(
+                      (acc, curr) =>
+                        acc +
+                        Number(
+                          curr.price * curr.quantity + curr.tax * curr.quantity
+                        ),
+                      0
+                    )}
+                </span>
+              </button>
+            </div>
           </div>
         ))
       )}
@@ -289,6 +354,14 @@ const CheckoutPage = () => {
         <span>Total Price</span>
         <span>${totalPrice}</span>
       </div>
+
+      {/* dialog */}
+      <PlatformCredentialDialog
+        dialogId={dialogId}
+        dialogOpen={openDialog}
+        onClose={() => setOpenDialog(false)}
+        loadOrders={loadOrders}
+      />
     </div>
   );
 };
