@@ -324,7 +324,14 @@ const CheckoutPage = () => {
 
               <button
                 disabled={
-                  cartItems.length < 1 || loading || error || totalPrice < 1
+                  cartItems.length < 1 ||
+                  loading ||
+                  error ||
+                  totalPrice < 1 ||
+                  // disable when user do not have credentials
+                  user.platforms.filter(
+                    (platform) => platform.id === platformOrders[0].platform.id
+                  ).length < 1
                 }
                 type="button"
                 onClick={() => handleCheckout(platformOrders)}
