@@ -12,6 +12,7 @@ import clsx from "clsx";
 export const AdminOrderCard = ({ order, key }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [skillMasterName, setSkillMasterName] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
@@ -134,6 +135,18 @@ export const AdminOrderCard = ({ order, key }) => {
           })}
         </p>
         <p className="text-lg font-semibold">Price: ${order.total_price}</p>
+      </div>
+
+      <div className="flex flex-wrap gap-4 items-center">
+        <p className="text-sm px-2 rounded-md border border-white/10">
+          ID: {order.id}
+        </p>
+        <p className="text-sm px-2 rounded-md border border-white/10">
+          Platform ID: {order.platform}
+        </p>
+        <p className="text-sm px-2 rounded-md border border-white/10">
+          Platform Credential ID: {order.platform_credential_id}
+        </p>
       </div>
 
       <AdminOrderDialog

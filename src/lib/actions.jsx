@@ -116,9 +116,7 @@ export const deleteCategory = async (categoryId) => {
 // get attribute
 export const fetchAttribute = async () => {
   try {
-    const { data } = await axios.get(
-      `${apiUrl}/api/product_attribute_categories`
-    );
+    const { data } = await axios.get(`${apiUrl}/api/prod_attr_cats`);
 
     return data;
   } catch (error) {
@@ -132,7 +130,7 @@ export const addAttribute = async (attributeData) => {
     const sessionToken = await getSessionToken();
 
     const response = await axios.post(
-      `${apiUrl}/api/product_attribute_categories`,
+      `${apiUrl}/api/prod_attr_cats`,
       { name: attributeData.name },
       {
         headers: {
@@ -158,7 +156,7 @@ export const updateAttribute = async (attributeData) => {
     const sessionToken = await getSessionToken();
 
     const response = await axios.put(
-      `${apiUrl}/api/product_attribute_categories/${attributeData.id}`,
+      `${apiUrl}/api/prod_attr_cats/${attributeData.id}`,
       { name: attributeData.name },
       {
         headers: {
@@ -184,7 +182,7 @@ export const deleteAttribute = async (attributeId) => {
     const sessionToken = await getSessionToken();
 
     const response = await axios.delete(
-      `${apiUrl}/api/product_attribute_categories/${attributeId}`,
+      `${apiUrl}/api/prod_attr_cats/${attributeId}`,
       {
         headers: {
           Authorization: `Bearer ${sessionToken}`,
@@ -200,6 +198,19 @@ export const deleteAttribute = async (attributeId) => {
     return {
       error: errorMessage || "An error occurred while deleting the attribute.",
     };
+  }
+};
+
+// get product by attribute
+export const fetchProductByAttribute = async (attributeId) => {
+  try {
+    const { data } = await axios.get(
+      `${apiUrl}/api/prod_attr_cats/${attributeId}/products`
+    );
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch product by attribute. Please try again!" };
   }
 };
 
@@ -227,6 +238,8 @@ export const fetchGameById = async (gameId) => {
 
 // add game
 export const addGame = async (gameData) => {
+  console.log("gameData", gameData);
+
   try {
     const sessionToken = await getSessionToken();
 
@@ -247,8 +260,9 @@ export const addGame = async (gameData) => {
         secondary_color: gameData.secondary_color,
         features: gameData.features,
         category_id: gameData.category_id,
-        product_attribute_category_id: gameData.product_attribute_category_id,
         platform_ids: gameData.platform_ids,
+        prod_attr_cats: gameData.prod_attr_cats,
+        prod_attr_cat_ids: gameData.prod_attr_cat_ids,
       },
       {
         headers: {
@@ -256,6 +270,8 @@ export const addGame = async (gameData) => {
         },
       }
     );
+
+    console.log(response);
 
     return response.data;
   } catch (error) {
@@ -276,22 +292,24 @@ export const updateGame = async (gameData, gameId) => {
     const response = await axios.put(
       `${apiUrl}/api/products/${gameId}`,
       {
-        name: gameData.name,
-        description: gameData.description,
-        price: gameData.price,
-        image: gameData.image,
-        is_priority: gameData.is_priority,
-        tax: gameData.tax,
-        is_active: gameData.is_active,
-        most_popular: gameData.most_popular,
-        tag_line: gameData.tag_line,
-        bg_image: gameData.bg_image,
-        primary_color: gameData.primary_color,
-        secondary_color: gameData.secondary_color,
-        features: gameData.features,
-        category_id: gameData.category_id,
-        product_attribute_category_id: gameData.product_attribute_category_id,
-        platform_ids: gameData.platform_ids,
+        product: {
+          name: gameData.name,
+          description: gameData.description,
+          price: gameData.price,
+          image: gameData.image,
+          is_priority: gameData.is_priority,
+          tax: gameData.tax,
+          is_active: gameData.is_active,
+          most_popular: gameData.most_popular,
+          tag_line: gameData.tag_line,
+          bg_image: gameData.bg_image,
+          primary_color: gameData.primary_color,
+          secondary_color: gameData.secondary_color,
+          features: gameData.features,
+          category_id: gameData.category_id,
+          prod_attr_cat_ids: gameData.prod_attr_cat_ids,
+          platform_ids: gameData.platform_ids,
+        },
       },
       {
         headers: {
@@ -613,19 +631,6 @@ export const fetchProductByCategories = async (categoryId) => {
     return {
       error: "Failed to fetch product by categories. Please try again!",
     };
-  }
-};
-
-// get product by attribute
-export const fetchProductByAttribute = async (attributeId) => {
-  try {
-    const { data } = await axios.get(
-      `${apiUrl}/api/product_attribute_categories/${attributeId}/products`
-    );
-
-    return data;
-  } catch (error) {
-    return { error: "Failed to fetch product by attribute. Please try again!" };
   }
 };
 

@@ -93,8 +93,7 @@ const CheckoutPage = () => {
             is_active: product.is_active,
             tax: product.tax,
             category_id: product.category_id,
-            product_attribute_category_id:
-              product.product_attribute_category_id,
+            prod_attr_cats: product.prod_attr_cats,
             platform: item.platform,
             quantity: item.quantity,
           };

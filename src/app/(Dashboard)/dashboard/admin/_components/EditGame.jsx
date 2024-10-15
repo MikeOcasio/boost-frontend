@@ -9,7 +9,6 @@ import {
   Textarea,
 } from "@headlessui/react";
 import Image from "next/image";
-import clsx from "clsx";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiChevronDown, BiLoader, BiTrash, BiUpload } from "react-icons/bi";
@@ -53,10 +52,11 @@ export const EditGame = ({ data, setData }) => {
       secondary_color: null,
       features: [""],
       category_id: null,
-      product_attribute_category_id: null,
       platform_ids: [],
       remove_image: "false",
       remove_bg_image: "false",
+      prod_attr_cats: [],
+      prod_attr_cat_ids: [],
     };
   }
 
@@ -267,46 +267,56 @@ export const EditGame = ({ data, setData }) => {
               />
             </div>
           </Field>
-
-          {/* product attribute category */}
-          <Field className="flex min-w-fit flex-col gap-1 flex-1">
-            <Label>Product Attribute Category</Label>
-            <div className="relative">
-              <Select
-                value={game?.product_attribute_category_id}
-                onChange={(e) => {
-                  setGame({
-                    ...game,
-                    product_attribute_category_id: Number(e.target.value),
-                  });
-                }}
-                className="block w-full appearance-none rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
-              >
-                <option
-                  value={null}
-                  className="bg-neutral-800"
-                  unselectable="on"
-                >
-                  Select an attribute
-                </option>
-
-                {attribute.map((item, index) => (
-                  <option
-                    key={index}
-                    value={item.id}
-                    className="bg-neutral-800"
-                  >
-                    {item.name}
-                  </option>
-                ))}
-              </Select>
-              <BiChevronDown
-                className="group absolute top-1 right-4 size-8 fill-white/60"
-                aria-hidden="true"
-              />
-            </div>
-          </Field>
         </div>
+
+        {/* product attribute category */}
+        <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+          <Label>Product Attribute Category</Label>
+
+          <div className="flex flex-wrap gap-4 items-center">
+            {attribute?.map((attr) => (
+              <label
+                key={attr.id}
+                className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-wrap flex-1"
+              >
+                <input
+                  type="checkbox"
+                  className="h-4 w-4"
+                  value={attr.id}
+                  checked={
+                    game?.prod_attr_cats?.some((item) => item.id === attr.id) ||
+                    false
+                  }
+                  onChange={() => {
+                    const existingAttrs = game?.prod_attr_cats || []; // Ensure it's an array
+
+                    const updatedAttrs = existingAttrs.some(
+                      (item) => item.id === attr.id
+                    )
+                      ? existingAttrs.filter((item) => item.id !== attr.id) // Remove if exists
+                      : [...existingAttrs, { id: attr.id, name: attr.name }]; // Add if it doesn't exist
+
+                    setGame({
+                      ...game,
+                      prod_attr_cats: updatedAttrs,
+                      prod_attr_cat_ids: updatedAttrs.map((item) => item.id),
+                    });
+                  }}
+
+                  // onChange={() =>
+                  //   setGame({
+                  //     ...game,
+                  //     prod_attr_cats: game.prod_attr_cats.includes(attr.id)
+                  //       ? game.prod_attr_cats.filter((id) => id !== attr.id)
+                  //       : [...game.prod_attr_cats, attr.id],
+                  //   })
+                  // }
+                />
+                {attr.name}
+              </label>
+            ))}
+          </div>
+        </Field>
 
         {/* title */}
         <Field className="flex flex-col gap-1 w-full">

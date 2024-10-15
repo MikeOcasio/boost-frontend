@@ -63,7 +63,8 @@ const GamesPage = () => {
         normalize(game.name).includes(term) ||
         normalize(game.description).includes(term) ||
         normalize(game.category.name).includes(term) ||
-        normalize(game.category.description).includes(term)
+        normalize(game.category.description).includes(term) ||
+        normalize(String(game.id)).includes(term)
       );
     })
     .filter((game) => (filter.mostPopular ? game.most_popular : true))
@@ -80,7 +81,9 @@ const GamesPage = () => {
     )
     .filter((game) =>
       filter.attribute
-        ? game.product_attribute_category_id === Number(filter.attribute)
+        ? game.prod_attr_cats?.filter(
+            (item) => item.id === Number(filter.attribute)
+          ).length > 0
         : true
     );
 

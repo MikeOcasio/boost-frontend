@@ -17,6 +17,9 @@ const AllUsers = () => {
   const [dialogData, setDialogData] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState("");
+
   const loadUsers = async () => {
     setLoading(true);
     setError(false);
@@ -51,6 +54,22 @@ const AllUsers = () => {
     setDialogOpen(true);
   };
 
+  // Helper function: Normalize strings (remove extra spaces and convert to lowercase)
+  const normalize = (str) => str?.toLowerCase().replace(/\s+/g, "").trim();
+
+  // Filter and search logic
+  const filteredUsers = users?.filter((user) => {
+    const term = normalize(searchTerm);
+    return (
+      !term ||
+      normalize(user.first_name).includes(term) ||
+      normalize(user.last_name).includes(term) ||
+      normalize(user.role).includes(term) ||
+      normalize(user.email).includes(term) ||
+      normalize(String(user.id)).includes(term)
+    );
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
@@ -75,91 +94,110 @@ const AllUsers = () => {
         </p>
       )}
 
-      <div className="flex flex-wrap gap-4 justify-between items-center">
-        {users?.length < 1 ? (
+      {!loading &&
+        !error &&
+        (users?.length < 1 ? (
           <p className="text-center w-full">No users have been added yet!</p>
         ) : (
-          !loading &&
-          !error &&
-          users?.map((user, index) => (
-            <button
-              key={index}
-              onClick={() => editUser(user)}
-              className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30 gap-2"
-            >
+          users?.length > 0 && (
+            <>
               <div className="flex flex-wrap items-center gap-4">
-                <div className="flex max-h-[200px] mx-auto bg-white/10 rounded-lg p-2">
-                  {user.image_url ? (
-                    <Image
-                      src={user.image_url || "/logo.svg"}
-                      alt="User Image"
-                      width={150}
-                      height={150}
-                      className="mx-auto h-full object-contain rounded-lg"
-                    />
-                  ) : (
-                    <IoMdPerson className="h-28 w-28 rounded-full mx-auto" />
-                  )}
-                </div>
-
-                <div className="flex flex-col gap-2 items-start">
-                  <p className="text-lg flex flex-wrap gap-2">
-                    <span>
-                      {user.first_name} {user.last_name}
-                    </span>
-                    <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
-                      {user.role}
-                    </span>
-                    <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
-                      {user.id}
-                    </span>
-                  </p>
-
-                  <p className="text-sm font-semibold break-all">
-                    Platforms:{" "}
-                    {user.platforms.length < 1 ? (
-                      <span className="bg-black/20 px-2 py-1 rounded-md">
-                        N/A
-                      </span>
-                    ) : (
-                      user.platforms.map((platform) => (
-                        <span className="bg-black/20 px-2 py-1 rounded-md">
-                          {platform.name}
-                        </span>
-                      ))
-                    )}
-                  </p>
-
-                  <p className="text-sm font-semibold break-all flex flex-wrap gap-2">
-                    Preferred Skill Masters:{" "}
-                    {user.preferred_skill_master_ids.length < 1 ? (
-                      <span className="bg-black/20 px-2 py-1 rounded-md">
-                        N/A
-                      </span>
-                    ) : (
-                      user.preferred_skill_master_ids.map((skillMaster) => (
-                        <span className="bg-black/20 px-2 py-1 rounded-md">
-                          {skillMaster.name}
-                          name
-                        </span>
-                      ))
-                    )}
-                  </p>
-
-                  <p className="text-sm font-semibold break-all border border-white/10 rounded-lg px-2 py-1">
-                    {user.email}
-                  </p>
-                  <p className="text-xs break-all">
-                    Created At: {new Date(user.created_at).toLocaleString()}
-                  </p>
-                </div>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search users..."
+                  className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+                />
               </div>
 
-              <BiPencil className="h-8 w-8 ml-auto hover:bg-white/10 rounded-lg p-2" />
-            </button>
-          ))
-        )}
-      </div>
+              <div className="flex flex-wrap gap-4 justify-between items-center">
+                {!loading &&
+                  !error &&
+                  filteredUsers?.map((user, index) => (
+                    <button
+                      key={index}
+                      onClick={() => editUser(user)}
+                      className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30 gap-2"
+                    >
+                      <div className="flex flex-wrap items-center gap-4">
+                        <div className="flex max-h-[200px] mx-auto bg-white/10 rounded-lg p-2">
+                          {user.image_url ? (
+                            <Image
+                              src={user.image_url || "/logo.svg"}
+                              alt="User Image"
+                              width={150}
+                              height={150}
+                              className="mx-auto h-full object-contain rounded-lg"
+                            />
+                          ) : (
+                            <IoMdPerson className="h-28 w-28 rounded-full mx-auto" />
+                          )}
+                        </div>
+
+                        <div className="flex flex-col gap-2 items-start">
+                          <p className="text-lg flex flex-wrap gap-2">
+                            <span>
+                              {user.first_name} {user.last_name}
+                            </span>
+                            <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
+                              {user.role}
+                            </span>
+                            <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
+                              ID: {user.id}
+                            </span>
+                          </p>
+
+                          <p className="text-sm font-semibold break-all">
+                            Platforms:{" "}
+                            {user.platforms.length < 1 ? (
+                              <span className="bg-black/20 px-2 py-1 rounded-md">
+                                N/A
+                              </span>
+                            ) : (
+                              user.platforms.map((platform) => (
+                                <span className="bg-black/20 px-2 py-1 rounded-md">
+                                  {platform.name}
+                                </span>
+                              ))
+                            )}
+                          </p>
+
+                          <p className="text-sm font-semibold break-all flex flex-wrap gap-2">
+                            Preferred Skill Masters:{" "}
+                            {user.preferred_skill_master_ids.length < 1 ? (
+                              <span className="bg-black/20 px-2 py-1 rounded-md">
+                                N/A
+                              </span>
+                            ) : (
+                              user.preferred_skill_master_ids.map(
+                                (skillMaster) => (
+                                  <span className="bg-black/20 px-2 py-1 rounded-md">
+                                    {skillMaster.name}
+                                    name
+                                  </span>
+                                )
+                              )
+                            )}
+                          </p>
+
+                          <p className="text-sm font-semibold break-all border border-white/10 rounded-lg px-2 py-1">
+                            {user.email}
+                          </p>
+                          <p className="text-xs break-all">
+                            Created At:{" "}
+                            {new Date(user.created_at).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+
+                      <BiPencil className="h-8 w-8 ml-auto hover:bg-white/10 rounded-lg p-2" />
+                    </button>
+                  ))}
+              </div>
+            </>
+          )
+        ))}
 
       {/* Dialog Component */}
       <UserDialog

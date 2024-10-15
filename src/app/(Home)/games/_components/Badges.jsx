@@ -26,6 +26,8 @@ const Badges = ({
   const scrollContainerRef = useRef(null);
 
   const loadCategories = async () => {
+    if (!categoryId) return;
+
     try {
       const result = await fetchProductByCategories(categoryId);
       if (result.error) {
@@ -46,18 +48,26 @@ const Badges = ({
   };
 
   const loadAttribute = async () => {
-    try {
-      const result = await fetchProductByAttribute(attributeId);
-      if (result.error) {
-        setError(true);
-        toast.error(result.error);
-      } else {
-        // Filter out the current game from the attributes list
-        const filteredAttributes = result.filter(
-          (game) => game.id !== currentGameId
-        );
+    if (!attributeId || attributeId.length < 1) return;
 
-        setProductAttribute(filteredAttributes);
+    const attributeArr = [];
+
+    try {
+      for (const item of attributeId) {
+        const result = await fetchProductByAttribute(item?.id);
+        if (result.error) {
+          setError(true);
+          toast.error(result.error);
+        } else {
+          // Filter out the current game from the attributes list
+          const filteredAttributes = result.filter(
+            (game) => game.id !== currentGameId
+          );
+          attributeArr.push(filteredAttributes);
+        }
+        setProductAttribute(...attributeArr);
+
+        console.log("attributeArr", attributeArr);
       }
     } catch (error) {
       setError(true);

@@ -21,8 +21,7 @@ const NewGamePage = () => {
     if (!game?.description) errors.push("Game description");
     if (!game?.price) errors.push("Game price");
     if (!game?.category_id) errors.push("Game category");
-    if (!game?.product_attribute_category_id)
-      errors.push("Product attribute category");
+    if (!game?.prod_attr_cats.length) errors.push("Product attribute category");
     if (game?.is_priority === null) errors.push("Game priority");
     if (!game?.tax) errors.push("Game tax");
     if (game?.is_active === null) errors.push("Game active status");

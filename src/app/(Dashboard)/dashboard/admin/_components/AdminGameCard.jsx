@@ -106,7 +106,10 @@ export const AdminGameCard = ({ game }) => {
           Category ID: {game.category_id}
         </p>
         <p className="text-sm font-semibold bg-white/10 px-2 rounded-md">
-          Product Attribute Category ID: {game.product_attribute_category_id}
+          Product Attribute Category IDs:{" "}
+          {game.prod_attr_cats?.length > 0
+            ? game.prod_attr_cats.map((item) => item.id).join(", ")
+            : "N/A"}
         </p>
       </div>
 

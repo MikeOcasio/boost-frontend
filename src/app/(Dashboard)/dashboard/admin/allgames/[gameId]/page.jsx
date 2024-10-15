@@ -55,8 +55,7 @@ const GameEditPage = ({ params }) => {
     if (!game?.description) errors.push("Product description");
     if (!game?.price) errors.push("Product price");
     if (!game?.category_id) errors.push("Product category");
-    if (!game?.product_attribute_category_id)
-      errors.push("Product attribute category");
+    if (!game?.prod_attr_cats.length) errors.push("Product attribute category");
     if (game?.is_priority === null) errors.push("Product priority");
     if (!game?.tax) errors.push("Product tax");
     if (!game?.platform_ids.length) errors.push("At least one platform");
@@ -73,6 +72,8 @@ const GameEditPage = ({ params }) => {
   };
 
   const handleUpdateGame = async () => {
+    console.log("game", game);
+
     if (!validateGame()) return;
 
     setLoading(true);
