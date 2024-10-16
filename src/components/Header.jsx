@@ -167,11 +167,33 @@ export function Header() {
                   >
                     <MenuItem
                       as={Link}
+                      href="/dashboard/account"
+                      className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10"
+                    >
+                      <FaRegUser className="size-4 fill-white/30" />
+                      Account
+                    </MenuItem>
+
+                    <div className="my-1 h-px bg-white/5" />
+
+                    <MenuItem
+                      as={Link}
                       href="/dashboard"
                       className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10"
                     >
                       <MdDashboard className="size-4 fill-white/30" />
                       Dashboard
+                    </MenuItem>
+
+                    <div className="my-1 h-px bg-white/5" />
+
+                    <MenuItem
+                      as={Link}
+                      href="/dashboard/orders"
+                      className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10"
+                    >
+                      <BiReceipt className="size-4 fill-white/30" />
+                      Orders
                     </MenuItem>
 
                     <div className="my-1 h-px bg-white/5" />
@@ -191,17 +213,6 @@ export function Header() {
                         Logout
                       </MenuItem>
                     )}
-
-                    <div className="my-1 h-px bg-white/5" />
-
-                    <MenuItem
-                      as={Link}
-                      href="/dashboard/orders"
-                      className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10"
-                    >
-                      <BiReceipt className="size-4 fill-white/30" />
-                      Orders
-                    </MenuItem>
                   </MenuItems>
                 </Menu>
               </div>

@@ -2,7 +2,6 @@
 
 import { useUserStore } from "@/store/use-user";
 import OrdersGraveyardCard from "../../_components/OrdersGraveyardCard";
-import { orders } from "@/lib/data";
 import { fetchAllGraveyardOrders } from "@/lib/actions";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -26,7 +25,7 @@ const OrderGraveyardPage = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setGraveyardOrders(result);
+        setGraveyardOrders(result.orders);
       }
     } catch (e) {
       setError(true);
@@ -70,17 +69,6 @@ const OrderGraveyardPage = () => {
         !loading &&
         !error &&
         graveyardOrders?.map((order, index) => (
-          <OrdersGraveyardCard key={index} order={order} />
-        ))}
-
-      <hr />
-
-      {(user.role === "admin" ||
-        user.role === "dev" ||
-        user.role === "skillmaster") &&
-        !loading &&
-        !error &&
-        orders?.map((order, index) => (
           <OrdersGraveyardCard key={index} order={order} />
         ))}
     </div>

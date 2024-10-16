@@ -14,14 +14,16 @@ export const CheckoutOrderCard = ({ order }) => {
         <div className="flex flex-wrap items-center gap-4">
           {order.image && (
             <Link href={`/games/${order.id}`}>
-              <Image
-                src={order.image}
-                alt={order.name}
-                height={150}
-                width={150}
-                priority
-                className="rounded-md object-contain bg-black/20 p-4"
-              />
+              {order.image && (
+                <Image
+                  src={order.image}
+                  alt={order.name}
+                  height={150}
+                  width={150}
+                  priority
+                  className="rounded-md object-contain bg-black/20 p-4"
+                />
+              )}
             </Link>
           )}
           <div className="flex flex-col gap-1 justify-between">

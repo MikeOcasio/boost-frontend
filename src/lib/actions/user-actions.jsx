@@ -158,7 +158,7 @@ export const updateUser = async (user) => {
   }
 };
 
-// delete user (Not working)
+// delete user
 export const deleteUser = async (userId) => {
   try {
     const sessionToken = await getSessionToken();
@@ -166,11 +166,14 @@ export const deleteUser = async (userId) => {
       return { error: "No token found. Please login again." };
     }
 
-    const response = await axios.delete(`${apiUrl}/api/users`, {
-      headers: {
-        Authorization: `Bearer ${sessionToken}`,
-      },
-    });
+    const response = await axios.delete(
+      `${apiUrl}/users/member-data/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
 
     return response.data;
   } catch (error) {
@@ -248,6 +251,34 @@ export const addPlatformCredentials = async ({
 
     return {
       error: errorMessage || "An error occurred while adding platform to user.",
+    };
+  }
+};
+
+// ban user
+export const banUser = async (userId) => {
+  try {
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const response = await axios.delete(
+      `${apiUrl}/users/member-data/${userId}/ban`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to ban user:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while banning the user.",
     };
   }
 };

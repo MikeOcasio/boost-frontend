@@ -10,12 +10,16 @@ import OrdersGraveyardCard from "../_components/OrdersGraveyardCard";
 import AdminTabs from "../_components/AdminTabs";
 import { useUserStore } from "@/store/use-user";
 import OrderCard from "@/components/OrderCard";
-import { fetchAllOrders } from "@/lib/actions/orders-action";
+import {
+  fetchAllGraveyardOrders,
+  fetchAllOrders,
+} from "@/lib/actions/orders-action";
 
 const UserDashboard = () => {
   const { user } = useUserStore();
 
   const [orders, setOrders] = useState(null);
+  const [graveyardOrders, setGraveyardOrders] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
@@ -24,7 +28,7 @@ const UserDashboard = () => {
     setError(false);
 
     try {
-      const result = await fetchAllOrders();
+      const result = await fetchAllOrders(10);
       if (result.error) {
         setError(true);
         toast.error(result.error);
@@ -39,8 +43,39 @@ const UserDashboard = () => {
     }
   };
 
+  const loadGraveyardOrders = async () => {
+    setLoading(true);
+    setError(false);
+
+    try {
+      const result = await fetchAllGraveyardOrders(10);
+
+      console.log("result", result);
+
+      if (result.error) {
+        setError(true);
+        toast.error(result.error);
+      } else {
+        setGraveyardOrders(result.orders);
+      }
+    } catch (e) {
+      setError(true);
+      toast.error(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadOrders();
+
+    if (
+      user?.role === "dev" ||
+      user?.role === "admin" ||
+      user?.role === "skillmaster"
+    ) {
+      loadGraveyardOrders();
+    }
   }, []);
 
   if (!user) {
@@ -68,31 +103,6 @@ const UserDashboard = () => {
       {/* Admin tab*/}
       {(user.role === "admin" || user.role === "dev") && <AdminTabs />}
 
-      {/* Orders graveyard */}
-      {(user.role === "admin" ||
-        user.role === "dev" ||
-        user.role === "skillmaster") && (
-        <>
-          <div className="flex flex-col gap-y-4">
-            <div className="flex justify-between items-center flex-wrap gap-2">
-              <h2 className="text-lg font-semibold">Orders Graveyard</h2>
-
-              <Link href="/dashboard/orders_graveyard">
-                <button className="px-3 py-2 transition-all hover:bg-white/10 text-white rounded-lg border border-white/10">
-                  View All
-                </button>
-              </Link>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-4">
-            {orders?.map((order, index) => (
-              <OrdersGraveyardCard key={index} order={order} />
-            ))}
-          </div>
-        </>
-      )}
-
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 
       {error && (
@@ -105,6 +115,38 @@ const UserDashboard = () => {
           </button>
         </p>
       )}
+
+      {/* Orders graveyard */}
+      {!loading &&
+        !error &&
+        (user.role === "admin" ||
+          user.role === "dev" ||
+          user.role === "skillmaster") &&
+        (graveyardOrders?.length > 0 ? (
+          <>
+            <div className="flex flex-col gap-y-4">
+              <div className="flex justify-between items-center flex-wrap gap-2">
+                <h2 className="text-lg font-semibold">Orders Graveyard</h2>
+
+                <Link href="/dashboard/orders_graveyard">
+                  <button className="px-3 py-2 transition-all hover:bg-white/10 text-white rounded-lg border border-white/10">
+                    View All
+                  </button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-4">
+              {graveyardOrders?.map((order, index) => (
+                <OrdersGraveyardCard key={index} order={order} />
+              ))}
+            </div>
+          </>
+        ) : (
+          !loading && (
+            <p className="text-center w-full">Orders graveyard is empty!</p>
+          )
+        ))}
 
       {/* Recent Orders */}
       {!loading && !error && orders?.length > 0 ? (

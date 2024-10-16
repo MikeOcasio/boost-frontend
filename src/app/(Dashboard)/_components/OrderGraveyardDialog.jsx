@@ -2,12 +2,31 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
 
+import { acceptGraveyardOrder } from "@/lib/actions/orders-action";
+import { PiGameControllerFill } from "react-icons/pi";
+
 export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
-  const handleAcceptOrder = () => {
-    toast.success("Order accepted!");
+  const [loading, setLoading] = useState(false);
+
+  const handleAcceptOrder = async () => {
+    try {
+      setLoading(true);
+      const response = await acceptGraveyardOrder(order?.id);
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Order accepted!");
+      }
+    } catch (error) {
+      toast.error("Failed to accept order. Please try again!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -32,30 +51,41 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
           </DialogTitle>
 
           <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
-            {/* id */}
-            {order.id && (
-              <button
-                onClick={(e) => {
-                  navigator.clipboard.writeText(order.id);
+            <div className="flex flex-wrap justify-between items-center gap-2">
+              {/* id */}
+              {order.internal_id && (
+                <button
+                  onClick={(e) => {
+                    navigator.clipboard.writeText(order.internal_id);
 
-                  toast.success("Copied to clipboard!");
-                }}
-                className="flex gap-2 items-center rounded-lg bg-black/30 px-2 py-1 hover:bg-black/40 w-fit"
-              >
-                <span className="text-sm font-semibold break-all">
-                  Order ID: #{order.id}
+                    toast.success("Copied to clipboard!");
+                  }}
+                  className="flex gap-2 items-center rounded-lg bg-black/30 px-2 py-1 hover:bg-black/40 w-fit"
+                >
+                  <span className="text-sm font-semibold break-all">
+                    Order ID: #{order.internal_id}
+                  </span>
+                  <IoCopy className="h-8 w-8 ml-2 p-2 hover:bg-white/10 rounded-lg" />
+                </button>
+              )}
+
+              {/* Platform */}
+              <div className="flex flex-wrap gap-2 text-sm items-center">
+                <span className="font-semibold px-1 rounded-md border border-white/10 flex gap-2 items-center">
+                  <PiGameControllerFill className="h-5 w-5" />{" "}
+                  <span>{order.platform?.name}</span>
                 </span>
-                <IoCopy className="h-8 w-8 ml-2 p-2 hover:bg-white/10 rounded-lg" />
-              </button>
-            )}
+              </div>
+            </div>
 
             {/* Accept Order */}
             <div className="flex flex-wrap gap-2 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
               <button
                 onClick={handleAcceptOrder}
+                disabled={loading}
                 className="w-full bg-Gold p-2 rounded-full"
               >
-                Accept Order
+                {loading ? "Accepting..." : "Accept Order"}
               </button>
             </div>
 
@@ -71,28 +101,24 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
                       : "bg-green-500/80 text-white"
                   )}
                 >
-                  {order.order_status}
+                  {order.state}
                 </p>
               </div>
 
+              {/* platform */}
+
               <div className="flex flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1">
-                <p>Payment Status:</p>
-                <p
-                  className={clsx(
-                    "px-2 rounded-full",
-                    order.payment_status === "pending"
-                      ? "bg-yellow-500/80 text-white"
-                      : "bg-green-500/80 text-white"
-                  )}
-                >
-                  {order.payment_status}
-                </p>
+                <span>Platform:</span>
+                <span className="font-semibold px-1 rounded-md border border-white/10 flex gap-2 items-center">
+                  <PiGameControllerFill className="h-5 w-5" />{" "}
+                  <span>{order.platform?.name}</span>
+                </span>
               </div>
             </div>
 
             {/* Product Info */}
             <div className="flex flex-col gap-1 w-full">
-              {order.product?.map((product, index) => (
+              {order.products?.map((product, index) => (
                 <Link
                   key={index}
                   href={`/games/${product.product_id}`}
@@ -100,28 +126,21 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
                 >
                   <div className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30">
                     <div className="flex flex-wrap items-center gap-x-2">
-                      <Image
-                        src={product.image_url}
-                        alt={product.product_name}
-                        height={70}
-                        width={70}
-                        priority
-                        className="rounded-md object-contain bg-white/10 p-2"
-                      />
+                      {product.image && (
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          height={70}
+                          width={70}
+                          priority
+                          className="rounded-md object-contain bg-white/10 p-2"
+                        />
+                      )}
                       <div className="flex flex-col gap-y-1">
-                        <p className="text-sm font-semibold">
-                          {product.product_name} / {product.platform}
-                        </p>
-                        <div className="flex flex-wrap gap-1">
-                          <p className="text-xs text-gray-300 bg-white/10 px-1 rounded-md">
-                            Qty: {product.quantity}
-                          </p>
-                        </div>
+                        <p className="text-sm font-semibold">{product.name}</p>
                       </div>
                     </div>
-                    <p className="text-sm font-semibold">
-                      ${product.price * product.quantity}
-                    </p>
+                    <p className="text-sm font-semibold">${product.price}</p>
                   </div>
                 </Link>
               ))}
@@ -133,26 +152,35 @@ export const OrderGraveyardDialog = ({ dialogOpen, onClose, order }) => {
                 <span>Price</span>
                 <span>
                   $
-                  {order.product?.reduce(
-                    (acc, curr) => acc + Number(curr.price * curr.quantity),
+                  {order.products
+                    .reduce((acc, curr) => acc + Number(curr.price), 0)
+                    .toFixed(2)}
+                </span>
+              </p>
+              {order.promotion_id && (
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
+                  Promotion
+                  <span>{order.promotion_id}</span>
+                </p>
+              )}
+              <p className="text-sm flex flex-wrap gap-2 justify-between items-center ">
+                Tax
+                <span>
+                  $
+                  {order.products.reduce(
+                    (acc, curr) => acc + Number(curr.tax),
                     0
                   )}
                 </span>
-              </p>
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
-                Tax
-                <span>${order.tax}</span>
-              </p>
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
-                Promotion
-                <span>{order.promotion_id}</span>
               </p>
             </div>
 
             {/* data and price */}
             <div className="flex flex-wrap gap-4 justify-between items-center">
               {/* Date */}
-              <p className="text-sm text-gray-300">Order Date: {order.date}</p>
+              <p className="text-sm text-gray-300">
+                Order Date: {new Date(order.created_at).toLocaleString()}
+              </p>
 
               {/* totol_price */}
               <p className="text-lg">Total Price: ${order.total_price}</p>

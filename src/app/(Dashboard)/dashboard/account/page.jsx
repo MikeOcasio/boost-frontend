@@ -1,23 +1,29 @@
 "use client";
 
-import { fetchCurrentUser, fetchPlatforms, updateUser } from "@/lib/actions";
 import { Field, Input, Label } from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { BiLoader, BiPencil, BiUpload } from "react-icons/bi";
+import { BiLoader, BiPencil, BiPlus, BiShield, BiUpload } from "react-icons/bi";
 import { BsUpload } from "react-icons/bs";
 import { IoMdClose, IoMdPerson } from "react-icons/io";
 import { IoWarning } from "react-icons/io5";
+import { PiGameControllerFill } from "react-icons/pi";
+
+import { fetchCurrentUser, fetchPlatforms, updateUser } from "@/lib/actions";
+import { PlatformCredentialDialog } from "@/app/(Home)/checkout/_components/PlatformCredentialDialog";
 
 const AccountPage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-
   const [platforms, setPlatforms] = useState([]);
+
+  // dialog
+  const [dialogId, setDialogId] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const loadUser = async () => {
     try {
@@ -102,6 +108,12 @@ const AccountPage = () => {
 
   if (!user) return null;
 
+  // credential dialog
+  const handleCredentialDialog = (platform) => {
+    setDialogId(platform);
+    setOpenDialog(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
@@ -135,6 +147,8 @@ const AccountPage = () => {
 
       {user && (
         <div className="flex flex-col gap-4 max-w-2xl mx-auto">
+          <p>Gamer Tag: {user.gamer_tag}</p>
+
           <div className="flex flex-wrap gap-4">
             {/* user image */}
             {isEditing ? (
@@ -262,53 +276,44 @@ const AccountPage = () => {
             </Field>
 
             {/* platforms */}
-            {isEditing ? (
-              <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-                <Label>Platform</Label>
 
-                <div className="flex flex-wrap gap-4 items-center">
-                  {platforms.map((platform) => (
-                    <label
-                      key={platform.id}
-                      className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-wrap flex-1"
-                    >
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4"
-                        value={platform.id}
-                        checked={user?.platforms.includes(platform.id) || false}
-                        onChange={() => {
-                          setUser({
-                            ...user,
-                            platforms: user.platforms.includes(platform.id)
-                              ? user.platforms.filter(
-                                  (id) => id !== platform.id
-                                )
-                              : [...user.platforms, platform.id],
-                          });
-                        }}
-                      />
-                      {platform.name}
-                    </label>
-                  ))}
-                </div>
-              </Field>
-            ) : (
-              <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-                <Label>Preferred Platforms</Label>
+            <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+              <Label>Preferred Platforms</Label>
 
-                <div className="flex flex-wrap gap-4 items-center">
-                  {user.platforms.map((platform) => (
+              <div className="flex flex-col gap-2 items-center mt-2">
+                {platforms.map((platform) => (
+                  <div
+                    key={platform.id}
+                    className="flex flex-wrap gap-4 items-center justify-between w-full"
+                  >
                     <p
-                      key={platform}
-                      className="text-xs text-gray-300 bg-black/10 px-1 rounded-md"
+                      key={platform.id}
+                      className="font-semibold bg-white/5 p-2 rounded-md flex gap-4 flex-1 min-w-sm items-center"
                     >
-                      {platform} asd
+                      <PiGameControllerFill className="h-5 w-5" />
+                      <span className="w-full">{platform.name}</span>
                     </p>
-                  ))}
-                </div>
-              </Field>
-            )}
+
+                    {/* add platform */}
+                    {user?.platforms.find((p) => p.id === platform.id) ? (
+                      <div className="bg-white/10 rounded-lg p-2 flex gap-2 items-center flex-1 justify-center">
+                        <BiShield className="h-5 w-5 text-green-500" />
+                        <span>Added securely</span>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleCredentialDialog(platform)}
+                        disabled={loading}
+                        className="bg-Gold/80 hover:bg-Gold/60 rounded-lg p-2 flex gap-2 items-center flex-1 justify-center"
+                      >
+                        <BiPlus className="h-5 w-5" />
+                        Add Platform
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Field>
           </div>
 
           {isEditing && (
@@ -323,6 +328,14 @@ const AccountPage = () => {
           )}
         </div>
       )}
+
+      {/* dialog */}
+      <PlatformCredentialDialog
+        dialogId={dialogId}
+        dialogOpen={openDialog}
+        onClose={() => setOpenDialog(false)}
+        handleUserFetch={loadUser}
+      />
     </div>
   );
 };

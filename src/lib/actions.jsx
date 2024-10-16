@@ -455,7 +455,7 @@ export const loginUser = async ({ email, password }) => {
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage = error.response?.data?.error || error.message;
     console.error("Failed to login user:", errorMessage);
 
     return {

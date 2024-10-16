@@ -66,8 +66,6 @@ const Badges = ({
           attributeArr.push(filteredAttributes);
         }
         setProductAttribute(...attributeArr);
-
-        console.log("attributeArr", attributeArr);
       }
     } catch (error) {
       setError(true);

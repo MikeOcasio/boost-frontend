@@ -20,6 +20,8 @@ export const PlatformCredentialDialog = ({
   dialogOpen,
   onClose,
   loadOrders,
+
+  handleUserFetch,
 }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -42,15 +44,16 @@ export const PlatformCredentialDialog = ({
 
       if (response.error) {
         toast.error(response.error);
+      } else {
+        toast.success("Platform added successfully!");
+        handleClosed();
       }
-
-      toast.success("Platform added successfully!");
-      handleClosed();
     } catch (error) {
       console.log("Error submitting platform:", error.message);
       toast.error(error.message);
     } finally {
-      loadOrders();
+      handleUserFetch();
+      loadOrders && loadOrders();
       setLoading(false);
     }
   };

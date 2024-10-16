@@ -38,8 +38,6 @@ const CheckoutPage = () => {
       setLoading(true);
       const response = await fetchCurrentUser();
 
-      console.log("response", response);
-
       if (response?.error) {
         router.push("/login");
         throw new Error(response.error);
@@ -65,7 +63,7 @@ const CheckoutPage = () => {
     }
 
     handleUserFetch();
-  }, [userToken]);
+  }, []);
 
   const loadOrders = async () => {
     setLoading(true);
@@ -161,18 +159,26 @@ const CheckoutPage = () => {
     }
   };
 
+  const convertToSubCurrency = (amount) => {
+    return Math.round(amount * 100);
+  };
+
   const handleCheckout = async (orderDetails) => {
     setLoading(true);
     setError(false);
 
     try {
+      const productIds = orderDetails.flatMap((order) =>
+        Array(order.quantity).fill(order.id)
+      );
+
       const data = {
         order: {
-          user_id: user.id,
+          user_id: user?.id,
           state: "open",
           platform: orderDetails[0].platform.id,
         },
-        product_ids: orderDetails.map((order) => order.id),
+        product_ids: productIds,
       };
 
       const response = await createOrder(data);
@@ -192,7 +198,7 @@ const CheckoutPage = () => {
 
       router.push(`/thank_you?order_id=${response.id}`);
     } catch (error) {
-      toast.error(error.message || "Payment failed. Please try again.");
+      toast.error(error.message || "Error creating order!");
       setLoading(false);
     } finally {
       setLoading(false);
@@ -204,34 +210,6 @@ const CheckoutPage = () => {
       loadOrders();
     }
   }, [userToken, cartItems]);
-
-  const convertToSubCurrency = (amount) => {
-    return Math.round(amount * 100);
-  };
-
-  const handleAddPlatform = async ({ platform_id, username, password }) => {
-    try {
-      setLoading(true);
-      const response = await addPlatformCredentials({
-        platform_id,
-        username,
-        password,
-      });
-
-      if (response.error) {
-        setError(true);
-        toast.error(response.error);
-      } else {
-        toast.success("Platform added successfully!");
-        loadOrders();
-      }
-    } catch (error) {
-      toast.error(error.message || "Payment failed. Please try again.");
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // credential dialog
   const handleCredentialDialog = (platform_id) => {
@@ -268,7 +246,7 @@ const CheckoutPage = () => {
             className="space-y-4 bg-white/10 p-2 py-4 rounded-lg"
           >
             {/* if user do not have platform credential for the game show message */}
-            {user.platforms.filter(
+            {user?.platforms.filter(
               (platform) => platform.id === platformOrders[0].platform.id
             ).length < 1 && (
               <p className="text-center text-sm text-red-500">
@@ -288,10 +266,12 @@ const CheckoutPage = () => {
                 <span>Price</span>
                 <span>
                   $
-                  {platformOrders.reduce(
-                    (acc, curr) => acc + Number(curr.price * curr.quantity),
-                    0
-                  )}
+                  {platformOrders
+                    .reduce(
+                      (acc, curr) => acc + Number(curr.price * curr.quantity),
+                      0
+                    )
+                    .toFixed(2)}
                 </span>
               </p>
 
@@ -299,17 +279,19 @@ const CheckoutPage = () => {
                 Tax
                 <span>
                   $
-                  {platformOrders.reduce(
-                    (acc, curr) => acc + Number(curr.tax) * curr.quantity,
-                    0
-                  )}
+                  {platformOrders
+                    .reduce(
+                      (acc, curr) => acc + Number(curr.tax) * curr.quantity,
+                      0
+                    )
+                    .toFixed(2)}
                 </span>
               </p>
             </div>
 
             {/* pay now */}
             <div className="flex flex-wrap gap-4">
-              {user.platforms.filter(
+              {user?.platforms.filter(
                 (platform) => platform.id === platformOrders[0].platform.id
               ).length < 1 && (
                 <button
@@ -329,7 +311,7 @@ const CheckoutPage = () => {
                   error ||
                   totalPrice < 1 ||
                   // disable when user do not have credentials
-                  user.platforms.filter(
+                  user?.platforms.filter(
                     (platform) => platform.id === platformOrders[0].platform.id
                   ).length < 1
                 }
@@ -341,14 +323,17 @@ const CheckoutPage = () => {
                 <span>
                   $
                   {totalPrice &&
-                    platformOrders?.reduce(
-                      (acc, curr) =>
-                        acc +
-                        Number(
-                          curr.price * curr.quantity + curr.tax * curr.quantity
-                        ),
-                      0
-                    )}
+                    platformOrders
+                      ?.reduce(
+                        (acc, curr) =>
+                          acc +
+                          Number(
+                            curr.price * curr.quantity +
+                              curr.tax * curr.quantity
+                          ),
+                        0
+                      )
+                      .toFixed(2)}
                 </span>
               </button>
             </div>
@@ -367,6 +352,7 @@ const CheckoutPage = () => {
         dialogOpen={openDialog}
         onClose={() => setOpenDialog(false)}
         loadOrders={loadOrders}
+        handleUserFetch={handleUserFetch}
       />
     </div>
   );

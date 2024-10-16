@@ -56,14 +56,16 @@ export const CartButton = ({ mobileNav }) => {
                 key={item.id}
                 className="flex flex-wrap gap-4 items-center border-b border-white/10 pb-2"
               >
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  quality={100}
-                  width={100}
-                  height={100}
-                  className="mx-auto w-[100px] object-contain bg-white/10 rounded-md p-2"
-                />
+                {item.image && (
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    quality={100}
+                    width={100}
+                    height={100}
+                    className="mx-auto w-[100px] object-contain bg-white/10 rounded-md p-2"
+                  />
+                )}
 
                 <div className="flex flex-col gap-2 flex-1">
                   <div className="flex flex-wrap items-center gap-2">

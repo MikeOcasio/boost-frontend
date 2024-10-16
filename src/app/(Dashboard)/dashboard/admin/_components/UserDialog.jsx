@@ -16,9 +16,14 @@ import { IoClose, IoCopy } from "react-icons/io5";
 import { BiChevronDown, BiLoader, BiTrash, BiUpload } from "react-icons/bi";
 import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
-
-import { createUser, deleteUser, updateUser } from "@/lib/actions";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
+
+import {
+  banUser,
+  createUser,
+  deleteUser,
+  updateUser,
+} from "@/lib/actions/user-actions";
 
 export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
   const [user, setUser] = useState(dialogData || getDefaultUser());
@@ -148,6 +153,32 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
     setUser(dialogData || getDefaultUser());
   };
 
+  const handelBanUser = async () => {
+    if (!user.id) return;
+
+    const confirmed = confirm("Are you sure you want to ban this user?");
+    if (!confirmed) return;
+
+    try {
+      setLoading(true);
+      const response = await banUser(user.id);
+
+      if (response.error) {
+        toast.error("Error banning user!");
+      } else {
+        toast.success("User banned successfully!");
+        handleClosed();
+      }
+    } catch (error) {
+      toast.error("Failed to ban user. Please try again!");
+    } finally {
+      loadUsers();
+      setShowPassword(false);
+      setShowConfirmPassword(false);
+      setLoading(false);
+    }
+  };
+
   return (
     <Dialog
       open={dialogOpen}
@@ -170,22 +201,34 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
           </DialogTitle>
 
           <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
-            {/* id */}
-            {user.id && (
-              <button
-                onClick={(e) => {
-                  navigator.clipboard.writeText(user.id);
+            <div className="flex flex-wrap gap-2 justify-between items-center">
+              {/* id */}
+              {user.id && (
+                <button
+                  onClick={(e) => {
+                    navigator.clipboard.writeText(user.id);
 
-                  toast.success("Copied to clipboard!");
-                }}
-                className="flex gap-2 items-center rounded-lg bg-black/30 px-2 py-1 hover:bg-black/40 w-fit"
-              >
-                <span className="text-sm font-semibold break-all">
-                  ID: {user.id}
-                </span>
-                <IoCopy className="h-8 w-8 ml-2 p-2 hover:bg-white/10 rounded-lg" />
-              </button>
-            )}
+                    toast.success("Copied to clipboard!");
+                  }}
+                  className="flex gap-2 items-center rounded-lg bg-black/30 px-2 py-1 hover:bg-black/40 w-fit"
+                >
+                  <span className="text-sm font-semibold break-all">
+                    ID: {user.id}
+                  </span>
+                  <IoCopy className="h-8 w-8 ml-2 p-2 hover:bg-white/10 rounded-lg" />
+                </button>
+              )}
+
+              {/* ban user */}
+              {user?.id && (
+                <button
+                  onClick={handelBanUser}
+                  className="border rounded-md px-2 py-1 text-sm border-red-500/20 hover:border-red-500/30 text-red-500"
+                >
+                  Ban User
+                </button>
+              )}
+            </div>
 
             {/* Role */}
             <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">

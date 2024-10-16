@@ -1,13 +1,16 @@
 "use client";
 
-import { fetchAllUsers } from "@/lib/actions";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { UserDialog } from "../_components/UserDialog";
 import { BiLoader, BiPencil, BiPlus } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import Image from "next/image";
 import { IoMdPerson } from "react-icons/io";
+import clsx from "clsx";
+import { FaDeleteLeft } from "react-icons/fa6";
+
+import { fetchAllUsers } from "@/lib/actions";
+import { UserDialog } from "../_components/UserDialog";
 
 const AllUsers = () => {
   const [users, setUsers] = useState(null);
@@ -19,6 +22,8 @@ const AllUsers = () => {
 
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState("");
+
+  console.log("users", users);
 
   const loadUsers = async () => {
     setLoading(true);
@@ -111,14 +116,18 @@ const AllUsers = () => {
                 />
               </div>
 
-              <div className="flex flex-wrap gap-4 justify-between items-center">
+              <div className="flex flex-wrap gap-4 justify-between">
                 {!loading &&
                   !error &&
                   filteredUsers?.map((user, index) => (
                     <button
                       key={index}
+                      disabled={user?.deleted_at}
                       onClick={() => editUser(user)}
-                      className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30 gap-2"
+                      className={clsx(
+                        "flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30 gap-2 disabled:cursor-not-allowed",
+                        user?.deleted_at && "bg-red-500/20 hover:bg-red-500/30"
+                      )}
                     >
                       <div className="flex flex-wrap items-center gap-4">
                         <div className="flex max-h-[200px] mx-auto bg-white/10 rounded-lg p-2">
@@ -136,6 +145,13 @@ const AllUsers = () => {
                         </div>
 
                         <div className="flex flex-col gap-2 items-start">
+                          {user?.deleted_at && (
+                            <p className="text-xs break-all flex gap-2 flex-wrap items-center -mt-2">
+                              User is Deleted
+                              <FaDeleteLeft />
+                            </p>
+                          )}
+
                           <p className="text-lg flex flex-wrap gap-2">
                             <span>
                               {user.first_name} {user.last_name}
@@ -143,13 +159,10 @@ const AllUsers = () => {
                             <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
                               {user.role}
                             </span>
-                            <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
-                              ID: {user.id}
-                            </span>
                           </p>
 
-                          <p className="text-sm font-semibold break-all">
-                            Platforms:{" "}
+                          <p className="text-sm font-semibold break-all flex items-center gap-2 flex-wrap">
+                            <span>Platforms:</span>
                             {user.platforms.length < 1 ? (
                               <span className="bg-black/20 px-2 py-1 rounded-md">
                                 N/A
@@ -181,13 +194,29 @@ const AllUsers = () => {
                             )}
                           </p>
 
-                          <p className="text-sm font-semibold break-all border border-white/10 rounded-lg px-2 py-1">
-                            {user.email}
-                          </p>
-                          <p className="text-xs break-all">
-                            Created At:{" "}
-                            {new Date(user.created_at).toLocaleString()}
-                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
+                              ID: {user.id}
+                            </span>
+
+                            <p className="text-sm font-semibold break-all border border-white/10 rounded-lg px-2 py-1">
+                              {user.email}
+                            </p>
+                          </div>
+
+                          <div className="flex flex-wrap gap-x-4 gap-y-2 items-center justify-between">
+                            <p className="text-xs break-all">
+                              Created At:{" "}
+                              {new Date(user.created_at).toLocaleString()}
+                            </p>
+
+                            {user.deleted_at && (
+                              <p className="text-xs break-all">
+                                Deleted At:{" "}
+                                {new Date(user.deleted_at).toLocaleString()}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
 
