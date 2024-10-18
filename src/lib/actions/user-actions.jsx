@@ -150,8 +150,6 @@ export const updateUser = async (user) => {
       }
     );
 
-    console.log("response image test ", response.data);
-
     return response.data;
   } catch (error) {
     const errorMessage = error.response?.data || error.message;

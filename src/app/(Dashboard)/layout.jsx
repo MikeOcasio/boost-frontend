@@ -27,8 +27,6 @@ const DashboardLayout = ({ children }) => {
         throw new Error(response.error);
       }
 
-      console.log("current user", response);
-
       setUser(response);
     } catch (err) {
       toast.error(err.message || "An error occurred while fetching the user.");

@@ -134,35 +134,23 @@ export const OrderDialog = ({
                 </p>
 
                 {isEditing && (
-                  <div className="relative">
-                    <Select
-                      value={currentOrderState}
-                      onChange={(e) => {
-                        setCurrentOrderState(e.target.value);
-                      }}
-                      className=" block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
-                    >
-                      {user.role === "admin" || user.role === "dev"
-                        ? adminOrderStatus.map((item, index) => (
-                            <option
-                              key={index}
-                              value={item.value}
-                              className={clsx("bg-neutral-800")}
-                            >
-                              {item.name}
-                            </option>
-                          ))
-                        : orderStatus.map((item, index) => (
-                            <option
-                              key={index}
-                              value={item.value}
-                              className={clsx("bg-neutral-800")}
-                            >
-                              {item.name}
-                            </option>
-                          ))}
-                    </Select>
-                  </div>
+                  <Select
+                    value={currentOrderState}
+                    onChange={(e) => {
+                      setCurrentOrderState(e.target.value);
+                    }}
+                    className=" block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
+                  >
+                    {orderStatus.map((item, index) => (
+                      <option
+                        key={index}
+                        value={item.value}
+                        className={clsx("bg-neutral-800")}
+                      >
+                        {item.name}
+                      </option>
+                    ))}
+                  </Select>
                 )}
               </div>
 

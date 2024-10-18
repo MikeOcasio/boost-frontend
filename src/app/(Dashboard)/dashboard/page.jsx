@@ -140,6 +140,7 @@ const UserDashboard = () => {
                   key={index}
                   order={order}
                   loadGraveyardOrders={loadGraveyardOrders}
+                  loadOrders={loadOrders}
                 />
               ))}
             </div>

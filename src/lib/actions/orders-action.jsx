@@ -31,6 +31,7 @@ export const fetchAllOrders = async (limit) => {
 
 // create order
 export const createOrder = async (orderData) => {
+  console.log(orderData);
   try {
     const sessionToken = await getSessionToken();
     if (!sessionToken) {
@@ -49,7 +50,7 @@ export const createOrder = async (orderData) => {
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data.message || error.message;
+    const errorMessage = error.response?.data?.errors || error.message;
 
     return {
       error: errorMessage || "An error occurred while creating the order.",

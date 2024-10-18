@@ -15,6 +15,7 @@ export const OrderGraveyardDialog = ({
   onClose,
   order,
   loadGraveyardOrders,
+  loadOrders,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -36,6 +37,7 @@ export const OrderGraveyardDialog = ({
       if (response.error) {
         toast.error(response.error);
       } else {
+        loadOrders();
         onClose();
         toast.success("Order accepted!");
       }

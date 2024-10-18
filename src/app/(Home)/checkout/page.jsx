@@ -188,15 +188,15 @@ const CheckoutPage = () => {
 
         setLoading(false);
         return;
+      } else {
+        toast.success("Order placed successfully!");
+        setLoading(false);
+
+        // remove all item with same platform
+        orderDetails.forEach((order) => removeFromCart(order.id));
+
+        router.push(`/thank_you?order_id=${response.id}`);
       }
-
-      toast.success("Order placed successfully!");
-      setLoading(false);
-
-      // remove all item with same platform
-      orderDetails.forEach((order) => removeFromCart(order.id));
-
-      router.push(`/thank_you?order_id=${response.id}`);
     } catch (error) {
       toast.error(error.message || "Error creating order!");
       setLoading(false);

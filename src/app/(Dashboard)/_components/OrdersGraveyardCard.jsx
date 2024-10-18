@@ -7,7 +7,7 @@ import { OrderGraveyardDialog } from "./OrderGraveyardDialog";
 import clsx from "clsx";
 import { PiGameControllerFill } from "react-icons/pi";
 
-const OrdersGraveyardCard = ({ order, loadGraveyardOrders }) => {
+const OrdersGraveyardCard = ({ order, loadGraveyardOrders, loadOrders }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const onClose = () => {
@@ -97,6 +97,7 @@ const OrdersGraveyardCard = ({ order, loadGraveyardOrders }) => {
           onClose={onClose}
           order={order}
           loadGraveyardOrders={loadGraveyardOrders}
+          loadOrders={loadOrders}
         />
       </div>
     </div>

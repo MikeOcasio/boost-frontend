@@ -164,25 +164,16 @@ export const AdminOrderDialog = ({
                     }}
                     className=" block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
                   >
-                    {user.role === "admin" || user.role === "dev"
-                      ? adminOrderStatus.map((item, index) => (
-                          <option
-                            key={index}
-                            value={item.value}
-                            className={clsx("bg-neutral-800")}
-                          >
-                            {item.name}
-                          </option>
-                        ))
-                      : orderStatus.map((item, index) => (
-                          <option
-                            key={index}
-                            value={item.value}
-                            className={clsx("bg-neutral-800")}
-                          >
-                            {item.name}
-                          </option>
-                        ))}
+                    {(user.role === "admin" || user.role === "dev") &&
+                      adminOrderStatus.map((item, index) => (
+                        <option
+                          key={index}
+                          value={item.value}
+                          className={clsx("bg-neutral-800")}
+                        >
+                          {item.name}
+                        </option>
+                      ))}
                   </Select>
                 </div>
               </div>
