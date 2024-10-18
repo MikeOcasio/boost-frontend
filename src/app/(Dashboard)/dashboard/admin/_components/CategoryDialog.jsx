@@ -14,9 +14,13 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
-
-import { addCategory, deleteCategory, updateCategory } from "@/lib/actions";
 import { BiLoader, BiTrash } from "react-icons/bi";
+
+import {
+  addCategory,
+  deleteCategory,
+  updateCategory,
+} from "@/lib/actions/categories-actions";
 
 export const CategoryDialog = ({
   dialogData,

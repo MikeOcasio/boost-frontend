@@ -9,7 +9,7 @@ import clsx from "clsx";
 import { IoWarning } from "react-icons/io5";
 import { BiLoader } from "react-icons/bi";
 import toast from "react-hot-toast";
-import { fetchAllGames } from "@/lib/actions";
+import { fetchAllGames } from "@/lib/actions/products-action";
 
 export const HomeGameCarousel = () => {
   const [data, setData] = useState(null);

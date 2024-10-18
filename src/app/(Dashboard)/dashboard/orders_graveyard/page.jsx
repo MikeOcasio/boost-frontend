@@ -1,12 +1,13 @@
 "use client";
 
-import { useUserStore } from "@/store/use-user";
-import OrdersGraveyardCard from "../../_components/OrdersGraveyardCard";
-import { fetchAllGraveyardOrders } from "@/lib/actions";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
+
+import { fetchAllGraveyardOrders } from "@/lib/actions/orders-action";
+import { useUserStore } from "@/store/use-user";
+import OrdersGraveyardCard from "../../_components/OrdersGraveyardCard";
 
 const OrderGraveyardPage = () => {
   const { user } = useUserStore();

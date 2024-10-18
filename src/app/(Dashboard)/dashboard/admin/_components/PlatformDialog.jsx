@@ -12,9 +12,13 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
-
-import { addPlatform, deletePlatform, updatePlatform } from "@/lib/actions";
 import { BiLoader, BiTrash } from "react-icons/bi";
+
+import {
+  addPlatform,
+  deletePlatform,
+  updatePlatform,
+} from "@/lib/actions/platforms-action";
 
 export const PlatformDialog = ({
   dialogData,

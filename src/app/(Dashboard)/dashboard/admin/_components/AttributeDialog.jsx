@@ -13,7 +13,11 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
 
-import { addAttribute, deleteAttribute, updateAttribute } from "@/lib/actions";
+import {
+  addAttribute,
+  deleteAttribute,
+  updateAttribute,
+} from "@/lib/actions/attributes-action";
 import { BiLoader, BiTrash } from "react-icons/bi";
 
 export const AttributeDialog = ({

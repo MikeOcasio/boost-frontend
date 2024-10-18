@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { BiLoader, BiUpload } from "react-icons/bi";
-import { fetchGameById, updateGame } from "@/lib/actions";
-import { EditGame } from "../../_components/EditGame";
 import { IoWarning } from "react-icons/io5";
+
+import { fetchGameById, updateGame } from "@/lib/actions/products-action";
+import { EditGame } from "../../_components/EditGame";
 
 const GameEditPage = ({ params }) => {
   const { gameId } = params;

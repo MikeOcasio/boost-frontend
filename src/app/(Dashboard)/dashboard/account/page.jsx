@@ -20,7 +20,7 @@ import { PiGameControllerFill } from "react-icons/pi";
 
 import { PlatformCredentialDialog } from "@/app/(Home)/checkout/_components/PlatformCredentialDialog";
 import { fetchCurrentUser, updateUser } from "@/lib/actions/user-actions";
-import { fetchPlatforms } from "@/lib/actions";
+import { fetchPlatforms } from "@/lib/actions/platforms-action";
 
 const AccountPage = () => {
   const [user, setUser] = useState(null);

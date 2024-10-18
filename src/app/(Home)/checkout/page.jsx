@@ -9,11 +9,11 @@ import { IoWarning } from "react-icons/io5";
 
 import { useUserStore } from "@/store/use-user";
 import { useCartStore } from "@/store/use-cart";
-import { fetchGameById, fetchCurrentUser } from "@/lib/actions";
 import { CheckoutOrderCard } from "./_components/CheckoutOrderCard";
-import { createOrder } from "@/lib/actions/orders-action";
-import { addPlatformCredentials } from "@/lib/actions/user-actions";
 import { PlatformCredentialDialog } from "./_components/PlatformCredentialDialog";
+import { fetchGameById } from "@/lib/actions/products-action";
+import { createOrder } from "@/lib/actions/orders-action";
+import { fetchCurrentUser } from "@/lib/actions/user-actions";
 
 // load stripe
 // const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);

@@ -70,9 +70,12 @@ const OrdersGraveyardCard = ({ order, loadGraveyardOrders }) => {
           <span
             className={clsx(
               "font-semibold px-1 rounded-md border border-white/10",
-              order.state === "assigned" && "bg-yellow-600",
-              order.state === "complete" && "bg-green-600",
-              order.state === "open" && "bg-white/10"
+              order.state === "in_progress" && "bg-purple-500",
+              order.state === "delayed" && "bg-yellow-500",
+              order.state === "disputed" && "bg-red-500",
+              order.state === "assigned" && "bg-blue-500",
+              order.state === "re_assigned" && "bg-blue-500",
+              order.state === "complete" && "bg-green-500"
             )}
           >
             {order.state}

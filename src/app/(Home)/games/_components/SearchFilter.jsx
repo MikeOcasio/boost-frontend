@@ -9,7 +9,9 @@ import toast from "react-hot-toast";
 import { BiCross, BiFilter, BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 
-import { fetchAttribute, fetchCategories, fetchPlatforms } from "@/lib/actions";
+import { fetchPlatforms } from "@/lib/actions/platforms-action";
+import { fetchCategories } from "@/lib/actions/categories-actions";
+import { fetchAttribute } from "@/lib/actions/attributes-action";
 
 export const SearchFilter = ({ filter, setFilter }) => {
   const [categories, setCategories] = useState(null);

@@ -9,7 +9,8 @@ import toast from "react-hot-toast";
 import { BiCross, BiFilter, BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 
-import { fetchCategories, fetchPlatforms } from "@/lib/actions";
+import { fetchPlatforms } from "@/lib/actions/platforms-action";
+import { fetchCategories } from "@/lib/actions/categories-actions";
 
 const SkillmasterFilter = ({ filter, setFilter }) => {
   const [categories, setCategories] = useState(null);

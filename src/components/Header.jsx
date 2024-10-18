@@ -23,12 +23,12 @@ import {
   MenuItem,
   MenuItems,
 } from "@headlessui/react";
+import { FaRegUser } from "react-icons/fa";
 
 import { MobileNavigation } from "./home/MobileNavigation";
 import { CartButton } from "./CartButton";
 import { useUserStore } from "@/store/use-user";
-import { logoutSession } from "@/lib/actions";
-import { FaRegUser } from "react-icons/fa";
+import { logoutSession } from "@/lib/actions/user-actions";
 import { fetchCurrentUser } from "@/lib/actions/user-actions";
 
 const resourcesData = [
@@ -178,8 +178,9 @@ export function Header() {
                       <Image
                         src={user.image_url}
                         alt={user.first_name}
-                        width={30}
-                        height={30}
+                        width={50}
+                        height={50}
+                        priority
                         className="h-10 w-10 rounded-full object-cover"
                       />
                     ) : (

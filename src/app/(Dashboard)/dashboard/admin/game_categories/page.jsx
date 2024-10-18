@@ -7,7 +7,7 @@ import { IoWarning } from "react-icons/io5";
 import clsx from "clsx";
 
 import { CategoryDialog } from "../_components/CategoryDialog";
-import { fetchCategories } from "@/lib/actions";
+import { fetchCategories } from "@/lib/actions/categories-actions";
 
 const GameCategoriesPage = () => {
   const [categories, setCategories] = useState(null);

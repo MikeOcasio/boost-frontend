@@ -75,7 +75,9 @@ const OrdersPage = () => {
           !loading &&
           !error &&
           orders &&
-          orders?.map((order, index) => <OrderCard key={index} order={order} />)
+          orders?.map((order, index) => (
+            <OrderCard key={index} order={order} loadOrders={loadOrders} />
+          ))
         )}
       </div>
 

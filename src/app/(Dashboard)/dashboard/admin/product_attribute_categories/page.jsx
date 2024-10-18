@@ -5,7 +5,7 @@ import { BiLoader, BiPencil, BiPlus } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
 
-import { fetchAttribute } from "@/lib/actions";
+import { fetchAttribute } from "@/lib/actions/attributes-action";
 import { AttributeDialog } from "../_components/AttributeDialog";
 
 const ProductAttributePage = () => {

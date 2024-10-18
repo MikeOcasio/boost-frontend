@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import { fetchAllGames } from "@/lib/actions";
 import { useEffect, useState } from "react";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 
+import { fetchAllGames } from "@/lib/actions/products-action";
 import { AdminGameCard } from "../_components/AdminGameCard";
 import toast from "react-hot-toast";
 import { useUserStore } from "@/store/use-user";

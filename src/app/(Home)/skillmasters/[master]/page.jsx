@@ -1,6 +1,5 @@
 "use client";
 
-import { fetchSkillmasterById } from "@/lib/actions";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -9,6 +8,8 @@ import { BiLoader } from "react-icons/bi";
 import { BsTrophyFill } from "react-icons/bs";
 import { IoMdPerson } from "react-icons/io";
 import { IoWarning } from "react-icons/io5";
+
+import { fetchSkillmasterById } from "@/lib/actions/user-actions";
 
 // {
 //   id: 1,

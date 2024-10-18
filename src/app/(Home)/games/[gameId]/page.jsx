@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 
-import { fetchGameById } from "@/lib/actions";
+import { fetchGameById } from "@/lib/actions/products-action";
 import Badges from "../_components/Badges";
 import { useCartStore } from "@/store/use-cart";
 

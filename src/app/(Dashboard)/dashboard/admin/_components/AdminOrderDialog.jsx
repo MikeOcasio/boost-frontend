@@ -144,11 +144,12 @@ export const AdminOrderDialog = ({
                 <p>Order Status:</p>
                 <p
                   className={clsx(
-                    "px-2 rounded-full h-fit",
+                    "px-2 rounded-full h-fit border border-white/10",
                     currentOrderState === "in_progress" && "bg-purple-500",
                     currentOrderState === "delayed" && "bg-yellow-500",
                     currentOrderState === "disputed" && "bg-red-500",
                     currentOrderState === "assigned" && "bg-blue-500",
+                    currentOrderState === "re_assigned" && "bg-blue-500",
                     currentOrderState === "complete" && "bg-green-500"
                   )}
                 >

@@ -1,12 +1,13 @@
 "use client";
 
 import { PlusIcon } from "@heroicons/react/20/solid";
-import { EditGame } from "../../_components/EditGame";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
-import { addGame } from "@/lib/actions";
 import { useRouter } from "next/navigation";
+
+import { EditGame } from "../../_components/EditGame";
+import { addGame } from "@/lib/actions/products-action";
 
 const NewGamePage = () => {
   const router = useRouter();

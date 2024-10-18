@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useUserStore } from "@/store/use-user";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import toast from "react-hot-toast";
-import { fetchCurrentUser } from "@/lib/actions";
+
+import { useUserStore } from "@/store/use-user";
+import { fetchCurrentUser } from "@/lib/actions/user-actions";
 
 const AdminLayout = ({ children }) => {
   const router = useRouter();

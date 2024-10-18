@@ -139,8 +139,9 @@ export function Navbar() {
                         <Image
                           src={user.image_url}
                           alt={user.first_name}
-                          width={30}
-                          height={30}
+                          width={50}
+                          height={50}
+                          priority
                           className="h-10 w-10 rounded-full object-cover"
                         />
                       ) : (

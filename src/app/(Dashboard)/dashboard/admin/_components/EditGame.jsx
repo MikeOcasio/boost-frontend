@@ -15,15 +15,13 @@ import { BiChevronDown, BiLoader, BiTrash, BiUpload } from "react-icons/bi";
 import { IoCopy } from "react-icons/io5";
 import { IoMdAdd, IoMdRemove, IoMdClose } from "react-icons/io";
 import { GrPowerReset } from "react-icons/gr";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/Button";
-import {
-  deleteGame,
-  fetchAttribute,
-  fetchCategories,
-  fetchPlatforms,
-} from "@/lib/actions";
-import { useRouter } from "next/navigation";
+import { deleteGame } from "@/lib/actions/products-action";
+import { fetchCategories } from "@/lib/actions/categories-actions";
+import { fetchAttribute } from "@/lib/actions/attributes-action";
+import { fetchPlatforms } from "@/lib/actions/platforms-action";
 
 export const EditGame = ({ data, setData }) => {
   const router = useRouter();
@@ -277,7 +275,7 @@ export const EditGame = ({ data, setData }) => {
             {attribute?.map((attr) => (
               <label
                 key={attr.id}
-                className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-wrap flex-1"
+                className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-1"
               >
                 <input
                   type="checkbox"
@@ -302,15 +300,6 @@ export const EditGame = ({ data, setData }) => {
                       prod_attr_cat_ids: updatedAttrs.map((item) => item.id),
                     });
                   }}
-
-                  // onChange={() =>
-                  //   setGame({
-                  //     ...game,
-                  //     prod_attr_cats: game.prod_attr_cats.includes(attr.id)
-                  //       ? game.prod_attr_cats.filter((id) => id !== attr.id)
-                  //       : [...game.prod_attr_cats, attr.id],
-                  //   })
-                  // }
                 />
                 {attr.name}
               </label>

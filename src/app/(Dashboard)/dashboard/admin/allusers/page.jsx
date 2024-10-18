@@ -9,7 +9,7 @@ import { IoMdPerson } from "react-icons/io";
 import clsx from "clsx";
 import { FaDeleteLeft } from "react-icons/fa6";
 
-import { fetchAllUsers } from "@/lib/actions";
+import { fetchAllUsers } from "@/lib/actions/user-actions";
 import { UserDialog } from "../_components/UserDialog";
 
 const AllUsers = () => {

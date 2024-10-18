@@ -5,7 +5,7 @@ import { BiLoader, BiPencil, BiPlus } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
 
-import { fetchPlatforms } from "@/lib/actions";
+import { fetchPlatforms } from "@/lib/actions/platforms-action";
 import { PlatformDialog } from "../_components/PlatformDialog";
 
 const PlatformsPage = () => {

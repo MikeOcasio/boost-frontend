@@ -6,7 +6,7 @@ import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 
 import GameCard from "@/components/GameCard";
-import { fetchAllGames } from "@/lib/actions";
+import { fetchAllGames } from "@/lib/actions/products-action";
 import { SearchFilter } from "./_components/SearchFilter";
 import { FilterButton } from "@/components/FilterButton";
 

@@ -113,10 +113,14 @@ export const OrderGraveyardDialog = ({
                 <p>Order Status:</p>
                 <p
                   className={clsx(
-                    "px-2 rounded-full",
-                    order.state?.toLowerCase() === "pending"
-                      ? "bg-yellow-500/80 text-white"
-                      : "bg-green-500/80 text-white"
+                    "font-semibold px-1 rounded-md border border-white/10",
+
+                    order.state === "in_progress" && "bg-purple-500",
+                    order.state === "delayed" && "bg-yellow-500",
+                    order.state === "disputed" && "bg-red-500",
+                    order.state === "assigned" && "bg-blue-500",
+                    order.state === "re_assigned" && "bg-blue-500",
+                    order.state === "complete" && "bg-green-500"
                   )}
                 >
                   {order.state}
@@ -185,10 +189,9 @@ export const OrderGraveyardDialog = ({
                 Tax
                 <span>
                   $
-                  {order.products.reduce(
-                    (acc, curr) => acc + Number(curr.tax),
-                    0
-                  )}
+                  {order.products
+                    .reduce((acc, curr) => acc + Number(curr.tax), 0)
+                    .toFixed(2)}
                 </span>
               </p>
             </div>

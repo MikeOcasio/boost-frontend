@@ -9,7 +9,7 @@ import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import {
   fetchProductByAttribute,
   fetchProductByCategories,
-} from "@/lib/actions";
+} from "@/lib/actions/products-action";
 import RelatedGameCard from "./RelatedGameCard";
 
 const Badges = ({
@@ -65,6 +65,7 @@ const Badges = ({
           );
           attributeArr.push(filteredAttributes);
         }
+
         setProductAttribute(...attributeArr);
       }
     } catch (error) {

@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { BiLoader } from "react-icons/bi";
 import toast from "react-hot-toast";
 
-import { loginUser } from "@/lib/actions";
+import { loginUser } from "@/lib/actions/user-actions";
 import { useUserStore } from "@/store/use-user";
 
 export default function Login() {
