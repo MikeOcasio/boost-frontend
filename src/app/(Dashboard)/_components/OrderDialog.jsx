@@ -1,11 +1,56 @@
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle, Select } from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
 
-export const OrderDialog = ({ dialogOpen, onClose, order }) => {
+import { updateOrderStatus } from "@/lib/actions/orders-action";
+import { adminOrderStatus, orderStatus } from "@/lib/data";
+import { useUserStore } from "@/store/use-user";
+
+export const OrderDialog = ({
+  dialogOpen,
+  onClose,
+  order,
+  isEditing,
+  loadOrders,
+}) => {
+  const { user } = useUserStore();
+
+  const [currentOrderState, setCurrentOrderState] = useState(order?.state);
+  const [loading, setLoading] = useState(false);
+
+  const handleUpdateState = async () => {
+    if (!order?.id) return;
+
+    const confirmed = confirm(
+      "Are you sure you want to update the order status?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setLoading(true);
+      const response = await updateOrderStatus(order?.id, currentOrderState);
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        onClose();
+        toast.success("Order status updated successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to update order status. Please try again!");
+    } finally {
+      setCurrentOrderState(order?.state);
+      loadOrders();
+      setLoading(false);
+    }
+  };
+
   return (
     <Dialog
       open={dialogOpen}
@@ -15,7 +60,7 @@ export const OrderDialog = ({ dialogOpen, onClose, order }) => {
     >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="w-full max-w-xl rounded-lg bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
+        <DialogPanel className="w-full max-w-3xl rounded-lg bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
           <button
             onClick={() => onClose()}
             className="rounded-lg hover:bg-white/10 absolute right-0 top-0 m-4"
@@ -54,27 +99,79 @@ export const OrderDialog = ({ dialogOpen, onClose, order }) => {
               </div>
             </div>
 
+            {/* update order status */}
+            {(user.role === "admin" ||
+              user.role === "dev" ||
+              user.role === "skillmaster") &&
+              order.state !== currentOrderState && (
+                <div className="flex flex-wrap gap-2 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                  <button
+                    onClick={handleUpdateState}
+                    disabled={loading}
+                    className="w-full bg-Gold p-2 rounded-full"
+                  >
+                    {loading ? "Accepting..." : "Update Order Status"}
+                  </button>
+                </div>
+              )}
+
             {/* status */}
             <div className="flex flex-wrap gap-2 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-              <div className="flex flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1">
+              <div className="flex items-center flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1">
                 <p>Order Status:</p>
                 <p
                   className={clsx(
                     "px-2 rounded-full h-fit",
-                    order.state === "assigned" && "bg-yellow-600",
-                    order.state === "complete" && "bg-green-600",
-                    order.state === "open" && "bg-white/10"
+                    currentOrderState === "in_progress" && "bg-purple-500",
+                    currentOrderState === "delayed" && "bg-yellow-500",
+                    currentOrderState === "disputed" && "bg-red-500",
+                    currentOrderState === "assigned" && "bg-blue-500",
+                    currentOrderState === "complete" && "bg-green-500"
                   )}
                 >
-                  {order.state}
+                  {currentOrderState}
                 </p>
+
+                {isEditing && (
+                  <div className="relative">
+                    <Select
+                      value={currentOrderState}
+                      onChange={(e) => {
+                        setCurrentOrderState(e.target.value);
+                      }}
+                      className=" block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
+                    >
+                      {user.role === "admin" || user.role === "dev"
+                        ? adminOrderStatus.map((item, index) => (
+                            <option
+                              key={index}
+                              value={item.value}
+                              className={clsx("bg-neutral-800")}
+                            >
+                              {item.name}
+                            </option>
+                          ))
+                        : orderStatus.map((item, index) => (
+                            <option
+                              key={index}
+                              value={item.value}
+                              className={clsx("bg-neutral-800")}
+                            >
+                              {item.name}
+                            </option>
+                          ))}
+                    </Select>
+                  </div>
+                )}
               </div>
 
               {order.skill_master.gamer_tag && (
                 <div className="flex flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1">
                   <p>Assigned Skillmaster:</p>
                   <p
-                    className={clsx("px-2 rounded-full border border-white/10")}
+                    className={clsx(
+                      "px-2 rounded-full h-fit border border-white/10"
+                    )}
                   >
                     {order.skill_master.gamer_tag}
                   </p>

@@ -129,13 +129,18 @@ export const updateUser = async (user) => {
       return { error: "No token found. Please login again." };
     }
 
-    const response = await axios.patch(
-      `${apiUrl}/api/users/${user.id}`,
+    const response = await axios.put(
+      `${apiUrl}/users/member-data/${user.id}`,
       {
         user: {
+          image_url: user.image_url,
           first_name: user.first_name,
           last_name: user.last_name,
-          image_url: user.image,
+          gamer_tag: user.gamer_tag,
+          achievements: user.achievements,
+          gameplay_info: user.gameplay_info,
+          bio: user.bio,
+          role: user.role,
         },
       },
       {
@@ -145,7 +150,7 @@ export const updateUser = async (user) => {
       }
     );
 
-    console.log("response", response);
+    console.log("response image test ", response.data);
 
     return response.data;
   } catch (error) {
@@ -203,13 +208,12 @@ export const createUser = async ({
         last_name: lastName,
         password: password,
         password_confirmation: confirmPassword,
-        image_url: image,
       },
     });
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage = error.response?.data?.message || error.message;
     console.error("Failed to sign in user:", errorMessage);
 
     return {

@@ -29,6 +29,7 @@ import { CartButton } from "./CartButton";
 import { useUserStore } from "@/store/use-user";
 import { logoutSession } from "@/lib/actions";
 import { FaRegUser } from "react-icons/fa";
+import { fetchCurrentUser } from "@/lib/actions/user-actions";
 
 const resourcesData = [
   {
@@ -53,7 +54,25 @@ export function Header() {
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const { userToken, removeToken } = useUserStore();
+  const { userToken, removeToken, user, setUser } = useUserStore();
+
+  const handleUserFetch = async () => {
+    try {
+      const response = await fetchCurrentUser();
+      if (response?.error) {
+        throw new Error(response.error);
+      }
+      setUser(response);
+    } catch (err) {
+      await removeToken();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleUserFetch();
+  }, [userToken]);
 
   useEffect(() => {
     setMounted(true);
@@ -155,6 +174,14 @@ export function Header() {
                   <MenuButton className="rounded-lg hover:bg-Plum/30 border border-white/10 h-full mt-1">
                     {loading ? (
                       <BiLoader className="h-10 w-10 p-2.5 animate-spin" />
+                    ) : user?.image_url ? (
+                      <Image
+                        src={user.image_url}
+                        alt={user.first_name}
+                        width={30}
+                        height={30}
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
                     ) : (
                       <FaRegUser className="h-10 w-10 p-2.5" />
                     )}

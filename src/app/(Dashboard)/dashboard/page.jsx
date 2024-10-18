@@ -50,8 +50,6 @@ const UserDashboard = () => {
     try {
       const result = await fetchAllGraveyardOrders(10);
 
-      console.log("result", result);
-
       if (result.error) {
         setError(true);
         toast.error(result.error);
@@ -138,7 +136,11 @@ const UserDashboard = () => {
 
             <div className="flex flex-wrap gap-4">
               {graveyardOrders?.map((order, index) => (
-                <OrdersGraveyardCard key={index} order={order} />
+                <OrdersGraveyardCard
+                  key={index}
+                  order={order}
+                  loadGraveyardOrders={loadGraveyardOrders}
+                />
               ))}
             </div>
           </>
@@ -163,7 +165,7 @@ const UserDashboard = () => {
 
           <div className="space-y-4">
             {orders.map((order, index) => (
-              <OrderCard key={index} order={order} />
+              <OrderCard key={index} order={order} loadOrders={loadOrders} />
             ))}
           </div>
         </div>

@@ -1,18 +1,26 @@
 "use client";
 
-import { Field, Input, Label } from "@headlessui/react";
+import { Field, Input, Label, Textarea } from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { BiLoader, BiPencil, BiPlus, BiShield, BiUpload } from "react-icons/bi";
+import {
+  BiLoader,
+  BiPencil,
+  BiPlus,
+  BiShield,
+  BiTrophy,
+  BiUpload,
+} from "react-icons/bi";
 import { BsUpload } from "react-icons/bs";
-import { IoMdClose, IoMdPerson } from "react-icons/io";
+import { IoMdAdd, IoMdClose, IoMdPerson, IoMdRemove } from "react-icons/io";
 import { IoWarning } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
 
-import { fetchCurrentUser, fetchPlatforms, updateUser } from "@/lib/actions";
 import { PlatformCredentialDialog } from "@/app/(Home)/checkout/_components/PlatformCredentialDialog";
+import { fetchCurrentUser, updateUser } from "@/lib/actions/user-actions";
+import { fetchPlatforms } from "@/lib/actions";
 
 const AccountPage = () => {
   const [user, setUser] = useState(null);
@@ -89,6 +97,7 @@ const AccountPage = () => {
       toast.error("An unexpected error occurred.");
     } finally {
       setLoading(false);
+      loadUser();
     }
   };
 
@@ -114,10 +123,84 @@ const AccountPage = () => {
     setOpenDialog(true);
   };
 
+  const handleAchievementChange = (index, value) => {
+    const updatedAchievements = [...user.achievements];
+    updatedAchievements[index] = value;
+
+    // Prevent empty strings from being added
+    if (value.trim() !== "" || index < updatedAchievements.length - 1) {
+      setUser({ ...user, achievements: updatedAchievements });
+    }
+  };
+
+  const addAchievement = () => {
+    if (user.achievements[user.achievements.length - 1] !== "") {
+      setUser({ ...user, achievements: [...user.achievements, ""] });
+    } else {
+      toast.error(
+        "Please fill in the current achievement before adding a new one."
+      );
+    }
+  };
+
+  const removeAchievement = (index) => {
+    setUser({
+      ...user,
+      achievements: user.achievements.filter((_, i) => i !== index),
+    });
+  };
+
+  const handleGameplayNameChange = (index, value) => {
+    const updatedGameplayInfo = [...user.gameplay_info];
+    updatedGameplayInfo[index] = { ...updatedGameplayInfo[index], name: value };
+
+    setUser({ ...user, gameplay_info: updatedGameplayInfo });
+  };
+
+  const handleGameplayUrlChange = (index, value) => {
+    const updatedGameplayInfo = [...user.gameplay_info];
+    updatedGameplayInfo[index] = { ...updatedGameplayInfo[index], url: value };
+
+    setUser({ ...user, gameplay_info: updatedGameplayInfo });
+  };
+
+  const addGameplayInfo = () => {
+    // Allow adding a new entry if at least one field is filled
+    if (
+      user.gameplay_info[user.gameplay_info.length - 1]?.name !== "" &&
+      user.gameplay_info[user.gameplay_info.length - 1]?.url !== ""
+    ) {
+      setUser({
+        ...user,
+        gameplay_info: [...user.gameplay_info, { name: "", url: "" }],
+      });
+    } else {
+      toast.error(
+        "Please provide at least one field in the current gameplay info before adding a new one."
+      );
+    }
+  };
+
+  const removeGameplay = (index) => {
+    setUser({
+      ...user,
+      gameplay_info: user.gameplay_info.filter((_, i) => i !== index),
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h1 className="text-2xl font-semibold">{user?.first_name}'s Account</h1>
+        <h1 className="text-2xl font-semibold flex gap-2 items-center">
+          {user?.first_name}'s Account
+          {(user.role === "admin" ||
+            user.role === "dev" ||
+            user.role === "skillmaster") && (
+            <span className="px-2 py-1 rounded-md bg-white/10 ml-2 text-xs">
+              {user.role}
+            </span>
+          )}
+        </h1>
 
         <button
           type="button"
@@ -146,9 +229,7 @@ const AccountPage = () => {
       )}
 
       {user && (
-        <div className="flex flex-col gap-4 max-w-2xl mx-auto">
-          <p>Gamer Tag: {user.gamer_tag}</p>
-
+        <div className="flex flex-col gap-4 max-w-3xl mx-auto">
           <div className="flex flex-wrap gap-4">
             {/* user image */}
             {isEditing ? (
@@ -169,7 +250,7 @@ const AccountPage = () => {
                       onClick={() =>
                         setUser({
                           ...user,
-                          image: null,
+                          image_url: null,
                           remove_image: "true",
                         })
                       }
@@ -199,7 +280,7 @@ const AccountPage = () => {
                             reader.onloadend = () => {
                               setUser({
                                 ...user,
-                                image: reader.result,
+                                image_url: reader.result,
                                 remove_image: "false",
                               });
                             };
@@ -276,7 +357,6 @@ const AccountPage = () => {
             </Field>
 
             {/* platforms */}
-
             <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
               <Label>Preferred Platforms</Label>
 
@@ -314,6 +394,153 @@ const AccountPage = () => {
                 ))}
               </div>
             </Field>
+
+            {/* gamer tag */}
+            {(user.role === "admin" ||
+              user.role === "dev" ||
+              user.role === "skillmaster") &&
+              (isEditing || user.gamer_tag) && (
+                <Field className="flex flex-col gap-1 w-full">
+                  <Label className="text-sm">Gamer Tag</Label>
+                  <Input
+                    disabled={!isEditing}
+                    type="text"
+                    placeholder="Gamer tag name"
+                    className="input-field"
+                    value={user.gamer_tag}
+                    onChange={(e) =>
+                      setUser({ ...user, gamer_tag: e.target.value })
+                    }
+                  />
+                </Field>
+              )}
+
+            {/* bio */}
+            {(user.role === "admin" ||
+              user.role === "dev" ||
+              user.role === "skillmaster") &&
+              (isEditing || user.bio) && (
+                <Field className="flex flex-col gap-1 w-full">
+                  <Label className="text-sm">Bio</Label>
+                  <Textarea
+                    disabled={!isEditing}
+                    placeholder="Bio"
+                    className="input-field"
+                    value={user.bio}
+                    onChange={(e) => setUser({ ...user, bio: e.target.value })}
+                  />
+                </Field>
+              )}
+
+            {/* user achievements */}
+            {(user.role === "admin" ||
+              user.role === "dev" ||
+              user.role === "skillmaster") &&
+              (isEditing || user.achievements.length > 0) && (
+                <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                  <div className="flex items-center justify-between gap-4">
+                    <Label>Achievements</Label>
+                    {isEditing && (
+                      <button
+                        onClick={addAchievement}
+                        className="p-2 rounded-lg hover:bg-white/10 flex gap-2 items-center border border-white/10"
+                      >
+                        <IoMdAdd className="h-5 w-5" />
+                        Add more
+                      </button>
+                    )}
+                  </div>
+
+                  {user.achievements.map((achievement, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-wrap gap-2 items-center"
+                    >
+                      <BiTrophy className="h-5 w-5 text-Gold" />
+                      <Input
+                        type="text"
+                        autoFocus
+                        disabled={!isEditing}
+                        value={achievement}
+                        placeholder={`Achievement ${index + 1}`}
+                        className="input-field"
+                        onChange={(e) =>
+                          handleAchievementChange(index, e.target.value)
+                        }
+                      />
+                      {isEditing && (
+                        <button
+                          onClick={() => removeAchievement(index)}
+                          className="border rounded-lg p-2 hover:bg-white/10 border-white/10"
+                        >
+                          <IoMdRemove className="h-6 w-6" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </Field>
+              )}
+
+            {/* game play info */}
+            {(user.role === "admin" ||
+              user.role === "dev" ||
+              user.role === "skillmaster") &&
+              (isEditing || user.gameplay_info.length > 0) && (
+                <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                  <div className="flex items-center justify-between gap-4">
+                    <Label>Gameplay Info</Label>
+                    {isEditing && (
+                      <button
+                        onClick={addGameplayInfo}
+                        className="p-2 rounded-lg hover:bg-white/10 flex gap-2 items-center border border-white/10"
+                      >
+                        <IoMdAdd className="h-5 w-5" />
+                        Add more
+                      </button>
+                    )}
+                  </div>
+
+                  {user.gameplay_info.map((gameplay, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-wrap gap-2 items-center"
+                    >
+                      <Input
+                        type="text"
+                        autoFocus
+                        disabled={!isEditing}
+                        value={gameplay.name}
+                        placeholder={`Gameplay Name ${index + 1}`}
+                        className="input-field"
+                        onChange={(e) =>
+                          handleGameplayNameChange(index, e.target.value)
+                        }
+                      />
+
+                      <Input
+                        type="text"
+                        autoFocus
+                        disabled={!isEditing}
+                        value={gameplay.url}
+                        placeholder={`Gameplay URL ${index + 1}`}
+                        className="input-field"
+                        onChange={(e) =>
+                          handleGameplayUrlChange(index, e.target.value)
+                        }
+                      />
+
+                      {isEditing && (
+                        <button
+                          onClick={() => removeGameplay(index)}
+                          className="border rounded-lg p-2 hover:bg-white/10 border-white/10"
+                        >
+                          <IoMdRemove className="h-6 w-6" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </Field>
+              )}
           </div>
 
           {isEditing && (

@@ -1,15 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/use-user";
 import React, { useEffect } from "react";
 
 const PaymentConfirmation = () => {
-  // prod change
-  const router = useRouter();
-
-  useEffect(() => {
-    router.push("/");
-  }, []);
+  const { user } = useUserStore();
+  console.log("user", user);
 
   return <div>Payment Confirmation Page</div>;
 };

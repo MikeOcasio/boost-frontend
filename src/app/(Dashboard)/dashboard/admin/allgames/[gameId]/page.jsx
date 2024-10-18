@@ -72,8 +72,6 @@ const GameEditPage = ({ params }) => {
   };
 
   const handleUpdateGame = async () => {
-    console.log("game", game);
-
     if (!validateGame()) return;
 
     setLoading(true);

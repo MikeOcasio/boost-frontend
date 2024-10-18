@@ -10,8 +10,8 @@ import Link from "next/link";
 
 import { Navbar } from "./_components/Navbar";
 import { Footer } from "@/components/Footer";
-import { fetchCurrentUser } from "@/lib/actions";
 import { useUserStore } from "@/store/use-user";
+import { fetchCurrentUser } from "@/lib/actions/user-actions";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
@@ -26,6 +26,9 @@ const DashboardLayout = ({ children }) => {
       if (response?.error) {
         throw new Error(response.error);
       }
+
+      console.log("current user", response);
+
       setUser(response);
     } catch (err) {
       toast.error(err.message || "An error occurred while fetching the user.");

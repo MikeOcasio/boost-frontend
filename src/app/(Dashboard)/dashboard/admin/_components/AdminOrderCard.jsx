@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { AdminOrderDialog } from "./AdminOrderDialog";
 import { PiGameControllerFill } from "react-icons/pi";
 
-export const AdminOrderCard = ({ order }) => {
+export const AdminOrderCard = ({ order, loadOrders }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const onClose = () => setDialogOpen(false);
@@ -103,6 +103,7 @@ export const AdminOrderCard = ({ order }) => {
         dialogOpen={dialogOpen}
         onClose={onClose}
         order={order}
+        loadOrders={loadOrders}
       />
     </div>
   );

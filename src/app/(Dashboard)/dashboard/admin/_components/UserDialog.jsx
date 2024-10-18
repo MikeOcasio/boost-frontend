@@ -24,8 +24,11 @@ import {
   deleteUser,
   updateUser,
 } from "@/lib/actions/user-actions";
+import { useUserStore } from "@/store/use-user";
 
 export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
+  const { user: currentUser } = useUserStore();
+
   const [user, setUser] = useState(dialogData || getDefaultUser());
   const [loading, setLoading] = useState(false);
 
@@ -67,8 +70,6 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
   };
 
   const handleSubmit = async (userData) => {
-    console.log("userData ", userData);
-
     if (userData.id && isDataUnchanged()) {
       toast.error("No changes were made.");
       return;
@@ -93,7 +94,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
           email: user.email,
           password: user.password,
           confirmPassword: user.confirmPassword,
-          image: user.image_url,
+          image_url: user.image_url,
         });
 
         if (response.error) {
@@ -188,7 +189,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
     >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="w-full max-w-xl rounded-lg bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
+        <DialogPanel className="w-full max-w-2xl rounded-lg bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
           <button
             onClick={handleClosed}
             className="rounded-lg hover:bg-white/10 absolute right-0 top-0 m-4"
@@ -231,44 +232,50 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
             </div>
 
             {/* Role */}
-            <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-              <Field className="flex flex-col gap-1 flex-1">
-                <Label className="text-sm">Role</Label>
+            {user.id && (
+              <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                <Field className="flex flex-col gap-1 flex-1">
+                  <Label className="text-sm">Role</Label>
 
-                <div className="relative">
-                  <Select
-                    value={user?.role}
-                    onChange={(e) => {
-                      setUser({ ...user, role: e.target.value });
-                    }}
-                    className="block w-full appearance-none rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
-                  >
-                    <option
-                      value={null}
-                      className="bg-neutral-800"
-                      unselectable="on"
+                  <div className="relative">
+                    <Select
+                      value={user?.role}
+                      onChange={(e) => {
+                        setUser({ ...user, role: e.target.value });
+                      }}
+                      className="block w-full appearance-none rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
                     >
-                      Select a role
-                    </option>
-
-                    {role.map((item, index) => (
                       <option
-                        key={index}
-                        value={item}
+                        value={null}
                         className="bg-neutral-800"
+                        unselectable="on"
                       >
-                        {item}
+                        Select a role
                       </option>
-                    ))}
-                  </Select>
 
-                  <BiChevronDown
-                    className="group absolute top-1.5 right-4 size-6 fill-white/60"
-                    aria-hidden="true"
-                  />
-                </div>
-              </Field>
-            </div>
+                      {role
+                        .filter(
+                          (item) => currentUser === "dev" || item !== "dev"
+                        ) // Show "dev" only for dev users
+                        .map((item, index) => (
+                          <option
+                            key={index}
+                            value={item}
+                            className="bg-neutral-800"
+                          >
+                            {item}
+                          </option>
+                        ))}
+                    </Select>
+
+                    <BiChevronDown
+                      className="group absolute top-1.5 right-4 size-6 fill-white/60"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </Field>
+              </div>
+            )}
 
             {/* email */}
             <Field className="flex flex-col gap-1 w-full">
@@ -324,7 +331,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
                       type={showPassword ? "text" : "password"}
                       placeholder="Password"
                       autoFocus
-                      className="input-field"
+                      className="input-field w-full"
                       value={user.password}
                       onChange={(e) =>
                         setUser({ ...user, password: e.target.value })
@@ -348,7 +355,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm Password"
                       autoFocus
-                      className="input-field"
+                      className="input-field w-full"
                       value={user.confirmPassword}
                       onChange={(e) =>
                         setUser({ ...user, confirmPassword: e.target.value })
@@ -368,62 +375,67 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
               </div>
             )}
             {/* user image */}
-            <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-              <Label className="text-sm">Image</Label>
-              {user.image ? (
-                <div className="group relative cursor-pointer rounded-lg w-fit mx-auto">
-                  <Image
-                    src={user.image}
-                    alt="User Image"
-                    width={150}
-                    height={150}
-                    className="mx-auto rounded-lg object-cover bg-white/10"
-                  />
-                  <IoMdClose
-                    type="button"
-                    className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
-                    onClick={() =>
-                      setUser({ ...user, image: null, remove_image: "true" })
-                    }
-                  />
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2 justify-center w-full">
-                  <label
-                    for="dropzone-file"
-                    className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
-                  >
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <BiUpload className="h-8 w-8 text-gray-500" />
-                      <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                        Click or drag and drop your image here
-                      </p>
-                    </div>
-                    <input
-                      id="dropzone-file"
-                      type="file"
-                      accept="image/*"
-                      className="absolute border h-full w-full opacity-0"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setUser({
-                              ...user,
-                              image: reader.result,
-                              remove_image: "false",
-                            });
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
+            {user.id && (
+              <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                <Label className="text-sm">Image</Label>
+                {user.image_url ? (
+                  <div className="group relative cursor-pointer rounded-lg w-fit mx-auto">
+                    <Image
+                      src={user.image_url}
+                      alt="User Image"
+                      width={150}
+                      height={150}
+                      className="mx-auto rounded-lg object-cover bg-white/10"
                     />
-                  </label>
-                </div>
-              )}
-            </Field>
-
+                    <IoMdClose
+                      type="button"
+                      className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
+                      onClick={() =>
+                        setUser({
+                          ...user,
+                          image_url: null,
+                          remove_image: "true",
+                        })
+                      }
+                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2 justify-center w-full">
+                    <label
+                      for="dropzone-file"
+                      className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <BiUpload className="h-8 w-8 text-gray-500" />
+                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                          Click or drag and drop your image here
+                        </p>
+                      </div>
+                      <input
+                        id="dropzone-file"
+                        type="file"
+                        accept="image/*"
+                        className="absolute border h-full w-full opacity-0"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setUser({
+                                ...user,
+                                image_url: reader.result,
+                                remove_image: "false",
+                              });
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                )}
+              </Field>
+            )}
             {/* platforms */}
 
             {/* delete & submit button */}

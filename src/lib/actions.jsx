@@ -238,8 +238,6 @@ export const fetchGameById = async (gameId) => {
 
 // add game
 export const addGame = async (gameData) => {
-  console.log("gameData", gameData);
-
   try {
     const sessionToken = await getSessionToken();
 
@@ -270,8 +268,6 @@ export const addGame = async (gameData) => {
         },
       }
     );
-
-    console.log(response);
 
     return response.data;
   } catch (error) {
@@ -538,8 +534,6 @@ export const updateUser = async (user) => {
       }
     );
 
-    console.log("response", response);
-
     return response.data;
   } catch (error) {
     const errorMessage = error.response?.data || error.message;
@@ -694,8 +688,6 @@ export const fetchAllSkillmasters = async () => {
       }
     );
 
-    console.log("data", data);
-
     return data;
   } catch (error) {
     const errorMessage = error.response?.data || error.message;
@@ -780,8 +772,6 @@ export const fetchAllGraveyardOrders = async () => {
         Authorization: `Bearer ${sessionToken}`,
       },
     });
-
-    console.log("data", data);
 
     return data;
   } catch (error) {

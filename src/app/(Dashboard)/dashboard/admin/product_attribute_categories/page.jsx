@@ -16,8 +16,6 @@ const ProductAttributePage = () => {
   const [dialogData, setDialogData] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  console.log("attribute", attribute);
-
   // Fetch attribute from API
   const loadAttribute = async () => {
     setLoading(true);

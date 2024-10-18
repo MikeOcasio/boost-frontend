@@ -47,8 +47,6 @@ export const createOrder = async (orderData) => {
       }
     );
 
-    console.log("create order ", data);
-
     return data;
   } catch (error) {
     const errorMessage = error.response?.data.message || error.message;
@@ -99,6 +97,7 @@ export const acceptGraveyardOrder = async (orderId) => {
 
     const { data } = await axios.post(
       `${apiUrl}/orders/info/${orderId}/pick_up_order`,
+      {},
       {
         headers: {
           Authorization: `Bearer ${sessionToken}`,
@@ -108,7 +107,7 @@ export const acceptGraveyardOrder = async (orderId) => {
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage = error.response?.data?.message || error.message;
     console.error("Failed to accept order:", errorMessage);
     return {
       error: errorMessage || "An error occurred while accepting the order.",
@@ -136,10 +135,41 @@ export const assignOrderToSkillMaster = async (orderId, skillMasterId) => {
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage = error.response?.data?.message || error.message;
     console.error("Failed to assign order to skill master:", errorMessage);
     return {
       error: errorMessage || "An error occurred while assigning the order.",
+    };
+  }
+};
+
+// update order status
+export const updateOrderStatus = async (orderId, orderState) => {
+  try {
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const { data } = await axios.put(
+      `${apiUrl}/orders/info/${orderId}`,
+      {
+        state: orderState,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error("Failed to update order status:", errorMessage);
+    return {
+      error:
+        errorMessage || "An error occurred while updating the order status.",
     };
   }
 };

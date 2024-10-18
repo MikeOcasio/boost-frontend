@@ -17,7 +17,6 @@ import toast from "react-hot-toast";
 
 import { MobileNavigation } from "@/components/home/MobileNavigation";
 import { useUserStore } from "@/store/use-user";
-import { logoutSession } from "@/lib/actions";
 import {
   Button,
   Menu,
@@ -26,6 +25,7 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { FaRegUser } from "react-icons/fa";
+import { logoutSession } from "@/lib/actions/user-actions";
 
 const resources = [
   {
@@ -58,7 +58,7 @@ export function Navbar() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const { userToken, removeToken } = useUserStore();
+  const { userToken, removeToken, user } = useUserStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,11 +89,10 @@ export function Navbar() {
         toast.error(response.error || "An error occurred.");
       } else {
         toast.success("Logged out!");
-        router.push("/");
       }
     } catch (err) {
       toast.error(err.message || "Failed to log out user.");
-      console.log("Error logging out user:", err);
+      // console.log("Error logging out user:", err);
     } finally {
       removeToken();
       setLoading(false);
@@ -136,6 +135,14 @@ export function Navbar() {
                     <MenuButton className="rounded-lg hover:bg-Plum/30 border border-white/10 h-full mt-1">
                       {loading ? (
                         <BiLoader className="h-10 w-10 p-2.5 animate-spin" />
+                      ) : user.image_url ? (
+                        <Image
+                          src={user.image_url}
+                          alt={user.first_name}
+                          width={30}
+                          height={30}
+                          className="h-10 w-10 rounded-full object-cover"
+                        />
                       ) : (
                         <FaRegUser className="h-10 w-10 p-2.5" />
                       )}

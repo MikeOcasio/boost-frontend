@@ -6,23 +6,47 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import clsx from "clsx";
 
 import { OrderDialog } from "../app/(Dashboard)/_components/OrderDialog";
-import { PiGameControllerFill } from "react-icons/pi";
+import { PiGameControllerFill, PiPencil } from "react-icons/pi";
+import { useUserStore } from "@/store/use-user";
 
-const OrderCard = ({ order }) => {
+const OrderCard = ({ order, loadOrders }) => {
+  const { user } = useUserStore();
+
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const onClose = () => setDialogOpen(false);
 
   return (
-    <div className="flex-1 min-w-fit space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20">
+    <div
+      onClick={() => setDialogOpen(true)}
+      className="flex-1 min-w-fit space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20"
+    >
       <div className="flex justify-between items-center gap-2 flex-wrap-reverse">
         <h3 className="text-lg font-semibold">Order #{order?.internal_id}</h3>
-        <button
-          onClick={() => setDialogOpen(true)}
-          className="p-2 rounded-lg hover:bg-white/10"
-        >
-          <FaExternalLinkAlt className="h-5 w-5" />
-        </button>
+
+        <div className="flex gap-2">
+          {(user.role === "admin" ||
+            user.role === "dev" ||
+            user.role === "skillmaster") && (
+            <button
+              onClick={() => {
+                setDialogOpen(true);
+                setIsEditing(true);
+              }}
+              className="p-2 rounded-lg hover:bg-white/10"
+            >
+              <PiPencil className="h-5 w-5" />
+            </button>
+          )}
+
+          <button
+            onClick={() => setDialogOpen(true)}
+            className="p-2 rounded-lg hover:bg-white/10"
+          >
+            <FaExternalLinkAlt className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-1 w-full">
@@ -93,7 +117,13 @@ const OrderCard = ({ order }) => {
           <p className="text-lg font-semibold">Price: ${order.total_price}</p>
         </div>
 
-        <OrderDialog dialogOpen={dialogOpen} onClose={onClose} order={order} />
+        <OrderDialog
+          dialogOpen={dialogOpen}
+          onClose={onClose}
+          order={order}
+          isEditing={isEditing}
+          loadOrders={loadOrders}
+        />
       </div>
     </div>
   );
