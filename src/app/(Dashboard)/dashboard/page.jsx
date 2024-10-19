@@ -33,7 +33,24 @@ const UserDashboard = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setOrders(result?.orders);
+        // sort orders in order of open first
+        const sortedOrders = result?.orders.sort((a, b) => {
+          const aState = a.state;
+          const bState = b.state;
+          if (aState === "disputed") return -1;
+          if (bState === "disputed") return 1;
+          if (aState === "delayed") return -1;
+          if (bState === "delayed") return 1;
+          if (aState === "in_progress") return -1;
+          if (bState === "in_progress") return 1;
+          if (aState === "assigned") return -1;
+          if (bState === "assigned") return 1;
+          if (aState === "complete") return -1;
+          if (bState === "complete") return 1;
+          return 0;
+        });
+
+        setOrders(sortedOrders);
       }
     } catch (e) {
       setError(true);
@@ -54,7 +71,15 @@ const UserDashboard = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setGraveyardOrders(result.orders);
+        const sortedOrders = result?.orders.sort((a, b) => {
+          const aState = a.state;
+          const bState = b.state;
+          if (aState === "in_progress") return -1;
+          if (bState === "in_progress") return 1;
+          return 0;
+        });
+
+        setGraveyardOrders(sortedOrders);
       }
     } catch (e) {
       setError(true);

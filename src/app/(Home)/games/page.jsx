@@ -113,7 +113,7 @@ const GamesPage = () => {
   });
 
   return (
-    <div className="mt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4 overflow-hidden">
+    <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4 overflow-hidden">
       {/* Background */}
       <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
 

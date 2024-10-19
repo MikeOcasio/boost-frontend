@@ -15,7 +15,10 @@ const OrdersGraveyardCard = ({ order, loadGraveyardOrders, loadOrders }) => {
   };
 
   return (
-    <div className="space-y-4 rounded-lg border border-white/10 p-4 bg-Gold/20 hover:border-white/20 backdrop-blur-lg flex-1 min-w-fit">
+    <div
+      onClick={() => setDialogOpen(true)}
+      className="space-y-4 rounded-lg border border-white/10 p-4 bg-Gold/20 hover:border-white/20 backdrop-blur-lg flex-1 min-w-fit"
+    >
       <div className="flex justify-between items-center gap-2 flex-wrap-reverse">
         <h3 className="text-lg font-semibold">Order #{order?.internal_id}</h3>
 

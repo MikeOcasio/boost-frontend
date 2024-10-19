@@ -84,7 +84,7 @@ const GamePage = ({ params }) => {
   };
 
   return (
-    <div className="mt-24 max-w-7xl mx-auto min-h-screen p-4">
+    <div className="pt-24 max-w-7xl mx-auto min-h-screen p-4">
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 
       {error && (

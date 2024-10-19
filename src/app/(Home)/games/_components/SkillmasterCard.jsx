@@ -5,7 +5,7 @@ import { IoMdPerson } from "react-icons/io";
 export const SkillmasterCard = ({ skillMaster }) => {
   return (
     <div className="flex flex-wrap w-full pb-8 border-b hover:border-Gold">
-      <div className="flex max-h-[200px] mx-auto bg-white/10 rounded-lg p-2">
+      <div className="flex max-h-[200px] mx-auto bg-white/10 rounded-lg p-2 h-fit">
         {skillMaster.image_url ? (
           <Image
             src={skillMaster.image_url}
@@ -23,10 +23,24 @@ export const SkillmasterCard = ({ skillMaster }) => {
       <div className="flex min-w-[210px] flex-col gap-2 flex-1 justify-between m-6">
         <div className="space-y-2">
           <p className="text-xl font-bold leading-6 text-white">
-            {skillMaster.first_name} {skillMaster.last_name}
+            {skillMaster.gamer_tag ||
+              skillMaster.first_name + " " + skillMaster.last_name}
           </p>
+
+          <div className="flex flex-wrap gap-2 text-sm items-center">
+            Play:{" "}
+            {skillMaster.platforms.map((platform) => (
+              <p
+                key={platform.id}
+                className="bg-white/10 px-2 rounded-md text-center"
+              >
+                {platform.name}
+              </p>
+            ))}
+          </div>
+
           <p className="text-sm text-white/70 font-semibold">
-            {skillMaster.about}
+            {skillMaster.bio}
           </p>
         </div>
 

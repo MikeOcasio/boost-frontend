@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
@@ -54,13 +53,6 @@ import { fetchSkillmasterById } from "@/lib/actions/user-actions";
 // }
 
 const MasterPage = ({ params }) => {
-  // prod change
-  const router = useRouter();
-
-  useEffect(() => {
-    router.push("/");
-  }, []);
-
   const [skillMaster, setSkillMaster] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -90,7 +82,7 @@ const MasterPage = ({ params }) => {
   }, []);
 
   return (
-    <div className="relative mt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
+    <div className="relative pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
       {/* Background */}
       <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
 
@@ -125,10 +117,23 @@ const MasterPage = ({ params }) => {
           )}
 
           <p className="text-6xl tracking-widest text-center font-title">
-            {skillMaster.first_name} {skillMaster.last_name}
+            {skillMaster.gamer_tag ||
+              skillMaster.first_name + " " + skillMaster.last_name}
           </p>
+
+          <div className="flex flex-wrap gap-2 text-sm items-center justify-center">
+            {skillMaster.platforms.map((platform) => (
+              <p
+                key={platform.id}
+                className="bg-white/10 px-2 rounded-md text-center"
+              >
+                {platform.name}
+              </p>
+            ))}
+          </div>
+
           <p className="text-sm text-center text-white/80 font-semibold max-w-xl mx-auto">
-            {skillMaster.about}
+            {skillMaster.bio}
           </p>
 
           {/* achievements */}

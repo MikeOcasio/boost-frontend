@@ -29,6 +29,28 @@ export const fetchAllOrders = async (limit) => {
   }
 };
 
+// fetch order by id
+export const fetchOrderById = async (orderId) => {
+  try {
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const { data } = await axios.get(`${apiUrl}/orders/info/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
+    });
+
+    console.log("order data", data);
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch order details. Please try again!" };
+  }
+};
+
 // create order
 export const createOrder = async (orderData) => {
   console.log(orderData);

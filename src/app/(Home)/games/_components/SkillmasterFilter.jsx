@@ -10,28 +10,12 @@ import { BiCross, BiFilter, BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 
 import { fetchPlatforms } from "@/lib/actions/platforms-action";
-import { fetchCategories } from "@/lib/actions/categories-actions";
 
 const SkillmasterFilter = ({ filter, setFilter }) => {
-  const [categories, setCategories] = useState(null);
   const [platforms, setPlatforms] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
-  const loadCategories = async () => {
-    try {
-      const result = await fetchCategories();
-      if (result.error) {
-        setError(true);
-        toast.error(result.error);
-      }
-      setCategories(result);
-    } catch (error) {
-      setError(true);
-      toast.error("Failed to load categories");
-    }
-  };
 
   const loadPlatforms = async () => {
     try {
@@ -50,7 +34,9 @@ const SkillmasterFilter = ({ filter, setFilter }) => {
   const loadData = async () => {
     setLoading(true);
     setError(null);
-    await Promise.all([loadCategories(), loadPlatforms()]);
+
+    loadPlatforms();
+
     setLoading(false);
   };
 
@@ -118,34 +104,6 @@ const SkillmasterFilter = ({ filter, setFilter }) => {
                   className="bg-neutral-800"
                 >
                   {platform.name}
-                </option>
-              ))}
-            </select>
-
-            {/* categories filter */}
-            <select
-              value={filter.category}
-              onChange={(e) =>
-                setFilter((prev) => ({
-                  ...prev,
-                  category: e.target.value,
-                  categoryName: categories.find(
-                    (category) => category.id === Number(e.target.value)
-                  )?.name,
-                }))
-              }
-              className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
-            >
-              <option value="" className="bg-neutral-800" unselectable="on">
-                Select Category
-              </option>
-              {categories?.map((category) => (
-                <option
-                  key={category.id}
-                  value={category.id}
-                  className="bg-neutral-800"
-                >
-                  {category.name}
                 </option>
               ))}
             </select>

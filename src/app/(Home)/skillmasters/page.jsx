@@ -8,20 +8,10 @@ import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import { SkillmasterCard } from "../games/_components/SkillmasterCard";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
 import { fetchAllSkillmasters } from "@/lib/actions/user-actions";
 
 const SkillMastersPage = () => {
-  // prod change
-  const router = useRouter();
-
-  useEffect(() => {
-    router.push("/");
-  }, []);
-
-  const [skillMasters, setSkillMasters] = useState([]);
-
   // {
   //   id: 1,
   //   email: "ocasio.michael96@gmail.com",
@@ -61,14 +51,13 @@ const SkillMastersPage = () => {
   //     "I am a skill master and I love to help people learn new skills and improve their existing ones.",
   // },
 
+  const [skillMasters, setSkillMasters] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState({
     platform: "",
-    category: "",
     platformName: "",
-    categoryName: "",
   });
 
   const loadSkillmasters = async () => {
@@ -94,28 +83,31 @@ const SkillMastersPage = () => {
     loadSkillmasters();
   }, []);
 
+  // Helper function: Normalize strings (remove extra spaces and convert to lowercase)
+  const normalize = (str) => str?.toLowerCase().replace(/\s+/g, "").trim();
+
   // Filter and search logic for name, platform, and category
   const filteredSkillmasters = skillMasters
-    .filter((skillmaster) =>
-      (skillmaster.first_name + " " + skillmaster.last_name)
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    )
+    .filter((skillmaster) => {
+      const term = normalize(searchTerm);
+      return (
+        !term ||
+        normalize(skillmaster.first_name + skillmaster.last_name).includes(
+          term
+        ) ||
+        normalize(skillmaster.bio).includes(term)
+      );
+    })
     .filter((skillmaster) =>
       filter.platform
         ? skillmaster.platforms.some(
             (platform) => platform.id === Number(filter.platform)
           )
         : true
-    )
-    .filter((skillmaster) =>
-      filter.category
-        ? skillmaster.gamesIds.includes(Number(filter.category))
-        : true
     );
 
   return (
-    <div className="mt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
+    <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
       {/* Background */}
       <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
 
@@ -169,76 +161,60 @@ const SkillMastersPage = () => {
       )}
 
       {/* Search and Filters */}
-      {!loading &&
-        !error &&
-        (skillMasters.length < 1 ? (
-          <p className="w-full">No skill masters found!</p>
-        ) : (
-          skillMasters.length > 0 && (
-            <div className="space-y-6">
-              <div className="flex flex-wrap items-center gap-4">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search skill masters..."
-                  className="flex-1 p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
-                />
+      {!loading && !error && skillMasters.length < 1 ? (
+        <p className="w-full">No skill masters found!</p>
+      ) : (
+        <div className="space-y-6">
+          <div className="flex flex-wrap items-center gap-4">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search skill masters..."
+              className="flex-1 p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+            />
 
-                <SkillmasterFilter filter={filter} setFilter={setFilter} />
+            <SkillmasterFilter filter={filter} setFilter={setFilter} />
 
-                <div className="flex items-center gap-2 w-full flex-wrap">
-                  {/* Show applied filters */}
-                  {Object.keys(filter).length > 0 && (
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {filter.platformName && (
-                        <FilterButton
-                          label={filter.platformName}
-                          onRemove={() =>
-                            setFilter({
-                              ...filter,
-                              platform: "",
-                              platformName: "",
-                            })
-                          }
-                        />
-                      )}
-                      {filter.categoryName && (
-                        <FilterButton
-                          label={filter.categoryName}
-                          onRemove={() =>
-                            setFilter({
-                              ...filter,
-                              category: "",
-                              categoryName: "",
-                            })
-                          }
-                        />
-                      )}
-                    </div>
+            <div className="flex items-center gap-2 w-full flex-wrap">
+              {/* Show applied filters */}
+              {Object.keys(filter).length > 0 && (
+                <div className="flex items-center gap-2 flex-wrap">
+                  {filter.platformName && (
+                    <FilterButton
+                      label={filter.platformName}
+                      onRemove={() =>
+                        setFilter({
+                          ...filter,
+                          platform: "",
+                          platformName: "",
+                        })
+                      }
+                    />
                   )}
                 </div>
-              </div>
-
-              {/* Skill Masters List */}
-              <div className="space-y-6">
-                {filteredSkillmasters.length === 0 && (
-                  <div className="text-center text-sm text-gray-500">
-                    No skill masters found
-                  </div>
-                )}
-
-                {filteredSkillmasters.length > 0 &&
-                  filteredSkillmasters.map((skillMaster) => (
-                    <SkillmasterCard
-                      key={skillMaster.id}
-                      skillMaster={skillMaster}
-                    />
-                  ))}
-              </div>
+              )}
             </div>
-          )
-        ))}
+          </div>
+
+          {/* Skill Masters List */}
+          <div className="space-y-6">
+            {filteredSkillmasters.length === 0 && (
+              <div className="text-center text-sm text-gray-500">
+                No skill masters found
+              </div>
+            )}
+
+            {filteredSkillmasters.length > 0 &&
+              filteredSkillmasters.map((skillMaster) => (
+                <SkillmasterCard
+                  key={skillMaster.id}
+                  skillMaster={skillMaster}
+                />
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

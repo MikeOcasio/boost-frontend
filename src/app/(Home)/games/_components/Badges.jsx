@@ -149,24 +149,30 @@ const Badges = ({
               className="flex h-full gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar"
             >
               {categoryId
-                ? productCategories?.map((game, index) => (
-                    <RelatedGameCard
-                      key={game.id}
-                      index={index}
-                      game={game}
-                      primary_color={primary_color}
-                      secondary_color={secondary_color}
-                    />
-                  ))
-                : productAttribute?.map((game, index) => (
-                    <RelatedGameCard
-                      key={game.id}
-                      index={index}
-                      game={game}
-                      primary_color={primary_color}
-                      secondary_color={secondary_color}
-                    />
-                  ))}
+                ? productCategories?.map(
+                    (game, index) =>
+                      game.is_active && (
+                        <RelatedGameCard
+                          key={game.id}
+                          index={index}
+                          game={game}
+                          primary_color={primary_color}
+                          secondary_color={secondary_color}
+                        />
+                      )
+                  )
+                : productAttribute?.map(
+                    (game, index) =>
+                      game.is_active && (
+                        <RelatedGameCard
+                          key={game.id}
+                          index={index}
+                          game={game}
+                          primary_color={primary_color}
+                          secondary_color={secondary_color}
+                        />
+                      )
+                  )}
             </div>
           </div>
         )}
