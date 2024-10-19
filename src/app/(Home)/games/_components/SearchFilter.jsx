@@ -124,20 +124,33 @@ export const SearchFilter = ({ filter, setFilter }) => {
               <span className="text-white">Most Popular</span>
             </label>
 
-            <label className="flex items-center space-x-2 border-b border-white/10 pb-2">
-              <input
-                type="checkbox"
-                checked={filter.active}
-                onChange={(e) =>
-                  setFilter((prev) => ({
-                    ...prev,
-                    active: e.target.checked,
-                  }))
-                }
-                className="form-checkbox"
-              />
-              <span className="text-white">Active</span>
-            </label>
+            {/* sort by */}
+            <select
+              value={filter.sortBy}
+              onChange={(e) =>
+                setFilter((prev) => ({
+                  ...prev,
+                  sortBy: e.target.value,
+                }))
+              }
+              className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+            >
+              <option value="" className="bg-neutral-800" unselectable="on">
+                Sort By
+              </option>
+              <option value="latest" className="bg-neutral-800">
+                Latest
+              </option>
+              <option value="priceHighToLow" className="bg-neutral-800">
+                Price: High to Low
+              </option>
+              <option value="priceLowToHigh" className="bg-neutral-800">
+                Price: Low to High
+              </option>
+              <option value="oldest" className="bg-neutral-800">
+                Oldest
+              </option>
+            </select>
 
             {/* platforms filter */}
             <select

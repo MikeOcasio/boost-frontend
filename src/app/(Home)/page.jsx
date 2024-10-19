@@ -7,8 +7,43 @@ import HomePageAboutArea from "@/components/home/HomePageAboutArea";
 import burningCity from "@/images/cityBurn2.png";
 import purpleLane from "@/images/purpleLane.png";
 import { HomeGameCarousel } from "@/components/home/HomeGameCarousel";
+import { useEffect, useState } from "react";
+import { fetchAllGames } from "@/lib/actions/products-action";
+import { BiLoader } from "react-icons/bi";
+import { IoWarning } from "react-icons/io5";
 
 export default function Home() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const loadGames = async () => {
+    setLoading(true);
+    setError(false);
+
+    try {
+      const result = await fetchAllGames();
+      if (result.error) {
+        setError(true);
+        toast.error(result.error);
+      } else {
+        const popularGames = result.filter(
+          (game) => game.is_active && game.most_popular
+        );
+        setData(popularGames);
+      }
+    } catch (error) {
+      setError(true);
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadGames();
+  }, []);
+
   return (
     <div className="mt-10">
       <div className="h-screen w-full">
@@ -51,7 +86,24 @@ export default function Home() {
         />
       </div>
 
-      <HomeGameCarousel />
+      {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
+
+      {error && (
+        <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
+          <IoWarning className="h-5 w-5 mr-2" />
+          Failed to load games. Please try again!
+          {/* reload page */}
+          <button onClick={loadGames} className="bg-white/10 p-2 rounded-lg">
+            Reload
+          </button>
+        </p>
+      )}
+
+      {!loading && !error && data?.length < 1 ? (
+        <p className="w-full">No games found!</p>
+      ) : (
+        <HomeGameCarousel data={data} />
+      )}
 
       <HomePageAboutArea />
 

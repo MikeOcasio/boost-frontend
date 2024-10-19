@@ -153,7 +153,7 @@ export const AdminOrderDialog = ({
                     currentOrderState === "complete" && "bg-green-500"
                   )}
                 >
-                  {order.state}
+                  {currentOrderState}
                 </p>
 
                 <div className="relative">

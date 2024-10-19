@@ -9,23 +9,25 @@ import GameCard from "@/components/GameCard";
 import { fetchAllGames } from "@/lib/actions/products-action";
 import { SearchFilter } from "./_components/SearchFilter";
 import { FilterButton } from "@/components/FilterButton";
+import { HomeGameCarousel } from "@/components/home/HomeGameCarousel";
 
 const GamesPage = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [mostPopularGames, setMostPopularGames] = useState(null);
 
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState({
     mostPopular: false,
-    active: false,
     category: "",
     platform: "",
     attribute: "",
     platformName: "",
     categoryName: "",
     attributeName: "",
+    sortBy: "",
   });
 
   const loadGames = async () => {
@@ -37,6 +39,14 @@ const GamesPage = () => {
         setError(true);
         toast.error(result.error);
       } else {
+        // sorted to latest first
+        result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        const popularGames = result.filter(
+          (game) => game.is_active && game.most_popular
+        );
+        setMostPopularGames(popularGames);
+
         setGames(result);
       }
     } catch (error) {
@@ -68,7 +78,6 @@ const GamesPage = () => {
       );
     })
     .filter((game) => (filter.mostPopular ? game.most_popular : true))
-    .filter((game) => (filter.active ? game.is_active : true))
     .filter((game) =>
       filter.category ? game.category_id === Number(filter.category) : true
     )
@@ -81,11 +90,27 @@ const GamesPage = () => {
     )
     .filter((game) =>
       filter.attribute
-        ? game.prod_attr_cats?.filter(
+        ? game.prod_attr_cats?.some(
             (item) => item.id === Number(filter.attribute)
-          ).length > 0
+          )
         : true
     );
+
+  // Apply sorting based on filter.sortBy
+  const sortedGames = [...filteredGames].sort((a, b) => {
+    switch (filter.sortBy) {
+      case "latest":
+        return new Date(b.created_at) - new Date(a.created_at);
+      case "oldest":
+        return new Date(a.created_at) - new Date(b.created_at);
+      case "priceHighToLow":
+        return b.price - a.price;
+      case "priceLowToHigh":
+        return a.price - b.price;
+      default:
+        return 0;
+    }
+  });
 
   return (
     <div className="mt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4 overflow-hidden">
@@ -180,24 +205,47 @@ const GamesPage = () => {
                           }
                         />
                       )}
+                      {filter.sortBy && (
+                        <FilterButton
+                          label={filter.sortBy}
+                          onRemove={() =>
+                            setFilter({
+                              ...filter,
+                              sortBy: "",
+                              latest: true,
+                              oldest: false,
+                              priceHighToLow: false,
+                              priceLowToHigh: false,
+                            })
+                          }
+                        />
+                      )}
                     </div>
                   )}
                 </div>
               </div>
 
+              <div className="space-y-2 bg-Gold/10 pb-4 rounded-lg border border-white/10 hover:border-Gold/20">
+                <p className="text-sm font-semibold m-4 mb-0">
+                  Most Popular Games
+                </p>
+
+                {!loading && !error && mostPopularGames?.length < 1 ? (
+                  <p className="text-center w-full">No games found!</p>
+                ) : (
+                  <HomeGameCarousel data={mostPopularGames} />
+                )}
+              </div>
+
               <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
-                {!loading &&
-                  !error &&
-                  (filteredGames.length < 1 ? (
-                    <p className="text-center w-full">No games found!</p>
-                  ) : (
-                    filteredGames?.map(
-                      (game) =>
-                        game?.is_active && (
-                          <GameCard key={game.id} game={game} />
-                        )
-                    )
-                  ))}
+                {!loading && !error && filteredGames.length < 1 ? (
+                  <p className="text-center w-full">No games found!</p>
+                ) : (
+                  sortedGames?.map(
+                    (game) =>
+                      game?.is_active && <GameCard key={game.id} game={game} />
+                  )
+                )}
               </div>
             </div>
           )
