@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { BiChevronRight, BiPencil } from "react-icons/bi";
+import { BiChevronRight, BiImage, BiPencil } from "react-icons/bi";
 import Link from "next/link";
 import clsx from "clsx";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 export const AdminGameCard = ({ game }) => {
   return (
@@ -39,7 +40,7 @@ export const AdminGameCard = ({ game }) => {
       </div>
 
       <div className="flex flex-wrap gap-4">
-        {!!game.image && (
+        {!!game.image ? (
           <Image
             src={game.image}
             alt={game.name}
@@ -49,6 +50,8 @@ export const AdminGameCard = ({ game }) => {
             className="h-full object-contain max-w-[200px] w-full bg-gray-500/50 p-4 rounded-md"
             style={{ backgroundColor: game.primary_color + 70 }}
           />
+        ) : (
+          <BiImage className="h-40 w-40 bg-white/10 p-2 rounded-md" />
         )}
 
         <div className="flex-col flex gap-2 flex-1">
@@ -70,20 +73,20 @@ export const AdminGameCard = ({ game }) => {
               <p
                 className={clsx(
                   "font-semibold px-2 rounded-full",
-                  game.most_popular ? "bg-green-600" : "bg-gray-600"
+                  game.most_popular && "bg-Gold"
                 )}
               >
-                {game.most_popular ? "Most Popular" : ""}
+                {game.most_popular && "Most Popular"}
               </p>
             )}
 
             <p
               className={clsx(
                 "font-semibold px-2 rounded-full",
-                game.is_priority ? "bg-green-600" : "bg-gray-600"
+                game.is_priority && "bg-blue-600"
               )}
             >
-              {game.is_priority ? "Priority" : "Standard"}
+              {game.is_priority && "Priority"}
             </p>
           </div>
 
@@ -105,12 +108,14 @@ export const AdminGameCard = ({ game }) => {
         <p className="text-sm font-semibold bg-white/10 px-2 rounded-md">
           Category ID: {game.category_id}
         </p>
-        <p className="text-sm font-semibold bg-white/10 px-2 rounded-md">
-          Product Attribute Category IDs:{" "}
-          {game.prod_attr_cats?.length > 0
-            ? game.prod_attr_cats.map((item) => item.id).join(", ")
-            : "N/A"}
-        </p>
+
+        {game.prod_attr_cats?.length > 0 && (
+          <p className="text-sm font-semibold bg-white/10 px-2 rounded-md">
+            Product Attribute Category:{" "}
+            {game.prod_attr_cats?.length > 0 &&
+              game.prod_attr_cats.map((item) => item.name).join(", ")}
+          </p>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -132,6 +137,22 @@ export const AdminGameCard = ({ game }) => {
           <p className="font-semibold text-base">Description</p>
           <p>{game.description}</p>
         </div>
+      </div>
+
+      {/* created at */}
+      <div className="flex justify-between items-center">
+        <p className="text-xs font-semibold">
+          Created at: {new Date(game.created_at).toLocaleString()}
+        </p>
+
+        <Link
+          href={`/games/${game.id}`}
+          target="_blank"
+          className="flex items-center gap-2 px-3 py-2 transition-all hover:bg-white/10 rounded-lg border border-white/10"
+        >
+          <FaExternalLinkAlt className="h-4 w-4" />
+          Visit Game
+        </Link>
       </div>
     </div>
   );

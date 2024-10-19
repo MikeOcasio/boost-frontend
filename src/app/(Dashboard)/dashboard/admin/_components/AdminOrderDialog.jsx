@@ -2,14 +2,16 @@ import {
   assignOrderToSkillMaster,
   updateOrderStatus,
 } from "@/lib/actions/orders-action";
+import { fetchAllSkillmasters } from "@/lib/actions/user-actions";
 import { adminOrderStatus, orderStatus } from "@/lib/data";
 import { useUserStore } from "@/store/use-user";
 import { Dialog, DialogPanel, DialogTitle, Select } from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { BiImage } from "react-icons/bi";
 import { IoClose, IoCopy } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
 
@@ -24,6 +26,7 @@ export const AdminOrderDialog = ({
   const [skillmasterId, setSkillmasterId] = useState();
   const [loading, setLoading] = useState(false);
   const [currentOrderState, setCurrentOrderState] = useState(order?.state);
+  const [skillmasters, setSkillmasters] = useState(null);
 
   const handleAssignOrder = async () => {
     try {
@@ -39,9 +42,11 @@ export const AdminOrderDialog = ({
     } catch (error) {
       toast.error("Failed to assign order to skillmaster. Please try again!");
     } finally {
-      setLoading(false);
+      setCurrentOrderState(order?.state);
       setSkillmasterId("");
+      setLoading(false);
       loadOrders();
+      onClose();
     }
   };
 
@@ -68,10 +73,33 @@ export const AdminOrderDialog = ({
       toast.error("Failed to update order status. Please try again!");
     } finally {
       setCurrentOrderState(order?.state);
+      setSkillmasterId("");
+      setLoading(false);
       loadOrders();
+      onClose();
+    }
+  };
+
+  const getSkillmasters = async () => {
+    try {
+      setLoading(true);
+
+      const result = await fetchAllSkillmasters();
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setSkillmasters(result);
+      }
+    } catch (error) {
+      toast.error("Failed to load skillmasters. Please try again!");
+    } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getSkillmasters();
+  }, []);
 
   return (
     <Dialog
@@ -156,26 +184,24 @@ export const AdminOrderDialog = ({
                   {currentOrderState}
                 </p>
 
-                <div className="relative">
-                  <Select
-                    value={currentOrderState}
-                    onChange={(e) => {
-                      setCurrentOrderState(e.target.value);
-                    }}
-                    className=" block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
-                  >
-                    {(user.role === "admin" || user.role === "dev") &&
-                      adminOrderStatus.map((item, index) => (
-                        <option
-                          key={index}
-                          value={item.value}
-                          className={clsx("bg-neutral-800")}
-                        >
-                          {item.name}
-                        </option>
-                      ))}
-                  </Select>
-                </div>
+                <Select
+                  value={currentOrderState}
+                  onChange={(e) => {
+                    setCurrentOrderState(e.target.value);
+                  }}
+                  className="block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3 flex-1 min-w-fit"
+                >
+                  {(user.role === "admin" || user.role === "dev") &&
+                    adminOrderStatus.map((item, index) => (
+                      <option
+                        key={index}
+                        value={item.value}
+                        className={clsx("bg-neutral-800")}
+                      >
+                        {item.name}
+                      </option>
+                    ))}
+                </Select>
               </div>
 
               {order.skill_master.gamer_tag && (
@@ -194,17 +220,36 @@ export const AdminOrderDialog = ({
 
             {/* assign order to skillmaster */}
             <div className="flex flex-wrap gap-2 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-              <input
-                type="text"
-                placeholder="Skillmaster ID"
-                value={skillmasterId}
-                onChange={(e) => setSkillmasterId(e.target.value)}
-                className="input-field"
-              />
+              {skillmasters?.length > 0 && (
+                <select
+                  value={skillmasterId}
+                  onChange={(e) => setSkillmasterId(e.target.value)}
+                  className="block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3 flex-1 min-w-fit"
+                >
+                  <option value="" className="bg-neutral-800" unselectable="on">
+                    Select Skillmaster
+                  </option>
+
+                  {skillmasters.map((skillmaster) => (
+                    <option
+                      key={skillmaster.id}
+                      value={skillmaster.id}
+                      className="bg-neutral-800"
+                    >
+                      ID: {skillmaster.id} |{" "}
+                      {skillmaster.gamer_tag ||
+                        skillmaster.first_name +
+                          " " +
+                          skillmaster.last_name}{" "}
+                      | {skillmaster.email}
+                    </option>
+                  ))}
+                </select>
+              )}
 
               <button
                 onClick={() => handleAssignOrder()}
-                disabled={loading}
+                disabled={loading || !skillmasterId}
                 className="bg-Gold/80 p-2 rounded-lg hover:bg-Gold/60 disabled:bg-gray-500/20 flex-1"
               >
                 {loading ? "Assigning..." : "Assign Order to Skillmaster"}
@@ -221,7 +266,7 @@ export const AdminOrderDialog = ({
                 >
                   <div className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30">
                     <div className="flex flex-wrap items-center gap-x-2">
-                      {product.image && (
+                      {product.image ? (
                         <Image
                           src={product.image}
                           alt={product.name}
@@ -230,6 +275,8 @@ export const AdminOrderDialog = ({
                           priority
                           className="rounded-md object-contain bg-white/10 p-2"
                         />
+                      ) : (
+                        <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
                       )}
                       <div className="flex flex-col gap-y-1">
                         <p className="text-sm font-semibold">{product.name}</p>

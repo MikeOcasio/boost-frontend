@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { BiLoader, BiReceipt } from "react-icons/bi";
+import { BiImage, BiLoader, BiReceipt } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
 
@@ -77,12 +77,14 @@ const PaymentConfirmation = () => {
 
             <div className="flex flex-col gap-1">
               {orderData?.order?.products?.map((product, index) => (
-                <div
+                <Link
                   key={index}
+                  target="_blank"
+                  href={`/games/${product.id}`}
                   className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
                 >
                   <div className="flex flex-wrap items-center gap-x-2">
-                    {product.image && (
+                    {product.image ? (
                       <Image
                         src={product.image}
                         alt={product.name}
@@ -91,13 +93,15 @@ const PaymentConfirmation = () => {
                         priority
                         className="rounded-md object-contain bg-white/10 p-2"
                       />
+                    ) : (
+                      <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
                     )}
                     <div className="flex flex-col gap-y-1">
                       <p className="text-sm font-semibold">{product.name}</p>
                     </div>
                   </div>
                   <p className="text-sm font-semibold">${product.price}</p>
-                </div>
+                </Link>
               ))}
             </div>
 

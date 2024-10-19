@@ -16,7 +16,7 @@ import { FilterButton } from "@/components/FilterButton";
 const AllGames = () => {
   const { user } = useUserStore();
 
-  const [games, setGames] = useState([]);
+  const [games, setGames] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
@@ -31,6 +31,7 @@ const AllGames = () => {
     platformName: "",
     categoryName: "",
     attributeName: "",
+    sortBy: "",
   });
 
   // Fetch games from API
@@ -45,7 +46,12 @@ const AllGames = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setGames(result);
+        // sort to newest first
+        const sortedGames = result.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        setGames(sortedGames);
       }
     } catch (e) {
       setError(true);
@@ -72,7 +78,12 @@ const AllGames = () => {
         normalize(game.description).includes(term) ||
         normalize(game.category.name).includes(term) ||
         normalize(game.category.description).includes(term) ||
-        normalize(String(game.id)).includes(term)
+        normalize(String(game.id)).includes(term) ||
+        normalize(game.tag_line).includes(term) ||
+        game.platforms.some((platform) =>
+          normalize(platform.name).includes(term)
+        ) ||
+        game.prod_attr_cats.some((attr) => normalize(attr.name).includes(term))
       );
     })
     .filter((game) => (filter.mostPopular ? game.most_popular : true))
@@ -94,6 +105,25 @@ const AllGames = () => {
           ).length > 0
         : true
     );
+
+  // Apply sorting based on filter.sortBy
+
+  const sortedGames =
+    filteredGames &&
+    [...filteredGames].sort((a, b) => {
+      switch (filter.sortBy) {
+        case "latest":
+          return new Date(b.created_at) - new Date(a.created_at);
+        case "oldest":
+          return new Date(a.created_at) - new Date(b.created_at);
+        case "priceHighToLow":
+          return b.price - a.price;
+        case "priceLowToHigh":
+          return a.price - b.price;
+        default:
+          return 0;
+      }
+    });
 
   if (!user.role === "admin" || !user.role === "dev")
     return <div>You are not authorized to view this page</div>;
@@ -120,20 +150,26 @@ const AllGames = () => {
         </p>
       )}
 
-      {!loading && !error && games && games.length < 1 ? (
+      {!loading && !error && games?.length < 1 ? (
         <p className="w-full">No games found!</p>
       ) : (
         <div className="space-y-6">
           <div className="flex flex-wrap items-center gap-4">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search products..."
-              className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
-            />
+            {!loading && (
+              <>
+                <input
+                  type="text"
+                  autoFocus
+                  disabled={loading}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search products..."
+                  className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+                />
 
-            <SearchFilter filter={filter} setFilter={setFilter} />
+                <SearchFilter filter={filter} setFilter={setFilter} />
+              </>
+            )}
 
             <div className="flex items-center gap-2 w-full flex-wrap">
               {/* show applied filters */}
@@ -189,16 +225,27 @@ const AllGames = () => {
                       }
                     />
                   )}
+                  {filter.sortBy && (
+                    <FilterButton
+                      label={filter.sortBy}
+                      onRemove={() =>
+                        setFilter({
+                          ...filter,
+                          sortBy: "",
+                        })
+                      }
+                    />
+                  )}
                 </div>
               )}
             </div>
           </div>
 
           <div className="flex flex-col gap-4">
-            {!loading && !error && filteredGames.length < 1 ? (
+            {!loading && !error && filteredGames?.length < 1 ? (
               <p className="text-center w-full">No games found!</p>
             ) : (
-              filteredGames?.map(
+              sortedGames?.map(
                 (game) =>
                   game?.is_active && <AdminGameCard key={game.id} game={game} />
               )

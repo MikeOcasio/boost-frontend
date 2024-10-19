@@ -29,16 +29,14 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
               index % 2 === 0 ? primary_color + 30 : secondary_color + 30,
           }}
         >
-          {game.image && (
-            <Image
-              src={game.image}
-              alt={game.name}
-              quality={100}
-              width={200}
-              height={200}
-              className="mx-auto w-full max-w-[200px] max-h-[130px] object-contain rounded-md"
-            />
-          )}
+          <Image
+            src={game.image || "/game/empty-image.gif"}
+            alt={game.name}
+            quality={100}
+            width={200}
+            height={200}
+            className="mx-auto w-full max-w-[200px] max-h-[130px] object-contain rounded-md"
+          />
         </div>
 
         <div className="flex flex-col gap-2 items-center">

@@ -27,7 +27,11 @@ const ProductAttributePage = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setAttribute(result);
+        // sort to newest first
+        const sortedAttributes = result.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+        setAttribute(sortedAttributes);
       }
     } catch (e) {
       setError(true);
@@ -89,11 +93,18 @@ const ProductAttributePage = () => {
             <button
               key={index}
               onClick={() => editAttribute(attribute)}
-              className="flex justify-between items-center flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
+              className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
             >
-              <p className="text-lg font-semibold break-all">
-                {attribute.name}
-              </p>
+              <div className="space-y-2 text-start">
+                <p className="text-lg font-semibold break-all">
+                  {attribute.name}
+                </p>
+
+                {/* created at */}
+                <p className="text-xs font-semibold">
+                  Created at: {new Date(attribute.created_at).toLocaleString()}
+                </p>
+              </div>
               <BiPencil className="h-8 w-8 ml-2 hover:bg-white/10 rounded-lg p-2" />
             </button>
           ))

@@ -33,7 +33,12 @@ const AllUsers = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setUsers(result);
+        // sort to newest first
+        const sortedUsers = result.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        setUsers(sortedUsers);
       }
     } catch (e) {
       setError(true);
@@ -63,13 +68,19 @@ const AllUsers = () => {
   // Filter and search logic
   const filteredUsers = users?.filter((user) => {
     const term = normalize(searchTerm);
+    const isDeleted = !!user.deleted_at;
+
     return (
       !term ||
-      normalize(user.first_name).includes(term) ||
-      normalize(user.last_name).includes(term) ||
+      normalize(user.first_name + user.last_name).includes(term) ||
       normalize(user.role).includes(term) ||
       normalize(user.email).includes(term) ||
-      normalize(String(user.id)).includes(term)
+      normalize(String(user.id)).includes(term) ||
+      user.platforms.some((platform) =>
+        normalize(platform.name).includes(term)
+      ) ||
+      (user.gamer_tag && normalize(user.gamer_tag).includes(term)) ||
+      ("deleted-banned".includes(term) && isDeleted)
     );
   });
 
@@ -107,6 +118,7 @@ const AllUsers = () => {
               <div className="flex flex-wrap items-center gap-4">
                 <input
                   type="text"
+                  autoFocus
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search users..."
@@ -152,7 +164,8 @@ const AllUsers = () => {
 
                           <p className="text-lg flex flex-wrap gap-2">
                             <span>
-                              {user.first_name} {user.last_name}
+                              {user.first_name} {user.last_name}{" "}
+                              {user.gamer_tag && `(${user.gamer_tag})`}
                             </span>
                             <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
                               {user.role}

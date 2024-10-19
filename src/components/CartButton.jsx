@@ -1,4 +1,11 @@
-import { BiCart, BiCross, BiMinus, BiPlus, BiTrash } from "react-icons/bi";
+import {
+  BiCart,
+  BiCross,
+  BiImage,
+  BiMinus,
+  BiPlus,
+  BiTrash,
+} from "react-icons/bi";
 import {
   Popover,
   PopoverBackdrop,
@@ -56,7 +63,7 @@ export const CartButton = ({ mobileNav }) => {
                 key={item.id}
                 className="flex flex-wrap gap-4 items-center border-b border-white/10 pb-2"
               >
-                {item.image && (
+                {item.image ? (
                   <Image
                     src={item.image}
                     alt={item.name}
@@ -65,6 +72,8 @@ export const CartButton = ({ mobileNav }) => {
                     height={100}
                     className="mx-auto w-[100px] object-contain bg-white/10 rounded-md p-2"
                   />
+                ) : (
+                  <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
                 )}
 
                 <div className="flex flex-col gap-2 flex-1">

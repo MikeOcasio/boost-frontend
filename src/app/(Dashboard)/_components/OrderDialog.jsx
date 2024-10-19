@@ -10,6 +10,7 @@ import { PiGameControllerFill } from "react-icons/pi";
 import { updateOrderStatus } from "@/lib/actions/orders-action";
 import { adminOrderStatus, orderStatus } from "@/lib/data";
 import { useUserStore } from "@/store/use-user";
+import { BiImage } from "react-icons/bi";
 
 export const OrderDialog = ({
   dialogOpen,
@@ -139,7 +140,7 @@ export const OrderDialog = ({
                     onChange={(e) => {
                       setCurrentOrderState(e.target.value);
                     }}
-                    className=" block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
+                    className=" block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3 flex-1 min-w-fit"
                   >
                     {orderStatus.map((item, index) => (
                       <option
@@ -178,7 +179,7 @@ export const OrderDialog = ({
                 >
                   <div className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30">
                     <div className="flex flex-wrap items-center gap-x-2">
-                      {product.image && (
+                      {product.image ? (
                         <Image
                           src={product.image}
                           alt={product.name}
@@ -187,6 +188,8 @@ export const OrderDialog = ({
                           priority
                           className="rounded-md object-contain bg-white/10 p-2"
                         />
+                      ) : (
+                        <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
                       )}
                       <div className="flex flex-col gap-y-1">
                         <p className="text-sm font-semibold">{product.name}</p>

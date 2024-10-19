@@ -6,6 +6,7 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { OrderGraveyardDialog } from "./OrderGraveyardDialog";
 import clsx from "clsx";
 import { PiGameControllerFill } from "react-icons/pi";
+import { BiImage } from "react-icons/bi";
 
 const OrdersGraveyardCard = ({ order, loadGraveyardOrders, loadOrders }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -38,7 +39,7 @@ const OrdersGraveyardCard = ({ order, loadGraveyardOrders, loadOrders }) => {
             className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
           >
             <div className="flex flex-wrap items-center gap-x-2">
-              {product.image && (
+              {product.image ? (
                 <Image
                   src={product.image}
                   alt={product.name}
@@ -47,6 +48,8 @@ const OrdersGraveyardCard = ({ order, loadGraveyardOrders, loadOrders }) => {
                   priority
                   className="rounded-md object-contain bg-white/10 p-2"
                 />
+              ) : (
+                <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
               )}
               <div className="flex flex-col gap-y-1">
                 <p className="text-sm font-semibold">{product.name}</p>

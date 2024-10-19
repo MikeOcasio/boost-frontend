@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { OrderDialog } from "../app/(Dashboard)/_components/OrderDialog";
 import { PiGameControllerFill, PiPencil } from "react-icons/pi";
 import { useUserStore } from "@/store/use-user";
+import { BiImage } from "react-icons/bi";
 
 const OrderCard = ({ order, loadOrders }) => {
   const { user } = useUserStore();
@@ -56,7 +57,7 @@ const OrderCard = ({ order, loadOrders }) => {
             className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
           >
             <div className="flex flex-wrap items-center gap-x-2">
-              {product.image && (
+              {product.image ? (
                 <Image
                   src={product.image}
                   alt={product.name}
@@ -65,6 +66,8 @@ const OrderCard = ({ order, loadOrders }) => {
                   priority
                   className="rounded-md object-contain bg-white/10 p-2"
                 />
+              ) : (
+                <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
               )}
               <div className="flex flex-col gap-y-1">
                 <p className="text-sm font-semibold">{product.name}</p>

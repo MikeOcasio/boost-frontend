@@ -275,7 +275,7 @@ export const EditGame = ({ data, setData }) => {
             {attribute?.map((attr) => (
               <label
                 key={attr.id}
-                className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-1"
+                className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-1 w-full min-w-fit"
               >
                 <input
                   type="checkbox"
@@ -330,7 +330,7 @@ export const EditGame = ({ data, setData }) => {
             {platforms.map((platform) => (
               <label
                 key={platform.id}
-                className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-wrap flex-1"
+                className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-1"
               >
                 <input
                   type="checkbox"

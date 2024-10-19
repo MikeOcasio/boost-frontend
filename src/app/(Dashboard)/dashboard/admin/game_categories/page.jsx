@@ -28,7 +28,12 @@ const GameCategoriesPage = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setCategories(result);
+        // sort to newest first
+        const sortedCategories = result.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        setCategories(sortedCategories);
       }
     } catch (e) {
       setError(true);
@@ -107,6 +112,11 @@ const GameCategoriesPage = () => {
                 {category.description && (
                   <p className="break-all text-sm">{category.description}</p>
                 )}
+
+                {/* created at */}
+                <p className="text-xs font-semibold">
+                  Created at: {new Date(category.created_at).toLocaleString()}
+                </p>
               </div>
               <BiPencil className="h-8 w-8 ml-2 hover:bg-white/10 rounded-lg p-2" />
             </button>

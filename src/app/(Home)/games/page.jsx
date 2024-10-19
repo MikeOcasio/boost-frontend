@@ -74,7 +74,11 @@ const GamesPage = () => {
         normalize(game.description).includes(term) ||
         normalize(game.category.name).includes(term) ||
         normalize(game.category.description).includes(term) ||
-        normalize(String(game.id)).includes(term)
+        normalize(String(game.id)).includes(term) ||
+        game.platforms.some((platform) =>
+          normalize(platform.name).includes(term)
+        ) ||
+        game.prod_attr_cats.some((attr) => normalize(attr.name).includes(term))
       );
     })
     .filter((game) => (filter.mostPopular ? game.most_popular : true))
@@ -141,6 +145,7 @@ const GamesPage = () => {
               <div className="flex flex-wrap items-center gap-4">
                 <input
                   type="text"
+                  autoFocus
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search games..."
@@ -212,10 +217,6 @@ const GamesPage = () => {
                             setFilter({
                               ...filter,
                               sortBy: "",
-                              latest: true,
-                              oldest: false,
-                              priceHighToLow: false,
-                              priceLowToHigh: false,
                             })
                           }
                         />

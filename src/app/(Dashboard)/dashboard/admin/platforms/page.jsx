@@ -28,7 +28,12 @@ const PlatformsPage = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setPlatforms(result);
+        // sort to newest first
+        const sortedPlatforms = result.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        setPlatforms(sortedPlatforms);
       }
     } catch (e) {
       setError(true);
@@ -86,9 +91,16 @@ const PlatformsPage = () => {
             <button
               key={index}
               onClick={() => editPlatform(platform)}
-              className="flex justify-between items-center flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
+              className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
             >
-              <p className="text-lg font-semibold break-all">{platform.name}</p>
+              <div className="space-y-2 text-start">
+                <p className="text-lg font-semibold break-all">
+                  {platform.name}
+                </p>
+                <p className="text-xs font-semibold">
+                  Created at: {new Date(platform.created_at).toLocaleString()}
+                </p>
+              </div>
               <BiPencil className="h-8 w-8 ml-2 hover:bg-white/10 rounded-lg p-2" />
             </button>
           ))

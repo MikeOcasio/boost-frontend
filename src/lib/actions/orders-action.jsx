@@ -43,8 +43,6 @@ export const fetchOrderById = async (orderId) => {
       },
     });
 
-    console.log("order data", data);
-
     return data;
   } catch (error) {
     return { error: "Failed to fetch order details. Please try again!" };
@@ -53,7 +51,6 @@ export const fetchOrderById = async (orderId) => {
 
 // create order
 export const createOrder = async (orderData) => {
-  console.log(orderData);
   try {
     const sessionToken = await getSessionToken();
     if (!sessionToken) {

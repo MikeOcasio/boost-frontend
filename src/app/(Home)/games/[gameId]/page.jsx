@@ -129,16 +129,14 @@ const GamePage = ({ params }) => {
                 className="relative z-10 bg-black/50 rounded-xl h-fit p-8 backdrop-blur-sm"
                 style={{ backgroundColor: game.primary_color + 80 }}
               >
-                {game.image && (
-                  <Image
-                    src={game.image}
-                    alt={game.name}
-                    quality={100}
-                    width={200}
-                    height={200}
-                    className="w-full max-w-[200px] object-contain mx-auto rounded-md"
-                  />
-                )}
+                <Image
+                  src={game.image || "/game/empty-image.gif"}
+                  alt={game.name}
+                  quality={100}
+                  width={200}
+                  height={200}
+                  className="w-full max-w-[200px] object-contain mx-auto rounded-md"
+                />
               </div>
 
               <div className="relative z-10 flex flex-col gap-4">

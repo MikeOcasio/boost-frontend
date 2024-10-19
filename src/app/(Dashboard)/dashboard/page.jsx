@@ -72,11 +72,13 @@ const UserDashboard = () => {
         toast.error(result.error);
       } else {
         const sortedOrders = result?.orders.sort((a, b) => {
-          const aState = a.state;
-          const bState = b.state;
-          if (aState === "in_progress") return -1;
-          if (bState === "in_progress") return 1;
-          return 0;
+          const aIsOpen = a.state === "open";
+          const bIsOpen = b.state === "open";
+
+          if (aIsOpen && !bIsOpen) return -1;
+          if (!aIsOpen && bIsOpen) return 1;
+
+          return new Date(a.created_at) - new Date(b.created_at);
         });
 
         setGraveyardOrders(sortedOrders);

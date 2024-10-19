@@ -1,7 +1,7 @@
 import { useCartStore } from "@/store/use-cart";
 import Image from "next/image";
 import Link from "next/link";
-import { BiMinus, BiPlus } from "react-icons/bi";
+import { BiImage, BiMinus, BiPlus } from "react-icons/bi";
 
 export const CheckoutOrderCard = ({ order }) => {
   const { increaseQuantity, decreaseQuantity } = useCartStore();
@@ -12,20 +12,21 @@ export const CheckoutOrderCard = ({ order }) => {
     <div key={order.id} className="flex flex-col gap-1 w-full">
       <div className="flex flex-wrap justify-between bg-white/5 rounded-lg p-2 border border-white/10 hover:border-white/20 gap-2">
         <div className="flex flex-wrap items-center gap-4">
-          {order.image && (
-            <Link href={`/games/${order.id}`}>
-              {order.image && (
-                <Image
-                  src={order.image}
-                  alt={order.name}
-                  height={150}
-                  width={150}
-                  priority
-                  className="rounded-md object-contain bg-black/20 p-4"
-                />
-              )}
-            </Link>
-          )}
+          <Link href={`/games/${order.id}`}>
+            {order.image ? (
+              <Image
+                src={order.image}
+                alt={order.name}
+                height={150}
+                width={150}
+                priority
+                className="rounded-md object-contain bg-black/20 p-4"
+              />
+            ) : (
+              <BiImage className="h-28 w-28 bg-white/10 p-2 rounded-md" />
+            )}
+          </Link>
+
           <div className="flex flex-col gap-1 justify-between">
             <Link href={`/games/${order.id}`}>
               <p className="text-base font-semibold">

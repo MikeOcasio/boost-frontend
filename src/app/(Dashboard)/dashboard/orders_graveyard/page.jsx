@@ -26,7 +26,17 @@ const OrderGraveyardPage = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setGraveyardOrders(result.orders);
+        const sortedOrders = result?.orders.sort((a, b) => {
+          const aIsOpen = a.state === "open";
+          const bIsOpen = b.state === "open";
+
+          if (aIsOpen && !bIsOpen) return -1;
+          if (!aIsOpen && bIsOpen) return 1;
+
+          return new Date(a.created_at) - new Date(b.created_at);
+        });
+
+        setGraveyardOrders(sortedOrders);
       }
     } catch (e) {
       setError(true);
@@ -42,10 +52,10 @@ const OrderGraveyardPage = () => {
 
   return (
     <div className="space-y-4">
-      <p>Orders Graveyard</p>
+      <p className="font-bold text-2xl">Orders Graveyard</p>
 
       <p className="text-xs text-white/80">
-        You can pick any orders from here as per your requirements.
+        You can fulfill any order as you like.
       </p>
 
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}

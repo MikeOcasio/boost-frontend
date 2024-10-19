@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import React, { useState } from "react";
-import { BiPencil } from "react-icons/bi";
+import { BiImage, BiPencil } from "react-icons/bi";
 import clsx from "clsx";
 
 import { AdminOrderDialog } from "./AdminOrderDialog";
@@ -33,15 +33,17 @@ export const AdminOrderCard = ({ order, loadOrders }) => {
             className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
           >
             <div className="flex flex-wrap items-center gap-x-2">
-              {product.image && (
+              {product.image ? (
                 <Image
                   src={product.image}
                   alt={product.name}
-                  height={60}
-                  width={60}
+                  height={70}
+                  width={70}
                   priority
                   className="rounded-md object-contain bg-white/10 p-2"
                 />
+              ) : (
+                <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
               )}
               <div className="flex flex-col gap-y-1">
                 <p className="text-sm font-semibold">{product.name}</p>
