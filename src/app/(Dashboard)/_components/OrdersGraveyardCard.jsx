@@ -8,12 +8,29 @@ import clsx from "clsx";
 import { PiGameControllerFill } from "react-icons/pi";
 import { BiImage } from "react-icons/bi";
 
+// Group similar products and sum their quantities
+const groupProducts = (products) => {
+  return products.reduce((acc, product) => {
+    const existingProduct = acc.find((p) => p.id === product.id);
+
+    if (existingProduct) {
+      existingProduct.quantity += Number(product.quantity) || 1; // Ensure quantity is a number
+    } else {
+      acc.push({ ...product, quantity: Number(product.quantity) || 1 }); // Ensure quantity is a number
+    }
+
+    return acc;
+  }, []);
+};
+
 const OrdersGraveyardCard = ({ order, loadGraveyardOrders, loadOrders }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const onClose = () => {
     setDialogOpen(false);
   };
+
+  const groupedProducts = groupProducts(order.products);
 
   return (
     <div
@@ -33,10 +50,10 @@ const OrdersGraveyardCard = ({ order, loadGraveyardOrders, loadOrders }) => {
 
       {/* Product Info */}
       <div className="flex flex-col gap-1 w-full">
-        {order?.products?.map((product, index) => (
+        {groupedProducts?.map((product, index) => (
           <div
             key={index}
-            className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
+            className="flex flex-wrap gap-4 justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
           >
             <div className="flex flex-wrap items-center gap-x-2">
               {product.image ? (
@@ -51,11 +68,14 @@ const OrdersGraveyardCard = ({ order, loadGraveyardOrders, loadOrders }) => {
               ) : (
                 <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
               )}
-              <div className="flex flex-col gap-y-1">
+              <div className="flex flex-col gap-1">
                 <p className="text-sm font-semibold">{product.name}</p>
+                <p className="text-sm">Qty: {product.quantity}</p>
               </div>
             </div>
-            <p className="text-sm font-semibold">${product.price}</p>
+            <p className="text-sm font-semibold">
+              ${(product.price * product.quantity).toFixed(2)}
+            </p>
           </div>
         ))}
       </div>
@@ -102,6 +122,7 @@ const OrdersGraveyardCard = ({ order, loadGraveyardOrders, loadOrders }) => {
           dialogOpen={dialogOpen}
           onClose={onClose}
           order={order}
+          groupedProducts={groupedProducts}
           loadGraveyardOrders={loadGraveyardOrders}
           loadOrders={loadOrders}
         />

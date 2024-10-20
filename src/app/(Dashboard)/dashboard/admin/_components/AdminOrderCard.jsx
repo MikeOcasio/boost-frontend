@@ -18,9 +18,26 @@ const highlightMatch = (text, searchTerm) => {
   );
 };
 
+// Group similar products and sum their quantities
+const groupProducts = (products) => {
+  return products.reduce((acc, product) => {
+    const existingProduct = acc.find((p) => p.id === product.id);
+
+    if (existingProduct) {
+      existingProduct.quantity += Number(product.quantity) || 1; // Ensure quantity is a number
+    } else {
+      acc.push({ ...product, quantity: Number(product.quantity) || 1 }); // Ensure quantity is a number
+    }
+
+    return acc;
+  }, []);
+};
+
 export const AdminOrderCard = ({ order, loadOrders, searchTerm }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const onClose = () => setDialogOpen(false);
+
+  const groupedProducts = groupProducts(order.products);
 
   return (
     <div className="flex-1 min-w-fit space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20">
@@ -38,7 +55,7 @@ export const AdminOrderCard = ({ order, loadOrders, searchTerm }) => {
       </div>
 
       <div className="flex flex-col gap-1">
-        {order?.products?.map((product, index) => (
+        {groupedProducts?.map((product, index) => (
           <div
             key={index}
             className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
@@ -60,9 +77,12 @@ export const AdminOrderCard = ({ order, loadOrders, searchTerm }) => {
                 <p className="text-sm font-semibold">
                   {highlightMatch(product.name, searchTerm)}
                 </p>
+                <p className="text-sm">Qty: {product.quantity}</p>
               </div>
             </div>
-            <p className="text-sm font-semibold">${product.price}</p>
+            <p className="text-sm font-semibold">
+              ${(product.price * product.quantity).toFixed(2)}
+            </p>
           </div>
         ))}
       </div>
@@ -118,6 +138,7 @@ export const AdminOrderCard = ({ order, loadOrders, searchTerm }) => {
         dialogOpen={dialogOpen}
         onClose={onClose}
         order={order}
+        groupedProducts={groupedProducts}
         loadOrders={loadOrders}
       />
     </div>

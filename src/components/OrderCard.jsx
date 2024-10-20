@@ -21,12 +21,29 @@ const highlightMatch = (text, searchTerm) => {
   );
 };
 
+// Group similar products and sum their quantities
+const groupProducts = (products) => {
+  return products.reduce((acc, product) => {
+    const existingProduct = acc.find((p) => p.id === product.id);
+
+    if (existingProduct) {
+      existingProduct.quantity += Number(product.quantity) || 1; // Ensure quantity is a number
+    } else {
+      acc.push({ ...product, quantity: Number(product.quantity) || 1 }); // Ensure quantity is a number
+    }
+
+    return acc;
+  }, []);
+};
+
 const OrderCard = ({ order, loadOrders, searchTerm }) => {
   const { user } = useUserStore();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   const onClose = () => setDialogOpen(false);
+
+  const groupedProducts = groupProducts(order.products);
 
   return (
     <div
@@ -64,10 +81,10 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
       </div>
 
       <div className="flex flex-col gap-1 w-full">
-        {order?.products?.map((product, index) => (
+        {groupedProducts.map((product, index) => (
           <div
             key={index}
-            className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
+            className="flex flex-wrap gap-4 justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
           >
             <div className="flex flex-wrap items-center gap-x-2">
               {product.image ? (
@@ -82,13 +99,16 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
               ) : (
                 <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
               )}
-              <div className="flex flex-col gap-y-1">
+              <div className="flex flex-col gap-1">
                 <p className="text-sm font-semibold">
                   {highlightMatch(product.name, searchTerm)}
                 </p>
+                <p className="text-sm">Qty: {product.quantity}</p>
               </div>
             </div>
-            <p className="text-sm font-semibold">${product.price}</p>
+            <p className="text-sm font-semibold">
+              ${(product.price * product.quantity).toFixed(2)}
+            </p>
           </div>
         ))}
       </div>
@@ -139,6 +159,7 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
           dialogOpen={dialogOpen}
           onClose={onClose}
           order={order}
+          groupedProducts={groupedProducts}
           isEditing={isEditing}
           loadOrders={loadOrders}
         />

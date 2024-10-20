@@ -60,7 +60,9 @@ export const CheckoutOrderCard = ({ order }) => {
           </div>
         </div>
 
-        <p className="text-lg font-semibold">${order.price * order.quantity}</p>
+        <p className="text-lg font-semibold">
+          ${(order.price * order.quantity).toFixed(2)}
+        </p>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import { IoClose, IoCopy } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
 
 import { updateOrderStatus } from "@/lib/actions/orders-action";
-import { adminOrderStatus, orderStatus } from "@/lib/data";
+import { orderStatus } from "@/lib/data";
 import { useUserStore } from "@/store/use-user";
 import { BiImage } from "react-icons/bi";
 
@@ -16,6 +16,7 @@ export const OrderDialog = ({
   dialogOpen,
   onClose,
   order,
+  groupedProducts,
   isEditing,
   loadOrders,
 }) => {
@@ -171,13 +172,13 @@ export const OrderDialog = ({
 
             {/* Product Info */}
             <div className="flex flex-col gap-1 w-full">
-              {order.products?.map((product, index) => (
+              {groupedProducts?.map((product, index) => (
                 <Link
                   key={index}
                   href={`/games/${product.product_id}`}
                   target="_blank"
                 >
-                  <div className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30">
+                  <div className="flex gap-4 flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30">
                     <div className="flex flex-wrap items-center gap-x-2">
                       {product.image ? (
                         <Image
@@ -191,11 +192,15 @@ export const OrderDialog = ({
                       ) : (
                         <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
                       )}
-                      <div className="flex flex-col gap-y-1">
+
+                      <div className="flex flex-col gap-1">
                         <p className="text-sm font-semibold">{product.name}</p>
+                        <p className="text-sm">Qty: {product.quantity}</p>
                       </div>
                     </div>
-                    <p className="text-sm font-semibold">${product.price}</p>
+                    <p className="text-sm font-semibold">
+                      ${(product.price * product.quantity).toFixed(2)}
+                    </p>
                   </div>
                 </Link>
               ))}

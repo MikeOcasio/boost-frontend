@@ -19,6 +19,7 @@ export const AdminOrderDialog = ({
   dialogOpen,
   onClose,
   order,
+  groupedProducts,
   loadOrders,
 }) => {
   const { user } = useUserStore();
@@ -258,7 +259,7 @@ export const AdminOrderDialog = ({
 
             {/* Product Info */}
             <div className="flex flex-col gap-1 w-full">
-              {order.products?.map((product, index) => (
+              {groupedProducts?.map((product, index) => (
                 <Link
                   key={index}
                   href={`/games/${product.product_id}`}
@@ -280,9 +281,12 @@ export const AdminOrderDialog = ({
                       )}
                       <div className="flex flex-col gap-y-1">
                         <p className="text-sm font-semibold">{product.name}</p>
+                        <p className="text-sm">Qty: {product.quantity}</p>
                       </div>
                     </div>
-                    <p className="text-sm font-semibold">${product.price}</p>
+                    <p className="text-sm font-semibold">
+                      ${(product.price * product.quantity).toFixed(2)}
+                    </p>
                   </div>
                 </Link>
               ))}
