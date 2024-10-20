@@ -4,19 +4,30 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { BiImage, BiPencil } from "react-icons/bi";
 import clsx from "clsx";
-
 import { AdminOrderDialog } from "./AdminOrderDialog";
 import { PiGameControllerFill } from "react-icons/pi";
 
-export const AdminOrderCard = ({ order, loadOrders }) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+// Helper function to highlight matching terms
+const highlightMatch = (text, searchTerm) => {
+  if (!searchTerm) return text; // If no search term, return the original text
+  const regex = new RegExp(`(${searchTerm})`, "gi"); // Case-insensitive match
+  const parts = text.split(regex); // Split the text into matching and non-matching parts
 
+  return parts.map((part, index) =>
+    regex.test(part) ? <mark key={index}>{part}</mark> : part
+  );
+};
+
+export const AdminOrderCard = ({ order, loadOrders, searchTerm }) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const onClose = () => setDialogOpen(false);
 
   return (
     <div className="flex-1 min-w-fit space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Order #{order.internal_id}</h3>
+        <h3 className="text-lg font-semibold">
+          Order #{highlightMatch(order.internal_id, searchTerm)}
+        </h3>
 
         <button
           onClick={() => setDialogOpen(true)}
@@ -46,7 +57,9 @@ export const AdminOrderCard = ({ order, loadOrders }) => {
                 <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
               )}
               <div className="flex flex-col gap-y-1">
-                <p className="text-sm font-semibold">{product.name}</p>
+                <p className="text-sm font-semibold">
+                  {highlightMatch(product.name, searchTerm)}
+                </p>
               </div>
             </div>
             <p className="text-sm font-semibold">${product.price}</p>
@@ -54,13 +67,11 @@ export const AdminOrderCard = ({ order, loadOrders }) => {
         ))}
       </div>
 
-      {/* Assigned Skill Master */}
-
       {order.skill_master.gamer_tag && (
         <div className="flex flex-wrap gap-2 text-sm items-center">
           <span>Assigned Skill Master:</span>
           <span className="font-semibold px-1 rounded-md border border-white/10">
-            {order.skill_master.gamer_tag}
+            {highlightMatch(order.skill_master.gamer_tag, searchTerm)}
           </span>
         </div>
       )}
@@ -69,11 +80,10 @@ export const AdminOrderCard = ({ order, loadOrders }) => {
         <span>Platform:</span>
         <span className="font-semibold px-1 rounded-md border border-white/10 flex gap-2 items-center">
           <PiGameControllerFill className="h-5 w-5" />{" "}
-          <span>{order.platform?.name}</span>
+          <span>{highlightMatch(order.platform?.name || "", searchTerm)}</span>
         </span>
       </div>
 
-      {/* Order Status */}
       <div className="flex flex-wrap gap-2 text-sm items-center">
         <span>Order status:</span>
         <span
@@ -87,7 +97,7 @@ export const AdminOrderCard = ({ order, loadOrders }) => {
             order.state === "complete" && "bg-green-500"
           )}
         >
-          {order.state}
+          {highlightMatch(order.state, searchTerm)}
         </span>
       </div>
 

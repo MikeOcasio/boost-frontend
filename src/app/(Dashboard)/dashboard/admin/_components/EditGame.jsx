@@ -242,11 +242,7 @@ export const EditGame = ({ data, setData }) => {
                 }}
                 className="block w-full appearance-none rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
               >
-                <option
-                  value={null}
-                  className="bg-neutral-800"
-                  unselectable="on"
-                >
+                <option value="" className="bg-neutral-800" unselectable="on">
                   Select a category
                 </option>
                 {categories.map((category, index) => (

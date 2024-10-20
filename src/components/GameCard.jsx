@@ -3,7 +3,18 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import Link from "next/link";
 
-const GameCard = ({ game }) => {
+// Helper function to highlight matching terms
+const highlightMatch = (text, searchTerm) => {
+  if (!searchTerm) return text; // If no search term, return the original text
+  const regex = new RegExp(`(${searchTerm})`, "gi"); // Case-insensitive match
+  const parts = text.split(regex); // Split the text into matching and non-matching parts
+
+  return parts.map((part, index) =>
+    regex.test(part) ? <mark key={index}>{part}</mark> : part
+  );
+};
+
+const GameCard = ({ game, searchTerm }) => {
   return (
     <div
       key={game.id}
@@ -37,21 +48,26 @@ const GameCard = ({ game }) => {
 
         <div className="flex items-center gap-2 flex-wrap w-full text-xs -mt-2">
           <span className="bg-white/10 px-2 rounded-md flex-1 text-center min-w-fit">
-            {game.category?.name}
+            {highlightMatch(game.category?.name, searchTerm)}
           </span>
+
           {game.platforms?.map((platform) => (
             <p
               key={platform.id}
               className="bg-black/20 px-2 rounded-md flex-1 text-center"
             >
-              {platform.name}
+              {highlightMatch(platform.name, searchTerm)}
             </p>
           ))}
         </div>
 
         <div className="flex flex-col gap-2 items-center">
-          <p className="text-xl font-bold leading-6 text-white">{game.name}</p>
-          <p className="text-xs text-white/70 font-semibold">{game.tag_line}</p>
+          <p className="text-xl font-bold leading-6 text-white">
+            {highlightMatch(game.name, searchTerm)}
+          </p>
+          <p className="text-xs text-white/70 font-semibold">
+            {highlightMatch(game.tag_line, searchTerm)}
+          </p>
         </div>
 
         <ul
@@ -64,7 +80,7 @@ const GameCard = ({ game }) => {
                 className="h-6 w-5 flex-none text-green-500"
                 aria-hidden="true"
               />
-              {feature}
+              {highlightMatch(feature, searchTerm)}
             </li>
           ))}
         </ul>

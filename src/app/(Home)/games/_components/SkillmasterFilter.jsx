@@ -35,7 +35,7 @@ const SkillmasterFilter = ({ filter, setFilter }) => {
     setLoading(true);
     setError(null);
 
-    loadPlatforms();
+    await loadPlatforms();
 
     setLoading(false);
   };

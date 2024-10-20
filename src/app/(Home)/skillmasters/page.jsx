@@ -2,7 +2,7 @@
 
 import { FilterButton } from "@/components/FilterButton";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SkillmasterFilter from "../games/_components/SkillmasterFilter";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
@@ -87,24 +87,31 @@ const SkillMastersPage = () => {
   const normalize = (str) => str?.toLowerCase().replace(/\s+/g, "").trim();
 
   // Filter and search logic for name, platform, and category
-  const filteredSkillmasters = skillMasters
-    .filter((skillmaster) => {
-      const term = normalize(searchTerm);
-      return (
-        !term ||
-        normalize(skillmaster.first_name + skillmaster.last_name).includes(
-          term
-        ) ||
-        normalize(skillmaster.bio).includes(term)
-      );
-    })
-    .filter((skillmaster) =>
-      filter.platform
-        ? skillmaster.platforms.some(
-            (platform) => platform.id === Number(filter.platform)
+  const filteredSkillmasters = useMemo(() => {
+    const term = normalize(searchTerm);
+
+    return skillMasters
+      ?.filter((skillmaster) => {
+        return (
+          !term ||
+          normalize(skillmaster.first_name + skillmaster.last_name).includes(
+            term
+          ) ||
+          normalize(skillmaster.gamer_tag)?.includes(term) ||
+          normalize(skillmaster.bio)?.includes(term) ||
+          skillmaster.platforms.some((platform) =>
+            normalize(platform.name).includes(term)
           )
-        : true
-    );
+        );
+      })
+      .filter((skillmaster) =>
+        filter.platform
+          ? skillmaster.platforms.some(
+              (platform) => platform.id === Number(filter.platform)
+            )
+          : true
+      );
+  }, [skillMasters, searchTerm, filter]);
 
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
@@ -206,12 +213,16 @@ const SkillMastersPage = () => {
             )}
 
             {filteredSkillmasters.length > 0 &&
-              filteredSkillmasters.map((skillMaster) => (
-                <SkillmasterCard
-                  key={skillMaster.id}
-                  skillMaster={skillMaster}
-                />
-              ))}
+              filteredSkillmasters.map(
+                (skillMaster) =>
+                  !skillMaster?.deleted_at && (
+                    <SkillmasterCard
+                      key={skillMaster.id}
+                      skillMaster={skillMaster}
+                      searchTerm={searchTerm}
+                    />
+                  )
+              )}
           </div>
         </div>
       )}

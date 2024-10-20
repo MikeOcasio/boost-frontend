@@ -246,7 +246,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
                       className="block w-full appearance-none rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
                     >
                       <option
-                        value={null}
+                        value=""
                         className="bg-neutral-800"
                         unselectable="on"
                       >

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader, BiPencil, BiPlus } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
@@ -11,6 +11,17 @@ import { FaDeleteLeft } from "react-icons/fa6";
 
 import { fetchAllUsers } from "@/lib/actions/user-actions";
 import { UserDialog } from "../_components/UserDialog";
+
+// Helper function to highlight matching terms
+const highlightMatch = (text, searchTerm) => {
+  if (!searchTerm) return text; // If no search term, return the original text
+  const regex = new RegExp(`(${searchTerm})`, "gi"); // Case-insensitive match
+  const parts = text.split(regex); // Split the text into matching and non-matching parts
+
+  return parts.map((part, index) =>
+    regex.test(part) ? <mark key={index}>{part}</mark> : part
+  );
+};
 
 const AllUsers = () => {
   const [users, setUsers] = useState(null);
@@ -66,23 +77,26 @@ const AllUsers = () => {
   const normalize = (str) => str?.toLowerCase().replace(/\s+/g, "").trim();
 
   // Filter and search logic
-  const filteredUsers = users?.filter((user) => {
+  const filteredUsers = useMemo(() => {
     const term = normalize(searchTerm);
-    const isDeleted = !!user.deleted_at;
 
-    return (
-      !term ||
-      normalize(user.first_name + user.last_name).includes(term) ||
-      normalize(user.role).includes(term) ||
-      normalize(user.email).includes(term) ||
-      normalize(String(user.id)).includes(term) ||
-      user.platforms.some((platform) =>
-        normalize(platform.name).includes(term)
-      ) ||
-      (user.gamer_tag && normalize(user.gamer_tag).includes(term)) ||
-      ("deleted-banned".includes(term) && isDeleted)
-    );
-  });
+    return users?.filter((user) => {
+      const isDeleted = !!user.deleted_at;
+
+      return (
+        !term ||
+        normalize(user.first_name + user.last_name).includes(term) ||
+        normalize(user.role).includes(term) ||
+        normalize(user.email).includes(term) ||
+        normalize(String(user.id)).includes(term) ||
+        user.platforms.some((platform) =>
+          normalize(platform.name).includes(term)
+        ) ||
+        (user.gamer_tag && normalize(user.gamer_tag).includes(term)) ||
+        ("deleted-banned".includes(term) && isDeleted)
+      );
+    });
+  }, [users, searchTerm]);
 
   return (
     <div className="space-y-6">
@@ -157,18 +171,23 @@ const AllUsers = () => {
                         <div className="flex flex-col gap-2 items-start">
                           {user?.deleted_at && (
                             <p className="text-xs break-all flex gap-2 flex-wrap items-center -mt-2">
-                              User is Deleted
+                              User is {highlightMatch("Deleted", searchTerm)}
                               <FaDeleteLeft />
                             </p>
                           )}
 
                           <p className="text-lg flex flex-wrap gap-2">
                             <span>
-                              {user.first_name} {user.last_name}{" "}
-                              {user.gamer_tag && `(${user.gamer_tag})`}
+                              {highlightMatch(user.first_name, searchTerm)}{" "}
+                              {highlightMatch(user.last_name, searchTerm)}
+                              {user.gamer_tag &&
+                                highlightMatch(
+                                  " | " + user.gamer_tag,
+                                  searchTerm
+                                )}
                             </span>
                             <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
-                              {user.role}
+                              {highlightMatch(user.role, searchTerm)}
                             </span>
                           </p>
 
@@ -181,7 +200,7 @@ const AllUsers = () => {
                             ) : (
                               user.platforms.map((platform) => (
                                 <span className="bg-black/20 px-2 py-1 rounded-md">
-                                  {platform.name}
+                                  {highlightMatch(platform.name, searchTerm)}
                                 </span>
                               ))
                             )}
@@ -197,8 +216,10 @@ const AllUsers = () => {
                               user.preferred_skill_master_ids.map(
                                 (skillMaster) => (
                                   <span className="bg-black/20 px-2 py-1 rounded-md">
-                                    {skillMaster.name}
-                                    name
+                                    {highlightMatch(
+                                      skillMaster.name,
+                                      searchTerm
+                                    )}
                                   </span>
                                 )
                               )
@@ -207,11 +228,12 @@ const AllUsers = () => {
 
                           <div className="flex flex-wrap gap-2">
                             <span className="bg-black/20 px-2 py-1 rounded-md text-sm">
-                              ID: {user.id}
+                              ID:{" "}
+                              {highlightMatch(user.id.toString(), searchTerm)}
                             </span>
 
                             <p className="text-sm font-semibold break-all border border-white/10 rounded-lg px-2 py-1">
-                              {user.email}
+                              {highlightMatch(user.email, searchTerm)}
                             </p>
                           </div>
 

@@ -45,8 +45,8 @@ export const AdminOrderDialog = ({
       setCurrentOrderState(order?.state);
       setSkillmasterId("");
       setLoading(false);
-      loadOrders();
       onClose();
+      loadOrders();
     }
   };
 
@@ -75,8 +75,8 @@ export const AdminOrderDialog = ({
       setCurrentOrderState(order?.state);
       setSkillmasterId("");
       setLoading(false);
-      loadOrders();
       onClose();
+      loadOrders();
     }
   };
 

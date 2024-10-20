@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 
@@ -69,42 +69,48 @@ const AllGames = () => {
   const normalize = (str) => str?.toLowerCase().replace(/\s+/g, "").trim();
 
   // Filter and search logic
-  const filteredGames = games
-    ?.filter((game) => {
-      const term = normalize(searchTerm);
-      return (
-        !term ||
-        normalize(game.name).includes(term) ||
-        normalize(game.description).includes(term) ||
-        normalize(game.category.name).includes(term) ||
-        normalize(game.category.description).includes(term) ||
-        normalize(String(game.id)).includes(term) ||
-        normalize(game.tag_line).includes(term) ||
-        game.platforms.some((platform) =>
-          normalize(platform.name).includes(term)
-        ) ||
-        game.prod_attr_cats.some((attr) => normalize(attr.name).includes(term))
+  const filteredGames = useMemo(() => {
+    const term = normalize(searchTerm);
+
+    return games
+      ?.filter((game) => {
+        return (
+          !term ||
+          normalize(game.name).includes(term) ||
+          normalize(game.description).includes(term) ||
+          normalize(game.category.name).includes(term) ||
+          normalize(game.category.description).includes(term) ||
+          normalize(String(game.id)).includes(term) ||
+          normalize(game.tag_line).includes(term) ||
+          game.platforms.some((platform) =>
+            normalize(platform.name).includes(term)
+          ) ||
+          game.prod_attr_cats.some((attr) =>
+            normalize(attr.name).includes(term)
+          ) ||
+          game.features.some((feature) => normalize(feature).includes(term))
+        );
+      })
+      .filter((game) => (filter.mostPopular ? game.most_popular : true))
+      .filter((game) => (filter.active ? game.is_active : true))
+      .filter((game) =>
+        filter.category ? game.category_id === Number(filter.category) : true
+      )
+      .filter((game) =>
+        filter.platform
+          ? game.platforms.some(
+              (platform) => platform.id === Number(filter.platform)
+            )
+          : true
+      )
+      .filter((game) =>
+        filter.attribute
+          ? game.prod_attr_cats?.filter(
+              (item) => item.id === Number(filter.attribute)
+            ).length > 0
+          : true
       );
-    })
-    .filter((game) => (filter.mostPopular ? game.most_popular : true))
-    .filter((game) => (filter.active ? game.is_active : true))
-    .filter((game) =>
-      filter.category ? game.category_id === Number(filter.category) : true
-    )
-    .filter((game) =>
-      filter.platform
-        ? game.platforms.some(
-            (platform) => platform.id === Number(filter.platform)
-          )
-        : true
-    )
-    .filter((game) =>
-      filter.attribute
-        ? game.prod_attr_cats?.filter(
-            (item) => item.id === Number(filter.attribute)
-          ).length > 0
-        : true
-    );
+  }, [games, searchTerm, filter]);
 
   // Apply sorting based on filter.sortBy
 
@@ -247,7 +253,13 @@ const AllGames = () => {
             ) : (
               sortedGames?.map(
                 (game) =>
-                  game?.is_active && <AdminGameCard key={game.id} game={game} />
+                  game?.is_active && (
+                    <AdminGameCard
+                      key={game.id}
+                      game={game}
+                      searchTerm={searchTerm}
+                    />
+                  )
               )
             )}
           </div>

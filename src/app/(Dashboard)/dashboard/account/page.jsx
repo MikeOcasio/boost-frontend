@@ -68,7 +68,7 @@ const AccountPage = () => {
     setLoading(true);
     setError(false);
 
-    Promise.all([loadPlatforms(), loadUser()]).then(() => {
+    await Promise.all([loadPlatforms(), loadUser()]).then(() => {
       setLoading(false);
     });
   };
