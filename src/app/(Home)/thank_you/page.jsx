@@ -14,7 +14,7 @@ const PaymentConfirmation = () => {
   const params = useSearchParams().get("order_id");
 
   const [orderData, setOrderData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const loadOrderData = async () => {
@@ -66,7 +66,7 @@ const PaymentConfirmation = () => {
               Thank you for your purchase!
             </h2>
 
-            <p className="text-center text-white/80 font-semibold max-w-lg mx-auto">
+            <p className="text-center text-white/80 font-semibold max-w-md mx-auto text-xs">
               Your order has been successfully placed. Skillmaster will assign
               to your order shortly.
             </p>
@@ -107,11 +107,11 @@ const PaymentConfirmation = () => {
 
             <div className="flex flex-col gap-y-2">
               {/* Assigned Skill Master */}
-              {orderData.skill_master.gamer_tag && (
+              {orderData?.skill_master.gamer_tag && (
                 <div className="flex flex-wrap gap-2 text-sm items-center">
                   <span>Assigned Skill Master:</span>
                   <span className="font-semibold px-1 rounded-md border border-white/10">
-                    {order.skill_master.gamer_tag}
+                    {orderData?.skill_master.gamer_tag}
                   </span>
                 </div>
               )}

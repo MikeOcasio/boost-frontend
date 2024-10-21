@@ -20,7 +20,7 @@ const UserDashboard = () => {
 
   const [orders, setOrders] = useState(null);
   const [graveyardOrders, setGraveyardOrders] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const loadOrders = async () => {
@@ -143,12 +143,15 @@ const UserDashboard = () => {
 
       {/* Orders graveyard */}
       {!loading &&
-        !error &&
-        (user.role === "admin" ||
-          user.role === "dev" ||
-          user.role === "skillmaster") &&
-        (graveyardOrders?.length > 0 ? (
-          <>
+      !error &&
+      (user.role === "admin" ||
+        user.role === "dev" ||
+        user.role === "skillmaster") &&
+      graveyardOrders?.length < 1 ? (
+        <p className="text-center w-full">Orders graveyard is empty!</p>
+      ) : (
+        <>
+          {graveyardOrders?.length && (
             <div className="flex flex-col gap-y-4">
               <div className="flex justify-between items-center flex-wrap gap-2">
                 <h2 className="text-lg font-semibold">Orders Graveyard</h2>
@@ -160,47 +163,44 @@ const UserDashboard = () => {
                 </Link>
               </div>
             </div>
+          )}
 
-            <div className="flex flex-wrap gap-4">
-              {graveyardOrders?.map((order, index) => (
-                <OrdersGraveyardCard
-                  key={index}
-                  order={order}
-                  loadGraveyardOrders={loadGraveyardOrders}
-                  loadOrders={loadOrders}
-                />
-              ))}
-            </div>
-          </>
-        ) : (
-          !loading && (
-            <p className="text-center w-full">Orders graveyard is empty!</p>
-          )
-        ))}
+          <div className="flex flex-wrap gap-4">
+            {graveyardOrders?.map((order, index) => (
+              <OrdersGraveyardCard
+                key={index}
+                order={order}
+                loadGraveyardOrders={loadGraveyardOrders}
+                loadOrders={loadOrders}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Recent Orders */}
-      {!loading && !error && orders?.length > 0 ? (
+      {!loading && !error && orders?.length < 1 ? (
+        <p className="text-center w-full">No orders have been created yet!</p>
+      ) : (
         <div className="flex flex-col gap-y-4">
-          <div className="flex justify-between items-center flex-wrap gap-2">
-            <h2 className="text-lg font-semibold">Recent Orders</h2>
+          {orders?.length && (
+            <div className="flex justify-between items-center flex-wrap gap-2">
+              <h2 className="text-lg font-semibold">Recent Orders</h2>
 
-            <Link href="/dashboard/orders">
-              <button className="px-3 py-2 transition-all hover:bg-white/10 text-white rounded-lg border border-white/10">
-                View All
-              </button>
-            </Link>
-          </div>
+              <Link href="/dashboard/orders">
+                <button className="px-3 py-2 transition-all hover:bg-white/10 text-white rounded-lg border border-white/10">
+                  View All
+                </button>
+              </Link>
+            </div>
+          )}
 
           <div className="space-y-4">
-            {orders.map((order, index) => (
+            {orders?.map((order, index) => (
               <OrderCard key={index} order={order} loadOrders={loadOrders} />
             ))}
           </div>
         </div>
-      ) : (
-        !loading && (
-          <p className="text-center w-full">No orders have been created yet!</p>
-        )
       )}
     </div>
   );

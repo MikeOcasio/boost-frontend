@@ -52,7 +52,7 @@ const SkillMastersPage = () => {
   // },
 
   const [skillMasters, setSkillMasters] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState({

@@ -10,7 +10,7 @@ import { PlatformDialog } from "../_components/PlatformDialog";
 
 const PlatformsPage = () => {
   const [platforms, setPlatforms] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const [dialogData, setDialogData] = useState(null);
@@ -82,11 +82,9 @@ const PlatformsPage = () => {
       )}
 
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        {platforms?.length < 1 ? (
+        {!loading && !error && platforms?.length < 1 ? (
           <p className="text-center w-full">No platform have been added yet!</p>
         ) : (
-          !loading &&
-          !error &&
           platforms?.map((platform, index) => (
             <button
               key={index}

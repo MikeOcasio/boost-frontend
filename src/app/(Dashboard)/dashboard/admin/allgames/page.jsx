@@ -17,7 +17,7 @@ const AllGames = () => {
   const { user } = useUserStore();
 
   const [games, setGames] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   // Search and filter states
@@ -105,9 +105,9 @@ const AllGames = () => {
       )
       .filter((game) =>
         filter.attribute
-          ? game.prod_attr_cats?.filter(
+          ? game.prod_attr_cats.some(
               (item) => item.id === Number(filter.attribute)
-            ).length > 0
+            )
           : true
       );
   }, [games, searchTerm, filter]);

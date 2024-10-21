@@ -18,7 +18,7 @@ export const SearchFilter = ({ filter, setFilter }) => {
   const [attribute, setAttribute] = useState(null);
   const [platforms, setPlatforms] = useState(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const loadCategories = async () => {

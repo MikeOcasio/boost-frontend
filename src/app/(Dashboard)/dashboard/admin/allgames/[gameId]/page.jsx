@@ -14,7 +14,7 @@ const GameEditPage = ({ params }) => {
   const router = useRouter();
 
   const [game, setGame] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const [missingFields, setMissingFields] = useState([]);

@@ -23,7 +23,7 @@ export const CheckoutOrderCard = ({ order }) => {
                 className="rounded-md object-contain bg-black/20 p-4"
               />
             ) : (
-              <BiImage className="h-28 w-28 bg-white/10 p-2 rounded-md" />
+              <BiImage className="h-36 w-36 bg-white/10 p-2 rounded-md" />
             )}
           </Link>
 

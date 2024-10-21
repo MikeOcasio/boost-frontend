@@ -10,7 +10,7 @@ import { AttributeDialog } from "../_components/AttributeDialog";
 
 const ProductAttributePage = () => {
   const [attribute, setAttribute] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const [dialogData, setDialogData] = useState(null);
@@ -82,13 +82,11 @@ const ProductAttributePage = () => {
       )}
 
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        {attribute?.length < 1 ? (
+        {!loading && !error && attribute?.length < 1 ? (
           <p className="text-center w-full">
             No attribute have been added yet!
           </p>
         ) : (
-          !loading &&
-          !error &&
           attribute?.map((attribute, index) => (
             <button
               key={index}

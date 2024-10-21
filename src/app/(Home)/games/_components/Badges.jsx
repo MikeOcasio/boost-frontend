@@ -21,7 +21,7 @@ const Badges = ({
 }) => {
   const [productCategories, setProductCategories] = useState([]);
   const [productAttribute, setProductAttribute] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const scrollContainerRef = useRef(null);
 

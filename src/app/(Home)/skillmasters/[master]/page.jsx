@@ -54,7 +54,7 @@ import { fetchSkillmasterById } from "@/lib/actions/user-actions";
 
 const MasterPage = ({ params }) => {
   const [skillMaster, setSkillMaster] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const loadSkillmaster = async () => {

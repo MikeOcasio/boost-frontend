@@ -24,7 +24,7 @@ import { fetchPlatforms } from "@/lib/actions/platforms-action";
 
 const AccountPage = () => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [platforms, setPlatforms] = useState([]);

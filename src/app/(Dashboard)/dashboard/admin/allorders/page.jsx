@@ -14,7 +14,7 @@ import { OrderSearchFilter } from "@/app/(Dashboard)/_components/OrderSearchFilt
 
 const AllOrders = () => {
   const [orders, setOrders] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);

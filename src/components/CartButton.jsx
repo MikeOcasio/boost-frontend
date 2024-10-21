@@ -56,9 +56,13 @@ export const CartButton = ({ mobileNav }) => {
           <h3 className="text-lg font-semibold">Cart</h3>
         </div>
 
-        {cartItems.length > 0 ? (
+        {cartItems?.length < 1 ? (
+          <p className="text-sm text-gray-300 text-center mt-4">
+            Your cart is empty. Add items to your cart to continue.
+          </p>
+        ) : (
           <div className="mt-4 space-y-4">
-            {cartItems.map((item) => (
+            {cartItems?.map((item) => (
               <div
                 key={item.id}
                 className="flex flex-wrap gap-4 items-center border-b border-white/10 pb-2"
@@ -73,7 +77,7 @@ export const CartButton = ({ mobileNav }) => {
                     className="mx-auto w-[100px] object-contain bg-white/10 rounded-md p-2"
                   />
                 ) : (
-                  <BiImage className="h-16 w-16 bg-white/10 p-2 rounded-md" />
+                  <BiImage className="h-24 w-24 bg-white/10 p-2 rounded-md" />
                 )}
 
                 <div className="flex flex-col gap-2 flex-1">
@@ -136,10 +140,6 @@ export const CartButton = ({ mobileNav }) => {
               </button>
             </Link>
           </div>
-        ) : (
-          <p className="text-sm text-gray-300 text-center mt-4">
-            Your cart is empty. Add items to your cart to continue.
-          </p>
         )}
       </PopoverPanel>
     </Popover>

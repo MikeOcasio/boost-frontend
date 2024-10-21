@@ -14,7 +14,7 @@ import { fetchPlatforms } from "@/lib/actions/platforms-action";
 const SkillmasterFilter = ({ filter, setFilter }) => {
   const [platforms, setPlatforms] = useState(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const loadPlatforms = async () => {

@@ -11,7 +11,7 @@ import { fetchCategories } from "@/lib/actions/categories-actions";
 
 const GameCategoriesPage = () => {
   const [categories, setCategories] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const [dialogData, setDialogData] = useState(null);
@@ -84,13 +84,11 @@ const GameCategoriesPage = () => {
       )}
 
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        {categories?.length < 1 ? (
+        {!loading && !error && categories?.length < 1 ? (
           <p className="text-center w-full">
             No categories have been added yet!
           </p>
         ) : (
-          !loading &&
-          !error &&
           categories?.map((category, index) => (
             <button
               key={index}

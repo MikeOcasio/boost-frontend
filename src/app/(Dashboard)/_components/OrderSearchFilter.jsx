@@ -15,7 +15,7 @@ import { adminOrderStatus } from "@/lib/data";
 export const OrderSearchFilter = ({ filter, setFilter }) => {
   const [platforms, setPlatforms] = useState(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const loadPlatforms = async () => {

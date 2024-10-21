@@ -25,7 +25,7 @@ const highlightMatch = (text, searchTerm) => {
 
 const AllUsers = () => {
   const [users, setUsers] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const [dialogData, setDialogData] = useState(null);

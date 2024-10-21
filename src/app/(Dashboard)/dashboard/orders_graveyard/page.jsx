@@ -13,7 +13,7 @@ const OrderGraveyardPage = () => {
   const { user } = useUserStore();
 
   const [graveyardOrders, setGraveyardOrders] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const loadGraveyardOrders = async () => {

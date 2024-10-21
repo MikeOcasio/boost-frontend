@@ -13,7 +13,7 @@ import { HomeGameCarousel } from "@/components/home/HomeGameCarousel";
 
 const GamesPage = () => {
   const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mostPopularGames, setMostPopularGames] = useState(null);
 
@@ -101,9 +101,9 @@ const GamesPage = () => {
       )
       .filter((game) =>
         filter.attribute
-          ? game.prod_attr_cats?.filter(
+          ? game.prod_attr_cats.some(
               (item) => item.id === Number(filter.attribute)
-            ).length > 0
+            )
           : true
       );
   }, [games, searchTerm, filter]);
@@ -143,128 +143,124 @@ const GamesPage = () => {
       )}
 
       {/* Search bar */}
-      {!loading &&
-        !error &&
-        (games.length < 1 ? (
-          <p className="w-full">No games found!</p>
-        ) : (
-          games.length > 0 && (
-            <div className="space-y-6">
-              <div className="flex flex-wrap items-center gap-4">
-                <input
-                  type="text"
-                  autoFocus
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search games..."
-                  className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
-                />
+      {!loading && !error && games.length < 1 ? (
+        <p className="w-full">No games found!</p>
+      ) : (
+        games.length > 0 && (
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center gap-4">
+              <input
+                type="text"
+                autoFocus
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search games..."
+                className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+              />
 
-                <SearchFilter filter={filter} setFilter={setFilter} />
+              <SearchFilter filter={filter} setFilter={setFilter} />
 
-                <div className="flex items-center gap-2 w-full flex-wrap">
-                  {/* show applied filters */}
-                  {Object.keys(filter).length > 0 && (
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {filter.mostPopular && (
-                        <FilterButton
-                          label="Most Popular"
-                          onRemove={() =>
-                            setFilter({ ...filter, mostPopular: false })
-                          }
-                        />
-                      )}
-                      {filter.active && (
-                        <FilterButton
-                          label="Active"
-                          onRemove={() =>
-                            setFilter({ ...filter, active: false })
-                          }
-                        />
-                      )}
-                      {filter.category && (
-                        <FilterButton
-                          label={filter.categoryName}
-                          onRemove={() =>
-                            setFilter({
-                              ...filter,
-                              category: "",
-                              categoryName: "",
-                            })
-                          }
-                        />
-                      )}
-                      {filter.platform && (
-                        <FilterButton
-                          label={filter.platformName}
-                          onRemove={() =>
-                            setFilter({
-                              ...filter,
-                              platform: "",
-                              platformName: "",
-                            })
-                          }
-                        />
-                      )}
-                      {filter.attribute && (
-                        <FilterButton
-                          label={filter.attributeName}
-                          onRemove={() =>
-                            setFilter({
-                              ...filter,
-                              attribute: "",
-                              attributeName: "",
-                            })
-                          }
-                        />
-                      )}
-                      {filter.sortBy && (
-                        <FilterButton
-                          label={filter.sortBy}
-                          onRemove={() =>
-                            setFilter({
-                              ...filter,
-                              sortBy: "",
-                            })
-                          }
-                        />
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-2 bg-Gold/10 pb-4 rounded-lg border border-white/10 hover:border-Gold/20">
-                <p className="text-sm font-semibold m-4 mb-0">
-                  Most Popular Games
-                </p>
-
-                {!loading && !error && mostPopularGames?.length < 1 ? (
-                  <p className="text-center w-full">No games found!</p>
-                ) : (
-                  <HomeGameCarousel data={mostPopularGames} />
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
-                {!loading && !error && filteredGames.length < 1 ? (
-                  <p className="text-center w-full">No games found!</p>
-                ) : (
-                  sortedGames?.map(
-                    (game) =>
-                      game?.is_active && (
-                        <GameCard
-                          key={game.id}
-                          game={game}
-                          searchTerm={searchTerm}
-                        />
-                      )
-                  )
+              <div className="flex items-center gap-2 w-full flex-wrap">
+                {/* show applied filters */}
+                {Object.keys(filter).length > 0 && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {filter.mostPopular && (
+                      <FilterButton
+                        label="Most Popular"
+                        onRemove={() =>
+                          setFilter({ ...filter, mostPopular: false })
+                        }
+                      />
+                    )}
+                    {filter.active && (
+                      <FilterButton
+                        label="Active"
+                        onRemove={() => setFilter({ ...filter, active: false })}
+                      />
+                    )}
+                    {filter.category && (
+                      <FilterButton
+                        label={filter.categoryName}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            category: "",
+                            categoryName: "",
+                          })
+                        }
+                      />
+                    )}
+                    {filter.platform && (
+                      <FilterButton
+                        label={filter.platformName}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            platform: "",
+                            platformName: "",
+                          })
+                        }
+                      />
+                    )}
+                    {filter.attribute && (
+                      <FilterButton
+                        label={filter.attributeName}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            attribute: "",
+                            attributeName: "",
+                          })
+                        }
+                      />
+                    )}
+                    {filter.sortBy && (
+                      <FilterButton
+                        label={filter.sortBy}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            sortBy: "",
+                          })
+                        }
+                      />
+                    )}
+                  </div>
                 )}
               </div>
             </div>
-          )
-        ))}
+
+            <div className="space-y-2 bg-Gold/10 pb-4 rounded-lg border border-white/10 hover:border-Gold/20">
+              <p className="text-sm font-semibold m-4 mb-0">
+                Most Popular Games
+              </p>
+
+              {!loading && !error && mostPopularGames?.length < 1 ? (
+                <p className="text-center w-full">No games found!</p>
+              ) : (
+                <HomeGameCarousel data={mostPopularGames} />
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
+              {!loading && !error && filteredGames.length < 1 ? (
+                <p className="text-center w-full">No games found!</p>
+              ) : (
+                sortedGames?.map(
+                  (game) =>
+                    game?.is_active && (
+                      <GameCard
+                        key={game.id}
+                        game={game}
+                        searchTerm={searchTerm}
+                      />
+                    )
+                )
+              )}
+            </div>
+          </div>
+        )
+      )}
     </div>
   );
 };

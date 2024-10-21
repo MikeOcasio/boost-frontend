@@ -14,7 +14,7 @@ import { OrderSearchFilter } from "../../_components/OrderSearchFilter";
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -152,13 +152,11 @@ const OrdersPage = () => {
       )}
 
       <div className="flex flex-col gap-4">
-        {orders?.length < 1 ? (
+        {!loading && !error && orders && orders?.length < 1 ? (
           <p className="text-center w-full">No orders have been created yet!</p>
         ) : (
-          !loading &&
-          !error &&
-          orders && (
-            <>
+          <>
+            {orders?.length && (
               <div className="flex flex-wrap items-center gap-4">
                 <input
                   type="text"
@@ -225,19 +223,19 @@ const OrdersPage = () => {
                   )}
                 </div>
               </div>
+            )}
 
-              <div className="flex flex-wrap gap-4">
-                {sortedOrders?.map((order, index) => (
-                  <OrderCard
-                    key={index}
-                    order={order}
-                    loadOrders={loadOrders}
-                    searchTerm={searchTerm}
-                  />
-                ))}
-              </div>
-            </>
-          )
+            <div className="flex flex-wrap gap-4">
+              {sortedOrders?.map((order, index) => (
+                <OrderCard
+                  key={index}
+                  order={order}
+                  loadOrders={loadOrders}
+                  searchTerm={searchTerm}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
 
