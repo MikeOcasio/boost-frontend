@@ -27,7 +27,24 @@ const PaymentConfirmation = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setOrderData(result);
+        // Group products by their ID and sum the quantities
+
+        const groupedProducts = result.order.products.reduce((acc, product) => {
+          const existingProduct = acc.find((p) => p.id === product.id);
+
+          if (existingProduct) {
+            existingProduct.quantity += product.quantity || 1;
+          } else {
+            acc.push({ ...product, quantity: product.quantity || 1 });
+          }
+
+          return acc;
+        }, []);
+
+        setOrderData({
+          ...result,
+          order: { ...result.order, products: groupedProducts },
+        });
       }
     } catch (error) {
       setError(true);
@@ -98,9 +115,14 @@ const PaymentConfirmation = () => {
                     )}
                     <div className="flex flex-col gap-y-1">
                       <p className="text-sm font-semibold">{product.name}</p>
+                      <p className="text-sm font-semibold">
+                        Qty: {product.quantity}
+                      </p>
                     </div>
                   </div>
-                  <p className="text-sm font-semibold">${product.price}</p>
+                  <p className="text-sm font-semibold">
+                    ${(product.price * product.quantity).toFixed(2)}
+                  </p>
                 </Link>
               ))}
             </div>
@@ -151,7 +173,10 @@ const PaymentConfirmation = () => {
                   <span>
                     $
                     {orderData.order.products
-                      .reduce((acc, curr) => acc + Number(curr.price), 0)
+                      .reduce(
+                        (acc, curr) => acc + Number(curr.price * curr.quantity),
+                        0
+                      )
                       .toFixed(2)}
                   </span>
                 </p>
@@ -166,7 +191,10 @@ const PaymentConfirmation = () => {
                   <span>
                     $
                     {orderData.order.products
-                      .reduce((acc, curr) => acc + Number(curr.tax), 0)
+                      .reduce(
+                        (acc, curr) => acc + Number(curr.tax * curr.quantity),
+                        0
+                      )
                       .toFixed(2)}
                   </span>
                 </p>
