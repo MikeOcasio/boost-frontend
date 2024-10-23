@@ -102,6 +102,7 @@ const SkillMastersPage = () => {
           alt="award"
           width={150}
           height={150}
+          priority
           className="absolute -top-20 left-0 lg:block hidden opacity-80"
         />
         <Image
@@ -109,6 +110,7 @@ const SkillMastersPage = () => {
           alt="charge"
           width={150}
           height={150}
+          priority
           className="absolute bottom-0 right-0 lg:block hidden opacity-80"
         />
       </div>

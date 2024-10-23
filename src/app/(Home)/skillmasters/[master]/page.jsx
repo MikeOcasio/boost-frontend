@@ -9,53 +9,14 @@ import { IoMdPerson } from "react-icons/io";
 import { IoWarning } from "react-icons/io5";
 
 import { fetchSkillmasterById } from "@/lib/actions/user-actions";
-
-// {
-//   id: 1,
-//   email: "ocasio.michael96@gmail.com",
-//   first_name: "Mike",
-//   last_name: "Ocasio",
-//   role: "dev",
-//   image_url: "/skillmasters/profile.png",
-//   platforms: [{ id: 5 }, { id: 8, name: "Switch" }],
-//   gamesIds: [1, 23],
-//   about:
-//     "I am a skill master and I love to help people learn new skills and improve their existing ones.",
-//   achievements: [
-//     "+10 Wins",
-//     "+10k Coins",
-//     "+10 Tournaments",
-//     "+100 Trophies",
-//     "+50 Kills",
-//   ],
-//   gameplay_urls: [
-//     {
-//       title: "Gameplay 1",
-//       url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-//     },
-//     {
-//       title: "Gameplay 2",
-//       url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-//     },
-//     {
-//       title: "Gameplay 3",
-//       url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-//     },
-//     {
-//       title: "Gameplay 4",
-//       url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-//     },
-//     {
-//       title: "Gameplay 5",
-//       url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-//     },
-//   ],
-// }
+import { EmbededFrame } from "../_components/EmbededFrame";
+import { PiGameControllerFill } from "react-icons/pi";
 
 const MasterPage = ({ params }) => {
   const [skillMaster, setSkillMaster] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [prefetchedUrls, setPrefetchedUrls] = useState({});
 
   const loadSkillmaster = async () => {
     setLoading(true);
@@ -68,6 +29,7 @@ const MasterPage = ({ params }) => {
         toast.error(result.error);
       } else {
         setSkillMaster(result);
+        await prefetchGameplayUrls(result.gameplay_info);
       }
     } catch (error) {
       setError(true);
@@ -80,6 +42,32 @@ const MasterPage = ({ params }) => {
   useEffect(() => {
     loadSkillmaster();
   }, []);
+
+  // Function to prefetch gameplay URLs
+  const prefetchGameplayUrls = async (gameplayInfo) => {
+    if (!gameplayInfo) return;
+
+    const urls = {};
+
+    // Prefetch URLs
+    for (let item of gameplayInfo) {
+      const gameplayData = JSON.parse(
+        item.replace(/"=>/g, '":').replace(/=>/g, ":")
+      );
+
+      if (gameplayData.url) {
+        // Simulating a prefetch operation by creating a new Image
+        const link = document.createElement("link");
+        link.rel = "prefetch";
+        link.href = gameplayData.url;
+        document.head.appendChild(link);
+
+        urls[gameplayData.name] = gameplayData.url;
+      }
+    }
+
+    setPrefetchedUrls(urls);
+  };
 
   return (
     <div className="relative pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
@@ -104,81 +92,86 @@ const MasterPage = ({ params }) => {
 
       {!loading && !error && skillMaster && (
         <>
-          {skillMaster.image_url ? (
+          <div className="w-full space-y-4 rounded-3xl pt-4 relative overflow-hidden shadow-2xl">
             <Image
-              src={skillMaster.image_url}
+              src="/skillmasters/skillmaster-bg.jpg"
+              alt="bg"
               width={700}
               height={700}
-              alt="skillmaster"
-              className="mx-auto h-fit max-h-[300px] object-contain"
+              className="mx-auto h-full w-full object-cover absolute top-0 left-0 opacity-80 blur-lg -z-10"
             />
-          ) : (
-            <IoMdPerson className="h-28 w-28 bg-white/10 rounded-full p-4 mx-auto" />
+
+            {skillMaster.image_url ? (
+              <Image
+                src={skillMaster.image_url}
+                width={700}
+                height={700}
+                alt="skillmaster"
+                className="mx-auto h-[300px] w-[300px] object-cover object-center rounded-full bg-white/10"
+              />
+            ) : (
+              <IoMdPerson className="h-28 w-28 bg-white/10 rounded-full p-4 mx-auto" />
+            )}
+
+            <p className="text-6xl tracking-widest text-center font-title">
+              {skillMaster.gamer_tag ||
+                skillMaster.first_name + " " + skillMaster.last_name}
+            </p>
+
+            <div className="flex flex-wrap gap-2 text-sm items-center justify-center">
+              {skillMaster.platforms.map((platform) => (
+                <p
+                  key={platform.id}
+                  className="bg-white/10 p-1 px-4 rounded-md text-center flex gap-4 items-center"
+                >
+                  <PiGameControllerFill className="h-5 w-5" /> {platform.name}
+                </p>
+              ))}
+            </div>
+
+            <p className="text-sm text-center text-white/80 font-semibold max-w-xl mx-auto">
+              {skillMaster.bio}
+            </p>
+
+            {/* achievements */}
+            <div className="flex flex-wrap justify-center gap-4 py-4">
+              {skillMaster.achievements?.map((item, index) => (
+                <div
+                  className="flex flex-col items-center justify-center gap-4 bg-white/10 p-4 rounded-lg w-36 hover:scale-110 transition-all"
+                  key={index}
+                >
+                  <BsTrophyFill className="h-12 w-12 text-Gold" />
+
+                  <p
+                    key={index}
+                    className="text-sm text-center text-white/80 font-semibold"
+                  >
+                    {item}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {skillMaster.gameplay_info.length > 0 && (
+            <p className="text-xs font-bold">Game plays</p>
           )}
 
-          <p className="text-6xl tracking-widest text-center font-title">
-            {skillMaster.gamer_tag ||
-              skillMaster.first_name + " " + skillMaster.last_name}
-          </p>
-
-          <div className="flex flex-wrap gap-2 text-sm items-center justify-center">
-            {skillMaster.platforms.map((platform) => (
-              <p
-                key={platform.id}
-                className="bg-white/10 px-2 rounded-md text-center"
-              >
-                {platform.name}
-              </p>
-            ))}
-          </div>
-
-          <p className="text-sm text-center text-white/80 font-semibold max-w-xl mx-auto">
-            {skillMaster.bio}
-          </p>
-
-          {/* achievements */}
-          <div className="flex flex-wrap justify-center gap-4 py-4">
-            {skillMaster.achievements?.map((item, index) => (
-              <div
-                className="flex flex-col items-center justify-center gap-4 bg-white/10 p-4 rounded-lg w-36 hover:scale-110 transition-all"
-                key={index}
-              >
-                <BsTrophyFill className="h-12 w-12 text-Gold" />
-
-                <p
-                  key={index}
-                  className="text-sm text-center text-white/80 font-semibold"
-                >
-                  {item}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <p className="text-sm font-semibold">Game plays</p>
-
           <div className="flex flex-wrap items-center justify-center gap-6">
-            {skillMaster.gameplay_urls?.map((item, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center gap-2 min-w-[49%] h-full flex-1"
-              >
-                {item.url && (
-                  <iframe
-                    src={item.url}
-                    title={item.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="rounded-lg w-full h-[315px]"
-                  />
-                )}
+            {skillMaster.gameplay_info?.map((item, index) => {
+              // parsing array of objects
+              const gameplayData = JSON.parse(
+                item.replace(/"=>/g, '":').replace(/=>/g, ":")
+              );
 
-                <p className="text-sm text-center text-white/80 font-semibold bg-white/10 rounded-md px-2 py-1 w-full">
-                  {item.title}
-                </p>
-              </div>
-            ))}
+              return (
+                <EmbededFrame
+                  key={index}
+                  url={gameplayData.url}
+                  title={gameplayData.name}
+                />
+              );
+            })}
           </div>
         </>
       )}

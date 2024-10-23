@@ -15,7 +15,7 @@ import {
 } from "react-icons/bi";
 import { BsUpload } from "react-icons/bs";
 import { IoMdAdd, IoMdClose, IoMdPerson, IoMdRemove } from "react-icons/io";
-import { IoWarning } from "react-icons/io5";
+import { IoInformation, IoWarning } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
 
 import { PlatformCredentialDialog } from "@/app/(Home)/checkout/_components/PlatformCredentialDialog";
@@ -41,7 +41,15 @@ const AccountPage = () => {
         setError(true);
         toast.error(result.error);
       } else {
-        setUser(result);
+        const gameplayInfo = result.gameplay_info.map((gameplay) => {
+          // parsing array of objects
+          const gameplayData = JSON.parse(
+            gameplay.replace(/"=>/g, '":').replace(/=>/g, ":")
+          );
+          return gameplayData;
+        });
+
+        setUser({ ...result, gameplay_info: gameplayInfo });
       }
     } catch (e) {
       setError(true);
@@ -104,8 +112,8 @@ const AccountPage = () => {
 
   const handleEdit = () => {
     if (isEditing) {
-      setIsEditing(false);
       handleUpdateProfile();
+      setIsEditing(false);
     } else {
       setIsEditing(true);
     }
@@ -495,7 +503,19 @@ const AccountPage = () => {
               (isEditing || user.gameplay_info.length > 0) && (
                 <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
                   <div className="flex items-center justify-between gap-4">
-                    <Label>Gameplay Info</Label>
+                    <div className="flex items-center gap-2">
+                      <Label>Gameplay Info</Label>
+
+                      {isEditing && (
+                        <div
+                          title="Gameplay Url only supports Youtube, Twitch, Mp4 formats"
+                          className="cursor-pointer"
+                        >
+                          <IoInformation className="h-5 w-5 text-Gold border border-Gold rounded-full p-0.5" />
+                        </div>
+                      )}
+                    </div>
+
                     {isEditing && (
                       <button
                         onClick={addGameplayInfo}
@@ -526,7 +546,6 @@ const AccountPage = () => {
 
                       <Input
                         type="text"
-                        autoFocus
                         disabled={!isEditing}
                         value={gameplay.url}
                         placeholder={`Gameplay URL ${index + 1}`}

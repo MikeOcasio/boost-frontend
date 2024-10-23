@@ -42,7 +42,7 @@ const GameCard = ({ game, searchTerm }) => {
             width={200}
             height={200}
             priority
-            className="mx-auto w-fit max-h-[120px] max-w-[250px] object-contain rounded-md"
+            className="mx-auto w-fit max-h-[120px] max-w-[250px] object-contain !rounded-md"
           />
         </div>
 

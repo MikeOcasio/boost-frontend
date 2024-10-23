@@ -196,7 +196,6 @@ export const createUser = async ({
   email,
   password,
   confirmPassword,
-  image,
 }) => {
   try {
     const { data } = await axios.post(`${apiUrl}/users`, {

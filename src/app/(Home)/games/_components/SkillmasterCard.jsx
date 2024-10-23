@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { IoMdPerson } from "react-icons/io";
+import { PiGameControllerFill } from "react-icons/pi";
 
 // Helper function to highlight matching terms
 const highlightMatch = (text, searchTerm) => {
@@ -21,9 +22,9 @@ export const SkillmasterCard = ({ skillMaster, searchTerm }) => {
           <Image
             src={skillMaster.image_url}
             alt={skillMaster.first_name}
-            quality={100}
             width={150}
             height={150}
+            priority
             className="mx-auto h-full object-contain rounded-lg"
           />
         ) : (
@@ -42,17 +43,20 @@ export const SkillmasterCard = ({ skillMaster, searchTerm }) => {
               highlightMatch(skillMaster.gamer_tag, searchTerm)}
           </p>
 
-          <div className="flex flex-wrap gap-2 text-sm items-center">
-            Play:{" "}
-            {skillMaster.platforms.map((platform) => (
-              <p
-                key={platform.id}
-                className="bg-white/10 px-2 rounded-md text-center"
-              >
-                {highlightMatch(platform.name, searchTerm)}
-              </p>
-            ))}
-          </div>
+          {skillMaster.platforms.length > 0 && (
+            <div className="flex flex-wrap gap-2 text-sm items-center">
+              Play:{" "}
+              {skillMaster.platforms.map((platform) => (
+                <p
+                  key={platform.id}
+                  className="bg-white/10 px-2 rounded-md text-center flex gap-2 items-center"
+                >
+                  <PiGameControllerFill className="h-5 w-5" />{" "}
+                  {highlightMatch(platform.name, searchTerm)}
+                </p>
+              ))}
+            </div>
+          )}
 
           <p className="text-sm text-white/70 font-semibold">
             {highlightMatch(skillMaster.bio, searchTerm)}

@@ -242,6 +242,7 @@ const CheckoutPage = () => {
         (orderByPlatform.length > 0 || cartItems.length > 0) &&
         orderByPlatform.map((platformOrders, index) => {
           // variables for order platform
+
           const platformId = platformOrders[0].platform.id;
           const platformName = platformOrders[0].platform.name;
           const userHasPlatformCredential = user?.platforms.some(
@@ -254,11 +255,10 @@ const CheckoutPage = () => {
               className="space-y-4 bg-white/10 p-2 py-4 rounded-lg"
             >
               {/* if user do not have platform credential for the game show message and add credential button */}
-              {(!userHasPlatformCredential || platformName === "PC") && (
+              {!userHasPlatformCredential && (
                 <p className="text-center text-sm text-red-500">
-                  {!userHasPlatformCredential
-                    ? "You do not have any credential for this platform. Please add your credential to continue."
-                    : "Please add your game credential to continue."}
+                  You do not have any credential for this platform. Please add
+                  your credential to continue.
                 </p>
               )}
 
@@ -298,16 +298,14 @@ const CheckoutPage = () => {
 
               {/* pay now */}
               <div className="flex flex-wrap gap-4">
-                {user?.platforms.filter(
-                  (platform) => platform.id === platformOrders[0].platform.id
-                ).length < 1 && (
+                {!userHasPlatformCredential && (
                   <button
                     onClick={() =>
                       handleCredentialDialog(platformOrders[0].platform)
                     }
                     className="flex-1 bg-Gold rounded-lg p-2 text-base font-bold"
                   >
-                    Add {platformOrders[0].platform.name} Credential
+                    Add {platformName} Credential
                   </button>
                 )}
 
@@ -317,11 +315,7 @@ const CheckoutPage = () => {
                     loading ||
                     error ||
                     totalPrice < 1 ||
-                    // disable when user do not have credentials
-                    user?.platforms.filter(
-                      (platform) =>
-                        platform.id === platformOrders[0].platform.id
-                    ).length < 1
+                    !userHasPlatformCredential
                   }
                   type="button"
                   onClick={() => handleCheckout(platformOrders)}
