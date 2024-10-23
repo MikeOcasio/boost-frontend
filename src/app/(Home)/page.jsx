@@ -100,7 +100,7 @@ export default function Home() {
       )}
 
       {!loading && !error && data?.length < 1 ? (
-        <p className="w-full">No games found!</p>
+        <p className="mx-auto px-4 lg:max-w-7xl lg:-mt-[110vh] -mt-[90vh]" />
       ) : (
         <HomeGameCarousel data={data} />
       )}

@@ -21,6 +21,7 @@ import { PiGameControllerFill } from "react-icons/pi";
 import { PlatformCredentialDialog } from "@/app/(Home)/checkout/_components/PlatformCredentialDialog";
 import { fetchCurrentUser, updateUser } from "@/lib/actions/user-actions";
 import { fetchPlatforms } from "@/lib/actions/platforms-action";
+import { MdOutlineFileUpload } from "react-icons/md";
 
 const AccountPage = () => {
   const [user, setUser] = useState(null);
@@ -375,7 +376,9 @@ const AccountPage = () => {
                     </p>
 
                     {/* add platform */}
-                    {user?.platforms.find((p) => p.id === platform.id) ? (
+                    {user?.platforms.find(
+                      (p) => p.id === platform.id && p.name != "PC"
+                    ) ? (
                       <div className="bg-white/10 rounded-lg p-2 flex gap-2 items-center flex-1 justify-center">
                         <BiShield className="h-5 w-5 text-green-500" />
                         <span>Added securely</span>
@@ -386,8 +389,12 @@ const AccountPage = () => {
                         disabled={loading}
                         className="bg-Gold/80 hover:bg-Gold/60 rounded-lg p-2 flex gap-2 items-center flex-1 justify-center"
                       >
-                        <BiPlus className="h-5 w-5" />
-                        Add Platform
+                        {platform.name == "PC" ? (
+                          <MdOutlineFileUpload className="h-5 w-5" />
+                        ) : (
+                          <BiPlus className="h-5 w-5" />
+                        )}
+                        {platform.name == "PC" ? "Update" : "Add"} Platform
                       </button>
                     )}
                   </div>

@@ -12,45 +12,6 @@ import toast from "react-hot-toast";
 import { fetchAllSkillmasters } from "@/lib/actions/user-actions";
 
 const SkillMastersPage = () => {
-  // {
-  //   id: 1,
-  //   email: "ocasio.michael96@gmail.com",
-  //   first_name: "Mike",
-  //   last_name: "Ocasio",
-  //   role: "dev",
-  //   created_at: "2024-09-19T19:45:48.040Z",
-  //   updated_at: "2024-10-03T21:42:10.430Z",
-  //   image_url: "/skillmasters/profile.png",
-  //   platforms: [{ id: 5 }, { id: 8, name: "Switch" }],
-  //   perv_orders: [1, 2],
-  //   prev_games: [
-  //     {
-  //       product_id: 1,
-  //       order_id: 1,
-  //     },
-  //   ],
-  //   is_available: true,
-  //   about:
-  //     "I am a skill master and I love to help people learn new skills and improve their existing ones.",
-  // },
-  // {
-  //   id: 2,
-  //   email: "ocasio.michael96@gmail.com",
-  //   first_name: "Nikhil",
-  //   last_name: "Sharma",
-  //   role: "dev",
-  //   created_at: "2024-09-19T19:45:48.040Z",
-  //   updated_at: "2024-10-03T21:42:10.430Z",
-  //   image_url: "/skillmasters/profile.png",
-  //   platforms: [
-  //     { id: 5, name: "PC" },
-  //     { id: 6, name: "PlayStation" },
-  //   ],
-  //   gamesIds: [1, 23, 24],
-  //   about:
-  //     "I am a skill master and I love to help people learn new skills and improve their existing ones.",
-  // },
-
   const [skillMasters, setSkillMasters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);

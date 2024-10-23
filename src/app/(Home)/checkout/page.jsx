@@ -240,105 +240,114 @@ const CheckoutPage = () => {
         <p className="w-full">No order found!</p>
       ) : (
         (orderByPlatform.length > 0 || cartItems.length > 0) &&
-        orderByPlatform.map((platformOrders, index) => (
-          <div
-            key={index}
-            className="space-y-4 bg-white/10 p-2 py-4 rounded-lg"
-          >
-            {/* if user do not have platform credential for the game show message */}
-            {user?.platforms.filter(
-              (platform) => platform.id === platformOrders[0].platform.id
-            ).length < 1 && (
-              <p className="text-center text-sm text-red-500">
-                You do not have any credential for this platform. Please add
-                your credential to continue.
-              </p>
-            )}
+        orderByPlatform.map((platformOrders, index) => {
+          // variables for order platform
+          const platformId = platformOrders[0].platform.id;
+          const platformName = platformOrders[0].platform.name;
+          const userHasPlatformCredential = user?.platforms.some(
+            (platform) => platform.id === platformId
+          );
 
-            <div className="flex flex-col gap-4">
-              {platformOrders.map((order, index) => (
-                <CheckoutOrderCard key={index} order={order} />
-              ))}
-            </div>
-
-            <div className="flex flex-col gap-2 border border-white/10 p-4 rounded-lg">
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center border-b pb-2 border-white/10">
-                <span>Price</span>
-                <span>
-                  $
-                  {platformOrders
-                    .reduce(
-                      (acc, curr) => acc + Number(curr.price * curr.quantity),
-                      0
-                    )
-                    .toFixed(2)}
-                </span>
-              </p>
-
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
-                Tax
-                <span>
-                  $
-                  {platformOrders
-                    .reduce(
-                      (acc, curr) => acc + Number(curr.tax) * curr.quantity,
-                      0
-                    )
-                    .toFixed(2)}
-                </span>
-              </p>
-            </div>
-
-            {/* pay now */}
-            <div className="flex flex-wrap gap-4">
-              {user?.platforms.filter(
-                (platform) => platform.id === platformOrders[0].platform.id
-              ).length < 1 && (
-                <button
-                  onClick={() =>
-                    handleCredentialDialog(platformOrders[0].platform)
-                  }
-                  className="flex-1 bg-Gold rounded-lg p-2 text-base font-bold"
-                >
-                  Add {platformOrders[0].platform.name} Credential
-                </button>
+          return (
+            <div
+              key={index}
+              className="space-y-4 bg-white/10 p-2 py-4 rounded-lg"
+            >
+              {/* if user do not have platform credential for the game show message and add credential button */}
+              {(!userHasPlatformCredential || platformName === "PC") && (
+                <p className="text-center text-sm text-red-500">
+                  {!userHasPlatformCredential
+                    ? "You do not have any credential for this platform. Please add your credential to continue."
+                    : "Please add your game credential to continue."}
+                </p>
               )}
 
-              <button
-                disabled={
-                  cartItems.length < 1 ||
-                  loading ||
-                  error ||
-                  totalPrice < 1 ||
-                  // disable when user do not have credentials
-                  user?.platforms.filter(
-                    (platform) => platform.id === platformOrders[0].platform.id
-                  ).length < 1
-                }
-                type="button"
-                onClick={() => handleCheckout(platformOrders)}
-                className="w-full flex items-center flex-wrap-reverse gap-4 text-xl font-bold disabled:bg-gray-500/20 bg-Gold p-2 flex-1 max-w-xl px-4 rounded-lg hover:bg-Gold/80 justify-center mx-auto"
-              >
-                <span>Pay Now</span>
-                <span>
-                  $
-                  {totalPrice &&
-                    platformOrders
-                      ?.reduce(
-                        (acc, curr) =>
-                          acc +
-                          Number(
-                            curr.price * curr.quantity +
-                              curr.tax * curr.quantity
-                          ),
+              <div className="flex flex-col gap-4">
+                {platformOrders.map((order, index) => (
+                  <CheckoutOrderCard key={index} order={order} />
+                ))}
+              </div>
+
+              <div className="flex flex-col gap-2 border border-white/10 p-4 rounded-lg">
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center border-b pb-2 border-white/10">
+                  <span>Price</span>
+                  <span>
+                    $
+                    {platformOrders
+                      .reduce(
+                        (acc, curr) => acc + Number(curr.price * curr.quantity),
                         0
                       )
                       .toFixed(2)}
-                </span>
-              </button>
+                  </span>
+                </p>
+
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
+                  Tax
+                  <span>
+                    $
+                    {platformOrders
+                      .reduce(
+                        (acc, curr) => acc + Number(curr.tax) * curr.quantity,
+                        0
+                      )
+                      .toFixed(2)}
+                  </span>
+                </p>
+              </div>
+
+              {/* pay now */}
+              <div className="flex flex-wrap gap-4">
+                {user?.platforms.filter(
+                  (platform) => platform.id === platformOrders[0].platform.id
+                ).length < 1 && (
+                  <button
+                    onClick={() =>
+                      handleCredentialDialog(platformOrders[0].platform)
+                    }
+                    className="flex-1 bg-Gold rounded-lg p-2 text-base font-bold"
+                  >
+                    Add {platformOrders[0].platform.name} Credential
+                  </button>
+                )}
+
+                <button
+                  disabled={
+                    cartItems.length < 1 ||
+                    loading ||
+                    error ||
+                    totalPrice < 1 ||
+                    // disable when user do not have credentials
+                    user?.platforms.filter(
+                      (platform) =>
+                        platform.id === platformOrders[0].platform.id
+                    ).length < 1
+                  }
+                  type="button"
+                  onClick={() => handleCheckout(platformOrders)}
+                  className="w-full flex items-center flex-wrap-reverse gap-4 text-xl font-bold disabled:bg-gray-500/20 bg-Gold p-2 flex-1 max-w-xl px-4 rounded-lg hover:bg-Gold/80 justify-center mx-auto"
+                >
+                  <span>Pay Now</span>
+                  <span>
+                    $
+                    {totalPrice &&
+                      platformOrders
+                        ?.reduce(
+                          (acc, curr) =>
+                            acc +
+                            Number(
+                              curr.price * curr.quantity +
+                                curr.tax * curr.quantity
+                            ),
+                          0
+                        )
+                        .toFixed(2)}
+                  </span>
+                </button>
+              </div>
             </div>
-          </div>
-        ))
+          );
+        })
       )}
 
       <div className="text-right text-2xl font-bold flex items-center justify-between gap-2 border border-white/10 rounded-lg p-4">
