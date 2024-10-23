@@ -123,6 +123,8 @@ export const fetchAllUsers = async () => {
 
 // update user (Not working)
 export const updateUser = async (user) => {
+  console.log("User details ", user);
+
   try {
     const sessionToken = await getSessionToken();
     if (!sessionToken) {
@@ -149,6 +151,8 @@ export const updateUser = async (user) => {
         },
       }
     );
+
+    console.log("response ", response);
 
     return response.data;
   } catch (error) {

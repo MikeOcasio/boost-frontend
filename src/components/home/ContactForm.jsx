@@ -65,7 +65,7 @@ export const ContactForm = () => {
               autoComplete="email"
             />
             <InputField label="Subject" type="text" id="subject" />
-            <InputField label="Order #" type="number" id="order-number" />
+            <InputField label="Order #" type="text" id="order-number" />
 
             {/* Message Field */}
             <div className="sm:col-span-2">
