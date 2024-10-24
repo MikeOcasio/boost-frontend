@@ -72,6 +72,11 @@ export const OrderGraveyardDialog = ({
             Order Details
           </DialogTitle>
 
+          <span className="text-xs text-white/80">
+            You can pick the order by accepting it. and order gonna assign to
+            you.
+          </span>
+
           <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             <div className="flex flex-wrap justify-between items-center gap-2">
               {/* id */}

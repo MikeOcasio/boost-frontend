@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { fetchAllGames } from "@/lib/actions/products-action";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
+import toast from "react-hot-toast";
 
 export default function Home() {
   const [data, setData] = useState(null);

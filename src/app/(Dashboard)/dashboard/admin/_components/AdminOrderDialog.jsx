@@ -123,6 +123,11 @@ export const AdminOrderDialog = ({
             Order Details
           </DialogTitle>
 
+          <span className="text-xs text-white/80">
+            You can assing order to a skillmaster by selecting the their ID. and
+            update the order status.
+          </span>
+
           <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             <div className="flex flex-wrap gap-2 justify-between items-center">
               {/* id */}

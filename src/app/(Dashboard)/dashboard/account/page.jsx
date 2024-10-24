@@ -1,6 +1,14 @@
 "use client";
 
-import { Field, Input, Label, Textarea } from "@headlessui/react";
+import {
+  Field,
+  Input,
+  Label,
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+  Textarea,
+} from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -509,7 +517,23 @@ const AccountPage = () => {
                           title="Gameplay Url only supports Youtube, Twitch, Mp4 formats"
                           className="cursor-pointer"
                         >
-                          <IoInformation className="h-5 w-5 text-Gold border border-Gold rounded-full p-0.5" />
+                          <Popover>
+                            <PopoverButton>
+                              <IoInformation className="h-5 w-5 text-Gold border border-Gold rounded-full p-0.5" />
+                            </PopoverButton>
+                            <PopoverPanel
+                              transition
+                              anchor="bottom"
+                              className="rounded-xl bg-neutral-800/50 border border-white/10 backdrop-blur-md text-sm/6 transition duration-200 ease-in-out z-10 mt-2"
+                            >
+                              <div className="p-3">
+                                <span>
+                                  Gameplay Url only supports Youtube, Twitch,
+                                  Mp4 formats
+                                </span>
+                              </div>
+                            </PopoverPanel>
+                          </Popover>
                         </div>
                       )}
                     </div>

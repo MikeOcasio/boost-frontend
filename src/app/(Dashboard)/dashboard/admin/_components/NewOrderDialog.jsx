@@ -1,7 +1,6 @@
 "use client";
 
 import { createOrder } from "@/lib/actions/orders-action";
-import { fetchPlatforms } from "@/lib/actions/platforms-action";
 import { fetchAllGames } from "@/lib/actions/products-action";
 import { fetchAllUsers } from "@/lib/actions/user-actions";
 import { adminOrderStatus } from "@/lib/data";
@@ -14,7 +13,6 @@ import {
   Label,
   Select,
 } from "@headlessui/react";
-import { data } from "autoprefixer";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -157,7 +155,7 @@ export const NewOrderDialog = ({ dialogOpen, onClose, loadOrders }) => {
     >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="w-full max-w-xl rounded-lg bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
+        <DialogPanel className="w-full max-w-2xl rounded-lg bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
           <button
             onClick={handleClosed}
             className="rounded-lg hover:bg-white/10 absolute right-0 top-0 m-4"
@@ -168,6 +166,12 @@ export const NewOrderDialog = ({ dialogOpen, onClose, loadOrders }) => {
           <DialogTitle className="text-lg font-semibold">
             Add New Order
           </DialogTitle>
+
+          <span className="text-xs text-white/80">
+            To create an new order you need to select UserId then order status
+            (Open - recommended) then select platform and add product. You can
+            add multiple products.
+          </span>
 
           <div className="flex flex-col gap-4">
             {/* user id */}
@@ -186,7 +190,8 @@ export const NewOrderDialog = ({ dialogOpen, onClose, loadOrders }) => {
 
                 {allUsers?.map(
                   (item, index) =>
-                    !item.deleted_at && (
+                    !item.deleted_at &&
+                    item.role === "customer" && (
                       <option
                         key={index}
                         value={item.id}

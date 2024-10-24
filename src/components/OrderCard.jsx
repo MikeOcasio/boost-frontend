@@ -60,8 +60,7 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
             user.role === "dev" ||
             user.role === "skillmaster") && (
             <button
-              onClick={(e) => {
-                e.stopPropagation();
+              onClick={() => {
                 setDialogOpen(true);
                 setIsEditing(true);
               }}
@@ -71,10 +70,7 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
             </button>
           )}
 
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="p-2 rounded-lg hover:bg-white/10"
-          >
+          <button className="p-2 rounded-lg hover:bg-white/10">
             <FaExternalLinkAlt className="h-5 w-5" />
           </button>
         </div>
@@ -162,6 +158,7 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
           groupedProducts={groupedProducts}
           isEditing={isEditing}
           loadOrders={loadOrders}
+          setIsEditing={setIsEditing}
         />
       </div>
     </div>

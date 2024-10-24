@@ -19,6 +19,7 @@ export const OrderDialog = ({
   groupedProducts,
   isEditing,
   loadOrders,
+  setIsEditing,
 }) => {
   const { user } = useUserStore();
 
@@ -56,7 +57,10 @@ export const OrderDialog = ({
   return (
     <Dialog
       open={dialogOpen}
-      onClose={onClose}
+      onClose={() => {
+        onClose();
+        setIsEditing(false);
+      }}
       as="div"
       className="relative z-50"
     >
@@ -73,6 +77,13 @@ export const OrderDialog = ({
           <DialogTitle className="text-lg font-semibold">
             Order Details
           </DialogTitle>
+
+          {isEditing && (
+            <span className="text-xs text-white/80">
+              Update the order status. according to order state, to let user
+              know.
+            </span>
+          )}
 
           <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             <div className="flex flex-wrap justify-between items-center gap-2">
