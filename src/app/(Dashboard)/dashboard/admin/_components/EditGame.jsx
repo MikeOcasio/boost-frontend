@@ -51,8 +51,6 @@ export const EditGame = ({ data, setData }) => {
       features: [""],
       category_id: null,
       platform_ids: [],
-      remove_image: "false",
-      remove_bg_image: "false",
       prod_attr_cats: [],
       prod_attr_cat_ids: [],
     };
@@ -422,9 +420,7 @@ export const EditGame = ({ data, setData }) => {
                 />
                 <IoMdClose
                   className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
-                  onClick={() =>
-                    setGame({ ...game, image: null, remove_image: "true" })
-                  }
+                  onClick={() => setGame({ ...game, image: null })}
                 />
               </div>
             )}
@@ -452,7 +448,6 @@ export const EditGame = ({ data, setData }) => {
                         setGame({
                           ...game,
                           image: reader.result,
-                          remove_image: "false",
                         });
                       };
                       reader.readAsDataURL(file);
@@ -484,7 +479,6 @@ export const EditGame = ({ data, setData }) => {
                     setGame({
                       ...game,
                       bg_image: null,
-                      remove_bg_image: "true",
                     })
                   }
                 />
@@ -514,7 +508,6 @@ export const EditGame = ({ data, setData }) => {
                       setGame({
                         ...game,
                         bg_image: reader.result,
-                        remove_bg_image: "false",
                       });
                     };
                     reader.readAsDataURL(file);

@@ -69,7 +69,10 @@ export const createOrder = async (orderData) => {
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data?.errors || error.message;
+    const errorMessage =
+      error.response?.data?.errors ||
+      error.response?.data?.message ||
+      error.message;
 
     return {
       error: errorMessage || "An error occurred while creating the order.",
@@ -195,28 +198,32 @@ export const updateOrderStatus = async (orderId, orderState) => {
 };
 
 // stripe checkout session
-// export const checkoutSession = async (items) => {
-//   try {
-//     const sessionToken = await getSessionToken();
-//     if (!sessionToken) {
-//       return { error: "No token found. Please login again." };
-//     }
+export const checkoutSession = async (items) => {
+  try {
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
 
-//     const { data } = await axios.post(
-//       `http://localhost:3000/api/checkout_session`,
-//       items,
-//       {
-//         headers: { Authorization: `Bearer ${sessionToken}` },
-//       }
-//     );
+    const { data } = await axios.post(
+      `${apiUrl}/api/payments/create_checkout_session`,
+      {
+        currency: "usd",
+        description: "Boost Payment",
+        products: items,
+      },
+      {
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      }
+    );
 
-//     return data;
-//   } catch (error) {
-//     const errorMessage = error.response?.data || error.message;
-//     console.error("Failed to checkout session:", errorMessage);
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || error.message;
+    console.error("Failed to checkout session:", errorMessage);
 
-//     return {
-//       error: errorMessage || "An error occurred while checkout session.",
-//     };
-//   }
-// };
+    return {
+      error: errorMessage || "An error occurred while checkout session.",
+    };
+  }
+};

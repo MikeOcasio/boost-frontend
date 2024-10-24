@@ -394,7 +394,6 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
                         setUser({
                           ...user,
                           image_url: null,
-                          remove_image: "true",
                         })
                       }
                     />
@@ -424,7 +423,6 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
                               setUser({
                                 ...user,
                                 image_url: reader.result,
-                                remove_image: "false",
                               });
                             };
                             reader.readAsDataURL(file);

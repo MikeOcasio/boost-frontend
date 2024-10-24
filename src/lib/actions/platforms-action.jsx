@@ -11,7 +11,6 @@ export const fetchPlatforms = async () => {
 
     return data;
   } catch (error) {
-    console.log("error platforms ", error);
     return { error: "Failed to fetch platforms. Please try again!" };
   }
 };

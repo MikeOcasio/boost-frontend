@@ -260,7 +260,6 @@ const AccountPage = () => {
                         setUser({
                           ...user,
                           image_url: null,
-                          remove_image: "true",
                         })
                       }
                     />
@@ -290,7 +289,6 @@ const AccountPage = () => {
                               setUser({
                                 ...user,
                                 image_url: reader.result,
-                                remove_image: "false",
                               });
                             };
                             reader.readAsDataURL(file);

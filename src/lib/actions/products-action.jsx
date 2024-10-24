@@ -104,6 +104,8 @@ export const updateGame = async (gameData, gameId) => {
       }
     );
 
+    console.log("product updated successfully:", response.data);
+
     return response.data;
   } catch (error) {
     const errorMessage = error.response?.data || error.message;

@@ -1,28 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
-// import { loadStripe } from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
 import { useUserStore } from "@/store/use-user";
 import { useCartStore } from "@/store/use-cart";
 import { CheckoutOrderCard } from "./_components/CheckoutOrderCard";
 import { PlatformCredentialDialog } from "./_components/PlatformCredentialDialog";
 import { fetchGameById } from "@/lib/actions/products-action";
-import { createOrder } from "@/lib/actions/orders-action";
+import { checkoutSession } from "@/lib/actions/orders-action";
 import { fetchCurrentUser } from "@/lib/actions/user-actions";
 
 // load stripe
-// const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
 const CheckoutPage = () => {
   const router = useRouter();
   const { userToken, setUser, removeToken, user } = useUserStore();
-  const { cartItems, emptyCart, totalPrice, setTotalPrice, removeFromCart } =
-    useCartStore();
+  const { cartItems, emptyCart, totalPrice, setTotalPrice } = useCartStore();
 
   const [orderByPlatform, setOrderByPlatform] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +30,9 @@ const CheckoutPage = () => {
   // dialog
   const [dialogId, setDialogId] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+
+  // State for clientSecret
+  const [clientSecret, setClientSecret] = useState("");
 
   // fetch user info
   const handleUserFetch = async () => {
@@ -128,82 +130,40 @@ const CheckoutPage = () => {
     }
   };
 
-  const handlePayment = async () => {
+  // Function to fetch clientSecret
+  const fetchClientSecret = useCallback(async (orders) => {
     try {
       setLoading(true);
-      const stripe = await stripePromise;
 
-      // create checkout session
-      // const data = await checkoutSession(orders);
-
-      console.log("checkout res data ", data);
+      const data = await checkoutSession(orders);
 
       if (data.error) {
         toast.error(data.error);
         setLoading(false);
-        return;
-      }
 
-      // Redirect to Stripe Checkout
-      const { error } = await stripe.redirectToCheckout({
-        sessionId: data.sessionId,
-      });
-
-      if (error) {
-        toast.error(error.message);
+        return null;
+      } else {
+        setClientSecret(data.sessionId);
+        return data.sessionId;
       }
     } catch (error) {
       toast.error(error.message || "Payment failed. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const convertToSubCurrency = (amount) => {
-    return Math.round(amount * 100);
-  };
-
-  const handleCheckout = async (orderDetails) => {
-    setLoading(true);
-    setError(false);
-
-    try {
-      const productIds = orderDetails.flatMap((order) =>
-        Array(order.quantity).fill(order.id)
-      );
-
-      const data = {
-        order: {
-          user_id: user?.id,
-          state: "open",
-          platform: orderDetails[0].platform.id,
-        },
-        product_ids: productIds,
+  useEffect(() => {
+    if (clientSecret) {
+      // Load the Stripe Checkout UI once the sessionId is available
+      const redirectToCheckout = async () => {
+        const stripe = await stripePromise;
+        stripe.redirectToCheckout({ sessionId: clientSecret });
       };
 
-      const response = await createOrder(data);
-
-      if (response.error) {
-        toast.error(response.error);
-
-        setLoading(false);
-        return;
-      } else {
-        toast.success("Order placed successfully!");
-        setLoading(false);
-
-        // remove all item with same platform
-        orderDetails.forEach((order) => removeFromCart(order.id));
-
-        router.push(`/thank_you?order_id=${response.id}`);
-      }
-    } catch (error) {
-      toast.error(error.message || "Error creating order!");
-      setLoading(false);
-    } finally {
-      setLoading(false);
+      redirectToCheckout();
     }
-  };
+  }, [clientSecret]);
 
   useEffect(() => {
     if (userToken) {
@@ -318,7 +278,7 @@ const CheckoutPage = () => {
                     !userHasPlatformCredential
                   }
                   type="button"
-                  onClick={() => handleCheckout(platformOrders)}
+                  onClick={() => fetchClientSecret(platformOrders)}
                   className="w-full flex items-center flex-wrap-reverse gap-4 text-xl font-bold disabled:bg-gray-500/20 bg-Gold p-2 flex-1 max-w-xl px-4 rounded-lg hover:bg-Gold/80 justify-center mx-auto"
                 >
                   <span>Pay Now</span>

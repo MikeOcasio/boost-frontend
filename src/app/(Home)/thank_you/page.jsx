@@ -4,13 +4,15 @@ import { fetchOrderById } from "@/lib/actions/orders-action";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { BiImage, BiLoader, BiReceipt } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
 
 const PaymentConfirmation = () => {
+  const router = useRouter();
   const params = useSearchParams().get("order_id");
 
   const [orderData, setOrderData] = useState(null);
@@ -26,6 +28,7 @@ const PaymentConfirmation = () => {
       if (result.error) {
         setError(true);
         toast.error(result.error);
+        router.push("/games");
       } else {
         // Group products by their ID and sum the quantities
 
@@ -48,7 +51,8 @@ const PaymentConfirmation = () => {
       }
     } catch (error) {
       setError(true);
-      toast.error("An unexpected error occurred.");
+      toast.error(true);
+      router.push("/games");
     } finally {
       setLoading(false);
     }

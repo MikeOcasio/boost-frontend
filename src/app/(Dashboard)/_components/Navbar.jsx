@@ -92,7 +92,6 @@ export function Navbar() {
       }
     } catch (err) {
       toast.error(err.message || "Failed to log out user.");
-      // console.log("Error logging out user:", err);
     } finally {
       removeToken();
       setLoading(false);
