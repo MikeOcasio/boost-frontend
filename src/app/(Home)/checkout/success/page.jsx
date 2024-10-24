@@ -4,7 +4,7 @@ import { createOrder } from "@/lib/actions/orders-action";
 import { useCartStore } from "@/store/use-cart";
 import { useUserStore } from "@/store/use-user";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 
@@ -15,6 +15,9 @@ const CreateProductPage = () => {
   const { cartItems, removeFromCart } = useCartStore();
   const { user } = useUserStore();
 
+  // State to track if the checkout has been processed
+  const [checkoutInProgress, setCheckoutInProgress] = useState(false);
+
   // Consolidate platform ID from the cart items
   const platformId = cartItems.length > 0 ? cartItems[0].platform.id : null;
 
@@ -22,7 +25,11 @@ const CreateProductPage = () => {
     if (!sessionId) {
       toast.error("Session ID not found. Please try again!");
       router.push("/checkout");
+      return;
     }
+
+    if (checkoutInProgress) return; // Prevent multiple requests
+    setCheckoutInProgress(true);
 
     try {
       // Collect all product IDs based on their quantities
@@ -30,14 +37,13 @@ const CreateProductPage = () => {
         Array(order.quantity).fill(order.id)
       );
 
-      // Prepare data payload for creating the order
       const data = {
         order: {
           user_id: await user?.id,
           state: "open",
         },
-        session_id: sessionId, // Include session_id
-        platform: platformId, // Include platform info
+        session_id: sessionId,
+        platform: platformId,
         product_ids: productIds,
       };
 
@@ -45,6 +51,7 @@ const CreateProductPage = () => {
 
       if (response.error) {
         toast.error(response.error);
+        setCheckoutInProgress(false);
         return;
       } else {
         toast.success("Order placed successfully!");
@@ -52,22 +59,22 @@ const CreateProductPage = () => {
         // Remove all items with the same platform
         cartItems.forEach((order) => removeFromCart(order.id));
 
-        // Navigate to the thank you page with order_id
         router.push(`/thank_you?order_id=${response.order_id}`);
       }
     } catch (error) {
       toast.error(error.message || "Error creating order!");
-      router.push("/checkout");
+      setCheckoutInProgress(false);
     } finally {
       router.push("/checkout");
+      setCheckoutInProgress(false);
     }
   };
 
   useEffect(() => {
-    if (sessionId && user.id) {
+    if (sessionId && user?.id && !checkoutInProgress) {
       handleCheckout();
     }
-  }, []);
+  }, [sessionId, user]);
 
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4 flex items-center justify-center">
