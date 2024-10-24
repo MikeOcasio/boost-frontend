@@ -201,6 +201,12 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
             {dialogData ? "Update User" : "Add New User"}
           </DialogTitle>
 
+          <span className="text-xs text-white/80">
+            {dialogData
+              ? "You can update user role to skillmaster, admin, customer"
+              : "To create a new user you need to fill all the fields."}
+          </span>
+
           <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             <div className="flex flex-wrap gap-2 justify-between items-center">
               {/* id */}

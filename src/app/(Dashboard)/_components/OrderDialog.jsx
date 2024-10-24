@@ -2,7 +2,7 @@ import { Dialog, DialogPanel, DialogTitle, Select } from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
@@ -25,6 +25,12 @@ export const OrderDialog = ({
 
   const [currentOrderState, setCurrentOrderState] = useState(order?.state);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (order?.state) {
+      setCurrentOrderState(order.state);
+    }
+  }, [order]);
 
   const handleUpdateState = async () => {
     if (!order?.id) return;
@@ -116,7 +122,8 @@ export const OrderDialog = ({
             {(user.role === "admin" ||
               user.role === "dev" ||
               user.role === "skillmaster") &&
-              order.state !== currentOrderState && (
+              order.state !== currentOrderState &&
+              isEditing && (
                 <div className="flex flex-wrap gap-2 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
                   <button
                     onClick={handleUpdateState}
@@ -154,6 +161,8 @@ export const OrderDialog = ({
                     }}
                     className=" block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3 flex-1 min-w-fit"
                   >
+                    <option value="">Select Order Status</option>
+
                     {orderStatus.map((item, index) => (
                       <option
                         key={index}

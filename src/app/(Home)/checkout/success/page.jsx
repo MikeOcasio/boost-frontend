@@ -52,6 +52,7 @@ const CreateProductPage = () => {
       if (response.error) {
         toast.error(response.error);
         setCheckoutInProgress(false);
+        router.push("/checkout");
         return;
       } else {
         toast.success("Order placed successfully!");
@@ -64,8 +65,8 @@ const CreateProductPage = () => {
     } catch (error) {
       toast.error(error.message || "Error creating order!");
       setCheckoutInProgress(false);
-    } finally {
       router.push("/checkout");
+    } finally {
       setCheckoutInProgress(false);
     }
   };
