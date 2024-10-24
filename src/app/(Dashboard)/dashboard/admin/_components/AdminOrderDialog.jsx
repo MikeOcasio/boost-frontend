@@ -29,6 +29,12 @@ export const AdminOrderDialog = ({
   const [currentOrderState, setCurrentOrderState] = useState(order?.state);
   const [skillmasters, setSkillmasters] = useState(null);
 
+  useEffect(() => {
+    if (order?.state) {
+      setCurrentOrderState(order.state);
+    }
+  }, [order]);
+
   const handleAssignOrder = async () => {
     try {
       setLoading(true);
@@ -197,6 +203,8 @@ export const AdminOrderDialog = ({
                   }}
                   className="block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3 flex-1 min-w-fit"
                 >
+                  <option value="">Select Order Status</option>
+
                   {(user.role === "admin" || user.role === "dev") &&
                     adminOrderStatus.map((item, index) => (
                       <option

@@ -46,7 +46,7 @@ const NewGamePage = () => {
       const response = await addGame(game);
 
       if (response.error) {
-        toast.error(response.error);
+        toast.error(JSON.stringify(response.error));
       } else {
         toast.success("Game added successfully!");
         setGame(null);

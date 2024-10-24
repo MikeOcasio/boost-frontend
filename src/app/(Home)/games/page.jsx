@@ -230,17 +230,19 @@ const GamesPage = () => {
               </div>
             </div>
 
-            <div className="space-y-2 bg-Gold/10 pb-4 rounded-lg border border-white/10 hover:border-Gold/20">
-              <p className="text-sm font-semibold m-4 mb-0">
-                Most Popular Games
-              </p>
+            {mostPopularGames?.length > 0 && (
+              <div className="space-y-2 bg-Gold/10 pb-4 rounded-lg border border-white/10 hover:border-Gold/20">
+                <p className="text-sm font-semibold m-4 mb-0">
+                  Most Popular Games
+                </p>
 
-              {!loading && !error && mostPopularGames?.length < 1 ? (
-                <p className="text-center w-full">No games found!</p>
-              ) : (
-                <HomeGameCarousel data={mostPopularGames} />
-              )}
-            </div>
+                {!loading && !error && mostPopularGames?.length < 1 ? (
+                  <p className="text-center w-full">No games found!</p>
+                ) : (
+                  <HomeGameCarousel data={mostPopularGames} />
+                )}
+              </div>
+            )}
 
             <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
               {!loading && !error && filteredGames.length < 1 ? (

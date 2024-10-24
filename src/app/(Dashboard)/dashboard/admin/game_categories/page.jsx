@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BiLoader, BiPencil, BiPlus } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
@@ -9,6 +9,17 @@ import clsx from "clsx";
 import { CategoryDialog } from "../_components/CategoryDialog";
 import { fetchCategories } from "@/lib/actions/categories-actions";
 
+// Helper function to highlight matching terms
+const highlightMatch = (text, searchTerm) => {
+  if (!searchTerm) return text; // If no search term, return the original text
+  const regex = new RegExp(`(${searchTerm})`, "gi"); // Case-insensitive match
+  const parts = text.split(regex); // Split the text into matching and non-matching parts
+
+  return parts.map((part, index) =>
+    regex.test(part) ? <mark key={index}>{part}</mark> : part
+  );
+};
+
 const GameCategoriesPage = () => {
   const [categories, setCategories] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,6 +27,8 @@ const GameCategoriesPage = () => {
 
   const [dialogData, setDialogData] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch categories from API
   const loadCategories = async () => {
@@ -59,6 +72,23 @@ const GameCategoriesPage = () => {
     setDialogOpen(true);
   };
 
+  // Helper function: Normalize strings (remove extra spaces and convert to lowercase)
+  const normalize = (str) => str?.toLowerCase().replace(/\s+/g, "").trim();
+
+  // Filter and search logic
+  const filteredCategories = useMemo(() => {
+    const term = normalize(searchTerm);
+
+    return categories?.filter((category) => {
+      return (
+        !term ||
+        normalize(category.name).includes(term) ||
+        normalize(category.description).includes(term) ||
+        normalize(String(category.id)).includes(term)
+      );
+    });
+  }, [categories, searchTerm]);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
@@ -83,44 +113,66 @@ const GameCategoriesPage = () => {
         </p>
       )}
 
-      <div className="flex flex-wrap gap-4 justify-between items-center">
-        {!loading && !error && categories?.length < 1 ? (
-          <p className="text-center w-full">
-            No categories have been added yet!
-          </p>
-        ) : (
-          categories?.map((category, index) => (
-            <button
-              key={index}
-              onClick={() => editCategory(category)}
-              className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
-            >
-              <div className="flex flex-col gap-2 items-start">
-                <p className="text-lg font-semibold break-all">
-                  {category.name}
-                </p>
-                <p
-                  className={clsx(
-                    "text-xs font-semibold px-2 rounded-full",
-                    category.is_active ? "bg-green-500" : "bg-gray-500"
-                  )}
-                >
-                  {category.is_active ? "Active" : "Inactive"}
-                </p>
-                {category.description && (
-                  <p className="break-all text-sm">{category.description}</p>
-                )}
+      {!loading && !error && categories?.length < 1 ? (
+        <p className="text-center w-full">No users have been added yet!</p>
+      ) : (
+        categories?.length > 0 && (
+          <>
+            <div className="flex flex-wrap items-center gap-4">
+              <input
+                type="text"
+                autoFocus
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search users..."
+                className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+              />
+            </div>
 
-                {/* created at */}
-                <p className="text-xs font-semibold">
-                  Created at: {new Date(category.created_at).toLocaleString()}
+            <div className="flex flex-wrap gap-4 justify-between items-center">
+              {!loading && !error && categories?.length < 1 ? (
+                <p className="text-center w-full">
+                  No categories have been added yet!
                 </p>
-              </div>
-              <BiPencil className="h-8 w-8 ml-2 hover:bg-white/10 rounded-lg p-2" />
-            </button>
-          ))
-        )}
-      </div>
+              ) : (
+                filteredCategories?.map((category, index) => (
+                  <button
+                    key={index}
+                    onClick={() => editCategory(category)}
+                    className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
+                  >
+                    <div className="flex flex-col gap-2 items-start">
+                      <p className="text-lg font-semibold break-all">
+                        {highlightMatch(category.name, searchTerm)}
+                      </p>
+                      <p
+                        className={clsx(
+                          "text-xs font-semibold px-2 rounded-full",
+                          category.is_active ? "bg-green-500" : "bg-gray-500"
+                        )}
+                      >
+                        {category.is_active ? "Active" : "Inactive"}
+                      </p>
+                      {category.description && (
+                        <p className="break-all text-sm">
+                          {highlightMatch(category.description, searchTerm)}
+                        </p>
+                      )}
+
+                      {/* created at */}
+                      <p className="text-xs font-semibold">
+                        Created at:{" "}
+                        {new Date(category.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                    <BiPencil className="h-8 w-8 ml-2 hover:bg-white/10 rounded-lg p-2" />
+                  </button>
+                ))
+              )}
+            </div>
+          </>
+        )
+      )}
 
       {/* Dialog Component */}
       <CategoryDialog
