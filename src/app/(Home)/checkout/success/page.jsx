@@ -33,7 +33,7 @@ const CreateProductPage = () => {
       // Prepare data payload for creating the order
       const data = {
         order: {
-          user_id: user?.id,
+          user_id: await user?.id,
           state: "open",
         },
         session_id: sessionId, // Include session_id
@@ -64,10 +64,10 @@ const CreateProductPage = () => {
   };
 
   useEffect(() => {
-    if (sessionId) {
+    if (sessionId && user.id) {
       handleCheckout();
     }
-  }, [sessionId, user]);
+  }, []);
 
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4 flex items-center justify-center">
