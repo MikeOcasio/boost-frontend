@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { BiLoader, BiPencil, BiPlus } from "react-icons/bi";
+import { BiLoader, BiLock, BiPencil, BiPlus } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import Image from "next/image";
 import { IoMdPerson } from "react-icons/io";
@@ -93,7 +93,8 @@ const AllUsers = () => {
           normalize(platform.name).includes(term)
         ) ||
         (user.gamer_tag && normalize(user.gamer_tag).includes(term)) ||
-        ("deleted-banned".includes(term) && isDeleted)
+        ("deleted-banned".includes(term) && isDeleted) ||
+        (user.locked_by_admin && "locked".includes(term))
       );
     });
   }, [users, searchTerm]);
@@ -149,22 +150,25 @@ const AllUsers = () => {
                       disabled={user?.deleted_at}
                       onClick={() => editUser(user)}
                       className={clsx(
-                        "flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30 gap-2 disabled:cursor-not-allowed",
-                        user?.deleted_at && "bg-red-500/20 hover:bg-red-500/30"
+                        "flex justify-between flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30 gap-2 disabled:cursor-not-allowed",
+                        user?.deleted_at && "bg-red-500/20 hover:bg-red-500/30",
+                        user?.locked_by_admin &&
+                          "bg-blue-500/20 hover:bg-blue-500/30"
                       )}
                     >
-                      <div className="flex flex-wrap items-center gap-4">
-                        <div className="flex max-h-[200px] mx-auto bg-white/10 rounded-lg p-2">
+                      <div className="flex flex-wrap gap-4">
+                        <div className="flex max-w-[200px] w-fit mx-auto bg-white/10 rounded-lg p-2">
                           {user.image_url ? (
                             <Image
                               src={user.image_url || "/logo.svg"}
                               alt="User Image"
                               width={150}
                               height={150}
-                              className="mx-auto h-full object-contain rounded-lg"
+                              priority
+                              className="mx-auto w-auto h-auto object-cover rounded-lg"
                             />
                           ) : (
-                            <IoMdPerson className="h-28 w-28 rounded-full mx-auto" />
+                            <IoMdPerson className="h-28 w-28 rounded-full m-auto" />
                           )}
                         </div>
 
@@ -173,6 +177,14 @@ const AllUsers = () => {
                             <p className="text-xs break-all flex gap-2 flex-wrap items-center -mt-2">
                               User is {highlightMatch("Deleted", searchTerm)}
                               <FaDeleteLeft />
+                            </p>
+                          )}
+
+                          {user?.locked_by_admin && (
+                            <p className="text-xs break-all flex gap-2 flex-wrap items-center -mt-2">
+                              User is account{" "}
+                              {highlightMatch("Locked", searchTerm)}
+                              <BiLock />
                             </p>
                           )}
 
@@ -198,8 +210,11 @@ const AllUsers = () => {
                                 N/A
                               </span>
                             ) : (
-                              user.platforms.map((platform) => (
-                                <span className="bg-black/20 px-2 py-1 rounded-md">
+                              user.platforms.map((platform, index) => (
+                                <span
+                                  key={index}
+                                  className="bg-black/20 px-2 py-1 rounded-md"
+                                >
                                   {highlightMatch(platform.name, searchTerm)}
                                 </span>
                               ))
@@ -214,8 +229,11 @@ const AllUsers = () => {
                               </span>
                             ) : (
                               user.preferred_skill_master_ids.map(
-                                (skillMaster) => (
-                                  <span className="bg-black/20 px-2 py-1 rounded-md">
+                                (skillMaster, index) => (
+                                  <span
+                                    key={index}
+                                    className="bg-black/20 px-2 py-1 rounded-md"
+                                  >
                                     {highlightMatch(
                                       skillMaster.name,
                                       searchTerm
@@ -253,7 +271,7 @@ const AllUsers = () => {
                         </div>
                       </div>
 
-                      <BiPencil className="h-8 w-8 ml-auto hover:bg-white/10 rounded-lg p-2" />
+                      <BiPencil className="h-8 w-8 ml-auto mb-auto hover:bg-white/10 rounded-lg p-2" />
                     </button>
                   ))}
               </div>

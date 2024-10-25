@@ -14,6 +14,7 @@ import RelatedGameCard from "./RelatedGameCard";
 
 const Badges = ({
   categoryId,
+  categoryName,
   attributeId,
   primary_color,
   secondary_color,
@@ -121,7 +122,9 @@ const Badges = ({
           <div className="space-y-4 border-t border-white/10 pt-6">
             <div className="flex flex-wrap justify-between items-center gap-4">
               <h3 className="text-lg font-semibold">
-                {categoryId ? "Recommendations" : "Similar Products"}
+                {categoryId
+                  ? `Recommendations for ${categoryName}`
+                  : "Similar Products"}
               </h3>
 
               <div className="flex items-center gap-4 w-fit">

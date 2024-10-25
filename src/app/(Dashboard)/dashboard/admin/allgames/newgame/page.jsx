@@ -41,6 +41,8 @@ const NewGamePage = () => {
   const handleCreateGame = async () => {
     if (!validateGame()) return;
 
+    console.log("game", game);
+
     setLoading(true);
     try {
       const response = await addGame(game);

@@ -416,6 +416,7 @@ export const EditGame = ({ data, setData }) => {
                   alt="Product image"
                   width={200}
                   height={200}
+                  priority
                   className="rounded-lg bg-white/10 p-2"
                 />
                 <IoMdClose
@@ -426,7 +427,7 @@ export const EditGame = ({ data, setData }) => {
             )}
             <div className="flex flex-col gap-2 flex-1">
               <label
-                for="dropzone-file"
+                htmlFor="dropzone-file"
                 className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -471,6 +472,7 @@ export const EditGame = ({ data, setData }) => {
                   alt="background image"
                   width={200}
                   height={200}
+                  priority
                   className="rounded-lg bg-white/10 p-2"
                 />
                 <IoMdClose
@@ -486,7 +488,7 @@ export const EditGame = ({ data, setData }) => {
             )}
 
             <label
-              for="dropzone-file"
+              htmlFor="dropzone-file"
               className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">

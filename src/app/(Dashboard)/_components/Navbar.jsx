@@ -112,6 +112,7 @@ export function Navbar() {
             src="/logo.svg"
             height={150}
             width={150}
+            priority
             alt="RavenBoost"
             className="h-full w-16"
           />

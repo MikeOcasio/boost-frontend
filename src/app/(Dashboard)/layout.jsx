@@ -12,6 +12,7 @@ import { Navbar } from "./_components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useUserStore } from "@/store/use-user";
 import { fetchCurrentUser } from "@/lib/actions/user-actions";
+import { Button } from "@/components/Button";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
@@ -82,10 +83,16 @@ const DashboardLayout = ({ children }) => {
             alt="Not authorized"
             height={500}
             width={700}
+            priority
             className="h-96 w-full object-contain"
           />
         </div>
         Not authorized. Please log in to access this page.
+        <Link href="/">
+          <Button variant="secondary" className="mt-4">
+            Go back home
+          </Button>
+        </Link>
       </div>
     );
   }

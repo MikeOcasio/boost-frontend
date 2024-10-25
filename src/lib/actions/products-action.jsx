@@ -22,7 +22,12 @@ export const fetchGameById = async (gameId) => {
 
     return data;
   } catch (error) {
-    return { error: "Failed to fetch game. Please try again!" };
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
+
+    return {
+      error: errorMessage || "Failed to fetch game details. Please try again!",
+    };
   }
 };
 

@@ -89,7 +89,7 @@ const SkillMastersPage = () => {
           alt="skillmasters"
           width={700}
           height={700}
-          className="mx-auto h-fit"
+          className="mx-auto h-fit w-auto"
         />
 
         <p className="text-sm max-w-xl mx-auto text-center text-white/80">
@@ -103,7 +103,7 @@ const SkillMastersPage = () => {
           width={150}
           height={150}
           priority
-          className="absolute -top-20 left-0 lg:block hidden opacity-80"
+          className="h-auto absolute -top-20 left-0 lg:block hidden opacity-80"
         />
         <Image
           src="/skillmasters/charge.png"

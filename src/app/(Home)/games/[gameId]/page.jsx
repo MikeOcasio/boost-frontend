@@ -19,7 +19,7 @@ const GamePage = ({ params }) => {
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState(null);
+  const [selectedPlatform, setSelectedPlatform] = useState("");
 
   const { cartItems, addToCart, increaseQuantity, decreaseQuantity } =
     useCartStore();
@@ -38,6 +38,7 @@ const GamePage = ({ params }) => {
 
     try {
       const result = await fetchGameById(params.gameId);
+
       if (result.error) {
         setError(true);
         toast.error(result.error);
@@ -132,10 +133,10 @@ const GamePage = ({ params }) => {
                 <Image
                   src={game.image || "/game/empty-image.gif"}
                   alt={game.name}
-                  quality={100}
                   width={200}
                   height={200}
-                  className="w-full max-w-[200px] object-contain mx-auto rounded-md"
+                  priority
+                  className="w-full h-auto max-w-[200px] object-contain mx-auto rounded-md"
                 />
               </div>
 
@@ -242,6 +243,7 @@ const GamePage = ({ params }) => {
             <div className="flex flex-col gap-y-12">
               <Badges
                 categoryId={game.category_id}
+                categoryName={game.category?.name}
                 primary_color={game.primary_color}
                 secondary_color={game.secondary_color}
                 currentGameId={game.id}

@@ -19,6 +19,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const { userToken, setUserToken } = useUserStore();
 
@@ -33,7 +34,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await loginUser({ email, password });
+      const response = await loginUser({ email, password, rememberMe });
 
       if (response.error) {
         toast.error(response.error);
@@ -107,6 +108,20 @@ export default function Login() {
             >
               Forgot your password?
             </button>
+          </div>
+
+          {/* add rember me checkbox */}
+          <div className="flex items-center gap-2">
+            <input
+              id="rememberMe"
+              type="checkbox"
+              className="h-4 w-4 rounded border-gray-300 text-Gold focus:ring-Gold"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            <label htmlFor="rememberMe" className="text-sm">
+              Remember me
+            </label>
           </div>
 
           <button

@@ -53,6 +53,7 @@ export default function Home() {
             src={purpleLane}
             alt="background-picture"
             quality={100}
+            priority
             className="h-full w-full object-cover blur-sm backdrop-contrast-125"
           />
         </div>
@@ -67,8 +68,9 @@ export default function Home() {
             height={800}
             width={800}
             alt="group of video game characters"
+            quality={100}
             priority
-            className="h-[50vh] md:scale-105 object-contain drop-shadow-[0_30px_5px_rgba(0,0,0,0.5)]"
+            className="h-[50vh] w-auto md:scale-105 object-contain drop-shadow-[0_30px_5px_rgba(0,0,0,0.5)]"
           />
 
           <p className="mx-auto max-w-[80%] text-center lg:text-3xl text-lg font-medium leading-6 text-gray-300">
@@ -83,6 +85,7 @@ export default function Home() {
           src={burningCity}
           alt="background-picture"
           quality={100}
+          priority
           className="h-full w-full object-cover blur-md backdrop-contrast-125"
         />
       </div>

@@ -11,6 +11,7 @@ export default function NotFound() {
           alt="website under construction"
           height={500}
           width={700}
+          priority
           className="h-full w-full object-contain rounded-xl overflow-hidden"
         />
       </div>

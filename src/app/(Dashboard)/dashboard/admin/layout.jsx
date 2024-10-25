@@ -79,8 +79,9 @@ const AdminLayout = ({ children }) => {
         <Image
           src="/404.gif"
           alt="Admin Logo"
-          height={200}
-          width={200}
+          height={500}
+          width={500}
+          priority
           className="mx-auto rounded-lg"
         />
         <span>You are not authorized to access this page</span>

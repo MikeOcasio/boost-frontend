@@ -13,18 +13,27 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
-import { BiChevronDown, BiLoader, BiTrash, BiUpload } from "react-icons/bi";
+import {
+  BiChevronDown,
+  BiLoader,
+  BiLock,
+  BiTrash,
+  BiUpload,
+} from "react-icons/bi";
 import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
-import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { BsEye, BsEyeSlash, BsUnlock } from "react-icons/bs";
 
 import {
   banUser,
   createUser,
   deleteUser,
+  lockUserAction,
+  unlockUserAction,
   updateUser,
 } from "@/lib/actions/user-actions";
 import { useUserStore } from "@/store/use-user";
+import { GiCancel } from "react-icons/gi";
 
 export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
   const { user: currentUser } = useUserStore();
@@ -32,7 +41,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
   const [user, setUser] = useState(dialogData || getDefaultUser());
   const [loading, setLoading] = useState(false);
 
-  const [role, setRole] = useState(["customer", "admin", "skillmaster", "dev"]);
+  const [role, setRole] = useState(["customer", "admin", "skillmaster"]);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -110,8 +119,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
       toast.error(error.message);
     } finally {
       loadUsers();
-      setShowPassword(false);
-      setShowConfirmPassword(false);
+      handleClosed();
       setLoading(false);
     }
   };
@@ -141,8 +149,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
       toast.error(error.message);
     } finally {
       loadUsers();
-      setShowPassword(false);
-      setShowConfirmPassword(false);
+      handleClosed();
       setLoading(false);
     }
   };
@@ -174,8 +181,58 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
       toast.error("Failed to ban user. Please try again!");
     } finally {
       loadUsers();
-      setShowPassword(false);
-      setShowConfirmPassword(false);
+      handleClosed();
+      setLoading(false);
+    }
+  };
+
+  const lockUser = async () => {
+    if (!user.id) return;
+
+    const confirmed = confirm("Are you sure you want to lock this user?");
+    if (!confirmed) return;
+
+    try {
+      setLoading(true);
+      const response = await lockUserAction(user.id);
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("User locked successfully!");
+        handleClosed();
+      }
+    } catch (error) {
+      toast.error("Failed to lock user. Please try again!");
+    } finally {
+      loadUsers();
+      handleClosed();
+      setLoading(false);
+    }
+  };
+
+  const unlockUser = async () => {
+    if (!user.id) return;
+    const confirmed = confirm(
+      "Are you sure you want to unlock this user account?"
+    );
+    if (!confirmed) return;
+
+    try {
+      setLoading(true);
+      const response = await unlockUserAction(user.id);
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("User unlocked successfully!");
+        handleClosed();
+      }
+    } catch (error) {
+      toast.error("Failed to unlock user. Please try again!");
+    } finally {
+      loadUsers();
+      handleClosed();
       setLoading(false);
     }
   };
@@ -183,7 +240,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
   return (
     <Dialog
       open={dialogOpen}
-      onClose={onClose}
+      onClose={handleClosed}
       as="div"
       className="relative z-50"
     >
@@ -204,14 +261,15 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
           <span className="text-xs text-white/80">
             {dialogData
               ? "You can update user role to skillmaster, admin, customer"
-              : "To create a new user you need to fill all the fields."}
+              : "To create a new user you need to fill all the fields. User role will be set to customer by default."}
           </span>
 
           <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             <div className="flex flex-wrap gap-2 justify-between items-center">
               {/* id */}
-              {user.id && (
+              {user?.id && (
                 <button
+                  type="button"
                   onClick={(e) => {
                     navigator.clipboard.writeText(user.id);
 
@@ -226,19 +284,46 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
                 </button>
               )}
 
-              {/* ban user */}
-              {user?.id && (
-                <button
-                  onClick={handelBanUser}
-                  className="border rounded-md px-2 py-1 text-sm border-red-500/20 hover:border-red-500/30 text-red-500"
-                >
-                  Ban User
-                </button>
-              )}
+              <div className="flex gap-2 items-center flex-wrap">
+                {/* lock user */}
+                {user?.id && !user?.locked_by_admin && (
+                  <button
+                    type="button"
+                    onClick={lockUser}
+                    className="flex items-center gap-2 border rounded-md px-2 py-1 text-sm border-blue-500/50 text-blue-500 hover:bg-blue-500 hover:text-white"
+                  >
+                    <BiLock className="h-5 w-5" />
+                    Lock User
+                  </button>
+                )}
+
+                {user?.id && user?.locked_by_admin && (
+                  <button
+                    type="button"
+                    onClick={unlockUser}
+                    className="flex items-center gap-2 border rounded-md px-2 py-1 text-sm border-green-500 hover:bg-green-500 hover:text-white text-green-500"
+                  >
+                    <BsUnlock className="h-5 w-5" />
+                    Unlock User
+                  </button>
+                )}
+
+                {/* ban user */}
+                {user?.id && (
+                  <button
+                    type="button"
+                    onClick={handelBanUser}
+                    className="flex items-center gap-2 border rounded-md px-2 py-1 text-sm border-red-500 hover:bg-red-500 hover:text-white text-red-500"
+                  >
+                    <GiCancel className="h-5 w-5" />
+                    Ban User
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Role */}
-            {user.id && (
+            {user?.id && (
               <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
                 <Field className="flex flex-col gap-1 flex-1">
                   <Label className="text-sm">Role</Label>
@@ -259,19 +344,22 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
                         Select a role
                       </option>
 
-                      {role
-                        .filter(
-                          (item) => currentUser === "dev" || item !== "dev"
-                        ) // Show "dev" only for dev users
-                        .map((item, index) => (
-                          <option
-                            key={index}
-                            value={item}
-                            className="bg-neutral-800"
-                          >
-                            {item}
-                          </option>
-                        ))}
+                      {role.map((item, index) => (
+                        <option
+                          key={index}
+                          value={item}
+                          className="bg-neutral-800"
+                        >
+                          {/* capital first letter */}
+                          {item.charAt(0).toUpperCase() + item.slice(1)}
+                        </option>
+                      ))}
+
+                      {currentUser?.role === "dev" && (
+                        <option value="dev" className="bg-neutral-800">
+                          Developer
+                        </option>
+                      )}
                     </Select>
 
                     <BiChevronDown
@@ -381,17 +469,18 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
               </div>
             )}
             {/* user image */}
-            {user.id && (
+            {user?.id && (
               <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
                 <Label className="text-sm">Image</Label>
                 {user.image_url ? (
-                  <div className="group relative cursor-pointer rounded-lg w-fit mx-auto">
+                  <div className="group relative cursor-pointer rounded-lg mx-auto max-h-[200px]">
                     <Image
                       src={user.image_url}
                       alt="User Image"
                       width={150}
                       height={150}
-                      className="mx-auto rounded-lg object-cover bg-white/10"
+                      priority
+                      className="mx-auto w-full h-full rounded-lg object-cover bg-white/10"
                     />
                     <IoMdClose
                       type="button"
@@ -407,7 +496,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
                 ) : (
                   <div className="flex flex-col gap-2 justify-center w-full">
                     <label
-                      for="dropzone-file"
+                      htmlFor="dropzone-file"
                       className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -447,6 +536,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
               {/* Delete Button */}
               {dialogData && (
                 <button
+                  title="Delete User"
                   onClick={() => handleDelete(user.id)}
                   disabled={loading}
                   className="p-2 rounded-lg hover:bg-white/10 disabled:bg-gray-500/20"

@@ -135,9 +135,9 @@ export const CartButton = ({ mobileNav }) => {
             </div>
 
             <Link href="/checkout">
-              <button className="w-full mt-4 p-2 rounded-lg bg-Gold/90">
+              <PopoverButton className="w-full mt-4 p-2 rounded-lg bg-Gold/90">
                 Buy Now
-              </button>
+              </PopoverButton>
             </Link>
           </div>
         )}

@@ -48,10 +48,10 @@ export const setCookie = (value) => {
 };
 
 // login user
-export const loginUser = async ({ email, password }) => {
+export const loginUser = async ({ email, password, rememberMe }) => {
   try {
     const { data } = await axios.post(`${apiUrl}/users/sign_in`, {
-      user: { email, password },
+      user: { email, password, remember_me: rememberMe },
     });
 
     const { token } = data;
@@ -62,7 +62,8 @@ export const loginUser = async ({ email, password }) => {
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
     console.error("Failed to login user:", errorMessage);
 
     return {
@@ -318,7 +319,6 @@ export const fetchAllSkillmasters = async () => {
 export const fetchSkillmasterById = async (skillmasterId) => {
   try {
     const sessionToken = await getSessionToken();
-
     if (!sessionToken) {
       return { error: "No token found. Please login again." };
     }
@@ -340,6 +340,63 @@ export const fetchSkillmasterById = async (skillmasterId) => {
     return {
       error:
         errorMessage || "An error occurred while fetching the skillmaster.",
+    };
+  }
+};
+
+export const lockUserAction = async (userId) => {
+  try {
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/member-data/${userId}/lock`,
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage =
+      error.response?.data || error.response?.data?.error || error.message;
+    console.error("Failed to lock user:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while locking the user.",
+    };
+  }
+};
+
+export const unlockUserAction = async (userId) => {
+  try {
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/member-data/${userId}/unlock`,
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to unlock user:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while unlocking the user.",
     };
   }
 };

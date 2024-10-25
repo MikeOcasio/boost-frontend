@@ -32,10 +32,10 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
           <Image
             src={game.image || "/game/empty-image.gif"}
             alt={game.name}
-            quality={100}
+            priority
             width={200}
             height={200}
-            className="mx-auto w-full max-w-[200px] max-h-[130px] object-contain rounded-md"
+            className="mx-auto h-full w-fit max-w-[200px] max-h-[130px] object-contain rounded-md"
           />
         </div>
 

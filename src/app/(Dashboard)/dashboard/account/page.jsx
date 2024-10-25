@@ -259,6 +259,7 @@ const AccountPage = () => {
                       alt="User Image"
                       width={200}
                       height={200}
+                      priority
                       className="mx-auto rounded-lg object-cover bg-white/10"
                     />
                     <IoMdClose
@@ -275,7 +276,7 @@ const AccountPage = () => {
                 ) : (
                   <div className="flex flex-col gap-2 justify-center w-full">
                     <label
-                      for="dropzone-file"
+                      htmlFor="dropzone-file"
                       className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -316,6 +317,7 @@ const AccountPage = () => {
                     alt="User Image"
                     width={150}
                     height={150}
+                    priority
                     className="mx-auto rounded-lg object-cover bg-white/10"
                   />
                 ) : (

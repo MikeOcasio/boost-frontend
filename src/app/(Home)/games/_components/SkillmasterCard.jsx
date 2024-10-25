@@ -17,7 +17,7 @@ const highlightMatch = (text, searchTerm) => {
 export const SkillmasterCard = ({ skillMaster, searchTerm }) => {
   return (
     <div className="flex flex-wrap w-full pb-8 border-b hover:border-Gold">
-      <div className="flex max-h-[200px] mx-auto bg-white/10 rounded-lg p-4 h-fit">
+      <div className="flex h-[200px] w-[200px] mx-auto bg-white/10 rounded-lg p-4">
         {skillMaster.image_url ? (
           <Image
             src={skillMaster.image_url}
@@ -25,14 +25,14 @@ export const SkillmasterCard = ({ skillMaster, searchTerm }) => {
             width={150}
             height={150}
             priority
-            className="mx-auto h-full object-contain rounded-lg"
+            className="h-full m-auto w-full object-cover object-center rounded-lg"
           />
         ) : (
-          <IoMdPerson className="h-28 w-28 rounded-full mx-auto" />
+          <IoMdPerson className="h-28 w-28 rounded-full m-auto" />
         )}
       </div>
 
-      <div className="flex min-w-[210px] flex-col gap-2 flex-1 justify-between m-6">
+      <div className="flex min-w-[210px] flex-col gap-2 flex-1 justify-between my-6 mx-2 md:mx-6">
         <div className="space-y-2">
           <p className="text-xl font-bold leading-6 text-white">
             {!skillMaster.gamer_tag &&
