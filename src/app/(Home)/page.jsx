@@ -4,8 +4,6 @@ import Image from "next/image";
 
 import { ContactForm } from "@/components/home/ContactForm";
 import HomePageAboutArea from "@/components/home/HomePageAboutArea";
-import burningCity from "@/images/cityBurn2.png";
-import purpleLane from "@/images/purpleLane.png";
 import { HomeGameCarousel } from "@/components/home/HomeGameCarousel";
 import { useEffect, useState } from "react";
 import { fetchAllGames } from "@/lib/actions/products-action";
@@ -46,13 +44,14 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="mt-10 text-white relative">
+    <div className="mt-10 text-white">
       <div className="h-screen w-full">
         <div className="fixed top-0 -z-10 h-full w-full">
           <Image
-            src={purpleLane}
+            src="/utils/purpleLane.png"
             alt="background-picture"
             quality={100}
+            fill
             priority
             className="h-full w-full object-cover blur-sm backdrop-contrast-125"
           />
@@ -79,33 +78,39 @@ export default function Home() {
           </p>
         </div>
       </div>
+
       <div className="h-screen w-full sticky top-0 -z-10">
         <Image
-          src={burningCity}
+          src="/utils/cityBurn2.png"
           alt="background-picture"
           quality={100}
           priority
+          fill
           className="h-full w-full object-cover blur-md backdrop-contrast-125"
         />
       </div>
-      mx-auto px-4 lg:max-w-7xl lg:-mt-[110vh] -mt-[90vh]
-      {!loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
-      {error && (
-        <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
-          <IoWarning className="h-5 w-5 mr-2" />
-          Failed to load games. Please try again!
-          {/* reload page */}
-          <button onClick={loadGames} className="bg-white/10 p-2 rounded-lg">
-            Reload
-          </button>
-        </p>
-      )}
-      {!loading && !error && data?.length < 1 ? (
-        <p className="mx-auto px-4 lg:max-w-7xl lg:-mt-[110vh] -mt-[90vh]" />
-      ) : (
-        <HomeGameCarousel data={data} />
-      )}
+
+      <div className="mx-auto px-4 lg:max-w-7xl lg:-mt-[110vh] -mt-[90vh]">
+        {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
+
+        {error && (
+          <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
+            <IoWarning className="h-5 w-5 mr-2" />
+            Failed to load games. Please try again!
+            {/* reload page */}
+            <button onClick={loadGames} className="bg-white/10 p-2 rounded-lg">
+              Reload
+            </button>
+          </p>
+        )}
+
+        {!loading && !error && data?.length > 0 && (
+          <HomeGameCarousel data={data} />
+        )}
+      </div>
+
       <HomePageAboutArea />
+
       <ContactForm />
     </div>
   );

@@ -1,12 +1,8 @@
 "use client";
 
-import { Switch, Label } from "@headlessui/react";
-import clsx from "clsx";
+import { Switch } from "@headlessui/react";
 import { useState } from "react";
 import Image from "next/image";
-import APEX from "@/images/APEX.webp";
-import COD_Ghosts from "@/images/COD_Ghosts.png";
-import Link from "next/link";
 
 export const ContactForm = () => {
   const [agreed, setAgreed] = useState(false);
@@ -25,8 +21,10 @@ export const ContactForm = () => {
         {/* Right Side Image */}
         <div className="relative lg:w-[40%] min-h-96 lg:h-auto flex flex-col items-center justify-center bg-black/30">
           <Image
-            src={APEX}
+            src="/utils/APEX.webp"
             alt="APEX logo"
+            width={500}
+            height={500}
             className="absolute -z-10 inset-0 w-full h-full object-cover -scale-x-100 blur-sm"
           />
           <p className="z-10 p-4 md:p-6 text-lg leading-8 text-center">
@@ -37,8 +35,10 @@ export const ContactForm = () => {
             as possible.
           </p>
           <Image
-            src={COD_Ghosts}
+            src="/utils/COD_Ghosts.png"
             alt="COD Ghosts"
+            width={500}
+            height={500}
             className="w-1/2 h-1/2 object-contain -mb-16 -ml-10 mr-auto"
           />
         </div>

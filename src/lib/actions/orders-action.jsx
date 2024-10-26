@@ -51,8 +51,6 @@ export const fetchOrderById = async (orderId) => {
 
 // create order
 export const createOrder = async (orderData) => {
-  console.log("oderdata", orderData);
-
   try {
     const sessionToken = await getSessionToken();
     if (!sessionToken) {
@@ -146,9 +144,10 @@ export const assignOrderToSkillMaster = async (orderId, skillMasterId) => {
       return { error: "No token found. Please login again." };
     }
 
+    // test from here
     const { data } = await axios.post(
       `${apiUrl}/orders/info/${orderId}/pick_up_order`,
-      { assigned_skill_master_id: skillMasterId + 123 },
+      { assigned_skill_master_id: skillMasterId },
       {
         headers: {
           Authorization: `Bearer ${sessionToken}`,

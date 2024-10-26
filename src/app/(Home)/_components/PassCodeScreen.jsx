@@ -1,4 +1,4 @@
-import { loginUser } from "@/lib/actions/user-actions";
+import { loginUser, verifyQrCode } from "@/lib/actions/user-actions";
 import { useUserStore } from "@/store/use-user";
 import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
@@ -21,12 +21,32 @@ export const PassCodeScreen = ({
   const [loading, setLoading] = useState(false);
 
   //   login with passcode
-  const handleVerifyPasscode = async () => {
+  const handleVerifyPasscode = async (e) => {
+    e.preventDefault();
+
     if (passcode.every((digit) => digit === "")) {
       toast.error("Please enter a passcode");
       return;
     }
 
+    // verify qr code passcode
+    try {
+      setLoading(true);
+
+      const response = await verifyQrCode(passcode.join(""), dialogData.token);
+
+      if (response.error) {
+        toast.error(response.error);
+        return;
+      }
+    } catch (error) {
+      console.log("Error verifying QR code:", error.message);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+
+    // login user with passcode
     try {
       setLoading(true);
 
@@ -98,7 +118,7 @@ export const PassCodeScreen = ({
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4">
       <p className="text-sm -mt-2">
         Enter the 6-digit passcode shown on your authentication app to continue.
       </p>
@@ -133,7 +153,7 @@ export const PassCodeScreen = ({
 
       {/* Continue Button */}
       <button
-        type="button"
+        type="submit"
         onClick={handleVerifyPasscode}
         disabled={!passcode.every((digit) => digit !== "")}
         className="bg-Gold/80 p-2 rounded-lg hover:bg-Gold/60 disabled:bg-gray-500/20 flex-1"
@@ -144,13 +164,14 @@ export const PassCodeScreen = ({
       {/* Go back button */}
       {dialogData?.qr_code && (
         <button
+          type="button"
           onClick={() => setPassCodeScreen(false)}
           className="text-xs hover:underline"
         >
           Go back to QR Code
         </button>
       )}
-    </div>
+    </form>
   );
 };
 

@@ -1,6 +1,5 @@
 import { faqs } from "@/lib/data";
 import Image from "next/image";
-import trunk from "@/images/trunk.png";
 import { useState } from "react";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
@@ -48,7 +47,9 @@ export const Faq = () => {
           </div>
 
           <Image
-            src={trunk}
+            src="/utils/trunk.png"
+            width={500}
+            height={500}
             alt="shiny purple and gold controllers with keyboard"
             className="absolute -bottom-10 -right-10 z-10 hidden lg:block drop-shadow-[-10px_20px_8px_rgba(0,0,0,0.5)]"
           />

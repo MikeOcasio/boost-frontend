@@ -1,5 +1,4 @@
 import Image from "next/image";
-import controllers from "@/images/photos/controllers.png";
 import clsx from "clsx";
 import { Faq } from "./Faq";
 import SkillMasters from "./SkillMasters";
@@ -11,9 +10,11 @@ export default function HomePageAboutArea() {
       <div className="mx-auto text-base leading-7">
         <div className="flex justify-end">
           <Image
-            src={controllers}
+            src="/utils/controllers.png"
+            width={500}
+            height={500}
             alt="shiny purple and gold controllers with keyboard"
-            className="md:-mb-12 h-full w-full max-w-[500px] rotate-[17deg] object-contain drop-shadow-[0_30px_15px_rgba(0,0,0,0.5)]"
+            className="md:-mb-12 h-auto w-auto max-w-[500px] rotate-[17deg] object-contain drop-shadow-[0_30px_15px_rgba(0,0,0,0.5)]"
           />
         </div>
 

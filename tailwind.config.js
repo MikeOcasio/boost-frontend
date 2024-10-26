@@ -20,9 +20,9 @@ module.exports = {
     },
     extend: {
       backgroundImage: {
-        boostButton: "url('../images/containers/boostButton.svg')",
-        howItWorks: "url('../images/containers/leftTitle.svg')",
-        skillsMaster: "url('../images/containers/rightTitle.svg')",
+        boostButton: "url('/utils/boostButton.svg')",
+        howItWorks: "url('/utils/leftTitle.svg')",
+        skillsMaster: "url('/utils/rightTitle.svg')",
       },
       colors: {
         DutchWhite: "#EADCB3",

@@ -412,31 +412,46 @@ export const unlockUserAction = async (userId) => {
   }
 };
 
-// // verify qr code
-// export const verifyQrCodeAction = async () => {
-//   try {
-//     const sessionToken = await getSessionToken();
-//     if (!sessionToken) {
-//       return { error: "No token found. Please login again." };
-//     }
+// get qr code
+export const getQrCode = async (token) => {
+  try {
+    const { data } = await axios.get(`${apiUrl}/users/2fa`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-//     const { data } = await axios.post(
-//       `${apiUrl}/users/member-data/verify_qr_code`,
-//       null,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${sessionToken}`,
-//         },
-//       }
-//     );
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to get qr code:", errorMessage);
+    return {
+      error: errorMessage || "An error occurred while getting the qr code.",
+    };
+  }
+};
 
-//     return data;
-//   } catch (error) {
-//     const errorMessage = error.response?.data || error.message;
-//     console.error("Failed to verify qr code:", errorMessage);
+// verify qr code
+export const verifyQrCode = async (passcode, token) => {
+  try {
+    const { data } = await axios.post(
+      `${apiUrl}/users/2fa/verify`,
+      { otp_attempt: passcode },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-//     return {
-//       error: errorMessage || "An error occurred while verifying the qr code.",
-//     };
-//   }
-// };
+    return data;
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
+    console.error("Failed to verify qr code:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while verifying the qr code.",
+    };
+  }
+};

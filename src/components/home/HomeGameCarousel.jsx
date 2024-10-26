@@ -40,7 +40,7 @@ export const HomeGameCarousel = ({ data }) => {
   };
 
   return (
-    <div className="mx-auto px-4 lg:max-w-7xl lg:-mt-[110vh] -mt-[90vh]">
+    <div>
       {data?.length && (
         <Carousel
           autoPlay={true}

@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { BiLoader } from "react-icons/bi";
 import toast from "react-hot-toast";
 
-import { loginUser } from "@/lib/actions/user-actions";
+import { getQrCode, loginUser } from "@/lib/actions/user-actions";
 import { useUserStore } from "@/store/use-user";
 import { QrCodeDialog } from "../_components/QrCodeDialog";
 
@@ -55,14 +55,41 @@ export default function Login() {
       if (response.error) {
         toast.error(response.error);
       } else {
-        setDialogData(response);
-        setDialogOpen(true);
+        if (
+          !dialogData?.user?.otp_required_for_login ||
+          !dialogData?.user?.otp_setup_complete
+        ) {
+          const qrCode = await loadQrCode(response.token).then((res) => {
+            return res.qr_code;
+          });
+
+          setDialogData({ ...response, qr_code: qrCode });
+          setDialogOpen(true);
+        } else {
+          setDialogData(response);
+          setDialogOpen(true);
+        }
       }
     } catch (error) {
       console.log("Error logging in user:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadQrCode = async (token) => {
+    try {
+      const response = await getQrCode(token);
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        return response;
+      }
+    } catch (error) {
+      console.log("Error fetching QR code:", error.message);
+      toast.error(error.message);
     }
   };
 
