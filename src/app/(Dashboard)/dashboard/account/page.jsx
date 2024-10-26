@@ -260,7 +260,7 @@ const AccountPage = () => {
                       width={200}
                       height={200}
                       priority
-                      className="mx-auto rounded-lg object-cover bg-white/10"
+                      className="mx-auto w-auto h-auto rounded-lg object-cover bg-white/10"
                     />
                     <IoMdClose
                       type="button"
@@ -281,7 +281,7 @@ const AccountPage = () => {
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <BiUpload className="h-8 w-8 text-gray-500" />
-                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                        <p className="mb-2 text-sm text-gray-500">
                           Click or drag and drop your image here
                         </p>
                       </div>
@@ -318,7 +318,7 @@ const AccountPage = () => {
                     width={150}
                     height={150}
                     priority
-                    className="mx-auto rounded-lg object-cover bg-white/10"
+                    className="mx-auto h-auto w-auto rounded-lg object-cover bg-white/10"
                   />
                 ) : (
                   <IoMdPerson className="h-28 w-28 bg-white/10 rounded-full p-4 mx-auto" />

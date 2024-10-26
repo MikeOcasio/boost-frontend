@@ -135,7 +135,13 @@ const UserDashboard = () => {
           <IoWarning className="h-5 w-5 mr-2" />
           Failed to load orders. Please try again!
           {/* reload */}
-          <button onClick={loadOrders} className="p-2 rounded-lg bg-white/10">
+          <button
+            onClick={() => {
+              loadGraveyardOrders();
+              loadOrders();
+            }}
+            className="p-2 rounded-lg bg-white/10"
+          >
             Reload
           </button>
         </p>

@@ -40,18 +40,18 @@ export const MobileNavigation = ({
       <PopoverPanel
         focus
         transition
-        className="fixed inset-x-4 top-20 z-50 origin-top rounded-xl p-4 ring-1 ring-zinc-900/5 dark:bg-zinc-900 dark:ring-zinc-800 overflow-y-auto transition duration-200 ease-in-out [--anchor-gap:var(--spacing-5)] data-[closed]:-translate-y-1 data-[closed]:opacity-0"
+        className="fixed inset-x-4 top-20 z-50 origin-top rounded-xl p-4 ring-1 ring-zinc-900/5 bg-zinc-900 ring-zinc-800 overflow-y-auto transition duration-200 ease-in-out [--anchor-gap:var(--spacing-5)] data-[closed]:-translate-y-1 data-[closed]:opacity-0"
       >
         <div className="flex flex-row-reverse flex-wrap items-center justify-between">
           <PopoverButton aria-label="Close menu" className="p-1 ml-auto">
-            <BiCross className="h-6 w-6 text-zinc-500 dark:text-zinc-400 rotate-45" />
+            <BiCross className="h-6 w-6 text-zinc-500 rotate-45" />
           </PopoverButton>
 
           <h3 className="text-lg font-semibold">Menu</h3>
         </div>
 
         <nav className="overflow-y-auto max-h-[80vh] no-scrollbar">
-          <ul className="divide-y divide-zinc-100 text-base text-zinc-800 dark:divide-zinc-100/5 dark:text-zinc-300">
+          <ul className="divide-y divide-zinc-100 text-base text-zinc-800">
             {resources.map((item) => (
               <MobileNavItem key={item.name} href={item.href}>
                 <div className="group relative flex flex-wrap items-center gap-x-6 rounded-lg p-2 hover:bg-yellow-600/30">

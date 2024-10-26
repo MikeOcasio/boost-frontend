@@ -242,7 +242,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
       open={dialogOpen}
       onClose={handleClosed}
       as="div"
-      className="relative z-50"
+      className="relative z-50 text-white"
     >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -501,7 +501,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <BiUpload className="h-8 w-8 text-gray-500" />
-                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                        <p className="mb-2 text-sm text-gray-500">
                           Click or drag and drop your image here
                         </p>
                       </div>

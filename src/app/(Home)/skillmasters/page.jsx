@@ -103,7 +103,7 @@ const SkillMastersPage = () => {
           width={150}
           height={150}
           priority
-          className="h-auto absolute -top-20 left-0 lg:block hidden opacity-80"
+          className="absolute -top-20 left-0 lg:block hidden opacity-80"
         />
         <Image
           src="/skillmasters/charge.png"

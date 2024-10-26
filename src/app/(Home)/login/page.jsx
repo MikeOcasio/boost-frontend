@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 
 import { loginUser } from "@/lib/actions/user-actions";
 import { useUserStore } from "@/store/use-user";
+import { QrCodeDialog } from "../_components/QrCodeDialog";
 
 export default function Login() {
   const router = useRouter();
@@ -21,7 +22,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const { userToken, setUserToken } = useUserStore();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogData, setDialogData] = useState(null);
+
+  const { userToken } = useUserStore();
 
   useEffect(() => {
     if (userToken) {
@@ -31,18 +35,28 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!email || !password) {
+      toast.error("Email or password is missing");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await loginUser({ email, password, rememberMe });
+      const response = await loginUser({ email, password });
+
+      if (response.error === "OTP required") {
+        setDialogData(response.res);
+        setDialogOpen(true);
+        return;
+      }
 
       if (response.error) {
         toast.error(response.error);
       } else {
-        setUserToken(response.token);
-
-        toast.success("Login successful!");
-        router.push("/");
+        setDialogData(response);
+        setDialogOpen(true);
       }
     } catch (error) {
       console.log("Error logging in user:", error.message);
@@ -144,6 +158,16 @@ export default function Login() {
           </Link>
         </p>
       </div>
+
+      {/* Qr Code Dialog */}
+      <QrCodeDialog
+        dialogOpen={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        rememberMe={rememberMe}
+        email={email}
+        password={password}
+        dialogData={dialogData}
+      />
     </div>
   );
 }

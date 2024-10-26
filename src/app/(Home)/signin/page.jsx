@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 
 import { useUserStore } from "@/store/use-user";
 import { createUser, loginUser } from "@/lib/actions/user-actions";
+import { QrCodeDialog } from "../_components/QrCodeDialog";
 
 export default function SignIn() {
   const router = useRouter();
@@ -25,7 +26,10 @@ export default function SignIn() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { userToken, setUserToken } = useUserStore();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogData, setDialogData] = useState(null);
+
+  const { userToken } = useUserStore();
 
   useEffect(() => {
     if (userToken) {
@@ -69,7 +73,7 @@ export default function SignIn() {
       if (response.error) {
         toast.error("Error signing in user!");
       } else {
-        await authenticateUser();
+        fetchQrCode();
       }
     } catch (error) {
       console.log("Error logging in user:", error.message);
@@ -79,20 +83,25 @@ export default function SignIn() {
     }
   };
 
-  const authenticateUser = async () => {
+  const fetchQrCode = async () => {
+    if (!email || !password) {
+      toast.error("Email or password is missing");
+      return;
+    }
+
     try {
+      setLoading(true);
+
       const response = await loginUser({ email, password });
 
       if (response.error) {
         toast.error(response.error);
       } else {
-        setUserToken(response.token);
-
-        toast.success("Login successful!");
-        router.push("/");
+        setDialogData(response);
+        setDialogOpen(true);
       }
     } catch (error) {
-      console.log("Error logging in user:", error.message);
+      console.log("Error fetching QR code:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -222,6 +231,15 @@ export default function SignIn() {
           </Link>
         </p>
       </div>
+
+      {/* Qr Code Dialog */}
+      <QrCodeDialog
+        dialogOpen={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        email={email}
+        password={password}
+        dialogData={dialogData}
+      />
     </div>
   );
 }

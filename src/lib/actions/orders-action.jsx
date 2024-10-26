@@ -103,11 +103,8 @@ export const fetchAllGraveyardOrders = async (limit) => {
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
-    console.error("Failed to fetch all orders:", errorMessage);
-
     return {
-      error: errorMessage || "An error occurred while fetching the orders.",
+      error: "An error occurred while fetching the orders.",
     };
   }
 };
@@ -132,8 +129,9 @@ export const acceptGraveyardOrder = async (orderId) => {
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data?.message || error.message;
-    console.error("Failed to accept order:", errorMessage);
+    const errorMessage =
+      error.response?.data?.message || error.response?.data || error.message;
+    console.error("Failed to accept order:", error);
     return {
       error: errorMessage || "An error occurred while accepting the order.",
     };
@@ -150,7 +148,7 @@ export const assignOrderToSkillMaster = async (orderId, skillMasterId) => {
 
     const { data } = await axios.post(
       `${apiUrl}/orders/info/${orderId}/pick_up_order`,
-      { assigned_skill_master_id: skillMasterId },
+      { assigned_skill_master_id: skillMasterId + 123 },
       {
         headers: {
           Authorization: `Bearer ${sessionToken}`,

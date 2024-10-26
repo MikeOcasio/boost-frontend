@@ -231,7 +231,7 @@ export const EditGame = ({ data, setData }) => {
             <Label>Category</Label>
             <div className="relative">
               <Select
-                value={game?.category_id}
+                value={game?.category_id || ""}
                 onChange={(e) => {
                   setGame({
                     ...game,
@@ -240,9 +240,10 @@ export const EditGame = ({ data, setData }) => {
                 }}
                 className="block w-full appearance-none rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3"
               >
-                <option value="" className="bg-neutral-800" unselectable="on">
+                <option value="" className="bg-neutral-800">
                   Select a category
                 </option>
+
                 {categories.map((category, index) => (
                   <option
                     key={index}
@@ -308,7 +309,7 @@ export const EditGame = ({ data, setData }) => {
             autoFocus
             type="text"
             placeholder="Product name"
-            value={game?.name}
+            value={game?.name || ""}
             className="input-field"
             onChange={(e) => {
               setGame({ ...game, name: e.target.value });
@@ -352,7 +353,7 @@ export const EditGame = ({ data, setData }) => {
           <Input
             type="text"
             placeholder="Product tagline"
-            value={game?.tag_line}
+            value={game?.tag_line || ""}
             className="input-field"
             onChange={(e) => {
               setGame({ ...game, tag_line: e.target.value });
@@ -365,7 +366,7 @@ export const EditGame = ({ data, setData }) => {
           <Label>Description</Label>
           <Textarea
             placeholder="Product description"
-            value={game?.description}
+            value={game?.description || ""}
             className="input-field"
             rows={5}
             onChange={(e) => {
@@ -382,8 +383,9 @@ export const EditGame = ({ data, setData }) => {
             <Input
               type="number"
               placeholder="$200"
-              value={game?.price}
+              value={game?.price || ""}
               className="input-field"
+              onWheel={(e) => e.target.blur()}
               onChange={(e) => {
                 setGame({ ...game, price: e.target.value });
               }}
@@ -396,8 +398,9 @@ export const EditGame = ({ data, setData }) => {
             <Input
               type="number"
               placeholder="0.2"
-              value={game?.tax}
+              value={game?.tax || ""}
               className="input-field"
+              onWheel={(e) => e.target.blur()}
               onChange={(e) => {
                 setGame({ ...game, tax: e.target.value });
               }}
@@ -432,7 +435,7 @@ export const EditGame = ({ data, setData }) => {
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <BiUpload className="h-8 w-8 text-gray-500" />
-                  <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <p className="mb-2 text-sm text-gray-500">
                     Click or drag and drop your image here
                   </p>
                 </div>
@@ -493,7 +496,7 @@ export const EditGame = ({ data, setData }) => {
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <BiUpload className="h-8 w-8 text-gray-500" />
-                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mb-2 text-sm text-gray-500">
                   Click or drag and drop your image here
                 </p>
               </div>
@@ -529,7 +532,7 @@ export const EditGame = ({ data, setData }) => {
               <Input
                 type="text"
                 placeholder="#FFFFFF"
-                value={game?.primary_color}
+                value={game?.primary_color || ""}
                 className="input-field"
                 onChange={(e) => {
                   setGame({ ...game, primary_color: e.target.value });
@@ -553,7 +556,7 @@ export const EditGame = ({ data, setData }) => {
               <Input
                 type="text"
                 placeholder="#000000"
-                value={game?.secondary_color}
+                value={game?.secondary_color || ""}
                 className="input-field"
                 onChange={(e) => {
                   setGame({ ...game, secondary_color: e.target.value });
@@ -589,7 +592,7 @@ export const EditGame = ({ data, setData }) => {
             <div key={index} className="flex flex-wrap gap-2 items-center">
               <Input
                 type="text"
-                value={feature}
+                value={feature || ""}
                 placeholder={`Feature ${index + 1}`}
                 className="input-field"
                 onChange={(e) => handleFeatureChange(index, e.target.value)}

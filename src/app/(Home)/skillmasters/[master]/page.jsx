@@ -16,7 +16,6 @@ const MasterPage = ({ params }) => {
   const [skillMaster, setSkillMaster] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [prefetchedUrls, setPrefetchedUrls] = useState({});
 
   const loadSkillmaster = async () => {
     setLoading(true);
@@ -65,8 +64,6 @@ const MasterPage = ({ params }) => {
         urls[gameplayData.name] = gameplayData.url;
       }
     }
-
-    setPrefetchedUrls(urls);
   };
 
   return (
@@ -98,6 +95,7 @@ const MasterPage = ({ params }) => {
               alt="bg"
               width={700}
               height={700}
+              priority
               className="mx-auto h-full w-full object-cover absolute top-0 left-0 opacity-80 blur-lg -z-10"
             />
 
@@ -107,6 +105,7 @@ const MasterPage = ({ params }) => {
                 width={700}
                 height={700}
                 alt="skillmaster"
+                priority
                 className="mx-auto h-[300px] w-[300px] object-cover object-center rounded-full bg-white/10"
               />
             ) : (

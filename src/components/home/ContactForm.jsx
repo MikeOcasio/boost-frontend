@@ -27,7 +27,6 @@ export const ContactForm = () => {
           <Image
             src={APEX}
             alt="APEX logo"
-            quality={100}
             className="absolute -z-10 inset-0 w-full h-full object-cover -scale-x-100 blur-sm"
           />
           <p className="z-10 p-4 md:p-6 text-lg leading-8 text-center">
@@ -40,7 +39,6 @@ export const ContactForm = () => {
           <Image
             src={COD_Ghosts}
             alt="COD Ghosts"
-            quality={100}
             className="w-1/2 h-1/2 object-contain -mb-16 -ml-10 mr-auto"
           />
         </div>

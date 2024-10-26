@@ -120,7 +120,7 @@ const GamePage = ({ params }) => {
             </div>
 
             {/* boost game */}
-            <h2 className="text-center text-4xl font-title text-white sm:text-5xl dark:text-white">
+            <h2 className="text-center text-4xl font-title text-white sm:text-5xl">
               Boost Your Game
             </h2>
 

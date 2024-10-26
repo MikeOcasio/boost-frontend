@@ -42,16 +42,26 @@ export const setCookie = (value) => {
   cookies().set({
     name: "jwtToken",
     value: value,
-    maxAge: 60 * 60 * 24 * 3, // 3 days
+    maxAge: 60 * 60 * 24 * 2, // 2 days
     secure: true,
   });
 };
 
 // login user
-export const loginUser = async ({ email, password, rememberMe }) => {
+export const loginUser = async ({
+  email,
+  password,
+  rememberMe = false,
+  passcode = null,
+}) => {
   try {
     const { data } = await axios.post(`${apiUrl}/users/sign_in`, {
-      user: { email, password, remember_me: rememberMe },
+      user: {
+        email,
+        password,
+        remember_me: rememberMe,
+        otp_attempt: passcode,
+      },
     });
 
     const { token } = data;
@@ -68,6 +78,37 @@ export const loginUser = async ({ email, password, rememberMe }) => {
 
     return {
       error: errorMessage || "An error occurred while logging in the user.",
+      res: error.response?.data,
+    };
+  }
+};
+
+// create new user
+export const createUser = async ({
+  firstName,
+  lastName,
+  email,
+  password,
+  confirmPassword,
+}) => {
+  try {
+    const { data } = await axios.post(`${apiUrl}/users`, {
+      user: {
+        email: email,
+        first_name: firstName,
+        last_name: lastName,
+        password: password,
+        password_confirmation: confirmPassword,
+      },
+    });
+
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error("Failed to sign in user:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while signing in the user.",
     };
   }
 };
@@ -186,36 +227,6 @@ export const deleteUser = async (userId) => {
 
     return {
       error: errorMessage || "An error occurred while deleting the user.",
-    };
-  }
-};
-
-// create new user
-export const createUser = async ({
-  firstName,
-  lastName,
-  email,
-  password,
-  confirmPassword,
-}) => {
-  try {
-    const { data } = await axios.post(`${apiUrl}/users`, {
-      user: {
-        email: email,
-        first_name: firstName,
-        last_name: lastName,
-        password: password,
-        password_confirmation: confirmPassword,
-      },
-    });
-
-    return data;
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || error.message;
-    console.error("Failed to sign in user:", errorMessage);
-
-    return {
-      error: errorMessage || "An error occurred while signing in the user.",
     };
   }
 };
@@ -400,3 +411,32 @@ export const unlockUserAction = async (userId) => {
     };
   }
 };
+
+// // verify qr code
+// export const verifyQrCodeAction = async () => {
+//   try {
+//     const sessionToken = await getSessionToken();
+//     if (!sessionToken) {
+//       return { error: "No token found. Please login again." };
+//     }
+
+//     const { data } = await axios.post(
+//       `${apiUrl}/users/member-data/verify_qr_code`,
+//       null,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${sessionToken}`,
+//         },
+//       }
+//     );
+
+//     return data;
+//   } catch (error) {
+//     const errorMessage = error.response?.data || error.message;
+//     console.error("Failed to verify qr code:", errorMessage);
+
+//     return {
+//       error: errorMessage || "An error occurred while verifying the qr code.",
+//     };
+//   }
+// };

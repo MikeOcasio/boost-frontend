@@ -58,11 +58,11 @@ const SkillmasterFilter = ({ filter, setFilter }) => {
       <PopoverPanel
         focus
         transition
-        className="fixed max-w-sm mx-auto inset-x-4 top-[30%] z-50 origin-top rounded-xl p-4 ring-1 ring-zinc-900/5 dark:bg-zinc-900 dark:ring-zinc-800 overflow-y-auto transition duration-200 ease-in-out [--anchor-gap:var(--spacing-5)] data-[closed]:-translate-y-1 data-[closed]:opacity-0"
+        className="fixed max-w-sm mx-auto inset-x-4 top-[30%] z-50 origin-top rounded-xl p-4 ring-1 ring-zinc-900/5 bg-zinc-900 ring-zinc-800 overflow-y-auto transition duration-200 ease-in-out [--anchor-gap:var(--spacing-5)] data-[closed]:-translate-y-1 data-[closed]:opacity-0"
       >
         <div className="flex flex-row-reverse items-center justify-between">
           <PopoverButton aria-label="Close menu" className="p-1">
-            <BiCross className="h-6 w-6 text-zinc-500 dark:text-zinc-400 rotate-45" />
+            <BiCross className="h-6 w-6 text-zinc-500 rotate-45" />
           </PopoverButton>
 
           <h3 className="text-lg font-semibold">Filters</h3>

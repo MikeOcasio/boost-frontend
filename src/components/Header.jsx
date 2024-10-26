@@ -141,7 +141,7 @@ export function Header() {
   return (
     <nav
       className={clsx(
-        "z-50 fixed top-0 w-full lg:p-4 transition-all ",
+        "z-50 fixed top-0 w-full lg:p-4 transition-all text-white",
         isScrollDown ? "-translate-y-full" : "translate-y-0"
       )}
     >

@@ -13,7 +13,6 @@ export default function HomePageAboutArea() {
           <Image
             src={controllers}
             alt="shiny purple and gold controllers with keyboard"
-            quality={100}
             className="md:-mb-12 h-full w-full max-w-[500px] rotate-[17deg] object-contain drop-shadow-[0_30px_15px_rgba(0,0,0,0.5)]"
           />
         </div>

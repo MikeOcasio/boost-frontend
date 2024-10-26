@@ -46,7 +46,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="mt-10">
+    <div className="mt-10 text-white relative">
       <div className="h-screen w-full">
         <div className="fixed top-0 -z-10 h-full w-full">
           <Image
@@ -79,7 +79,6 @@ export default function Home() {
           </p>
         </div>
       </div>
-
       <div className="h-screen w-full sticky top-0 -z-10">
         <Image
           src={burningCity}
@@ -89,9 +88,8 @@ export default function Home() {
           className="h-full w-full object-cover blur-md backdrop-contrast-125"
         />
       </div>
-
-      {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
-
+      mx-auto px-4 lg:max-w-7xl lg:-mt-[110vh] -mt-[90vh]
+      {!loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
       {error && (
         <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
           <IoWarning className="h-5 w-5 mr-2" />
@@ -102,15 +100,12 @@ export default function Home() {
           </button>
         </p>
       )}
-
       {!loading && !error && data?.length < 1 ? (
         <p className="mx-auto px-4 lg:max-w-7xl lg:-mt-[110vh] -mt-[90vh]" />
       ) : (
         <HomeGameCarousel data={data} />
       )}
-
       <HomePageAboutArea />
-
       <ContactForm />
     </div>
   );

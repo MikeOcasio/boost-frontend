@@ -5,7 +5,7 @@ const HomeLayout = ({ children }) => {
   return (
     <>
       <Header />
-      <main>{children}</main>
+      <main className="text-white">{children}</main>
       <Footer />
     </>
   );

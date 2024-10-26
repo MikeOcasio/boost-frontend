@@ -50,7 +50,6 @@ export const Faq = () => {
           <Image
             src={trunk}
             alt="shiny purple and gold controllers with keyboard"
-            quality={100}
             className="absolute -bottom-10 -right-10 z-10 hidden lg:block drop-shadow-[-10px_20px_8px_rgba(0,0,0,0.5)]"
           />
         </div>

@@ -66,7 +66,8 @@ export const addGame = async (gameData) => {
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
     console.error("Failed to add game:", errorMessage);
 
     return {
@@ -109,11 +110,10 @@ export const updateGame = async (gameData, gameId) => {
       }
     );
 
-    console.log("product updated successfully:", response.data);
-
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
     console.error("Failed to update game:", errorMessage);
 
     return {
@@ -135,7 +135,8 @@ export const deleteGame = async (gameId) => {
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
     console.error("Failed to delete game:", errorMessage);
 
     return {

@@ -165,7 +165,7 @@ const GameCategoriesPage = () => {
                         {new Date(category.created_at).toLocaleString()}
                       </p>
                     </div>
-                    <BiPencil className="h-8 w-8 ml-2 hover:bg-white/10 rounded-lg p-2" />
+                    <BiPencil className="h-8 w-8 ml-auto hover:bg-white/10 rounded-lg p-2" />
                   </button>
                 ))
               )}

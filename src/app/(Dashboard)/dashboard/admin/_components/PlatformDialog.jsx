@@ -123,7 +123,7 @@ export const PlatformDialog = ({
       open={dialogOpen}
       onClose={onClose}
       as="div"
-      className="relative z-50"
+      className="relative z-50 text-white"
     >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
