@@ -140,7 +140,7 @@ const GamePage = ({ params }) => {
                 />
               </div>
 
-              <div className="relative z-10 flex flex-col gap-4">
+              <div className="relative z-10 flex flex-col gap-4 flex-1 max-w-3xl">
                 <p className="text-xs -mb-4 font-semibold">
                   {game.category.name}
                 </p>
