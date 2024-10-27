@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Description,
   Field,
   Input,
   Label,
@@ -53,6 +54,10 @@ export const EditGame = ({ data, setData }) => {
       platform_ids: [],
       prod_attr_cats: [],
       prod_attr_cat_ids: [],
+      slider: false,
+      slider_range: [],
+      dropdown: false,
+      dropdown_options: [],
     };
   }
 
@@ -174,6 +179,85 @@ export const EditGame = ({ data, setData }) => {
     }
   };
 
+  // set the value to 0 if the slider is unchecked
+  const handleSlider = (checked, index) => {
+    if (checked) {
+      setGame({
+        ...game,
+        slider: checked,
+        slider_range: [{ min_quantity: 0, max_quantity: 0, price: 0 }],
+      });
+    } else {
+      setGame({
+        ...game,
+        slider: checked,
+        slider_range: [],
+      });
+    }
+  };
+
+  const addASliderVariant = () => {
+    if (game.slider_range[game.slider_range.length - 1] !== "") {
+      setGame({ ...game, slider_range: [...game.slider_range, ""] });
+    } else {
+      toast.error(
+        "Please fill in the current slider variant before adding a new one."
+      );
+    }
+  };
+
+  const removeSliderVariant = (index) => {
+    setGame({
+      ...game,
+      slider_range: game.slider_range?.filter((_, i) => i !== index),
+    });
+  };
+
+  const handleDropdown = (checked) => {
+    if (checked) {
+      setGame({
+        ...game,
+        dropdown: checked,
+        dropdown_options: [{ option: "", price: 0 }],
+      });
+    } else {
+      setGame({ ...game, dropdown: checked, dropdown_options: [] });
+    }
+  };
+
+  const addADropdownVariant = () => {
+    if (game.dropdown_options[game.dropdown_options.length - 1] !== "") {
+      setGame({
+        ...game,
+        dropdown_options: [...game.dropdown_options, { option: "", price: 0 }],
+      });
+    } else {
+      toast.error(
+        "Please fill in the current dropdown variant before adding a new one."
+      );
+    }
+  };
+
+  const removeDropdownVariant = (index) => {
+    setGame({
+      ...game,
+      dropdown_options: game.dropdown_options?.filter((_, i) => i !== index),
+    });
+  };
+
+  const handleDropdownOptionChange = (index, value) => {
+    const updatedOptions = [...game.dropdown_options];
+    updatedOptions[index].option = value;
+
+    // Prevent empty strings from being added
+    if (value.trim() !== "" || index < updatedOptions.length - 1) {
+      setGame({
+        ...game,
+        dropdown_options: updatedOptions,
+      });
+    }
+  };
+
   if (loading) {
     return <BiLoader className="h-8 w-8 animate-spin mx-auto" />;
   }
@@ -223,6 +307,21 @@ export const EditGame = ({ data, setData }) => {
             </div>
           ))}
         </div>
+
+        {/* title */}
+        <Field className="flex flex-col gap-1 w-full">
+          <Label>Title</Label>
+          <Input
+            autoFocus
+            type="text"
+            placeholder="Product name"
+            value={game?.name || ""}
+            className="input-field"
+            onChange={(e) => {
+              setGame({ ...game, name: e.target.value });
+            }}
+          />
+        </Field>
 
         {/* Category and Product Attribute Dropdowns */}
         <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
@@ -302,21 +401,6 @@ export const EditGame = ({ data, setData }) => {
           </div>
         </Field>
 
-        {/* title */}
-        <Field className="flex flex-col gap-1 w-full">
-          <Label>Title</Label>
-          <Input
-            autoFocus
-            type="text"
-            placeholder="Product name"
-            value={game?.name || ""}
-            className="input-field"
-            onChange={(e) => {
-              setGame({ ...game, name: e.target.value });
-            }}
-          />
-        </Field>
-
         {/* platform */}
         <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
           <Label>Platform</Label>
@@ -345,6 +429,199 @@ export const EditGame = ({ data, setData }) => {
               </label>
             ))}
           </div>
+        </Field>
+
+        {/* slider for qty with min and max */}
+        <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+          <div className="flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex flex-col gap-2 flex-1">
+              <Label>Slider for quantity</Label>
+              <Description className="text-xs">
+                Prefer to use for leveling products.
+              </Description>
+
+              <Switch
+                checked={game?.slider}
+                onChange={handleSlider}
+                className="group relative flex h-7 min-w-14 w-14 cursor-pointer rounded-full bg-white/10 p-1 transition-colors duration-200 ease-in-out data-[checked]:bg-Gold"
+              >
+                <span className="pointer-events-none inline-block size-5 translate-x-0 rounded-full bg-white shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7" />
+              </Switch>
+            </div>
+            {game?.slider && (
+              <button
+                onClick={addASliderVariant}
+                className="p-2 rounded-lg hover:bg-white/10 flex gap-2 items-center border border-white/10"
+              >
+                <IoMdAdd className="h-5 w-5" />
+                Add more variants
+              </button>
+            )}
+          </div>
+
+          {game?.slider && game?.slider_range?.length > 0 && (
+            <div className="flex flex-wrap gap-4 w-full">
+              {game?.slider_range.map((range, index) => (
+                <div
+                  key={index}
+                  className="flex flex-wrap gap-4 items-center w-full"
+                >
+                  <div className="flex flex-col gap-1 flex-1">
+                    <Label>Min Quantity</Label>
+                    <Input
+                      type="number"
+                      placeholder="1"
+                      value={range?.min_quantity || ""}
+                      className="input-field"
+                      onChange={(e) => {
+                        setGame({
+                          ...game,
+                          slider_range: game.slider_range.map((item, i) => {
+                            if (i === index) {
+                              return { ...item, min_quantity: e.target.value };
+                            }
+                            return item;
+                          }),
+                        });
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1 flex-1">
+                    <Label>Max Quantity</Label>
+                    <Input
+                      type="number"
+                      placeholder="100"
+                      value={range?.max_quantity || ""}
+                      className="input-field"
+                      onChange={(e) => {
+                        setGame({
+                          ...game,
+                          slider_range: game.slider_range.map((item, i) => {
+                            if (i === index) {
+                              return { ...item, max_quantity: e.target.value };
+                            }
+                            return item;
+                          }),
+                        });
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1 flex-1">
+                    <Label>Price</Label>
+                    <Input
+                      type="number"
+                      placeholder="20"
+                      value={range?.price || ""}
+                      className="input-field"
+                      onChange={(e) => {
+                        setGame({
+                          ...game,
+                          slider_range: game.slider_range.map((item, i) => {
+                            if (i === index) {
+                              return { ...item, price: e.target.value };
+                            }
+                            return item;
+                          }),
+                        });
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    onClick={() => removeSliderVariant(index)}
+                    className="border rounded-lg p-2 hover:bg-white/10 border-white/10 mt-auto"
+                  >
+                    <IoMdRemove className="h-6 w-6" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </Field>
+
+        <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+          <div className="flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex flex-col gap-2 flex-1">
+              <Label>Dropdown</Label>
+              <Description className="text-xs">
+                Prefer to use for ranks and weapons.
+              </Description>
+
+              <Switch
+                checked={game?.dropdown}
+                onChange={handleDropdown}
+                className="group relative flex h-7 min-w-14 w-14 cursor-pointer rounded-full bg-white/10 p-1 transition-colors duration-200 ease-in-out data-[checked]:bg-Gold"
+              >
+                <span className="pointer-events-none inline-block size-5 translate-x-0 rounded-full bg-white shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7" />
+              </Switch>
+            </div>
+            {game?.dropdown && (
+              <button
+                onClick={addADropdownVariant}
+                className="p-2 rounded-lg hover:bg-white/10 flex gap-2 items-center border border-white/10"
+              >
+                <IoMdAdd className="h-5 w-5" />
+                Add more variants
+              </button>
+            )}
+          </div>
+
+          {game?.dropdown && game?.dropdown_options?.length > 0 && (
+            <div className="flex flex-wrap gap-4 w-full">
+              {game?.dropdown_options.map((option, index) => (
+                <div
+                  key={index}
+                  className="flex flex-wrap gap-4 items-center w-full"
+                >
+                  <div className="flex flex-col gap-1 flex-1">
+                    <Label>Option {index + 1}</Label>
+                    <Input
+                      type="text"
+                      placeholder="Option 1"
+                      value={option.option || ""}
+                      className="input-field"
+                      onChange={(e) =>
+                        handleDropdownOptionChange(index, e.target.value)
+                      }
+                    />
+                  </div>
+
+                  {/* price */}
+                  <div className="flex flex-col gap-1 flex-1">
+                    <Label>Price</Label>
+                    <Input
+                      type="number"
+                      placeholder="20"
+                      value={option?.price || ""}
+                      className="input-field"
+                      onChange={(e) => {
+                        setGame({
+                          ...game,
+                          dropdown_options: game.dropdown_options.map(
+                            (item, i) => {
+                              if (i === index) {
+                                return { ...item, price: e.target.value };
+                              }
+                              return item;
+                            }
+                          ),
+                        });
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    onClick={() => removeDropdownVariant(index)}
+                    className="border rounded-lg p-2 hover:bg-white/10 border-white/10 mt-auto"
+                  >
+                    <IoMdRemove className="h-6 w-6" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </Field>
 
         {/* tag_line */}
