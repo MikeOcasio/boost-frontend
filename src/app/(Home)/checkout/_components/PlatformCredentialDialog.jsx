@@ -43,7 +43,7 @@ export const PlatformCredentialDialog = ({
       });
 
       if (response.error) {
-        toast.error(response.error);
+        toast.error(JSON.stringify(response.error));
       } else {
         toast.success("Platform added successfully!");
         handleClosed();

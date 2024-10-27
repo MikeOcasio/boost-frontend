@@ -5,6 +5,16 @@ import { getSessionToken } from "./get-session-token";
 import { cookies } from "next/headers";
 import { apiUrl } from "../api-url";
 
+// set cookie
+export const setCookie = (value) => {
+  cookies().set({
+    name: "jwtToken",
+    value: value,
+    maxAge: 60 * 60 * 24 * 2, // 2 days
+    secure: true,
+  });
+};
+
 export const logoutSession = async () => {
   try {
     const sessionToken = await getSessionToken();
@@ -35,16 +45,6 @@ export const logoutSession = async () => {
       error: errorMessage || "An error occurred while logout the user.",
     };
   }
-};
-
-// set cookie
-export const setCookie = (value) => {
-  cookies().set({
-    name: "jwtToken",
-    value: value,
-    maxAge: 60 * 60 * 24 * 2, // 2 days
-    secure: true,
-  });
 };
 
 // login user
@@ -137,8 +137,7 @@ export const fetchCurrentUser = async () => {
     console.error("Failed to fetch current user:", errorMessage);
 
     return {
-      error:
-        errorMessage || "An error occurred while fetching the current user.",
+      error: "An error occurred while fetching the current user.",
     };
   }
 };
@@ -183,6 +182,7 @@ export const updateUser = async (user) => {
           gameplay_info: user.gameplay_info,
           bio: user.bio,
           role: user.role,
+          email: user.email,
         },
       },
       {
@@ -194,7 +194,8 @@ export const updateUser = async (user) => {
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
     console.error("Failed to update user:", errorMessage);
 
     return {
@@ -222,7 +223,8 @@ export const deleteUser = async (userId) => {
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
     console.error("Failed to delete user:", errorMessage);
 
     return {
@@ -259,7 +261,8 @@ export const addPlatformCredentials = async ({
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage =
+      error.response?.data?.errors || error.response?.data || error.message;
     console.error("Failed to add platform to user:", errorMessage);
 
     return {
@@ -287,7 +290,8 @@ export const banUser = async (userId) => {
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
     console.error("Failed to ban user:", errorMessage);
 
     return {
@@ -316,12 +320,11 @@ export const fetchAllSkillmasters = async () => {
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
-    console.error("Failed to fetch all skillmasters:", errorMessage);
+    // const errorMessage = error.response?.data || error.message;
+    // console.error("Failed to fetch all skillmasters:", errorMessage);
 
     return {
-      error:
-        errorMessage || "An error occurred while fetching the skillmasters.",
+      error: "An error occurred while fetching the skillmasters.",
     };
   }
 };
@@ -345,12 +348,11 @@ export const fetchSkillmasterById = async (skillmasterId) => {
 
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
-    console.error("Failed to fetch skillmaster:", errorMessage);
+    // const errorMessage = error.response?.data || error.message;
+    // console.error("Failed to fetch skillmaster:", errorMessage);
 
     return {
-      error:
-        errorMessage || "An error occurred while fetching the skillmaster.",
+      error: "An error occurred while fetching the skillmaster.",
     };
   }
 };
@@ -375,7 +377,7 @@ export const lockUserAction = async (userId) => {
     return response.data;
   } catch (error) {
     const errorMessage =
-      error.response?.data || error.response?.data?.error || error.message;
+      error.response?.data?.error || error.response?.data || error.message;
     console.error("Failed to lock user:", errorMessage);
 
     return {
@@ -403,7 +405,8 @@ export const unlockUserAction = async (userId) => {
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
     console.error("Failed to unlock user:", errorMessage);
 
     return {

@@ -32,7 +32,7 @@ export const addPlatform = async (platformData) => {
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage = error.response?.data?.error || error.message;
     console.error("Failed to add platform:", errorMessage);
 
     return {
@@ -58,7 +58,7 @@ export const updatePlatform = async (platformData) => {
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage = error.response?.data?.error || error.message;
     console.error("Failed to update platform:", errorMessage);
 
     return {
@@ -83,7 +83,7 @@ export const deletePlatform = async (platformId) => {
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage = error.response?.data.error || error.message;
     console.error("Failed to delete platform:", errorMessage);
 
     return {

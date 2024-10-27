@@ -172,7 +172,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
       const response = await banUser(user.id);
 
       if (response.error) {
-        toast.error("Error banning user!");
+        toast.error(response.error);
       } else {
         toast.success("User banned successfully!");
         handleClosed();

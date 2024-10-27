@@ -157,6 +157,9 @@ const AllUsers = () => {
                         user?.locked_by_admin &&
                           "bg-blue-500/20 hover:bg-blue-500/30"
                       )}
+                      style={{
+                        backgroundColor: user?.locked_by_admin && "#3b82f650",
+                      }}
                     >
                       <div className="flex flex-wrap gap-4">
                         <div className="flex max-w-[200px] w-fit mx-auto bg-white/10 rounded-lg p-2">

@@ -157,57 +157,63 @@ export const PlatformDialog = ({
               </button>
             )}
 
-            {/* platform Name Field */}
-            <Field className="flex flex-col gap-1 w-full">
-              <Label className="text-sm">Platform Name</Label>
-              <Input
-                type="text"
-                placeholder="Game platform name"
-                autoFocus
-                className="input-field"
-                value={platform.name}
-                onChange={(e) =>
-                  setPlatform({ ...platform, name: e.target.value })
-                }
-              />
-            </Field>
-
-            <div className="flex items-center justify-between gap-4">
-              {/* Delete Button */}
-
-              {dialogData && (
-                <button
-                  onClick={() => handleDelete(platform.id)}
-                  disabled={loading}
-                  className="p-2 rounded-lg hover:bg-white/10 disabled:bg-gray-500/20"
-                >
-                  {loading ? (
-                    <BiLoader className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <BiTrash className="h-5 w-5 text-red-600" />
-                  )}
-                </button>
-              )}
-
-              {/* Submit Button */}
-              <button
-                onClick={() => handleSubmit(platform)}
-                disabled={loading || !platform.name.trim() || isDataUnchanged()}
-                className={clsx(
-                  "bg-Gold/80 p-2 rounded-lg hover:bg-Gold/60 disabled:bg-gray-500/20 flex-1",
-                  {
-                    "cursor-not-allowed":
-                      loading || !platform.name.trim() || isDataUnchanged(),
+            <form className="flex flex-col gap-4">
+              {/* platform Name Field */}
+              <Field className="flex flex-col gap-1 w-full">
+                <Label className="text-sm">Platform Name</Label>
+                <Input
+                  type="text"
+                  placeholder="Game platform name"
+                  autoFocus
+                  className="input-field"
+                  value={platform.name}
+                  onChange={(e) =>
+                    setPlatform({ ...platform, name: e.target.value })
                   }
+                />
+              </Field>
+
+              <div className="flex items-center justify-between gap-4">
+                {/* Delete Button */}
+
+                {dialogData && (
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(platform.id)}
+                    disabled={loading}
+                    className="p-2 rounded-lg hover:bg-white/10 disabled:bg-gray-500/20"
+                  >
+                    {loading ? (
+                      <BiLoader className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <BiTrash className="h-5 w-5 text-red-600" />
+                    )}
+                  </button>
                 )}
-              >
-                {loading
-                  ? "Submitting..."
-                  : dialogData
-                  ? "Update platform"
-                  : "Add platform"}
-              </button>
-            </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  onClick={() => handleSubmit(platform)}
+                  disabled={
+                    loading || !platform.name.trim() || isDataUnchanged()
+                  }
+                  className={clsx(
+                    "bg-Gold/80 p-2 rounded-lg hover:bg-Gold/60 disabled:bg-gray-500/20 flex-1",
+                    {
+                      "cursor-not-allowed":
+                        loading || !platform.name.trim() || isDataUnchanged(),
+                    }
+                  )}
+                >
+                  {loading
+                    ? "Submitting..."
+                    : dialogData
+                    ? "Update platform"
+                    : "Add platform"}
+                </button>
+              </div>
+            </form>
           </div>
         </DialogPanel>
       </div>
