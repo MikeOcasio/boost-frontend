@@ -70,8 +70,6 @@ export default function SignIn() {
         confirmPassword,
       });
 
-      console.log("response", response);
-
       if (response.error) {
         toast.error("Error signing in user!");
       } else {

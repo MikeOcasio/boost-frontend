@@ -93,22 +93,33 @@ export const CartButton = ({ mobileNav }) => {
 
                   <div className="flex items-center gap-2 flex-wrap justify-between">
                     <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => decreaseQuantity(item.id)}
-                        className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
-                      >
-                        <BiMinus className="h-5 w-5" />
-                      </button>
+                      {!item.is_slider && !item.is_dropdown && (
+                        <>
+                          <button
+                            onClick={() => decreaseQuantity(item.id)}
+                            className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
+                          >
+                            <BiMinus className="h-5 w-5" />
+                          </button>
 
-                      <p>{item.quantity}</p>
+                          <p>{item.quantity}</p>
 
-                      <button
-                        onClick={() => increaseQuantity(item.id)}
-                        className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
-                      >
-                        <BiPlus className="h-5 w-5" />
-                      </button>
+                          <button
+                            onClick={() => increaseQuantity(item.id)}
+                            className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
+                          >
+                            <BiPlus className="h-5 w-5" />
+                          </button>
+                        </>
+                      )}
 
+                      {(item.is_dropdown || item.is_slider) && (
+                        <p className="text-xs">
+                          qty:{" "}
+                          {item.dropdown_options?.length ||
+                            item.slider_range?.length}
+                        </p>
+                      )}
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => removeFromCart(item.id)}
@@ -121,7 +132,24 @@ export const CartButton = ({ mobileNav }) => {
 
                     {/* Price */}
                     <p className="text-lg font-semibold">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      $
+                      {!item.is_dropdown &&
+                        !item.is_slider &&
+                        (item.price * item.quantity).toFixed(2)}
+                      {/* dropdown price */}
+                      {item.is_dropdown &&
+                        (item.dropdown_options?.length > 0
+                          ? item.dropdown_options
+                              .reduce((acc, curr) => acc + curr.price, 0)
+                              .toFixed(2)
+                          : item.price)}
+                      {/* slider price */}
+                      {item.is_slider &&
+                        (item.slider_range?.length > 0
+                          ? item.slider_range
+                              .reduce((acc, curr) => acc + curr.price, 0)
+                              .toFixed(2)
+                          : item.price)}
                     </p>
                   </div>
                 </div>

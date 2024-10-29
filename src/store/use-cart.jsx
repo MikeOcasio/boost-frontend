@@ -16,9 +16,34 @@ const getInitialCart = () => {
 
 // Helper function to calculate total price
 const calculateTotalPrice = (cartItems) => {
-  return cartItems
-    .reduce((total, item) => total + item.price * item.quantity, 0)
+  const totalPrice = cartItems
+    .reduce(
+      (total, item) =>
+        total +
+        (item.is_dropdown
+          ? item.dropdown_options.reduce((acc, curr) => acc + curr.price, 0)
+          : item.is_slider
+          ? item.slider_range.reduce((acc, curr) => acc + curr.price, 0)
+          : item.price * item.quantity),
+      0
+    )
     .toFixed(2);
+
+  localStorage.setItem("totalPrice", totalPrice);
+
+  return totalPrice;
+
+  // return cartItems
+  //   .reduce(
+  //     (total, item) =>
+  //       total + item.slider_range.reduce((acc, curr) => acc + curr.price, 0),
+  //     0
+  //   )
+  //   .toFixed(2);
+
+  // return cartItems
+  //   .reduce((total, item) => total + item.price * item.quantity, 0)
+  //   .toFixed(2);
 };
 
 // get total price from localStorage
@@ -66,6 +91,12 @@ export const useCartStore = create((set) => ({
           tax: product.tax,
           category_id: product.category_id,
           prod_attr_cats: product.prod_attr_cats,
+          dropdown_options: product.dropdown_options,
+          starting_point: product.starting_point,
+          ending_point: product.ending_point,
+          is_dropdown: product.is_dropdown,
+          is_slider: product.is_slider,
+          slider_range: product.slider_range,
         };
         updatedCart = [...state.cartItems, newItem];
       }

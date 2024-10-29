@@ -136,6 +136,7 @@ export const PassCodeScreen = ({
 
             <input
               ref={(el) => (inputRefs.current[index] = el)}
+              autoFocus
               type="text"
               inputMode="numeric"
               maxLength={1}

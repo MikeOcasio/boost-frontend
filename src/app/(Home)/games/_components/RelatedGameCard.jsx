@@ -48,8 +48,8 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
           role="list"
           className="space-y-2 text-sm leading-6 text-white/90 px-2"
         >
-          {game.features?.map((feature) => (
-            <li key={feature} className="flex gap-x-3">
+          {game.features?.map((feature, index) => (
+            <li key={index} className="flex gap-x-3">
               <CheckIcon
                 className="h-6 w-5 flex-none text-green-500"
                 aria-hidden="true"

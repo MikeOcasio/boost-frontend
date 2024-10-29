@@ -32,9 +32,18 @@ const GameEditPage = ({ params }) => {
       } else {
         const platformArr = response.platforms.map((platform) => platform.id);
 
+        const dropdownOptions = response.dropdown_options?.map((option) => {
+          return JSON.parse(option);
+        });
+        const sliderRanges = response.slider_range?.map((range) => {
+          return JSON.parse(range);
+        });
+
         setGame({
           ...response,
           platform_ids: platformArr,
+          dropdown_options: dropdownOptions,
+          slider_range: sliderRanges,
         });
       }
     } catch (error) {
@@ -52,21 +61,58 @@ const GameEditPage = ({ params }) => {
   const validateGame = () => {
     const errors = [];
 
-    if (!game?.name) errors.push("Product name");
-    if (!game?.description) errors.push("Product description");
-    if (!game?.price) errors.push("Product price");
-    if (!game?.category_id) errors.push("Product category");
-    if (!game?.prod_attr_cats.length) errors.push("Product attribute category");
-    if (game?.is_priority === null) errors.push("Product priority");
-    if (!game?.tax) errors.push("Product tax");
+    if (!game?.name) errors.push("Product name is missing");
+    if (!game?.description) errors.push("Product description is missing");
+    if (!game?.price) errors.push("Product price is missing");
+    if (!game?.category_id) errors.push("Product category is missing");
+    if (!game?.prod_attr_cats.length)
+      errors.push("Select at least one attribute");
+    if (game?.is_priority === null) errors.push("Product priority is missing");
+    if (!game?.tax) errors.push("Product tax is missing");
     if (!game?.platform_ids.length) errors.push("At least one platform");
-    if (game?.is_active === null) errors.push("Product active status");
-    if (game?.most_popular === null) errors.push("Most popular status");
-    if (!game?.tag_line) errors.push("Product tag line");
-    if (!game?.primary_color) errors.push("Primary color");
-    if (!game?.secondary_color) errors.push("Secondary color");
-    if (game?.features?.length === 0)
+    if (game?.is_active === null)
+      errors.push("Product active status is missing");
+    if (game?.most_popular === null)
+      errors.push("Most popular status is missing");
+    if (!game?.tag_line) errors.push("Product tag line is empty");
+    if (!game?.primary_color) errors.push("Primary color is missing");
+    if (!game?.secondary_color) errors.push("Secondary color is missing");
+
+    if (game?.features?.length === 0) {
       errors.push("At least one product feature");
+    }
+    if (game?.features?.length) {
+      game.features.forEach((feature, index) => {
+        if (!feature) errors.push(`Feature ${index + 1} is empty`);
+      });
+    }
+
+    // dropdown and slider are not required but if they are present, they must have at least one option also the values must be valid not empty
+    if (game?.is_dropdown && !game?.dropdown_options?.length) {
+      errors.push("At least one dropdown option");
+    }
+    if (game?.is_dropdown && game?.dropdown_options?.length) {
+      game.dropdown_options.forEach((option, index) => {
+        if (!option.option)
+          errors.push(`Dropdown option ${index + 1} is empty`);
+        if (!option.price)
+          errors.push(`Dropdown option ${index + 1} has no price`);
+      });
+    }
+
+    if (game?.is_slider && !game?.slider_range?.length) {
+      errors.push("At least one slider option");
+    }
+    if (game?.is_slider && game?.slider_range?.length) {
+      game.slider_range.forEach((range, index) => {
+        if (!range.min_quantity)
+          errors.push(`Slider option ${index + 1} has no min quantity`);
+        if (!range.max_quantity)
+          errors.push(`Slider option ${index + 1} has no max quantity`);
+        if (!range.price)
+          errors.push(`Slider option ${index + 1} has no price`);
+      });
+    }
 
     setMissingFields(errors);
     return errors.length === 0;
@@ -75,9 +121,24 @@ const GameEditPage = ({ params }) => {
   const handleUpdateGame = async () => {
     if (!validateGame()) return;
 
+    // stingfy dropdown and slider ranges object and make the array of stingified objects
+    const dropdownOptions = game?.dropdown_options?.map((option) => {
+      return JSON.stringify(option);
+    });
+    const sliderRanges = game?.slider_range?.map((range) => {
+      return JSON.stringify(range);
+    });
+
     setLoading(true);
     try {
-      const response = await updateGame(game, gameId);
+      const response = await updateGame(
+        {
+          ...game,
+          dropdown_options: dropdownOptions,
+          slider_range: sliderRanges,
+        },
+        gameId
+      );
 
       if (response.error) {
         toast.error(response.error);

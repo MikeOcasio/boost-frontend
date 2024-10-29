@@ -25,8 +25,6 @@ export const QrCodeDialog = ({
     }
   }, [dialogOpen, passCodeScreen]);
 
-  console.log("dialogData", dialogData);
-
   return (
     <Dialog
       open={dialogOpen}

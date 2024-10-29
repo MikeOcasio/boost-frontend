@@ -56,6 +56,10 @@ export const addGame = async (gameData) => {
         platform_ids: gameData.platform_ids,
         prod_attr_cats: gameData.prod_attr_cats,
         prod_attr_cat_ids: gameData.prod_attr_cat_ids,
+        is_dropdown: gameData.is_dropdown,
+        dropdown_options: gameData.dropdown_options,
+        is_slider: gameData.is_slider,
+        slider_range: gameData.slider_range,
       },
       {
         headers: {
@@ -101,6 +105,10 @@ export const updateGame = async (gameData, gameId) => {
           category_id: gameData.category_id,
           prod_attr_cat_ids: gameData.prod_attr_cat_ids,
           platform_ids: gameData.platform_ids,
+          is_slider: gameData.is_slider,
+          slider_range: gameData.slider_range,
+          is_dropdown: gameData.is_dropdown,
+          dropdown_options: gameData.dropdown_options,
         },
       },
       {

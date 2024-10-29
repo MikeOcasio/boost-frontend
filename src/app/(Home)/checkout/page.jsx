@@ -177,8 +177,6 @@ const CheckoutPage = () => {
     setOpenDialog(true);
   };
 
-  // console.log("order data", orderByPlatform);
-
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
       <p className="text-center text-4xl font-title sm:text-5xl">Checkout</p>

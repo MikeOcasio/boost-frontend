@@ -62,11 +62,15 @@ const GameCard = ({ game, searchTerm }) => {
         </div>
 
         <div className="flex flex-col gap-2 items-center">
-          <p className="text-xl font-bold leading-6 text-white">
-            {highlightMatch(game.name, searchTerm)}
+          <p className="text-xl font-bold leading-6 text-white text-center">
+            {game.name.length > 50
+              ? highlightMatch(game.name, searchTerm).slice(0, 50) + "..."
+              : highlightMatch(game.name, searchTerm)}
           </p>
-          <p className="text-xs text-white/70 font-semibold">
-            {highlightMatch(game.tag_line, searchTerm)}
+          <p className="text-xs text-white/70 font-semibold text-center">
+            {game.tag_line.length > 50
+              ? highlightMatch(game.tag_line, searchTerm).slice(0, 50) + "..."
+              : highlightMatch(game.tag_line, searchTerm)}
           </p>
         </div>
 

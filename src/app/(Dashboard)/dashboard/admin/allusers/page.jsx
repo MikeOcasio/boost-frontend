@@ -34,8 +34,6 @@ const AllUsers = () => {
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState("");
 
-  console.log("users", users);
-
   const loadUsers = async () => {
     setLoading(true);
     setError(false);
