@@ -36,7 +36,6 @@ const AccountPage = () => {
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [platforms, setPlatforms] = useState([]);
-  const [subplatforms, setSubplatforms] = useState({});
 
   // dialog
   const [dialogId, setDialogId] = useState(null);
@@ -406,7 +405,7 @@ const AccountPage = () => {
                         className="bg-Gold/80 hover:bg-Gold/60 rounded-lg p-2 flex gap-2 items-center flex-1 justify-center"
                       >
                         <BiPlus className="h-5 w-5" />
-                        Add Platform
+                        Add {platform.has_sub_platforms ? "Sub" : ""} Platform
                       </button>
                     )}
                   </div>

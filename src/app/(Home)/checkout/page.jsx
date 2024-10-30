@@ -14,6 +14,7 @@ import { PlatformCredentialDialog } from "./_components/PlatformCredentialDialog
 import { fetchGameById } from "@/lib/actions/products-action";
 import { checkoutSession } from "@/lib/actions/orders-action";
 import { fetchCurrentUser } from "@/lib/actions/user-actions";
+import { fetchPlatformById } from "@/lib/actions/platforms-action";
 
 // load stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
@@ -33,6 +34,8 @@ const CheckoutPage = () => {
 
   // State for clientSecret
   const [clientSecret, setClientSecret] = useState("");
+
+  const [selectedSubplatform, setSelectedSubplatform] = useState("");
 
   // fetch user info
   const handleUserFetch = async () => {
@@ -166,6 +169,8 @@ const CheckoutPage = () => {
 
   // Function to fetch clientSecret
   const fetchClientSecret = useCallback(async (orders) => {
+    console.log("orders data ", orders);
+
     try {
       setLoading(true);
 
@@ -228,9 +233,22 @@ const CheckoutPage = () => {
   }, [userToken, cartItems]);
 
   // credential dialog
-  const handleCredentialDialog = (platform_id) => {
-    setDialogId(platform_id);
-    setOpenDialog(true);
+  const handleCredentialDialog = async (platform_id) => {
+    try {
+      setLoading(true);
+      const result = await fetchPlatformById(platform_id.id);
+
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setDialogId(result);
+        setOpenDialog(true);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch platform details. Please try again!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -262,7 +280,8 @@ const CheckoutPage = () => {
           const platformId = platformOrders[0].platform.id;
           const platformName = platformOrders[0].platform.name;
           const userHasPlatformCredential = user?.platforms.some(
-            (platform) => platform.id === platformId && platform.name !== "PC"
+            (platform) =>
+              platform.id === platformId && !platform.has_sub_platforms
           );
 
           return (
@@ -329,11 +348,37 @@ const CheckoutPage = () => {
                     onClick={() =>
                       handleCredentialDialog(platformOrders[0].platform)
                     }
-                    className="flex-1 bg-Gold rounded-lg p-2 text-base font-bold"
+                    className="flex-1 bg-Gold rounded-lg p-2 text-base font-bold min-w-fit"
                   >
                     Add {platformName} Credential
                   </button>
                 )}
+
+                {/* show the dropdown of user subplatforms */}
+                {!userHasPlatformCredential &&
+                  user?.sub_platforms.length > 0 && (
+                    <div className="flex flex-wrap gap-2 items-center flex-1 min-w-fit">
+                      <select
+                        value={selectedSubplatform}
+                        onChange={(e) => setSelectedSubplatform(e.target.value)}
+                        className="p-4 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 w-full"
+                      >
+                        <option value="" className="bg-neutral-800">
+                          Select a platform
+                        </option>
+
+                        {user?.sub_platforms.map((subplatform) => (
+                          <option
+                            key={subplatform.id}
+                            value={subplatform.id}
+                            className="bg-neutral-800"
+                          >
+                            {subplatform.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
                 <button
                   disabled={
@@ -341,11 +386,12 @@ const CheckoutPage = () => {
                     loading ||
                     error ||
                     totalPrice < 1 ||
-                    !userHasPlatformCredential
+                    !userHasPlatformCredential ||
+                    !selectedSubplatform
                   }
                   type="button"
                   onClick={() => fetchClientSecret(platformOrders)}
-                  className="w-full flex items-center flex-wrap-reverse gap-4 text-xl font-bold disabled:bg-gray-500/20 bg-Gold p-2 flex-1 max-w-xl px-4 rounded-lg hover:bg-Gold/80 justify-center mx-auto"
+                  className="min-w-fit w-full flex items-center flex-wrap-reverse gap-4 text-xl font-bold disabled:bg-gray-500/20 bg-Gold p-2 flex-1 max-w-xl px-4 rounded-lg hover:bg-Gold/80 justify-center mx-auto"
                 >
                   <span>Pay Now</span>
                   <span>

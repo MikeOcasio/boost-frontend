@@ -9,12 +9,13 @@ import {
   Label,
 } from "@headlessui/react";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose } from "react-icons/io5";
 
 import { addPlatformCredentials } from "@/lib/actions/user-actions";
 import { fetchSubplatforms } from "@/lib/actions/platforms-action";
+import { useUserStore } from "@/store/use-user";
 
 export const PlatformCredentialDialog = ({
   dialogId,
@@ -29,9 +30,19 @@ export const PlatformCredentialDialog = ({
   const [subplatforms, setSubplatforms] = useState([]);
   const [selectedSubplatform, setSelectedSubplatform] = useState(null);
 
-  const handleSubmit = async ({ username, password }) => {
+  const { user } = useUserStore();
+
+  console.log("platform details", dialogId);
+
+  const handleSubmit = async ({ username, password, sub_platform_id }) => {
     if (!dialogId?.id) {
       toast.error("something went wrong");
+      handleClosed();
+      return;
+    }
+
+    if (dialogId?.has_sub_platforms && !sub_platform_id) {
+      toast.error("Please select a subplatform");
       handleClosed();
       return;
     }
@@ -42,6 +53,7 @@ export const PlatformCredentialDialog = ({
         platform_id: dialogId?.id,
         username: username,
         password: password,
+        sub_platform_id: sub_platform_id,
       });
 
       if (response.error) {
@@ -64,23 +76,27 @@ export const PlatformCredentialDialog = ({
     onClose();
     setUsername("");
     setPassword("");
+    setSelectedSubplatform(null);
   };
 
-  const loadSubplatforms = async (id) => {
-    try {
-      setLoading(true);
-      const result = await fetchSubplatforms(id);
-      if (result.error) {
-        toast.error(result.error);
-      } else {
-        setSubplatforms(result);
+  // use usememo
+  const loadSubplatforms = useMemo(() => {
+    return async (id) => {
+      try {
+        setLoading(true);
+        const result = await fetchSubplatforms(id);
+        if (result.error) {
+          toast.error(result.error);
+        } else {
+          setSubplatforms(result);
+        }
+      } catch (error) {
+        toast.error("Failed to load subplatforms. Please try again!");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      toast.error("Failed to load subplatforms. Please try again!");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+  }, [dialogId]);
 
   useEffect(() => {
     if (dialogId?.has_sub_platforms) {
@@ -91,7 +107,7 @@ export const PlatformCredentialDialog = ({
   return (
     <Dialog
       open={dialogOpen}
-      onClose={onClose}
+      onClose={handleClosed}
       as="div"
       className="relative z-50 text-white"
     >
@@ -129,38 +145,50 @@ export const PlatformCredentialDialog = ({
               </Field>
             )}
 
-            {selectedSubplatform && (
-              <>
-                {/* platform Name Field */}
-                <Field className="flex flex-col gap-1 w-full">
-                  <Label className="text-sm">Username</Label>
-                  <Input
-                    type="text"
-                    placeholder="username"
-                    autoFocus
-                    className="input-field"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                </Field>
-                {/* password Field */}
-                <Field className="flex flex-col gap-1 w-full">
-                  <Label className="text-sm">Password</Label>
-                  <Input
-                    type="password"
-                    placeholder="password"
-                    autoFocus
-                    className="input-field"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </Field>
-              </>
+            {user?.sub_platforms.find(
+              (p) => p.id === Number(selectedSubplatform)
+            ) ? (
+              <p>Subplatform credential already added</p>
+            ) : (
+              (!dialogId?.has_sub_platforms || selectedSubplatform) && (
+                <>
+                  {/* platform Name Field */}
+                  <Field className="flex flex-col gap-1 w-full">
+                    <Label className="text-sm">Username</Label>
+                    <Input
+                      type="text"
+                      placeholder="username"
+                      autoFocus
+                      className="input-field"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </Field>
+                  {/* password Field */}
+                  <Field className="flex flex-col gap-1 w-full">
+                    <Label className="text-sm">Password</Label>
+                    <Input
+                      type="password"
+                      placeholder="password"
+                      autoFocus
+                      className="input-field"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </Field>
+                </>
+              )
             )}
             <div className="flex items-center justify-between gap-4">
               {/* Submit Button */}
               <button
-                onClick={() => handleSubmit({ username, password })}
+                onClick={() =>
+                  handleSubmit({
+                    username,
+                    password,
+                    sub_platform_id: selectedSubplatform,
+                  })
+                }
                 disabled={loading || !username.trim() || !password.trim()}
                 className={clsx(
                   "bg-Gold/80 p-2 rounded-lg hover:bg-Gold/60 disabled:bg-gray-500/20 flex-1",

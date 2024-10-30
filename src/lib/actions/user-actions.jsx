@@ -238,6 +238,7 @@ export const addPlatformCredentials = async ({
   platform_id,
   username,
   password,
+  sub_platform_id,
 }) => {
   try {
     const sessionToken = await getSessionToken();
@@ -251,6 +252,7 @@ export const addPlatformCredentials = async ({
         platform_id,
         username,
         password,
+        sub_platform_id,
       },
       {
         headers: {

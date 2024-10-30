@@ -15,6 +15,17 @@ export const fetchPlatforms = async () => {
   }
 };
 
+// get platform by id
+export const fetchPlatformById = async (platformId) => {
+  try {
+    const { data } = await axios.get(`${apiUrl}/api/platforms/${platformId}`);
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch platform by id. Please try again!" };
+  }
+};
+
 // add platform
 export const addPlatform = async (platformData) => {
   try {

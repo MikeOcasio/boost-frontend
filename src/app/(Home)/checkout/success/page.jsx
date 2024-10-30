@@ -65,6 +65,7 @@ const CreateProductPage = () => {
         // Remove all items with the same platform
         orderData.orders.forEach((order) => removeFromCart(order.id));
 
+        sessionStorage.removeItem("place_order");
         router.push(`/thank_you?order_id=${response.order_id}`);
       }
     } catch (error) {
