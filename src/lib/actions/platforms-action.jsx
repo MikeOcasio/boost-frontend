@@ -91,3 +91,108 @@ export const deletePlatform = async (platformId) => {
     };
   }
 };
+
+// need to check from here
+
+// get subplatforms
+export const fetchSubplatforms = async (id) => {
+  try {
+    const sessionToken = await getSessionToken();
+
+    if (!id || !sessionToken) {
+      return { error: "Failed to fetch subplatforms. Please try again!" };
+    }
+
+    const { data } = await axios.get(
+      `${apiUrl}/api/platforms/${id}/sub_platforms`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch subplatforms. Please try again!" };
+  }
+};
+
+// add subplatform
+export const addSubplatform = async (subplatformData) => {
+  try {
+    const sessionToken = await getSessionToken();
+
+    const response = await axios.post(
+      `${apiUrl}/api/subplatforms`,
+      { name: subplatformData.name },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || error.message;
+    console.error("Failed to add subplatform:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while adding the subplatform.",
+    };
+  }
+};
+
+// update subplatform
+export const updateSubplatform = async (subplatformData) => {
+  try {
+    const sessionToken = await getSessionToken();
+
+    const response = await axios.put(
+      `${apiUrl}/api/subplatforms/${subplatformData.id}`,
+      { name: subplatformData.name },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || error.message;
+    console.error("Failed to update subplatform:", errorMessage);
+
+    return {
+      error:
+        errorMessage || "An error occurred while updating the subplatform.",
+    };
+  }
+};
+
+// delete subplatform
+export const deleteSubplatform = async (subplatformId) => {
+  try {
+    const sessionToken = await getSessionToken();
+
+    const response = await axios.delete(
+      `${apiUrl}/api/subplatforms/${subplatformId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data.error || error.message;
+    console.error("Failed to delete subplatform:", errorMessage);
+
+    return {
+      error:
+        errorMessage || "An error occurred while deleting the subplatform.",
+    };
+  }
+};

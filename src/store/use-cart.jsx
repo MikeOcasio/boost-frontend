@@ -21,10 +21,13 @@ const calculateTotalPrice = (cartItems) => {
       (total, item) =>
         total +
         (item.is_dropdown
-          ? item.dropdown_options.reduce((acc, curr) => acc + curr.price, 0)
+          ? item.dropdown_options.reduce(
+              (acc, curr) => acc + Number(curr.price),
+              0
+            )
           : item.is_slider
-          ? item.slider_range.reduce((acc, curr) => acc + curr.price, 0)
-          : item.price * item.quantity),
+          ? item.slider_range.reduce((acc, curr) => acc + Number(curr.price), 0)
+          : Number(item.price) * Number(item.quantity)),
       0
     )
     .toFixed(2);

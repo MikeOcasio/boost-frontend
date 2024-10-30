@@ -114,7 +114,7 @@ const CheckoutPage = () => {
           if (item.is_slider) {
             order.is_slider = product.is_slider;
             order.slider_range = item.slider_range;
-            order.item_qty = item.slider_range.length;
+            order.item_qty = item.slider_range.length - 1;
             order.quantity = 1;
             order.starting_point = item.starting_point;
             order.ending_point = item.ending_point;

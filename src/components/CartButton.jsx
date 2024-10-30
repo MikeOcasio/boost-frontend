@@ -117,7 +117,7 @@ export const CartButton = ({ mobileNav }) => {
                         <p className="text-xs">
                           Qty:{" "}
                           {item.dropdown_options?.length ||
-                            item.slider_range?.length}
+                            item.slider_range?.length - 1}
                         </p>
                       )}
                       <div className="flex items-center gap-2">

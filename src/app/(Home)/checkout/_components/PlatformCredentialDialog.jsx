@@ -9,23 +9,25 @@ import {
   Label,
 } from "@headlessui/react";
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose } from "react-icons/io5";
 
 import { addPlatformCredentials } from "@/lib/actions/user-actions";
+import { fetchSubplatforms } from "@/lib/actions/platforms-action";
 
 export const PlatformCredentialDialog = ({
   dialogId,
   dialogOpen,
   onClose,
   loadOrders,
-
   handleUserFetch,
 }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [subplatforms, setSubplatforms] = useState([]);
+  const [selectedSubplatform, setSelectedSubplatform] = useState(null);
 
   const handleSubmit = async ({ username, password }) => {
     if (!dialogId?.id) {
@@ -64,6 +66,28 @@ export const PlatformCredentialDialog = ({
     setPassword("");
   };
 
+  const loadSubplatforms = async (id) => {
+    try {
+      setLoading(true);
+      const result = await fetchSubplatforms(id);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setSubplatforms(result);
+      }
+    } catch (error) {
+      toast.error("Failed to load subplatforms. Please try again!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (dialogId?.has_sub_platforms) {
+      loadSubplatforms(dialogId?.id);
+    }
+  }, [dialogId]);
+
   return (
     <Dialog
       open={dialogOpen}
@@ -86,32 +110,53 @@ export const PlatformCredentialDialog = ({
           </DialogTitle>
 
           <div className="flex flex-col gap-4">
-            {/* platform Name Field */}
-            <Field className="flex flex-col gap-1 w-full">
-              <Label className="text-sm">Username</Label>
-              <Input
-                type="text"
-                placeholder="username"
-                autoFocus
-                className="input-field"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </Field>
+            {/* Subplatforms */}
+            {dialogId?.has_sub_platforms && (
+              <Field className="flex flex-col gap-2">
+                <Label className="text-sm">Subplatform</Label>
+                <select
+                  value={selectedSubplatform}
+                  onChange={(e) => setSelectedSubplatform(e.target.value)}
+                  className="input-field"
+                >
+                  <option value="">Select a subplatform</option>
+                  {subplatforms.map((subplatform) => (
+                    <option key={subplatform.id} value={subplatform.id}>
+                      {subplatform.name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            )}
 
-            {/* password Field */}
-            <Field className="flex flex-col gap-1 w-full">
-              <Label className="text-sm">Password</Label>
-              <Input
-                type="password"
-                placeholder="password"
-                autoFocus
-                className="input-field"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Field>
-
+            {selectedSubplatform && (
+              <>
+                {/* platform Name Field */}
+                <Field className="flex flex-col gap-1 w-full">
+                  <Label className="text-sm">Username</Label>
+                  <Input
+                    type="text"
+                    placeholder="username"
+                    autoFocus
+                    className="input-field"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </Field>
+                {/* password Field */}
+                <Field className="flex flex-col gap-1 w-full">
+                  <Label className="text-sm">Password</Label>
+                  <Input
+                    type="password"
+                    placeholder="password"
+                    autoFocus
+                    className="input-field"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </Field>
+              </>
+            )}
             <div className="flex items-center justify-between gap-4">
               {/* Submit Button */}
               <button
