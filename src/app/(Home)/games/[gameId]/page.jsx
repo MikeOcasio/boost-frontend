@@ -35,7 +35,7 @@ const GamePage = ({ params }) => {
   } = useCartStore();
 
   useEffect(() => {
-    if (game) {
+    if (game && game.platforms) {
       setSelectedPlatform(game?.platforms[0].id);
     }
   }, [game]);
@@ -126,20 +126,47 @@ const GamePage = ({ params }) => {
     addToCart(product);
   };
 
+  const setDropdownRange = () => {
+    const range = game?.dropdown_options.slice(
+      Number(selectedDropdown) + 1,
+      Number(selectedDropdown2) + 1
+    );
+    setSelectedDropdownRange(range);
+  };
+
+  const setSliderRange = () => {
+    const range = game?.slider_range.reduce((acc, item) => {
+      const { min_quantity, max_quantity, price } = item;
+
+      // Find values within the selected range
+      for (let i = min_quantity; i <= max_quantity; i++) {
+        if (i >= selectedDropdown && i <= selectedDropdown2) {
+          acc.push({ index: i, price });
+        }
+      }
+      return acc;
+    }, []);
+
+    setSelectedSliderRange(range);
+  };
+
+  // render cart data
   useEffect(() => {
-    if (cartItem) {
+    if (game && cartItem) {
       // starting index
       if (cartItem.is_dropdown) {
         const startingIndex = game.dropdown_options.findIndex(
-          (option) => option.option === cartItem.dropdown_options[0].option
+          (option) => option.option === cartItem.starting_point.option
         );
-        setSelectedDropdown(startingIndex);
 
         // ending index
-        const endingIndex = game.dropdown_options.findIndex(
-          (option) => option.option === cartItem.dropdown_options[1].option
+        const endingIndex = game.dropdown_options?.findIndex(
+          (option) => option.option === cartItem.ending_point.option
         );
+
+        setSelectedDropdown(startingIndex);
         setSelectedDropdown2(endingIndex);
+        setDropdownRange();
       }
 
       if (cartItem.is_slider) {
@@ -149,6 +176,11 @@ const GamePage = ({ params }) => {
         );
         setSelectedSliderRange(cartItem.slider_range);
       }
+    } else {
+      setSelectedDropdown("");
+      setSelectedDropdown2("");
+      setSelectedSliderRange([]);
+      setDropdownRange();
     }
   }, [cartItem, game]);
 
@@ -170,31 +202,17 @@ const GamePage = ({ params }) => {
     setSelectedDropdown2(e.target.value);
   };
 
+  // set drop down range
   useEffect(() => {
-    if (selectedDropdown && selectedDropdown2) {
-      const range = game.dropdown_options.slice(
-        Number(selectedDropdown) + 1,
-        Number(selectedDropdown2) + 1
-      );
-      setSelectedDropdownRange(range);
+    if (selectedDropdown && selectedDropdown2 && game?.dropdown_options) {
+      setDropdownRange();
     }
-  }, [selectedDropdown, selectedDropdown2]);
+  }, [selectedDropdown, selectedDropdown2, game?.dropdown_options]);
 
+  // set slider range
   useEffect(() => {
-    if (selectedDropdown && selectedDropdown2) {
-      const range = game.slider_range.reduce((acc, item) => {
-        const { min_quantity, max_quantity, price } = item;
-
-        // Find values within the selected range
-        for (let i = min_quantity; i <= max_quantity; i++) {
-          if (i >= selectedDropdown && i <= selectedDropdown2) {
-            acc.push({ index: i, price });
-          }
-        }
-        return acc;
-      }, []);
-
-      setSelectedSliderRange(range);
+    if (selectedDropdown && selectedDropdown2 && game.slider_range) {
+      setSliderRange();
     }
   }, [selectedDropdown, selectedDropdown2, game?.slider_range]);
 
@@ -306,7 +324,7 @@ const GamePage = ({ params }) => {
                         ))}
                       </select>
 
-                      {selectedDropdown &&
+                      {String(selectedDropdown) &&
                         game?.dropdown_options?.length - 1 !==
                           Number(selectedDropdown) && (
                           <select
@@ -348,7 +366,24 @@ const GamePage = ({ params }) => {
                     </p>
 
                     <div className="flex flex-wrap gap-2 items-center justify-between bg-white/10 border border-white/10 hover:border-white/20 rounded-lg p-4">
-                      {(selectedDropdown || selectedDropdown2) && (
+                      {cartItem ? (
+                        (selectedDropdown || selectedDropdown2) && (
+                          <SliderQty
+                            min={game.slider_range[0].min_quantity}
+                            max={
+                              game.slider_range[game.slider_range.length - 1]
+                                .max_quantity
+                            }
+                            selectedMin={selectedDropdown || 10}
+                            selectedMax={selectedDropdown2 || 20}
+                            cartItem={cartItem}
+                            onChange={({ min, max }) => {
+                              setSelectedDropdown(min);
+                              setSelectedDropdown2(max);
+                            }}
+                          />
+                        )
+                      ) : (
                         <SliderQty
                           min={game.slider_range[0].min_quantity}
                           max={
@@ -357,7 +392,6 @@ const GamePage = ({ params }) => {
                           }
                           selectedMin={selectedDropdown || 10}
                           selectedMax={selectedDropdown2 || 20}
-                          cartItem={cartItem}
                           onChange={({ min, max }) => {
                             setSelectedDropdown(min);
                             setSelectedDropdown2(max);

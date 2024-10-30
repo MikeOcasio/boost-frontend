@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export const SliderQty = ({
@@ -36,7 +37,14 @@ export const SliderQty = ({
   }, [minVal, maxVal, onChange]);
 
   return (
-    <div className="relative flex-1">
+    <div
+      className={clsx(
+        "relative flex-1",
+        cartItem?.quantity > 0
+          ? "cursor-not-allowed opacity-50"
+          : "cursor-pointer"
+      )}
+    >
       <input
         disabled={cartItem?.quantity > 0}
         type="range"

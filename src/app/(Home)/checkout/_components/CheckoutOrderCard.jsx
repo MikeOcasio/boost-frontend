@@ -39,29 +39,38 @@ export const CheckoutOrderCard = ({ order }) => {
 
             <div className="flex flex-wrap gap-2 items-center">
               {/* increment and decrement quantity */}
-              <button
-                onClick={() => decreaseQuantity(order.id)}
-                className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
-              >
-                <BiMinus className="h-5 w-5" />
-              </button>
+              {!order.is_dropdown && !order.is_slider && (
+                <button
+                  onClick={() => decreaseQuantity(order.id)}
+                  className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
+                >
+                  <BiMinus className="h-5 w-5" />
+                </button>
+              )}
 
               <p className="text-xs text-gray-300 bg-white/10 px-2 rounded-md">
-                {order.quantity}
+                {order?.is_dropdown || order?.is_slider
+                  ? "Qty: " + order.item_qty
+                  : +order.quantity}
               </p>
 
-              <button
-                onClick={() => increaseQuantity(order.id)}
-                className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
-              >
-                <BiPlus className="h-5 w-5" />
-              </button>
+              {!order.is_dropdown && !order.is_slider && (
+                <button
+                  onClick={() => increaseQuantity(order.id)}
+                  className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
+                >
+                  <BiPlus className="h-5 w-5" />
+                </button>
+              )}
             </div>
           </div>
         </div>
 
         <p className="text-lg font-semibold">
-          ${(order.price * order.quantity).toFixed(2)}
+          $
+          {order.is_dropdown || order.is_slider
+            ? order.price
+            : (order.price * order.quantity).toFixed(2)}
         </p>
       </div>
     </div>

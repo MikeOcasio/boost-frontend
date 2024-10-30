@@ -19,21 +19,25 @@ const CreateProductPage = () => {
   const [checkoutInProgress, setCheckoutInProgress] = useState(false);
 
   // Consolidate platform ID from the cart items
-  const platformId = cartItems.length > 0 ? cartItems[0].platform.id : null;
 
   const handleCheckout = async () => {
-    if (!sessionId) {
-      toast.error("Session ID not found. Please try again!");
+    if (checkoutInProgress) return; // Prevent multiple requests
+    setCheckoutInProgress(true);
+
+    const orderData = JSON.parse(sessionStorage.getItem("place_order"));
+
+    if (!sessionId || !orderData || orderData.sessionId !== sessionId) {
+      toast.error("Invalid session. Please try again!");
       router.push("/checkout");
       return;
     }
 
-    if (checkoutInProgress) return; // Prevent multiple requests
-    setCheckoutInProgress(true);
+    const platformId =
+      orderData.orders.length > 0 ? orderData.orders[0].platform.id : null;
 
     try {
       // Collect all product IDs based on their quantities
-      const productIds = cartItems.flatMap((order) =>
+      const productIds = orderData.orders.flatMap((order) =>
         Array(order.quantity).fill(order.id)
       );
 
@@ -45,6 +49,7 @@ const CreateProductPage = () => {
         session_id: sessionId,
         platform: platformId,
         product_ids: productIds,
+        ordersData: orderData.orders,
       };
 
       const response = await createOrder(data);
@@ -58,7 +63,7 @@ const CreateProductPage = () => {
         toast.success("Order placed successfully!");
 
         // Remove all items with the same platform
-        cartItems.forEach((order) => removeFromCart(order.id));
+        orderData.orders.forEach((order) => removeFromCart(order.id));
 
         router.push(`/thank_you?order_id=${response.order_id}`);
       }

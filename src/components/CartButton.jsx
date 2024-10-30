@@ -115,7 +115,7 @@ export const CartButton = ({ mobileNav }) => {
 
                       {(item.is_dropdown || item.is_slider) && (
                         <p className="text-xs">
-                          qty:{" "}
+                          Qty:{" "}
                           {item.dropdown_options?.length ||
                             item.slider_range?.length}
                         </p>

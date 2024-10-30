@@ -98,12 +98,46 @@ const CheckoutPage = () => {
             quantity: item.quantity,
           };
 
+          if (item.is_dropdown) {
+            order.is_dropdown = product.is_dropdown;
+            order.dropdown_options = item.dropdown_options;
+            order.starting_point = item.starting_point;
+            order.ending_point = item.ending_point;
+            order.item_qty = item.dropdown_options.length;
+            order.quantity = 1;
+            order.price = item.dropdown_options.reduce(
+              (acc, curr) => acc + curr.price,
+              0
+            );
+          }
+
+          if (item.is_slider) {
+            order.is_slider = product.is_slider;
+            order.slider_range = item.slider_range;
+            order.item_qty = item.slider_range.length;
+            order.quantity = 1;
+            order.starting_point = item.starting_point;
+            order.ending_point = item.ending_point;
+            order.price = item.slider_range.reduce(
+              (acc, curr) => acc + curr.price,
+              0
+            );
+          }
+
           validOrders.push(order);
 
           // Update total price, including tax
-          calculatedTotal +=
-            parseFloat(order.price) * order.quantity +
-            parseFloat(order.tax) * order.quantity;
+          if (item.is_dropdown) {
+            calculatedTotal +=
+              parseFloat(order.price) + parseFloat(order.tax) * order.item_qty;
+          } else if (item.is_slider) {
+            calculatedTotal +=
+              parseFloat(order.price) + parseFloat(order.tax) * order.item_qty;
+          } else {
+            calculatedTotal +=
+              parseFloat(order.price) * order.quantity +
+              parseFloat(order.tax) * order.quantity;
+          }
 
           // Group orders by platform ID
           const platformId = item.platform.id;
@@ -135,7 +169,20 @@ const CheckoutPage = () => {
     try {
       setLoading(true);
 
-      const data = await checkoutSession(orders);
+      // if order is slider or dropdown then add tax to the price and make the tax 0
+      const options = orders.map((order) => {
+        if (order.is_dropdown || order.is_slider) {
+          return {
+            ...order,
+            price: order.price + order.tax * order.item_qty,
+            tax: 0,
+          };
+        } else {
+          return order;
+        }
+      });
+
+      const data = await checkoutSession(options);
 
       if (data.error) {
         toast.error(data.error);
@@ -143,6 +190,15 @@ const CheckoutPage = () => {
 
         return null;
       } else {
+        // in session storage set the current order data with the session id
+        sessionStorage.setItem(
+          "place_order",
+          JSON.stringify({
+            orders,
+            sessionId: data.sessionId,
+          })
+        );
+
         setClientSecret(data.sessionId);
         return data.sessionId;
       }
@@ -233,12 +289,19 @@ const CheckoutPage = () => {
                   <span>Price</span>
                   <span>
                     $
-                    {platformOrders
-                      .reduce(
-                        (acc, curr) => acc + Number(curr.price * curr.quantity),
-                        0
-                      )
-                      .toFixed(2)}
+                    {
+                      // if dropdown or slider, do not include quantity
+                      platformOrders
+                        .reduce(
+                          (acc, curr) =>
+                            curr.is_dropdown || curr.is_slider
+                              ? acc + Number(curr.price)
+                              : acc + Number(curr.price * curr.quantity),
+
+                          0
+                        )
+                        .toFixed(2)
+                    }
                   </span>
                 </p>
 
@@ -248,7 +311,10 @@ const CheckoutPage = () => {
                     $
                     {platformOrders
                       .reduce(
-                        (acc, curr) => acc + Number(curr.tax) * curr.quantity,
+                        (acc, curr) =>
+                          curr.is_dropdown || curr.is_slider
+                            ? acc + Number(curr.tax) * curr.item_qty
+                            : acc + Number(curr.tax) * curr.quantity,
                         0
                       )
                       .toFixed(2)}
@@ -288,11 +354,15 @@ const CheckoutPage = () => {
                       platformOrders
                         ?.reduce(
                           (acc, curr) =>
-                            acc +
-                            Number(
-                              curr.price * curr.quantity +
-                                curr.tax * curr.quantity
-                            ),
+                            curr.is_dropdown || curr.is_slider
+                              ? acc +
+                                Number(curr.price) +
+                                Number(curr.tax * curr.item_qty)
+                              : acc +
+                                Number(
+                                  curr.price * curr.quantity +
+                                    curr.tax * curr.quantity
+                                ),
                           0
                         )
                         .toFixed(2)}

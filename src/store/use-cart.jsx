@@ -32,18 +32,6 @@ const calculateTotalPrice = (cartItems) => {
   localStorage.setItem("totalPrice", totalPrice);
 
   return totalPrice;
-
-  // return cartItems
-  //   .reduce(
-  //     (total, item) =>
-  //       total + item.slider_range.reduce((acc, curr) => acc + curr.price, 0),
-  //     0
-  //   )
-  //   .toFixed(2);
-
-  // return cartItems
-  //   .reduce((total, item) => total + item.price * item.quantity, 0)
-  //   .toFixed(2);
 };
 
 // get total price from localStorage
