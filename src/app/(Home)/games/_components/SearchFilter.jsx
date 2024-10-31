@@ -4,7 +4,7 @@ import {
   PopoverButton,
   PopoverPanel,
 } from "@headlessui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiCross, BiFilter, BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
@@ -21,8 +21,9 @@ export const SearchFilter = ({ filter, setFilter }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
+      setLoading(true);
       const result = await fetchCategories();
       if (result.error) {
         setError(true);
@@ -32,11 +33,14 @@ export const SearchFilter = ({ filter, setFilter }) => {
     } catch (error) {
       setError(true);
       toast.error("Failed to load categories");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const loadAttribute = async () => {
+  const loadAttribute = useCallback(async () => {
     try {
+      setLoading(true);
       const result = await fetchAttribute();
       if (result.error) {
         setError(true);
@@ -46,11 +50,14 @@ export const SearchFilter = ({ filter, setFilter }) => {
     } catch (error) {
       setError(true);
       toast.error("Failed to load attributes");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const loadPlatforms = async () => {
+  const loadPlatforms = useCallback(async () => {
     try {
+      setLoading(true);
       const result = await fetchPlatforms();
       if (result.error) {
         setError(true);
@@ -60,19 +67,16 @@ export const SearchFilter = ({ filter, setFilter }) => {
     } catch (error) {
       setError(true);
       toast.error("Failed to load platforms");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-    await Promise.all([loadCategories(), loadAttribute(), loadPlatforms()]);
-    setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    loadCategories();
+    loadAttribute();
+    loadPlatforms();
+  }, [loadAttribute, loadCategories, loadPlatforms]);
 
   return (
     <Popover>

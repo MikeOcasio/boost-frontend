@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
@@ -26,10 +26,11 @@ const Badges = ({
   const [error, setError] = useState(false);
   const scrollContainerRef = useRef(null);
 
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     if (!categoryId) return;
 
     try {
+      setLoading(true);
       const result = await fetchProductByCategories(categoryId);
       if (result.error) {
         setError(true);
@@ -45,15 +46,18 @@ const Badges = ({
     } catch (error) {
       setError(true);
       toast.error("Failed to load badges. Please try again!");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [categoryId, currentGameId]);
 
-  const loadAttribute = async () => {
+  const loadAttribute = useCallback(async () => {
     if (!attributeId || attributeId.length < 1) return;
 
     const attributeArr = [];
 
     try {
+      setLoading(true);
       for (const item of attributeId) {
         const result = await fetchProductByAttribute(item?.id);
         if (result.error) {
@@ -72,23 +76,15 @@ const Badges = ({
     } catch (error) {
       setError(true);
       toast.error("Failed to load badges. Please try again!");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const loadRelatedGames = async () => {
-    setLoading(true);
-    setError(false);
-
-    if (categoryId) loadCategories();
-
-    if (attributeId) loadAttribute();
-
-    setLoading(false);
-  };
+  }, [attributeId, currentGameId]);
 
   useEffect(() => {
-    loadRelatedGames();
-  }, []);
+    loadCategories();
+    loadAttribute();
+  }, [loadAttribute, loadCategories]);
 
   // Scroll left function
   const scrollLeft = () => {

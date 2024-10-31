@@ -35,7 +35,7 @@ export default function SignIn() {
     if (userToken) {
       router.push("/");
     }
-  }, []);
+  }, [router, userToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 import { BsTrophyFill } from "react-icons/bs";
@@ -17,7 +17,7 @@ const MasterPage = ({ params }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const loadSkillmaster = async () => {
+  const loadSkillmaster = useCallback(async () => {
     setLoading(true);
     setError(false);
 
@@ -36,11 +36,11 @@ const MasterPage = ({ params }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params?.master]);
 
   useEffect(() => {
     loadSkillmaster();
-  }, []);
+  }, [loadSkillmaster]);
 
   // Function to prefetch gameplay URLs
   const prefetchGameplayUrls = async (gameplayInfo) => {

@@ -56,8 +56,9 @@ export function Header() {
 
   const { userToken, removeToken, user, setUser } = useUserStore();
 
-  const handleUserFetch = async () => {
+  const handleUserFetch = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await fetchCurrentUser();
       if (response?.error) {
         throw new Error(response.error);
@@ -68,11 +69,11 @@ export function Header() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [removeToken, setUser]);
 
   useEffect(() => {
     handleUserFetch();
-  }, [userToken]);
+  }, [handleUserFetch, userToken]);
 
   useEffect(() => {
     setMounted(true);

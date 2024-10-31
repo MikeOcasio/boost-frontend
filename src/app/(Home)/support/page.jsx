@@ -8,7 +8,7 @@ const SupportPage = () => {
 
   useEffect(() => {
     router.push("/");
-  }, []);
+  }, [router]);
 
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4"></div>

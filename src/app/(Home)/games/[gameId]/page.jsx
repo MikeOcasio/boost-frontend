@@ -3,7 +3,7 @@
 import { CheckIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BiLoader, BiMinus, BiPlus, BiTrash } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
@@ -42,7 +42,7 @@ const GamePage = ({ params }) => {
 
   const cartItem = game && cartItems.find((item) => item.id === game.id);
 
-  const loadGame = async () => {
+  const loadGame = useCallback(async () => {
     setLoading(true);
     setError(false);
 
@@ -80,11 +80,11 @@ const GamePage = ({ params }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params?.gameId, router]);
 
   useEffect(() => {
     loadGame();
-  }, []);
+  }, [loadGame]);
 
   const handleAddToCart = () => {
     if (!game || !game.is_active) return;
@@ -126,15 +126,15 @@ const GamePage = ({ params }) => {
     addToCart(product);
   };
 
-  const setDropdownRange = () => {
+  const setDropdownRange = useCallback(() => {
     const range = game?.dropdown_options.slice(
       Number(selectedDropdown) + 1,
       Number(selectedDropdown2) + 1
     );
     setSelectedDropdownRange(range);
-  };
+  }, [selectedDropdown, selectedDropdown2, game?.dropdown_options]);
 
-  const setSliderRange = () => {
+  const setSliderRange = useCallback(() => {
     const range = game?.slider_range.reduce((acc, item) => {
       const { min_quantity, max_quantity, price } = item;
 
@@ -148,7 +148,7 @@ const GamePage = ({ params }) => {
     }, []);
 
     setSelectedSliderRange(range);
-  };
+  }, [selectedDropdown, selectedDropdown2, game?.slider_range]);
 
   // render cart data
   useEffect(() => {
@@ -182,7 +182,7 @@ const GamePage = ({ params }) => {
       setSelectedSliderRange([]);
       setDropdownRange();
     }
-  }, [cartItem, game]);
+  }, [cartItem, game, setDropdownRange]);
 
   const handleDropdownChange = (e) => {
     if (
@@ -207,14 +207,19 @@ const GamePage = ({ params }) => {
     if (selectedDropdown && selectedDropdown2 && game?.dropdown_options) {
       setDropdownRange();
     }
-  }, [selectedDropdown, selectedDropdown2, game?.dropdown_options]);
+  }, [
+    selectedDropdown,
+    selectedDropdown2,
+    game?.dropdown_options,
+    setDropdownRange,
+  ]);
 
   // set slider range
   useEffect(() => {
     if (selectedDropdown && selectedDropdown2 && game.slider_range) {
       setSliderRange();
     }
-  }, [selectedDropdown, selectedDropdown2, game?.slider_range]);
+  }, [selectedDropdown, selectedDropdown2, game.slider_range, setSliderRange]);
 
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen p-4">

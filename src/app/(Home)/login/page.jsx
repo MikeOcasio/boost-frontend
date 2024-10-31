@@ -31,7 +31,7 @@ export default function Login() {
     if (userToken) {
       router.push("/");
     }
-  }, []);
+  }, [router, userToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
