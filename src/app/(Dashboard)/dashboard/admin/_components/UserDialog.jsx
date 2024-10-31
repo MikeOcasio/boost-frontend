@@ -84,6 +84,11 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
       return;
     }
 
+    if (userData.id === currentUser?.id) {
+      toast.error("You cannot update your own role!");
+      return;
+    }
+
     setLoading(true);
     try {
       if (userData.id) {

@@ -3,7 +3,7 @@ import {
   updateOrderStatus,
 } from "@/lib/actions/orders-action";
 import { fetchAllSkillmasters } from "@/lib/actions/user-actions";
-import { adminOrderStatus, orderStatus } from "@/lib/data";
+import { adminOrderStatus } from "@/lib/data";
 import { useUserStore } from "@/store/use-user";
 import { Dialog, DialogPanel, DialogTitle, Select } from "@headlessui/react";
 import clsx from "clsx";

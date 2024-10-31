@@ -32,8 +32,6 @@ export const PlatformCredentialDialog = ({
 
   const { user } = useUserStore();
 
-  console.log("platform details", dialogId);
-
   const handleSubmit = async ({ username, password, sub_platform_id }) => {
     if (!dialogId?.id) {
       toast.error("something went wrong");
@@ -132,7 +130,11 @@ export const PlatformCredentialDialog = ({
                 <Label className="text-sm">Subplatform</Label>
                 <select
                   value={selectedSubplatform}
-                  onChange={(e) => setSelectedSubplatform(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedSubplatform(e.target.value);
+                    setPassword("");
+                    setUsername("");
+                  }}
                   className="input-field"
                 >
                   <option value="">Select a subplatform</option>

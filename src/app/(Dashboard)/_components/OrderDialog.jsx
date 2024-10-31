@@ -7,10 +7,10 @@ import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
 
-import { updateOrderStatus } from "@/lib/actions/orders-action";
+import { fetchOrderById, updateOrderStatus } from "@/lib/actions/orders-action";
 import { orderStatus } from "@/lib/data";
 import { useUserStore } from "@/store/use-user";
-import { BiImage } from "react-icons/bi";
+import { BiCopy, BiImage } from "react-icons/bi";
 
 export const OrderDialog = ({
   dialogOpen,
@@ -23,8 +23,27 @@ export const OrderDialog = ({
 }) => {
   const { user } = useUserStore();
 
+  const [currentOrder, setCurrentOrder] = useState(null);
+
   const [currentOrderState, setCurrentOrderState] = useState(order?.state);
   const [loading, setLoading] = useState(false);
+
+  // get order by id
+  const getOrderById = async (orderId) => {
+    try {
+      setLoading(true);
+      const result = await fetchOrderById(orderId);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setCurrentOrder(result);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch order details. Please try again!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (order?.state) {
@@ -253,6 +272,65 @@ export const OrderDialog = ({
                 </span>
               </p>
             </div>
+
+            {/* get credential */}
+            {!currentOrder?.platform_credentials && (
+              <button
+                onClick={() => getOrderById(order.id)}
+                className="flex-1 bg-Gold rounded-lg p-2 text-base font-bold min-w-fit"
+              >
+                Get platform credential
+              </button>
+            )}
+
+            {/* credential */}
+            {currentOrder?.platform_credentials && (
+              <div className="flex flex-col gap-2 border border-white/10 p-4 rounded-lg">
+                <p className="text-xs flex flex-wrap gap-2 items-center">
+                  <span>Platform Credentials</span>
+
+                  {currentOrder?.platform_credentials && (
+                    <span className="bg-white/10 px-2 rounded-md">
+                      {currentOrder?.platform_credentials.platform.name || ""} /{" "}
+                      {currentOrder?.platform_credentials?.sub_platform.name ||
+                        ""}
+                    </span>
+                  )}
+                </p>
+
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center border-b pb-2 border-white/10">
+                  Username:
+                  <span
+                    className="font-semibold bg-white/10 px-2 py-1 rounded-md flex gap-1 items-center hover:bg-white/20 cursor-pointer transition-all"
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        currentOrder?.platform_credentials.username
+                      );
+                      toast.success("Copied to clipboard!");
+                    }}
+                  >
+                    <BiCopy className="h-5 w-5 hover:bg-black/10 p-1 rounded-md" />
+                    ******
+                  </span>
+                </p>
+
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
+                  Password:{" "}
+                  <span
+                    className="font-semibold bg-white/10 px-2 py-1 rounded-md flex gap-1 items-center hover:bg-white/20 cursor-pointer transition-all"
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        currentOrder?.platform_credentials.password
+                      );
+                      toast.success("Copied to clipboard!");
+                    }}
+                  >
+                    <BiCopy className="h-5 w-5 hover:bg-black/10 p-1 rounded-md" />
+                    ******
+                  </span>
+                </p>
+              </div>
+            )}
 
             {/* data and price */}
             <div className="flex flex-wrap gap-4 justify-between items-center">

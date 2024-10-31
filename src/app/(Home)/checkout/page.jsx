@@ -289,7 +289,6 @@ const CheckoutPage = () => {
               key={index}
               className="space-y-4 bg-white/10 p-2 py-4 rounded-lg"
             >
-              {/* if user do not have platform credential for the game show message and add credential button */}
               {!userHasPlatformCredential && (
                 <p className="text-center text-sm text-red-500">
                   You do not have any credential for this platform. Please add

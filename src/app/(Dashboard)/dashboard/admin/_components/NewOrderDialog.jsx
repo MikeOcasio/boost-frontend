@@ -94,7 +94,7 @@ export const NewOrderDialog = ({ dialogOpen, onClose, loadOrders }) => {
       const response = await createOrder(data);
 
       if (response.error) {
-        response.error.forEach((err) => toast.error(err));
+        toast.error(JSON.stringify(response.error));
       } else {
         toast.success("Order added successfully!");
         handleClosed();
