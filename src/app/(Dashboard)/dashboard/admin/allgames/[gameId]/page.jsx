@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { BiLoader, BiUpload } from "react-icons/bi";
@@ -19,7 +19,7 @@ const GameEditPage = ({ params }) => {
 
   const [missingFields, setMissingFields] = useState([]);
 
-  const fetchGames = async () => {
+  const fetchGames = useCallback(async () => {
     setLoading(true);
     setError(false);
 
@@ -32,12 +32,12 @@ const GameEditPage = ({ params }) => {
       } else {
         const platformArr = response.platforms.map((platform) => platform.id);
 
-        const dropdownOptions = response.dropdown_options?.map((option) => {
-          return JSON.parse(option);
-        });
-        const sliderRanges = response.slider_range?.map((range) => {
-          return JSON.parse(range);
-        });
+        const dropdownOptions = response.dropdown_options?.map((option) =>
+          JSON.parse(option)
+        );
+        const sliderRanges = response.slider_range?.map((range) =>
+          JSON.parse(range)
+        );
 
         setGame({
           ...response,
@@ -52,11 +52,11 @@ const GameEditPage = ({ params }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [gameId]);
 
   useEffect(() => {
     fetchGames();
-  }, []);
+  }, [fetchGames]);
 
   const validateGame = () => {
     const errors = [];

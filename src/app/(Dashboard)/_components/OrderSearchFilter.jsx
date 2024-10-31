@@ -20,6 +20,7 @@ export const OrderSearchFilter = ({ filter, setFilter }) => {
 
   const loadPlatforms = async () => {
     try {
+      setLoading(true);
       const result = await fetchPlatforms();
       if (result.error) {
         setError(true);
@@ -29,20 +30,13 @@ export const OrderSearchFilter = ({ filter, setFilter }) => {
     } catch (error) {
       setError(true);
       toast.error("Failed to load platforms");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-
-    await loadPlatforms();
-
-    setLoading(false);
-  };
-
   useEffect(() => {
-    loadData();
+    loadPlatforms();
   }, []);
 
   return (

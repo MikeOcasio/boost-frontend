@@ -19,7 +19,7 @@ export const Faq = () => {
           <p className="">
             Discover answers to your questions about our services for PC, Xbox,
             and PlayStation gamers. Explore customization options, pricing, and
-            our commitment to safety. We're here to enhance your gaming
+            our commitment to safety. We&apos;re here to enhance your gaming
             experience.
           </p>
 

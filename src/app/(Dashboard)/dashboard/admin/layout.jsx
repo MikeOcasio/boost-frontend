@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import toast from "react-hot-toast";
@@ -18,7 +18,7 @@ const AdminLayout = ({ children }) => {
   const [error, setError] = useState(false);
 
   // Function to fetch and verify the current user
-  const handleUserFetch = async () => {
+  const handleUserFetch = useCallback(async () => {
     try {
       const response = await fetchCurrentUser();
       if (response?.error) {
@@ -33,7 +33,7 @@ const AdminLayout = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, setUser, removeToken]);
 
   useEffect(() => {
     if (!userToken) {
@@ -44,7 +44,7 @@ const AdminLayout = ({ children }) => {
     }
 
     handleUserFetch();
-  }, [userToken]);
+  }, [userToken, handleUserFetch, router]);
 
   // Handle the loading state
   if (loading) {
@@ -61,7 +61,6 @@ const AdminLayout = ({ children }) => {
       <p className="mt-4 w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
         <IoWarning className="h-5 w-5 mr-2" />
         An error occurred. Please try again!
-        {/* Reload page */}
         <Link
           href="/"
           className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all"

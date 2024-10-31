@@ -94,13 +94,13 @@ export const PlatformCredentialDialog = ({
         setLoading(false);
       }
     };
-  }, [dialogId]);
+  }, []);
 
   useEffect(() => {
     if (dialogId?.has_sub_platforms) {
       loadSubplatforms(dialogId?.id);
     }
-  }, [dialogId]);
+  }, [dialogId, loadSubplatforms]);
 
   return (
     <Dialog

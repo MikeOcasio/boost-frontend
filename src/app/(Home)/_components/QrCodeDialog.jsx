@@ -23,7 +23,7 @@ export const QrCodeDialog = ({
     if (dialogOpen) {
       !dialogData.qr_code && setPassCodeScreen(true);
     }
-  }, [dialogOpen, passCodeScreen]);
+  }, [dialogData?.qr_code, dialogOpen, passCodeScreen]);
 
   return (
     <Dialog

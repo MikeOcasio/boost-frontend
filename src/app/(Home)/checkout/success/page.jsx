@@ -4,7 +4,7 @@ import { createOrder } from "@/lib/actions/orders-action";
 import { useCartStore } from "@/store/use-cart";
 import { useUserStore } from "@/store/use-user";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 
@@ -20,7 +20,7 @@ const CreateProductPage = () => {
 
   // Consolidate platform ID from the cart items
 
-  const handleCheckout = async () => {
+  const handleCheckout = useCallback(async () => {
     if (checkoutInProgress) return; // Prevent multiple requests
     setCheckoutInProgress(true);
 
@@ -75,13 +75,13 @@ const CreateProductPage = () => {
     } finally {
       setCheckoutInProgress(false);
     }
-  };
+  }, [checkoutInProgress, removeFromCart, router, sessionId, user?.id]);
 
   useEffect(() => {
     if (sessionId && user?.id && !checkoutInProgress) {
       handleCheckout();
     }
-  }, [sessionId, user]);
+  }, [checkoutInProgress, handleCheckout, sessionId, user]);
 
   return (
     <Suspense fallback={<BiLoader className="h-8 w-8 animate-spin mx-auto" />}>

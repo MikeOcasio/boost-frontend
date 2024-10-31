@@ -101,7 +101,7 @@ const UserDashboard = () => {
     ) {
       loadGraveyardOrders();
     }
-  }, []);
+  }, [user?.role]);
 
   if (!user) {
     return (

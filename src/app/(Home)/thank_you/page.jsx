@@ -19,7 +19,7 @@ const PaymentConfirmation = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const loadOrderData = async () => {
+  const loadOrderData = useCallback(async () => {
     setLoading(true);
     setError(false);
 
@@ -56,11 +56,11 @@ const PaymentConfirmation = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, params]);
 
   useEffect(() => {
     loadOrderData();
-  }, []);
+  }, [loadOrderData]);
 
   return (
     <Suspense fallback={<BiLoader className="h-8 w-8 animate-spin mx-auto" />}>

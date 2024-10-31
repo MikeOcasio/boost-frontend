@@ -67,6 +67,7 @@ export const EditGame = ({ data, setData }) => {
 
   const loadCategories = async () => {
     try {
+      setLoading(true);
       const result = await fetchCategories();
       if (result.error) {
         throw new Error(result.error);
@@ -74,11 +75,14 @@ export const EditGame = ({ data, setData }) => {
       setCategories(result);
     } catch (error) {
       setError("Failed to load categories");
+    } finally {
+      setLoading(false);
     }
   };
 
   const loadAttribute = async () => {
     try {
+      setLoading(true);
       const result = await fetchAttribute();
       if (result.error) {
         throw new Error(result.error);
@@ -86,11 +90,14 @@ export const EditGame = ({ data, setData }) => {
       setAttribute(result);
     } catch (error) {
       setError("Failed to load attributes");
+    } finally {
+      setLoading(false);
     }
   };
 
   const loadPlatforms = async () => {
     try {
+      setLoading(true);
       const result = await fetchPlatforms();
       if (result.error) {
         throw new Error(result.error);
@@ -98,19 +105,15 @@ export const EditGame = ({ data, setData }) => {
       setPlatforms(result);
     } catch (error) {
       setError("Failed to load platforms");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // load all data
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-    await Promise.all([loadCategories(), loadAttribute(), loadPlatforms()]);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    loadData();
+    loadCategories();
+    loadAttribute();
+    loadPlatforms();
   }, []);
 
   const addFeature = () => {

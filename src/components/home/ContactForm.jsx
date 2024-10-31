@@ -29,10 +29,10 @@ export const ContactForm = () => {
           />
           <p className="z-10 p-4 md:p-6 text-lg leading-8 text-center">
             Got questions, need assistance, or want to share your feedback?
-            We're all ears! At Raven Boost, your gaming experience and
+            We&apos;re all ears! At Raven Boost, your gaming experience and
             satisfaction are our top priorities. Use the options below to get in
-            touch with us, and we'll make sure to address your needs as swiftly
-            as possible.
+            touch with us, and we&apos;ll make sure to address your needs as
+            swiftly as possible.
           </p>
           <Image
             src="/utils/COD_Ghosts.png"
@@ -113,7 +113,7 @@ export const ContactForm = () => {
               type="submit"
               className="block w-full rounded-full bg-Gold px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-Plum focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Gold transition-all"
             >
-              Let's talk
+              Let&apos;s talk
             </button>
           </div>
         </form>

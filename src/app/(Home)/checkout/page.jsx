@@ -38,7 +38,7 @@ const CheckoutPage = () => {
   const [selectedSubplatform, setSelectedSubplatform] = useState("");
 
   // fetch user info
-  const handleUserFetch = async () => {
+  const handleUserFetch = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetchCurrentUser();
@@ -57,7 +57,7 @@ const CheckoutPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, removeToken, setUser]);
 
   useEffect(() => {
     if (!userToken) {
@@ -68,9 +68,9 @@ const CheckoutPage = () => {
     }
 
     handleUserFetch();
-  }, []);
+  }, [handleUserFetch, router, userToken]);
 
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     setLoading(true);
     setError(false);
     let validOrders = [];
@@ -165,12 +165,10 @@ const CheckoutPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [cartItems, emptyCart, router, setTotalPrice]);
 
   // Function to fetch clientSecret
   const fetchClientSecret = useCallback(async (orders) => {
-    console.log("orders data ", orders);
-
     try {
       setLoading(true);
 
@@ -230,7 +228,7 @@ const CheckoutPage = () => {
     if (userToken) {
       loadOrders();
     }
-  }, [userToken, cartItems]);
+  }, [userToken, cartItems, loadOrders]);
 
   // credential dialog
   const handleCredentialDialog = async (platform_id) => {
@@ -385,8 +383,7 @@ const CheckoutPage = () => {
                     loading ||
                     error ||
                     totalPrice < 1 ||
-                    !userHasPlatformCredential ||
-                    !selectedSubplatform
+                    (!userHasPlatformCredential && !selectedSubplatform)
                   }
                   type="button"
                   onClick={() => fetchClientSecret(platformOrders)}

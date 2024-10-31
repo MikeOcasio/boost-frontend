@@ -43,6 +43,7 @@ const AccountPage = () => {
 
   const loadUser = async () => {
     try {
+      setLoading(true);
       const result = await fetchCurrentUser();
       if (result.error) {
         setError(true);
@@ -61,11 +62,14 @@ const AccountPage = () => {
     } catch (e) {
       setError(true);
       toast.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const loadPlatforms = async () => {
     try {
+      setLoading(true);
       const result = await fetchPlatforms();
       if (result.error) {
         setError(true);
@@ -76,21 +80,26 @@ const AccountPage = () => {
     } catch (e) {
       setError(true);
       toast.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  //  load user data by default and if edititng is true, load the platform data
-  const loadData = async () => {
-    setLoading(true);
-    setError(false);
+  // const loadData = async () => {
+  //   setLoading(true);
+  //   setError(false);
 
-    await Promise.all([loadPlatforms(), loadUser()]).then(() => {
-      setLoading(false);
-    });
-  };
+  //   await Promise.all([loadPlatforms(), loadUser()]).then(() => {
+  //     setLoading(false);
+  //   });
+  // };
 
+  //
+
+  // load data
   useEffect(() => {
-    loadData();
+    loadPlatforms();
+    loadUser();
   }, []);
 
   const handleUpdateProfile = async () => {
@@ -208,7 +217,7 @@ const AccountPage = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
         <h1 className="text-2xl font-semibold flex gap-2 items-center">
-          {user?.first_name}'s Account
+          {user?.first_name}&apos;s Account
           {(user.role === "admin" ||
             user.role === "dev" ||
             user.role === "skillmaster") && (

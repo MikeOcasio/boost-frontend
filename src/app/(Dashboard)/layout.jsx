@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import toast from "react-hot-toast";
@@ -21,7 +21,7 @@ const DashboardLayout = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const handleUserFetch = async () => {
+  const handleUserFetch = useCallback(async () => {
     try {
       const response = await fetchCurrentUser();
       if (response?.error) {
@@ -37,7 +37,7 @@ const DashboardLayout = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, setUser, removeToken]);
 
   useEffect(() => {
     if (!userToken) {
@@ -48,7 +48,7 @@ const DashboardLayout = ({ children }) => {
     }
 
     handleUserFetch();
-  }, [userToken]);
+  }, [handleUserFetch, router, userToken]);
 
   if (loading) {
     return (
