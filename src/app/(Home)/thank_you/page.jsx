@@ -5,7 +5,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiImage, BiLoader, BiReceipt } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
@@ -13,7 +13,8 @@ import { PiGameControllerFill } from "react-icons/pi";
 
 const PaymentConfirmation = () => {
   const router = useRouter();
-  const params = useSearchParams().get("order_id");
+  const searchParam = useSearchParams();
+  const params = searchParam.get("order_id");
 
   const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(true);

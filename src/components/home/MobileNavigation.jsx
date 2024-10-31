@@ -13,7 +13,7 @@ import { CartButton } from "../CartButton";
 function MobileNavItem({ href, children }) {
   return (
     <li>
-      <PopoverButton as={Link} href={href} className="block py-2">
+      <PopoverButton as={Link} href={href} className="block py-2 text-white">
         {children}
       </PopoverButton>
     </li>
@@ -50,7 +50,7 @@ export const MobileNavigation = ({
           <h3 className="text-lg font-semibold">Menu</h3>
         </div>
 
-        <nav className="overflow-y-auto max-h-[80vh] no-scrollbar">
+        <nav className="overflow-y-auto max-h-[80vh] no-scrollbar text-white">
           <ul className="divide-y divide-zinc-100 text-base text-zinc-800">
             {resources.map((item) => (
               <MobileNavItem key={item.name} href={item.href}>
@@ -69,7 +69,7 @@ export const MobileNavigation = ({
               <button
                 onClick={handleLogout}
                 disabled={loading}
-                className="w-full group relative flex flex-wrap items-center gap-x-6 rounded-lg p-2 hover:bg-yellow-600/30"
+                className="w-full group relative flex flex-wrap items-center gap-x-6 p-2 hover:bg-yellow-600/30"
               >
                 <div className="bg-inherit mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg">
                   {loading ? (
@@ -78,7 +78,7 @@ export const MobileNavigation = ({
                     <BiPowerOff className="h-6 w-6 text-white" />
                   )}
                 </div>
-                <div>Logout</div>
+                <p className="text-white">Logout</p>
               </button>
             )}
 

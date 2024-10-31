@@ -28,7 +28,7 @@ export const CartButton = ({ mobileNav }) => {
   return (
     <Popover>
       {mobileNav ? (
-        <PopoverButton className="w-full group relative flex flex-wrap items-center gap-x-6 rounded-lg my-2 p-2 hover:bg-yellow-600/30">
+        <PopoverButton className="w-full group relative flex flex-wrap items-center gap-x-6 rounded-lg my-2 p-2 hover:bg-yellow-600/30 text-white">
           <BiCart className="bg-inherit p-2 h-11 w-11 rounded-lg" />
           <span>Cart</span>
         </PopoverButton>

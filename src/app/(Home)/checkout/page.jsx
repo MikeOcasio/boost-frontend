@@ -22,7 +22,8 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 const CheckoutPage = () => {
   const router = useRouter();
   const { userToken, setUser, removeToken, user } = useUserStore();
-  const { cartItems, emptyCart, totalPrice, setTotalPrice } = useCartStore();
+  const { cartItems, emptyCart, totalPrice, setTotalPrice, setCartItems } =
+    useCartStore();
 
   const [orderByPlatform, setOrderByPlatform] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -168,49 +169,63 @@ const CheckoutPage = () => {
   }, [cartItems, emptyCart, router, setTotalPrice]);
 
   // Function to fetch clientSecret
-  const fetchClientSecret = useCallback(async (orders) => {
-    try {
-      setLoading(true);
+  const fetchClientSecret = useCallback(
+    async (orders) => {
+      try {
+        setLoading(true);
 
-      // if order is slider or dropdown then add tax to the price and make the tax 0
-      const options = orders.map((order) => {
-        if (order.is_dropdown || order.is_slider) {
-          return {
-            ...order,
-            price: order.price + order.tax * order.item_qty,
-            tax: 0,
-          };
+        // if order is slider or dropdown then add tax to the price and make the tax 0
+        const options = orders.map((order) => {
+          if (order.is_dropdown || order.is_slider) {
+            return {
+              ...order,
+              price: order.price + order.tax * order.item_qty,
+              tax: 0,
+            };
+          } else {
+            return order;
+          }
+        });
+
+        const data = await checkoutSession(options);
+
+        if (data.error) {
+          toast.error(data.error);
+          setLoading(false);
+
+          return null;
         } else {
-          return order;
+          // in session storage set the current order data with the session id
+
+          if (selectedSubplatform) {
+            sessionStorage.setItem(
+              "place_order",
+              JSON.stringify({
+                orders,
+                sessionId: data.sessionId,
+                subplatform: selectedSubplatform,
+              })
+            );
+          } else {
+            sessionStorage.setItem(
+              "place_order",
+              JSON.stringify({
+                orders,
+                sessionId: data.sessionId,
+              })
+            );
+          }
+          setClientSecret(data.sessionId);
+          return data.sessionId;
         }
-      });
-
-      const data = await checkoutSession(options);
-
-      if (data.error) {
-        toast.error(data.error);
+      } catch (error) {
+        toast.error(error.message || "Payment failed. Please try again.");
+      } finally {
         setLoading(false);
-
-        return null;
-      } else {
-        // in session storage set the current order data with the session id
-        sessionStorage.setItem(
-          "place_order",
-          JSON.stringify({
-            orders,
-            sessionId: data.sessionId,
-          })
-        );
-
-        setClientSecret(data.sessionId);
-        return data.sessionId;
       }
-    } catch (error) {
-      toast.error(error.message || "Payment failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [selectedSubplatform]
+  );
 
   useEffect(() => {
     if (clientSecret) {

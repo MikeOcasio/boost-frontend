@@ -9,41 +9,50 @@ import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 
 const CreateProductPage = () => {
-  const sessionId = useSearchParams().get("session_id");
+  const searchParam = useSearchParams();
+  const sessionId = searchParam.get("session_id");
   const router = useRouter();
 
   const { removeFromCart } = useCartStore();
   const { user } = useUserStore();
 
-  // State to track if the checkout has been processed
+  const [orderData, setOrderData] = useState(null);
   const [checkoutInProgress, setCheckoutInProgress] = useState(false);
 
-  // Consolidate platform ID from the cart items
+  useEffect(() => {
+    // Access sessionStorage only after the component mounts on the client
+    if (typeof window !== "undefined") {
+      const sessionStorageData = sessionStorage.getItem("place_order");
+      if (sessionStorageData) {
+        setOrderData(JSON.parse(sessionStorageData));
+      }
+    }
+  }, []);
 
-  const handleCheckout = useCallback(async () => {
-    if (checkoutInProgress) return; // Prevent multiple requests
-    setCheckoutInProgress(true);
-
-    const orderData = JSON.parse(sessionStorage.getItem("place_order"));
-
+  const validateSession = useCallback(() => {
     if (!sessionId || !orderData || orderData.sessionId !== sessionId) {
       toast.error("Invalid session. Please try again!");
       router.push("/checkout");
-      return;
+      return false;
     }
+    return true;
+  }, [sessionId, orderData, router]);
+
+  const handleCheckout = useCallback(async () => {
+    if (checkoutInProgress || !validateSession()) return;
+    setCheckoutInProgress(true);
 
     const platformId =
       orderData.orders.length > 0 ? orderData.orders[0].platform.id : null;
 
     try {
-      // Collect all product IDs based on their quantities
       const productIds = orderData.orders.flatMap((order) =>
         Array(order.quantity).fill(order.id)
       );
 
       const data = {
         order: {
-          user_id: await user?.id,
+          user_id: user?.id,
           state: "open",
         },
         session_id: sessionId,
@@ -52,17 +61,19 @@ const CreateProductPage = () => {
         ordersData: orderData.orders,
       };
 
+      if (orderData.subplatform) {
+        data.subplatform_id = Number(orderData.subplatform);
+      }
+
       const response = await createOrder(data);
 
       if (response.error) {
         toast.error(response.error);
         setCheckoutInProgress(false);
         router.push("/checkout");
-        return;
       } else {
         toast.success("Order placed successfully!");
 
-        // Remove all items with the same platform
         orderData.orders.forEach((order) => removeFromCart(order.id));
 
         sessionStorage.removeItem("place_order");
@@ -72,16 +83,35 @@ const CreateProductPage = () => {
       toast.error(error.message || "Error creating order!");
       setCheckoutInProgress(false);
       router.push("/checkout");
-    } finally {
-      setCheckoutInProgress(false);
     }
-  }, [checkoutInProgress, removeFromCart, router, sessionId, user?.id]);
+  }, [
+    checkoutInProgress,
+    validateSession,
+    orderData,
+    user?.id,
+    sessionId,
+    router,
+    removeFromCart,
+  ]);
 
   useEffect(() => {
-    if (sessionId && user?.id && !checkoutInProgress) {
+    if (
+      orderData &&
+      !checkoutInProgress &&
+      sessionId &&
+      user?.id &&
+      validateSession()
+    ) {
       handleCheckout();
     }
-  }, [checkoutInProgress, handleCheckout, sessionId, user]);
+  }, [
+    checkoutInProgress,
+    sessionId,
+    user?.id,
+    orderData,
+    handleCheckout,
+    validateSession,
+  ]);
 
   return (
     <Suspense fallback={<BiLoader className="h-8 w-8 animate-spin mx-auto" />}>
