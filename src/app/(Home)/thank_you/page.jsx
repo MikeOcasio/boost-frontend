@@ -5,7 +5,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiImage, BiLoader, BiReceipt } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
@@ -14,15 +14,6 @@ import { PiGameControllerFill } from "react-icons/pi";
 const PaymentConfirmation = () => {
   const router = useRouter();
   const searchParam = useSearchParams();
-
-  return (
-    <Suspense fallback={<BiLoader className="h-8 w-8 animate-spin mx-auto" />}>
-      <PaymentDetails searchParam={searchParam} router={router} />
-    </Suspense>
-  );
-};
-
-const PaymentDetails = ({ searchParam, router }) => {
   const params = searchParam.get("order_id");
 
   const [orderData, setOrderData] = useState(null);
@@ -40,15 +31,20 @@ const PaymentDetails = ({ searchParam, router }) => {
         toast.error(result.error);
         router.push("/games");
       } else {
+        // Group products by their ID and sum the quantities
+
         const groupedProducts = result.order.products.reduce((acc, product) => {
           const existingProduct = acc.find((p) => p.id === product.id);
+
           if (existingProduct) {
             existingProduct.quantity += product.quantity || 1;
           } else {
             acc.push({ ...product, quantity: product.quantity || 1 });
           }
+
           return acc;
         }, []);
+
         setOrderData({
           ...result,
           order: { ...result.order, products: groupedProducts },
@@ -56,7 +52,7 @@ const PaymentDetails = ({ searchParam, router }) => {
       }
     } catch (error) {
       setError(true);
-      toast.error("Error loading order data.");
+      toast.error(true);
       router.push("/games");
     } finally {
       setLoading(false);
@@ -67,35 +63,6 @@ const PaymentDetails = ({ searchParam, router }) => {
     loadOrderData();
   }, [loadOrderData]);
 
-  return (
-    <div className="pt-24 max-w-7xl mx-auto min-h-screen flex flex-col items-center justify-center gap-6 p-4 overflow-hidden">
-      {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
-      {error && (
-        <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
-          <IoWarning className="h-5 w-5 mr-2" />
-          Failed to load order details. Please try again!
-          <button
-            onClick={loadOrderData}
-            className="p-2 rounded-lg bg-white/10"
-          >
-            Reload
-          </button>
-        </p>
-      )}
-      {/* Render order details here if orderData exists */}
-      {!loading && !error && orderData && (
-        <OrderDetailsContent
-          orderData={orderData}
-          loading={loading}
-          error={error}
-          loadOrderData={loadOrderData}
-        />
-      )}
-    </div>
-  );
-};
-
-const OrderDetailsContent = ({ orderData, loading, error, loadOrderData }) => {
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen flex flex-col items-center justify-center gap-6 p-4 overflow-hidden">
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}

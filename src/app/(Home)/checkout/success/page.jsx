@@ -4,7 +4,7 @@ import { createOrder } from "@/lib/actions/orders-action";
 import { useCartStore } from "@/store/use-cart";
 import { useUserStore } from "@/store/use-user";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 
@@ -114,11 +114,9 @@ const CreateProductPage = () => {
   ]);
 
   return (
-    <Suspense fallback={<BiLoader className="h-8 w-8 animate-spin mx-auto" />}>
-      <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4 flex items-center justify-center">
-        <BiLoader className="h-8 w-8 animate-spin mx-auto" />
-      </div>
-    </Suspense>
+    <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4 flex items-center justify-center">
+      <BiLoader className="h-8 w-8 animate-spin mx-auto" />
+    </div>
   );
 };
 
