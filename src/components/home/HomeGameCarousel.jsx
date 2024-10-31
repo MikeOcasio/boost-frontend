@@ -40,7 +40,7 @@ export const HomeGameCarousel = ({ data }) => {
   };
 
   return (
-    <div>
+    <div className="h-fit">
       {data?.length && (
         <Carousel
           autoPlay={true}
