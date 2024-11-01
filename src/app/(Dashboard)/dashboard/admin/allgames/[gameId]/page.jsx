@@ -30,14 +30,26 @@ const GameEditPage = ({ params }) => {
         setError(true);
         toast.error(response.error);
       } else {
-        const platformArr = response.platforms.map((platform) => platform.id);
+        const platformArr = response?.platforms?.map((platform) => platform.id);
 
-        const dropdownOptions = response.dropdown_options?.map((option) =>
-          JSON.parse(option)
-        );
-        const sliderRanges = response.slider_range?.map((range) =>
-          JSON.parse(range)
-        );
+        const dropdownOptions = response?.dropdown_options?.map((option) => {
+          try {
+            return option && JSON.parse(option);
+          } catch (error) {
+            console.warn("Failed to parse dropdown option:", option, error);
+            return {}; // Default empty object in case of parsing error
+          }
+        });
+
+        const sliderRanges = response?.slider_range?.map((range) => {
+          try {
+            console.log("slider range", range);
+            return range && JSON.parse(range);
+          } catch (error) {
+            console.warn("Failed to parse slider range:", range, error);
+            return {}; // Default empty object in case of parsing error
+          }
+        });
 
         setGame({
           ...response,
@@ -47,6 +59,8 @@ const GameEditPage = ({ params }) => {
         });
       }
     } catch (error) {
+      console.log("error", error);
+
       setError(true);
       toast.error("Failed to fetch product data.");
     } finally {

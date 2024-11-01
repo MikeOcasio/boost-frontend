@@ -56,13 +56,23 @@ const GamePage = ({ params }) => {
       } else {
         if (result.is_dropdown) {
           result.dropdown_options = result.dropdown_options.map((option) => {
-            return JSON.parse(option);
+            try {
+              return JSON.parse(option);
+            } catch (error) {
+              console.warn("Failed to parse dropdown option:", option, error);
+              return {}; // Default empty object in case of parsing error
+            }
           });
         }
 
         if (result.is_slider) {
           result.slider_range = result.slider_range.map((range) => {
-            return JSON.parse(range);
+            try {
+              return JSON.parse(range);
+            } catch (error) {
+              console.warn("Failed to parse slider range:", range, error);
+              return {}; // Default empty object in case of parsing error
+            }
           });
         }
 
@@ -284,8 +294,8 @@ const GamePage = ({ params }) => {
                 </p>
 
                 <ul role="list" className="space-y-2 ms-2">
-                  {game.features.map((feature) => (
-                    <li key={feature} className="flex gap-x-3">
+                  {game.features.map((feature, index) => (
+                    <li key={index} className="flex gap-x-3">
                       <CheckIcon
                         className="h-6 w-5 flex-none text-green-500"
                         aria-hidden="true"

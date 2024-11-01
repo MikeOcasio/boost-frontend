@@ -532,7 +532,7 @@ export const EditGame = ({ data, setData }) => {
                   <Label>Max Quantity</Label>
                   <Input
                     type="number"
-                    placeholder={range?.min_quantity + 9}
+                    placeholder={range?.min_quantity + 9 || index + 10}
                     disabled={index !== game.slider_range.length - 1}
                     value={range?.max_quantity || ""}
                     className="input-field"
