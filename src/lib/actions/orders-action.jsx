@@ -51,8 +51,6 @@ export const fetchOrderById = async (orderId) => {
 
 // create order
 export const createOrder = async (orderData) => {
-  console.log("orderData", orderData);
-
   try {
     const sessionToken = await getSessionToken();
     if (!sessionToken) {

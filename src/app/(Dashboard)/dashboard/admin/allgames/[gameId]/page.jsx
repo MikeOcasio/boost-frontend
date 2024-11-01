@@ -43,7 +43,6 @@ const GameEditPage = ({ params }) => {
 
         const sliderRanges = response?.slider_range?.map((range) => {
           try {
-            console.log("slider range", range);
             return range && JSON.parse(range);
           } catch (error) {
             console.warn("Failed to parse slider range:", range, error);
@@ -59,8 +58,6 @@ const GameEditPage = ({ params }) => {
         });
       }
     } catch (error) {
-      console.log("error", error);
-
       setError(true);
       toast.error("Failed to fetch product data.");
     } finally {

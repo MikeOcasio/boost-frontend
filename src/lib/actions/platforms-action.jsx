@@ -103,7 +103,30 @@ export const deletePlatform = async (platformId) => {
   }
 };
 
-// need to check from here
+export const enableSubplatform = async (platformData) => {
+  try {
+    const sessionToken = await getSessionToken();
+
+    const response = await axios.put(
+      `${apiUrl}/api/platforms/${platformData.id}`,
+      { has_sub_platforms: platformData.has_sub_platforms },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || error.message;
+    console.error("Failed to update platform:", errorMessage);
+
+    return {
+      error: errorMessage || "An error occurred while updating the platform.",
+    };
+  }
+};
 
 // get subplatforms
 export const fetchSubplatforms = async (id) => {
@@ -130,13 +153,20 @@ export const fetchSubplatforms = async (id) => {
 };
 
 // add subplatform
-export const addSubplatform = async (subplatformData) => {
+export const addSubplatform = async (data, platformId) => {
   try {
     const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "Failed to add subplatform. Please try again!" };
+    }
 
     const response = await axios.post(
-      `${apiUrl}/api/subplatforms`,
-      { name: subplatformData.name },
+      `${apiUrl}/api/platforms/${platformId}/sub_platforms`,
+      {
+        sub_platform: {
+          name: data.name,
+        },
+      },
       {
         headers: {
           Authorization: `Bearer ${sessionToken}`,
@@ -146,8 +176,8 @@ export const addSubplatform = async (subplatformData) => {
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data?.error || error.message;
-    console.error("Failed to add subplatform:", errorMessage);
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error("Failed to add subplatform:", error);
 
     return {
       error: errorMessage || "An error occurred while adding the subplatform.",
@@ -156,13 +186,20 @@ export const addSubplatform = async (subplatformData) => {
 };
 
 // update subplatform
-export const updateSubplatform = async (subplatformData) => {
+export const updateSubplatform = async (data, platformId) => {
   try {
     const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "Failed to add subplatform. Please try again!" };
+    }
 
     const response = await axios.put(
-      `${apiUrl}/api/subplatforms/${subplatformData.id}`,
-      { name: subplatformData.name },
+      `${apiUrl}/api/platforms/${platformId}/sub_platforms/${data.id}`,
+      {
+        sub_platform: {
+          name: data.name,
+        },
+      },
       {
         headers: {
           Authorization: `Bearer ${sessionToken}`,
@@ -183,12 +220,15 @@ export const updateSubplatform = async (subplatformData) => {
 };
 
 // delete subplatform
-export const deleteSubplatform = async (subplatformId) => {
+export const deleteSubplatform = async (platformId, subPlatformId) => {
   try {
     const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "Failed to add subplatform. Please try again!" };
+    }
 
     const response = await axios.delete(
-      `${apiUrl}/api/subplatforms/${subplatformId}`,
+      `${apiUrl}/api/platforms/${platformId}/sub_platforms/${subPlatformId}`,
       {
         headers: {
           Authorization: `Bearer ${sessionToken}`,
