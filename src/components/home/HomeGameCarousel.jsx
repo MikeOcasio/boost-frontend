@@ -40,11 +40,11 @@ export const HomeGameCarousel = ({ data }) => {
   };
 
   return (
-    <div className="h-fit">
+    <div>
       {data?.length && (
         <Carousel
           autoPlay={true}
-          infiniteLoop={true}
+          infiniteLoop={data.length > 1}
           emulateTouch={true}
           onChange={handleChange}
           interval={3000}
