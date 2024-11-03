@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { getQrCode, loginUser } from "@/lib/actions/user-actions";
 import { useUserStore } from "@/store/use-user";
 import { QrCodeDialog } from "../_components/QrCodeDialog";
+import { ForgotPasswordDialog } from "../_components/ForgotPasswordDialog";
 
 export default function Login() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function Login() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogData, setDialogData] = useState(null);
+  const [openForgotDialog, setOpenForgotDialog] = useState(false);
 
   const { userToken } = useUserStore();
 
@@ -143,9 +145,11 @@ export default function Login() {
                 </button>
               </div>
             </Field>
+
             <button
               type="button"
-              className="text-end text-sm text-blue-600 hover:text-blue-500"
+              onClick={() => setOpenForgotDialog(true)}
+              className="text-end text-sm text-blue-600 hover:text-blue-500 w-fit ml-auto"
             >
               Forgot your password?
             </button>
@@ -194,6 +198,12 @@ export default function Login() {
         email={email}
         password={password}
         dialogData={dialogData}
+      />
+
+      {/* Forgot Password Dialog */}
+      <ForgotPasswordDialog
+        dialogOpen={openForgotDialog}
+        onClose={() => setOpenForgotDialog(false)}
       />
     </div>
   );
