@@ -142,6 +142,13 @@ const PlatformsPage = () => {
                       <p className="text-lg font-semibold break-all">
                         {highlightMatch(platform.name, searchTerm)}
                       </p>
+
+                      {platform.has_sub_platforms && (
+                        <p className="text-xs font-semibold border border-white/10 rounded-lg px-2 py-1">
+                          Sub platform
+                        </p>
+                      )}
+
                       <p className="text-xs font-semibold">
                         Created at:{" "}
                         {new Date(platform.created_at).toLocaleString()}
