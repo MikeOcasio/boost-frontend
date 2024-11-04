@@ -144,7 +144,7 @@ const PlatformsPage = () => {
                       </p>
 
                       {platform.has_sub_platforms && (
-                        <p className="text-xs font-semibold border border-white/10 rounded-lg px-2 py-1">
+                        <p className="text-xs font-semibold border border-white/10 rounded-lg px-2 py-1 w-fit">
                           Sub platform
                         </p>
                       )}
