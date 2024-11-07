@@ -71,7 +71,7 @@ export default function SignIn() {
       });
 
       if (response.error) {
-        toast.error("Error signing in user!");
+        toast.error(response.error || "Error signing in user!");
       } else {
         getUserSession();
       }
@@ -183,7 +183,7 @@ export default function SignIn() {
           <Field className="flex flex-col gap-1 w-full">
             <Label className="text-sm">Email</Label>
             <Input
-              type="text"
+              type="email"
               placeholder="Email"
               className="input-field"
               required

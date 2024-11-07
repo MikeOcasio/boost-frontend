@@ -115,7 +115,8 @@ export default function Login() {
           <Field className="flex flex-col gap-1 w-full">
             <Label className="text-sm">Email</Label>
             <Input
-              type="text"
+              type="email"
+              required
               placeholder="Email"
               autoFocus
               className="input-field"
@@ -130,6 +131,7 @@ export default function Login() {
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
+                  required
                   placeholder="Password"
                   className="input-field w-full"
                   value={password}

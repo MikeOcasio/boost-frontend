@@ -29,6 +29,7 @@ export default function Home() {
         const popularGames = result.filter(
           (game) => game.is_active && game.most_popular
         );
+
         setData(popularGames);
       }
     } catch (error) {

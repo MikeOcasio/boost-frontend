@@ -485,7 +485,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
                       width={150}
                       height={150}
                       priority
-                      className="mx-auto w-full h-full rounded-lg object-cover bg-white/10"
+                      className="mx-auto w-full h-full max-h-[200px] rounded-lg object-cover bg-white/10"
                     />
                     <IoMdClose
                       type="button"

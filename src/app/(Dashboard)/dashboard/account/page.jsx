@@ -85,17 +85,6 @@ const AccountPage = () => {
     }
   };
 
-  // const loadData = async () => {
-  //   setLoading(true);
-  //   setError(false);
-
-  //   await Promise.all([loadPlatforms(), loadUser()]).then(() => {
-  //     setLoading(false);
-  //   });
-  // };
-
-  //
-
   // load data
   useEffect(() => {
     loadPlatforms();
