@@ -10,7 +10,7 @@ const getEmbedUrl = (url) => {
   // Check if it's a Twitch URL
   if (url.includes("twitch.tv")) {
     const videoId = url.split("/").pop();
-    return `https://player.twitch.tv/?video=${videoId}&parent=localhost`;
+    return `https://player.twitch.tv/?video=${videoId}&parent=ravenboost`;
   }
 
   // If it's a direct MP4 URL

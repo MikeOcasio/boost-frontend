@@ -11,11 +11,23 @@ import { IoWarning } from "react-icons/io5";
 import { fetchSkillmasterById } from "@/lib/actions/user-actions";
 import { EmbededFrame } from "../_components/EmbededFrame";
 import { PiGameControllerFill } from "react-icons/pi";
+import { useUserStore } from "@/store/use-user";
+import { useRouter } from "next/navigation";
 
 const MasterPage = ({ params }) => {
   const [skillMaster, setSkillMaster] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const router = useRouter();
+
+  const { user } = useUserStore();
+
+  useEffect(() => {
+    if (!user?.id) {
+      router.push("/login");
+    }
+  }, [user, router]);
 
   const loadSkillmaster = useCallback(async () => {
     setLoading(true);
@@ -106,15 +118,14 @@ const MasterPage = ({ params }) => {
                 height={700}
                 alt="skillmaster"
                 priority
-                className="mx-auto h-[300px] w-[300px] object-cover object-center rounded-full bg-white/10"
+                className="mx-auto h-[300px] w-[300px] object-contain object-center rounded-full bg-white/10"
               />
             ) : (
               <IoMdPerson className="h-28 w-28 bg-white/10 rounded-full p-4 mx-auto" />
             )}
 
             <p className="text-6xl tracking-widest text-center font-title">
-              {skillMaster.gamer_tag ||
-                skillMaster.first_name + " " + skillMaster.last_name}
+              {skillMaster.gamer_tag || "Skillmaster#" + skillMaster.id}
             </p>
 
             <div className="flex flex-wrap gap-2 text-sm items-center justify-center">

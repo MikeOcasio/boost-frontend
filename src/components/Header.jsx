@@ -182,7 +182,7 @@ export function Header() {
                         width={50}
                         height={50}
                         priority
-                        className="h-10 w-10 rounded-full object-cover"
+                        className="h-10 w-10 rounded-full object-contain"
                       />
                     ) : (
                       <FaRegUser className="h-10 w-10 p-2.5" />

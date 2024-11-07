@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { BiLogoTiktok } from "react-icons/bi";
-import { BsInstagram, BsTwitterX } from "react-icons/bs";
+import { BsDiscord, BsInstagram, BsTwitterX } from "react-icons/bs";
 
 function SocialLink({ icon: Icon, ...props }) {
   return (
@@ -37,10 +37,14 @@ export function Footer() {
           />
         </div>
 
-        <Link href="mailto:support@ravenboost.com">
-          <span className="break-all italic text-white underline">
-            support@ravenboost.com
-          </span>
+        <Link
+          href="https://discord.gg/2BVynY4WSc"
+          target="_blank"
+          className="flex flex-wrap gap-2 text-sm rounded-full px-4 py-2 border-2 border-white/10 hover:bg-white/10 transition-all"
+        >
+          <BsDiscord className="h-6 w-6 fill-white transition group-hover:fill-zinc-400" />
+
+          <span className="break-all text-white">support</span>
         </Link>
       </div>
     </footer>

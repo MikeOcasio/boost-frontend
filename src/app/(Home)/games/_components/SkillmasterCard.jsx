@@ -25,7 +25,7 @@ export const SkillmasterCard = ({ skillMaster, searchTerm }) => {
             width={150}
             height={150}
             priority
-            className="h-full m-auto w-full object-cover object-center rounded-lg"
+            className="h-full m-auto w-full object-contain object-center rounded-lg"
           />
         ) : (
           <IoMdPerson className="h-28 w-28 rounded-full m-auto" />
@@ -36,9 +36,8 @@ export const SkillmasterCard = ({ skillMaster, searchTerm }) => {
         <div className="space-y-2">
           <p className="text-xl font-bold leading-6 text-white">
             {!skillMaster.gamer_tag &&
-              highlightMatch(skillMaster.first_name, searchTerm)}{" "}
-            {!skillMaster.gamer_tag &&
-              highlightMatch(skillMaster.last_name, searchTerm)}
+              highlightMatch("Skillmaster#" + skillMaster.id, searchTerm)}
+
             {skillMaster.gamer_tag &&
               highlightMatch(skillMaster.gamer_tag, searchTerm)}
           </p>

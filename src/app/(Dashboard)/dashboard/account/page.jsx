@@ -257,7 +257,7 @@ const AccountPage = () => {
                       width={200}
                       height={200}
                       priority
-                      className="mx-auto w-auto h-auto rounded-lg object-cover bg-white/10"
+                      className="mx-auto w-auto h-auto rounded-lg object-contain bg-white/10"
                     />
                     <IoMdClose
                       type="button"
@@ -315,7 +315,7 @@ const AccountPage = () => {
                     width={150}
                     height={150}
                     priority
-                    className="mx-auto h-auto w-auto rounded-lg object-cover bg-white/10"
+                    className="mx-auto h-auto w-auto rounded-lg object-contain bg-white/10"
                   />
                 ) : (
                   <IoMdPerson className="h-28 w-28 bg-white/10 rounded-full p-4 mx-auto" />
