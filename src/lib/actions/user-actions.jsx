@@ -57,7 +57,7 @@ export const loginUser = async ({
   try {
     const { data } = await axios.post(`${apiUrl}/users/sign_in`, {
       user: {
-        email,
+        email: email?.toLowerCase(),
         password,
         remember_me: rememberMe,
         otp_attempt: passcode,
@@ -94,7 +94,7 @@ export const createUser = async ({
   try {
     const { data } = await axios.post(`${apiUrl}/users`, {
       user: {
-        email: email,
+        email: email?.toLowerCase(),
         first_name: firstName,
         last_name: lastName,
         password: password,
@@ -182,7 +182,7 @@ export const updateUser = async (user) => {
           gameplay_info: user.gameplay_info,
           bio: user.bio,
           role: user.role,
-          email: user.email,
+          email: user.email?.toLowerCase(),
         },
       },
       {
