@@ -76,8 +76,8 @@ export function Navbar() {
   }, [lastScrollY]);
 
   const handleLogout = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       if (!userToken) {
         toast.error("No token found. Please login again.");
         return;
@@ -93,8 +93,9 @@ export function Navbar() {
     } catch (err) {
       toast.error(err.message || "Failed to log out user.");
     } finally {
-      removeToken();
       setLoading(false);
+
+      removeToken();
       router.push("/");
     }
   };

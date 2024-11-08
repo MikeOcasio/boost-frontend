@@ -48,6 +48,7 @@ const AccountPage = () => {
       if (result.error) {
         setError(true);
         toast.error(result.error);
+        router.push("/login");
       } else {
         const gameplayInfo = result.gameplay_info.map((gameplay) => {
           // parsing array of objects

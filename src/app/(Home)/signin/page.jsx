@@ -246,6 +246,14 @@ export default function SignIn() {
             {loading && <BiLoader className="h-5 w-5 animate-spin" />}
             Sign in
           </button>
+
+          <p className="text-xs text-center text-white/80">
+            By signing in, you agree to our{" "}
+            <Link href="/terms" className="font-semibold text-Gold">
+              Terms and Conditions
+            </Link>
+            .
+          </p>
         </form>
 
         <p className="mt-10 text-center text-sm text-gray-500">

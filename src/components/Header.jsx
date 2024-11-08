@@ -48,31 +48,35 @@ const resourcesData = [
 export function Header() {
   const router = useRouter();
 
+  const { userToken, removeToken, user, setUser } = useUserStore();
+
   const [resources, setResources] = useState(resourcesData);
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(!!userToken);
   const [mounted, setMounted] = useState(false);
 
-  const { userToken, removeToken, user, setUser } = useUserStore();
-
   const handleUserFetch = useCallback(async () => {
+    if (!userToken) return;
+
     try {
       setLoading(true);
       const response = await fetchCurrentUser();
+
       if (response?.error) {
-        throw new Error(response.error);
+        router.push("/");
+      } else {
+        setUser(response);
       }
-      setUser(response);
     } catch (err) {
       await removeToken();
     } finally {
       setLoading(false);
     }
-  }, [removeToken, setUser]);
+  }, [removeToken, router, setUser, userToken]);
 
   useEffect(() => {
-    handleUserFetch();
+    if (userToken) handleUserFetch();
   }, [handleUserFetch, userToken]);
 
   useEffect(() => {
@@ -115,8 +119,9 @@ export function Header() {
   }, [lastScrollY]);
 
   const handleLogout = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
+
       if (!userToken) {
         toast.error("No token found. Please login again.");
         return;

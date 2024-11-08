@@ -26,7 +26,7 @@ const CheckoutPage = () => {
     useCartStore();
 
   const [orderByPlatform, setOrderByPlatform] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   // dialog
@@ -46,10 +46,9 @@ const CheckoutPage = () => {
 
       if (response?.error) {
         router.push("/login");
-        throw new Error(response.error);
+      } else {
+        setUser(response);
       }
-
-      setUser(response);
     } catch (err) {
       toast.error(err.message || "An error occurred while fetching the user.");
       setError(true);

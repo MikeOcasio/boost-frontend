@@ -5,62 +5,6 @@ const TermsAndConditions = () => {
     <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
       <p className="text-center text-xl font-bold">Terms and Conditions</p>
 
-      <p className="text-lg font-semibold">Raven Boost Terms and Conditions</p>
-
-      <p>Thank you for your interest in Raven Boost!</p>
-
-      <ul className="list-decimal ml-4 space-y-2">
-        <li>
-          Eligibility: To sign up and earn with Raven Boost, you must be 18
-          years or older. It is important to provide accurate information as any
-          false representation of age may result in termination of your profile
-          and orders.
-        </li>
-        <li>
-          Earnings and Fees: As a booster, 35% of your earnings will be
-          allocated to Raven Boost as cover service fees. Please note that you
-          are responsible for handling your own taxes, as they will not be
-          deducted for you. Payments will be made to you on a every 2 weeks,
-          Friday.
-        </li>
-        <li>
-          Order Completion and Support: It is important to reach out to customer
-          support for any issues or concerns regarding order completion. Failure
-          to do so may result in a probationary period as per the &quot;3 strike
-          rule.&quot; Additionally, you agree to take orders from customers who
-          specifically choose your profile. If you are unavailable or have a
-          backlog of orders, they will be assigned to other boosters in the
-          order received.
-        </li>
-        <li>
-          Confidentiality and Legal Considerations: You are required to maintain
-          the confidentiality of Raven Boost&apos;s website ownership.
-          Disclosing this information may lead to legal actions by Raven Boost.
-          Furthermore, it is essential to take pictures of customers before and
-          after completing orders to ensure transparency. It is strictly
-          prohibited to retain customers&apos; information beyond the completion
-          of the order. Failure to comply with this may result in legal
-          consequences, as customers have the right to sue for any misuse of
-          their account information. When it comes to Raven Boost, they cannot
-          be held liable for any potential issues with your gaming account or
-          the misuse of your account information by boosters. In the event of
-          any legal matters, such as unauthorized access or misuse, the
-          jurisdiction would fall under the courts of the Canada (Quebec), Raven
-          Boost serves as a platform for connecting boosters and customers, but
-          Raven Boost are not accountable for individual account issues or the
-          improper use of information. If a booster retains a customer&apos;s
-          account information. Both the customer and the booster are bound by
-          the terms of this agreement.
-        </li>
-        <li>
-          It&apos;s important to note that our terms and policies extend to our
-          Discord community as well. By joining the Raven Boost Discord, you
-          agree to abide by the same rules and guidelines that govern our
-          platform. This ensures a safe and respectful environment for all
-          members
-        </li>
-      </ul>
-
       <p className="text-lg font-semibold">
         Service Terms and Conditions for Raven
       </p>
@@ -133,6 +77,64 @@ const TermsAndConditions = () => {
         understood the terms and conditions outlined herein, and you agree to
         abide by them.
       </p>
+
+      <p className="text-lg font-semibold" id="skillmaster-term">
+        Skillmasters Terms and Conditions
+      </p>
+
+      <p>Thank you for your interest in Raven Boost!</p>
+
+      <ul className="list-decimal ml-4 space-y-2">
+        <li>
+          Eligibility: To sign up and earn with Raven Boost, you must be 18
+          years or older. It is important to provide accurate information as any
+          false representation of age may result in termination of your profile
+          and orders.
+        </li>
+        <li>
+          Earnings and Fees: As a booster, 35% of your earnings will be
+          allocated to Raven Boost as cover service fees. Please note that you
+          are responsible for handling your own taxes, as they will not be
+          deducted for you. Payments will be made to you on a every 2 weeks,
+          Friday.
+        </li>
+        <li>
+          Order Completion and Support: It is important to reach out to customer
+          support for any issues or concerns regarding order completion. Failure
+          to do so may result in a probationary period as per the &quot;3 strike
+          rule.&quot; Additionally, you agree to take orders from customers who
+          specifically choose your profile. If you are unavailable or have a
+          backlog of orders, they will be assigned to other boosters in the
+          order received.
+        </li>
+        <li>
+          Confidentiality and Legal Considerations: You are required to maintain
+          the confidentiality of Raven Boost&apos;s website ownership.
+          Disclosing this information may lead to legal actions by Raven Boost.
+          Furthermore, it is essential to take pictures of customers before and
+          after completing orders to ensure transparency. It is strictly
+          prohibited to retain customers&apos; information beyond the completion
+          of the order. Failure to comply with this may result in legal
+          consequences, as customers have the right to sue for any misuse of
+          their account information. When it comes to Raven Boost, they cannot
+          be held liable for any potential issues with your gaming account or
+          the misuse of your account information by boosters. In the event of
+          any legal matters, such as unauthorized access or misuse, the
+          jurisdiction would fall under the courts of the Canada (Quebec), Raven
+          Boost serves as a platform for connecting boosters and customers, but
+          Raven Boost are not accountable for individual account issues or the
+          improper use of information. If a booster retains a customer&apos;s
+          account information. Both the customer and the booster are bound by
+          the terms of this agreement.
+        </li>
+        <li>
+          It&apos;s important to note that our terms and policies extend to our
+          Discord community as well. By joining the Raven Boost Discord, you
+          agree to abide by the same rules and guidelines that govern our
+          platform. This ensures a safe and respectful environment for all
+          members
+        </li>
+      </ul>
     </div>
   );
 };

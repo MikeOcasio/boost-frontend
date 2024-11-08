@@ -23,12 +23,13 @@ const DashboardLayout = ({ children }) => {
 
   const handleUserFetch = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await fetchCurrentUser();
       if (response?.error) {
-        throw new Error(response.error);
+        router.push("/login");
+      } else {
+        setUser(response);
       }
-
-      setUser(response);
     } catch (err) {
       toast.error(err.message || "An error occurred while fetching the user.");
       setError(true);

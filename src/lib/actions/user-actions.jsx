@@ -367,7 +367,7 @@ export const lockUserAction = async (userId) => {
     }
 
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/member-data/${userId}/lock`,
+      `${apiUrl}/users/member-data/${userId}/lock`,
       null,
       {
         headers: {
@@ -396,7 +396,7 @@ export const unlockUserAction = async (userId) => {
     }
 
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/member-data/${userId}/unlock`,
+      `${apiUrl}/users/member-data/${userId}/unlock`,
       null,
       {
         headers: {
