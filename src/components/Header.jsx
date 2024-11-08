@@ -53,7 +53,7 @@ export function Header() {
   const [resources, setResources] = useState(resourcesData);
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [loading, setLoading] = useState(!!userToken);
+  const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   const handleUserFetch = useCallback(async () => {
@@ -119,13 +119,13 @@ export function Header() {
   }, [lastScrollY]);
 
   const handleLogout = async () => {
+    if (!userToken) {
+      toast.error("No token found. Please login again.");
+      return;
+    }
+
     try {
       setLoading(true);
-
-      if (!userToken) {
-        toast.error("No token found. Please login again.");
-        return;
-      }
 
       const response = await logoutSession();
 
@@ -138,8 +138,9 @@ export function Header() {
       toast.error("Failed to log out user.");
       console.log("Error logging out user:", err);
     } finally {
-      removeToken();
       setLoading(false);
+
+      removeToken();
       router.push("/");
     }
   };

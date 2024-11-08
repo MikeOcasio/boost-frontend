@@ -76,12 +76,13 @@ export function Navbar() {
   }, [lastScrollY]);
 
   const handleLogout = async () => {
+    if (!userToken) {
+      toast.error("No token found. Please login again.");
+      return;
+    }
+
     try {
       setLoading(true);
-      if (!userToken) {
-        toast.error("No token found. Please login again.");
-        return;
-      }
 
       const response = await logoutSession();
 
