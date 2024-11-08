@@ -17,11 +17,11 @@ const TermsAndConditions = () => {
           and orders.
         </li>
         <li>
-          Earnings and Fees: As a booster, 20% of your earnings will be
+          Earnings and Fees: As a booster, 35% of your earnings will be
           allocated to Raven Boost as cover service fees. Please note that you
           are responsible for handling your own taxes, as they will not be
-          deducted for you. Payments will be made to you on a weekly basis,
-          every Friday.
+          deducted for you. Payments will be made to you on a every 2 weeks,
+          Friday.
         </li>
         <li>
           Order Completion and Support: It is important to reach out to customer
