@@ -13,8 +13,8 @@ function SocialLink({ icon: Icon, ...props }) {
 
 export function Footer() {
   return (
-    <footer className="z-10 p-4 backdrop-blur-xl text-white">
-      <div className="flex flex-wrap w-full items-center justify-center md:justify-between bg-gradient-to-r from-Plum/50 to-Gold/50 p-6 backdrop-blur-xl gap-4 rounded-xl">
+    <footer className="z-10 p-4 backdrop-blur-xl text-white space-y-2">
+      <div className="flex flex-wrap w-full items-center justify-center md:justify-between bg-gradient-to-r from-Plum/50 to-Gold/50 p-4 px-6 backdrop-blur-xl gap-4 rounded-xl">
         <div className="flex flex-wrap gap-6">
           <h2 className="font-bold">Follow Us</h2>
           <SocialLink
@@ -45,6 +45,23 @@ export function Footer() {
           <BsDiscord className="h-6 w-6 fill-white transition group-hover:fill-zinc-400" />
 
           <span className="break-all text-white">support</span>
+        </Link>
+      </div>
+      <div className="w-full flex flex-wrap gap-2 text-sm items-center justify-between md:px-4">
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/terms"
+            className="text-sm text-white/50 hover:text-white transition-all"
+          >
+            Terms & conditions
+          </Link>
+        </div>
+
+        <Link
+          href="/"
+          className="text-sm text-white/50 hover:text-white transition-all"
+        >
+          © ravenboost.com - All rights reserved.
         </Link>
       </div>
     </footer>
