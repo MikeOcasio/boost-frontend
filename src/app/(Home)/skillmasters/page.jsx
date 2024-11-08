@@ -11,7 +11,6 @@ import toast from "react-hot-toast";
 
 import { fetchAllSkillmasters } from "@/lib/actions/user-actions";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/store/use-user";
 
 const SkillMastersPage = () => {
   const [skillMasters, setSkillMasters] = useState([]);
@@ -24,13 +23,12 @@ const SkillMastersPage = () => {
   });
 
   const router = useRouter();
-  const { user } = useUserStore();
 
   useEffect(() => {
-    if (!user?.id) {
+    if (error) {
       router.push("/login");
     }
-  }, [user, router]);
+  }, [error, router]);
 
   const loadSkillmasters = async () => {
     setLoading(true);

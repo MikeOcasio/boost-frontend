@@ -11,7 +11,6 @@ import { IoWarning } from "react-icons/io5";
 import { fetchSkillmasterById } from "@/lib/actions/user-actions";
 import { EmbededFrame } from "../_components/EmbededFrame";
 import { PiGameControllerFill } from "react-icons/pi";
-import { useUserStore } from "@/store/use-user";
 import { useRouter } from "next/navigation";
 
 const MasterPage = ({ params }) => {
@@ -21,13 +20,11 @@ const MasterPage = ({ params }) => {
 
   const router = useRouter();
 
-  const { user } = useUserStore();
-
   useEffect(() => {
-    if (!user?.id) {
+    if (error) {
       router.push("/login");
     }
-  }, [user, router]);
+  }, [error, router]);
 
   const loadSkillmaster = useCallback(async () => {
     setLoading(true);
