@@ -51,7 +51,7 @@ export function Header() {
   const [resources, setResources] = useState(resourcesData);
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   const { userToken, removeToken, user, setUser } = useUserStore();
