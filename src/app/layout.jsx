@@ -28,7 +28,7 @@ export const metadata = {
       "Boost Your Game, Your Way! Choose your dream team and leave the rest to us.",
     images: [
       {
-        url: "https://www.ravenboost.com/logo.svg",
+        url: "/meta-home.png",
         width: 1200,
         height: 630,
         alt: "RavenBoost",
@@ -42,7 +42,7 @@ export const metadata = {
       "Boost Your Game, Your Way! Choose your dream team and leave the rest to us.",
     images: [
       {
-        url: "https://www.ravenboost.com/logo.svg",
+        url: "/meta-home.png",
         width: 1200,
         height: 630,
         alt: "RavenBoost",
