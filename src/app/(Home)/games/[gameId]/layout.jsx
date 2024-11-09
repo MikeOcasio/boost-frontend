@@ -1,11 +1,10 @@
 import { fetchGameById } from "@/lib/actions/products-action";
-import React from "react";
 
 // METADATA
 export async function generateMetadata({ params }) {
   const game = await fetchGameById(params.gameId); // Fetch the game data
   return {
-    title: `${game?.name} | ${game?.category?.name}` || "Game Details",
+    title: `${game?.name} | ${game?.category?.name}` || "RavenBoost Game",
     description: game?.tag_line || "Explore game details and boost options.",
     openGraph: {
       type: "article",
