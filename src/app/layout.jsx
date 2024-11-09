@@ -5,6 +5,8 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
+import homeMeta from "/public/meta-home.png";
+
 const akronim = Akronim({
   subsets: ["latin"],
   weight: "400",
@@ -20,15 +22,12 @@ export const metadata = {
     icon: "/logo.svg",
   },
   openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://ravenboost.com",
     title: "RavenBoost",
     description:
       "Boost Your Game, Your Way! Choose your dream team and leave the rest to us.",
     images: [
       {
-        url: "/meta-home.png",
+        url: homeMeta,
         width: 1200,
         height: 630,
         alt: "RavenBoost",
@@ -36,13 +35,12 @@ export const metadata = {
     ],
   },
   twitter: {
-    card: "summary_large_image",
     title: "RavenBoost",
     description:
       "Boost Your Game, Your Way! Choose your dream team and leave the rest to us.",
     images: [
       {
-        url: "/meta-home.png",
+        url: homeMeta,
         width: 1200,
         height: 630,
         alt: "RavenBoost",
