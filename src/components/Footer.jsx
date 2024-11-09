@@ -61,7 +61,7 @@ export function Footer() {
           href="/"
           className="text-sm text-white/50 hover:text-white transition-all"
         >
-          © ravenboost.com - All rights reserved.
+          © www.ravenboost.com - All rights reserved.
         </Link>
       </div>
     </footer>

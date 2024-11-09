@@ -9,7 +9,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       type: "article",
       locale: "en_US",
-      url: `https://ravenboost.com/game?s/${game?.id}`,
+      url: `https://www.ravenboost.com/game?s/${game?.id}`,
       title: game?.name,
       description: game?.tag_line,
       images: [

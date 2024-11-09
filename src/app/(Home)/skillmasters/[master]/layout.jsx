@@ -2,38 +2,34 @@ import { fetchSkillmasterById } from "@/lib/actions/user-actions";
 
 // METADATA
 export async function generateMetadata({ params }) {
-  const skillMaster = await fetchSkillmasterById(params.master); // Fetch the skill master data
   return {
-    title:
-      `${skillMaster?.gamer_tag || "Skillmaster#" + skillMaster?.id}` ||
-      "RavenBoost Skillmaster",
-    description:
-      skillMaster?.bio || "Explore skillmaster details and boost options.",
+    title: "RavenBoost Skillmaster",
+    description: "Explore skillmaster details and boost options.",
     openGraph: {
       type: "article",
       locale: "en_US",
-      url: `https://ravenboost.com/skillmasters/${skillMaster?.id}`,
-      title: skillMaster?.gamer_tag || "Skillmaster#" + skillMaster?.id,
-      description: skillMaster?.bio,
+      url: `https://www.ravenboost.com/skillmasters/${params.master}`,
+      title: "RavenBoost Skillmaster",
+      description: "Explore skillmaster details and boost options.",
       images: [
         {
-          url: skillMaster?.image_url,
+          url: "/skillmasters/hero.png",
           width: 1200,
           height: 630,
-          alt: skillMaster?.gamer_tag || "Skillmaster#" + skillMaster?.id,
+          alt: "RavenBoost Skillmaster",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: skillMaster?.gamer_tag || "Skillmaster#" + skillMaster?.id,
-      description: skillMaster?.bio,
+      title: "RavenBoost Skillmaster",
+      description: "Explore skillmaster details and boost options.",
       images: [
         {
-          url: skillMaster?.image_url,
+          url: "/skillmasters/hero.png",
           width: 1200,
           height: 630,
-          alt: skillMaster?.gamer_tag || "Skillmaster#" + skillMaster?.id,
+          alt: "RavenBoost Skillmaster",
         },
       ],
     },

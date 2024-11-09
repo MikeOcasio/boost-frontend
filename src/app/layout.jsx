@@ -22,7 +22,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://ravenboost.com",
+    url: "https://www.ravenboost.com",
     title: "RavenBoost",
     description:
       "Boost Your Game, Your Way! Choose your dream team and leave the rest to us.",
