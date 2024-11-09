@@ -38,6 +38,8 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (loading) return;
+
     if (!email || !password) {
       toast.error("Email or password is missing");
       return;
@@ -56,21 +58,17 @@ export default function Login() {
 
       if (response.error) {
         toast.error(response.error);
-      } else {
-        if (
-          !dialogData?.user?.otp_required_for_login ||
-          !dialogData?.user?.otp_setup_complete
-        ) {
-          const qrCode = await loadQrCode(response.token).then((res) => {
-            return res.qr_code;
-          });
+      } else if (
+        !dialogData?.user?.otp_required_for_login ||
+        !dialogData?.user?.otp_setup_complete
+      ) {
+        const qrCode = await loadQrCode(response.token);
 
-          setDialogData({ ...response, qr_code: qrCode });
-          setDialogOpen(true);
-        } else {
-          setDialogData(response);
-          setDialogOpen(true);
-        }
+        setDialogData({ ...response, qr_code: qrCode.qr_code });
+        setDialogOpen(true);
+      } else {
+        setDialogData(response);
+        setDialogOpen(true);
       }
     } catch (error) {
       console.log("Error logging in user:", error.message);

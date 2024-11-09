@@ -57,10 +57,10 @@ export function Header() {
   const [mounted, setMounted] = useState(false);
 
   const handleUserFetch = useCallback(async () => {
-    if (!userToken) return;
+    if (!userToken || !mounted) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await fetchCurrentUser();
 
       if (response?.error) {
@@ -73,7 +73,7 @@ export function Header() {
     } finally {
       setLoading(false);
     }
-  }, [removeToken, router, setUser, userToken]);
+  }, [mounted, removeToken, router, setUser, userToken]);
 
   useEffect(() => {
     if (userToken) handleUserFetch();
@@ -144,6 +144,10 @@ export function Header() {
       router.push("/");
     }
   };
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <nav

@@ -60,7 +60,7 @@ export const PassCodeScreen = ({
       if (response.error) {
         toast.error(response.error);
       } else {
-        setUserToken(response.token);
+        await setUserToken(response.token);
 
         toast.success("Passcode verified successfully!");
         setPassCodeScreen(false);
