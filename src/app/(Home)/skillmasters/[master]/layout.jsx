@@ -12,28 +12,28 @@ export async function generateMetadata({ params }) {
     openGraph: {
       type: "article",
       locale: "en_US",
-      url: `https://ravenboost.com/skillmaster?s/${skillMaster?.id}`,
-      title: skillMaster?.gamer_tag,
+      url: `https://ravenboost.com/skillmasters/${skillMaster?.id}`,
+      title: skillMaster?.gamer_tag || "Skillmaster#" + skillMaster?.id,
       description: skillMaster?.bio,
       images: [
         {
           url: skillMaster?.image_url,
           width: 1200,
           height: 630,
-          alt: skillMaster?.gamer_tag,
+          alt: skillMaster?.gamer_tag || "Skillmaster#" + skillMaster?.id,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: skillMaster?.gamer_tag,
+      title: skillMaster?.gamer_tag || "Skillmaster#" + skillMaster?.id,
       description: skillMaster?.bio,
       images: [
         {
           url: skillMaster?.image_url,
           width: 1200,
           height: 630,
-          alt: skillMaster?.gamer_tag,
+          alt: skillMaster?.gamer_tag || "Skillmaster#" + skillMaster?.id,
         },
       ],
     },
