@@ -476,3 +476,24 @@ export const forgotPassword = async (data) => {
     };
   }
 };
+
+// get banned users
+export const fetchBannedUsers = async () => {
+  try {
+    const sessionToken = await getSessionToken();
+
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const { data } = await axios.get(`${apiUrl}/users/banned_emails`, {
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
+    });
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch banned users. Please try again!" };
+  }
+};
