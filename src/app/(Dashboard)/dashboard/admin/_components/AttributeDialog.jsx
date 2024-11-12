@@ -143,7 +143,7 @@ export const AttributeDialog = ({
               : "Add New product attribute"}
           </DialogTitle>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             {/* id */}
             {attribute.id && (
               <button

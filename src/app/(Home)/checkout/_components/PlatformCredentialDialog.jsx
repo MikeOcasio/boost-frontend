@@ -123,7 +123,7 @@ export const PlatformCredentialDialog = ({
             Add {dialogId?.name} credentials
           </DialogTitle>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             {/* Subplatforms */}
             {dialogId?.has_sub_platforms && (
               <Field className="flex flex-col gap-2">

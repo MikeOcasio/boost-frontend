@@ -173,7 +173,7 @@ export const NewOrderDialog = ({ dialogOpen, onClose, loadOrders }) => {
             add multiple products.
           </span>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             {/* user id */}
             <Field className="flex flex-col gap-1 w-full">
               <Label className="text-sm">User ID</Label>

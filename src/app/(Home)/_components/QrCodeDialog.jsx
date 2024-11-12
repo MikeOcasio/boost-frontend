@@ -3,8 +3,9 @@
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { BiShield } from "react-icons/bi";
+import { BiCopy, BiShield } from "react-icons/bi";
 import { PassCodeScreen } from "./PassCodeScreen";
+import toast from "react-hot-toast";
 
 export const QrCodeDialog = ({
   dialogOpen,
@@ -40,7 +41,7 @@ export const QrCodeDialog = ({
           </DialogTitle>
 
           {!passCodeScreen && (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
               <div className="flex items-center justify-center overflow-auto w-fit mx-auto bg-white p-4 rounded-lg">
                 {qrCodeBase64 && (
                   <Image
@@ -52,6 +53,26 @@ export const QrCodeDialog = ({
                   />
                 )}
               </div>
+
+              {dialogData?.otp_secret && (
+                <div className="text-center space-y-2 text-sm">
+                  <p>
+                    Having trouble with the QR code? Enter it manually using
+                    this secret
+                  </p>
+
+                  <p
+                    className="p-2 bg-white/10 w-fit flex items-center justify-center rounded-lg cursor-pointer mx-auto gap-2 hover:bg-white/20"
+                    onClick={() => {
+                      navigator.clipboard.writeText(dialogData?.otp_secret);
+                      toast.success("Copied to clipboard");
+                    }}
+                  >
+                    <BiCopy className="h-5 w-5 text-white/80" />
+                    {dialogData?.otp_secret}
+                  </p>
+                </div>
+              )}
 
               <div className="text-xs text-white/80 flex gap-2">
                 <BiShield className="h-5 w-5 text-green-500" />

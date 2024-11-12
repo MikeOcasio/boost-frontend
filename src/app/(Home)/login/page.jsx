@@ -64,7 +64,11 @@ export default function Login() {
       ) {
         const qrCode = await loadQrCode(response.token);
 
-        setDialogData({ ...response, qr_code: qrCode.qr_code });
+        setDialogData({
+          ...response,
+          qr_code: qrCode.qr_code,
+          otp_secret: qrCode.otp_secret,
+        });
         setDialogOpen(true);
       } else {
         setDialogData(response);

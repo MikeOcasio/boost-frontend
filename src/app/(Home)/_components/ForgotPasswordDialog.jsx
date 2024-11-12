@@ -59,7 +59,10 @@ export const ForgotPasswordDialog = ({ dialogOpen, onClose }) => {
             Enter your email address to reset your password
           </DialogTitle>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar"
+          >
             <Input
               type="email"
               placeholder="Email"

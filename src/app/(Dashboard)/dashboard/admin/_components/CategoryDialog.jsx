@@ -150,7 +150,7 @@ export const CategoryDialog = ({
             {dialogData ? "Update Game Category" : "Add New Game Category"}
           </DialogTitle>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             {/* id */}
             {category.id && (
               <button

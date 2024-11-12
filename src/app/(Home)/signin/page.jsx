@@ -101,11 +101,13 @@ export default function SignIn() {
           !dialogData?.user?.otp_required_for_login ||
           !dialogData?.user?.otp_setup_complete
         ) {
-          const qrCode = await loadQrCode(response.token).then((res) => {
-            return res.qr_code;
-          });
+          const qrCode = await loadQrCode(response.token);
 
-          setDialogData({ ...response, qr_code: qrCode });
+          setDialogData({
+            ...response,
+            qr_code: qrCode.qr_code,
+            otp_secret: qrCode.otp_secret,
+          });
           setDialogOpen(true);
         } else {
           setDialogData(response);
