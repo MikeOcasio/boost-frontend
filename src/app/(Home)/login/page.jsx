@@ -208,7 +208,6 @@ export default function Login() {
       <ForgotPasswordDialog
         dialogOpen={openForgotDialog}
         onClose={() => setOpenForgotDialog(false)}
-        dialogData={email}
       />
     </div>
   );

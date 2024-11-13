@@ -72,7 +72,9 @@ export const ForgotPasswordDialog = ({ dialogOpen, onClose, dialogData }) => {
             <Input
               type="email"
               placeholder="Email"
+              disabled={loading || dialogData}
               autoFocus
+              required
               className="input-field w-full"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
