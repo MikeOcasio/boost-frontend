@@ -136,6 +136,11 @@ export const fetchCurrentUser = async () => {
     const errorMessage = error.response?.data || error.message;
     console.error("Failed to fetch current user:", errorMessage);
 
+    if (errorMessage === "Signature has expired") {
+      logoutSession();
+      return { error: "Your session has expired. Please login again." };
+    }
+
     return {
       error: "An error occurred while fetching the current user.",
     };

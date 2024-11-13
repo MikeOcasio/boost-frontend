@@ -23,6 +23,9 @@ const AdminLayout = ({ children }) => {
       setLoading(true);
       const response = await fetchCurrentUser();
       if (response?.error) {
+        toast.error(response.error);
+
+        await removeToken();
         router.push("/login");
       } else {
         setUser(response);

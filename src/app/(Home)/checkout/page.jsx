@@ -22,8 +22,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 const CheckoutPage = () => {
   const router = useRouter();
   const { userToken, setUser, removeToken, user } = useUserStore();
-  const { cartItems, emptyCart, totalPrice, setTotalPrice, setCartItems } =
-    useCartStore();
+  const { cartItems, emptyCart, totalPrice, setTotalPrice } = useCartStore();
 
   const [orderByPlatform, setOrderByPlatform] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -45,6 +44,9 @@ const CheckoutPage = () => {
       const response = await fetchCurrentUser();
 
       if (response?.error) {
+        toast.error(response.error);
+
+        await removeToken();
         router.push("/login");
       } else {
         setUser(response);

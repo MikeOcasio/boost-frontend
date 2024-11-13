@@ -29,6 +29,7 @@ import { PiGameControllerFill } from "react-icons/pi";
 import { PlatformCredentialDialog } from "@/app/(Home)/checkout/_components/PlatformCredentialDialog";
 import { fetchCurrentUser, updateUser } from "@/lib/actions/user-actions";
 import { fetchPlatforms } from "@/lib/actions/platforms-action";
+import { useUserStore } from "@/store/use-user";
 
 const AccountPage = () => {
   const [user, setUser] = useState(null);
@@ -41,13 +42,17 @@ const AccountPage = () => {
   const [dialogId, setDialogId] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const loadUser = async () => {
+  const { removeToken } = useUserStore();
+
+  const loadUser = useCallback(async () => {
     try {
       setLoading(true);
       const result = await fetchCurrentUser();
+
       if (result.error) {
-        setError(true);
         toast.error(result.error);
+
+        await removeToken();
         router.push("/login");
       } else {
         const gameplayInfo = result.gameplay_info.map((gameplay) => {
@@ -66,7 +71,7 @@ const AccountPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [removeToken]);
 
   const loadPlatforms = async () => {
     try {
@@ -90,7 +95,7 @@ const AccountPage = () => {
   useEffect(() => {
     loadPlatforms();
     loadUser();
-  }, []);
+  }, [loadUser]);
 
   const handleUpdateProfile = async () => {
     if (!user?.id) return;

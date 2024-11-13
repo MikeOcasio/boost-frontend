@@ -64,6 +64,9 @@ export function Header() {
       const response = await fetchCurrentUser();
 
       if (response?.error) {
+        toast.error(response.error);
+
+        await removeToken();
         router.push("/");
       } else {
         setUser(response);
