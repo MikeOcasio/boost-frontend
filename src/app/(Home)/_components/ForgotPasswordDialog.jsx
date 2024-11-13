@@ -58,7 +58,7 @@ export const ForgotPasswordDialog = ({ dialogOpen, onClose, dialogData }) => {
           </button>
 
           <DialogTitle className="text-lg font-semibold">
-            Enter your email address to reset your password
+            Email address to reset your password
           </DialogTitle>
 
           <p className="text-xs">
@@ -85,7 +85,7 @@ export const ForgotPasswordDialog = ({ dialogOpen, onClose, dialogData }) => {
               className="flex w-full justify-center rounded-md bg-Gold px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-Gold/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Gold gap-2 items-center"
             >
               {loading && <BiLoader className="h-5 w-5 animate-spin" />}
-              LOGIN
+              Send Reset Link
             </button>
           </form>
         </DialogPanel>
