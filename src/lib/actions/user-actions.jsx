@@ -468,16 +468,18 @@ export const verifyQrCode = async (passcode, token) => {
 
 export const forgotPassword = async (data) => {
   try {
-    const response = await axios.post("/api/forgot_password", data);
+    const response = await axios.post(`${apiUrl}/users/password`, {
+      user: { email: data.email },
+    });
 
     return response.data;
   } catch (error) {
     const errorMessage =
       error.response?.data?.error || error.response?.data || error.message;
-    console.error("Failed to verify qr code:", errorMessage);
+    console.error("Failed to send password reset email:", errorMessage);
 
     return {
-      error: errorMessage || "An error occurred while verifying the qr code.",
+      error: "Some error occurred. Please enter a valid email address.",
     };
   }
 };

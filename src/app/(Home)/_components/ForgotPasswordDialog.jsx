@@ -7,8 +7,8 @@ import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 import { IoClose } from "react-icons/io5";
 
-export const ForgotPasswordDialog = ({ dialogOpen, onClose }) => {
-  const [email, setEmail] = useState("");
+export const ForgotPasswordDialog = ({ dialogOpen, onClose, dialogData }) => {
+  const [email, setEmail] = useState(dialogData || "");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -25,7 +25,9 @@ export const ForgotPasswordDialog = ({ dialogOpen, onClose }) => {
       const response = await forgotPassword({ email });
 
       if (response.error) {
-        toast.error(response.error);
+        toast.success(
+          "Reset password link sent to your email, check your inbox."
+        );
       } else {
         toast.success("Password reset link sent to your email");
         onClose();
@@ -58,6 +60,10 @@ export const ForgotPasswordDialog = ({ dialogOpen, onClose }) => {
           <DialogTitle className="text-lg font-semibold">
             Enter your email address to reset your password
           </DialogTitle>
+
+          <p className="text-xs">
+            A password reset link will be sent to your email address.
+          </p>
 
           <form
             onSubmit={handleSubmit}

@@ -30,6 +30,8 @@ import { PlatformCredentialDialog } from "@/app/(Home)/checkout/_components/Plat
 import { fetchCurrentUser, updateUser } from "@/lib/actions/user-actions";
 import { fetchPlatforms } from "@/lib/actions/platforms-action";
 import { useUserStore } from "@/store/use-user";
+import { ForgotPasswordDialog } from "@/app/(Home)/_components/ForgotPasswordDialog";
+import { CgPassword } from "react-icons/cg";
 
 const AccountPage = () => {
   const [user, setUser] = useState(null);
@@ -41,6 +43,7 @@ const AccountPage = () => {
   // dialog
   const [dialogId, setDialogId] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openForgotDialog, setOpenForgotDialog] = useState(false);
 
   const { removeToken } = useUserStore();
 
@@ -132,7 +135,7 @@ const AccountPage = () => {
 
   const handleDiscardChanges = () => {
     setIsEditing(false);
-    loadData();
+    loadUser();
   };
 
   if (!user) return null;
@@ -602,6 +605,24 @@ const AccountPage = () => {
               Discard Changes
             </button>
           )}
+
+          {/* change password */}
+          <div className="flex flex-col gap-4 items-center">
+            <button
+              type="button"
+              onClick={() => setOpenForgotDialog(true)}
+              className="text-blue-600 hover:text-blue-500 p-2 rounded-lg bg-white/10 hover:bg-white/20 flex items-center gap-4 w-full justify-center max-w-xl"
+            >
+              <CgPassword className="h-5 w-5" />
+              Change your password?
+            </button>
+
+            <ForgotPasswordDialog
+              dialogOpen={openForgotDialog}
+              onClose={() => setOpenForgotDialog(false)}
+              dialogData={user.email}
+            />
+          </div>
         </div>
       )}
 
