@@ -28,17 +28,17 @@ const ResetPasswordPage = () => {
   const { removeToken } = useUserStore();
 
   const verifyForgotUserToken = useCallback(async () => {
-    setLoading(true);
-
-    const forgotUserToken = localStorage.getItem("forgotUserToken");
-
-    const forgotUserEmail = CryptoJS.AES.decrypt(
-      forgotUserToken,
-      SECRET_KEY
-    ).toString(CryptoJS.enc.Utf8);
-
-    // check if the email exists in the database
     try {
+      setLoading(true);
+
+      const forgotUserToken = localStorage.getItem("forgotUserToken");
+
+      const forgotUserEmail = CryptoJS.AES.decrypt(
+        forgotUserToken,
+        SECRET_KEY
+      ).toString(CryptoJS.enc.Utf8);
+
+      // check if the email exists in the database
       const response = await doesUserExist(forgotUserEmail);
 
       if (response.error) {
