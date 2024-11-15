@@ -364,6 +364,7 @@ export const fetchSkillmasterById = async (skillmasterId) => {
   }
 };
 
+// lock user account
 export const lockUserAction = async (userId) => {
   try {
     const sessionToken = await getSessionToken();
@@ -393,6 +394,7 @@ export const lockUserAction = async (userId) => {
   }
 };
 
+// unlock user account
 export const unlockUserAction = async (userId) => {
   try {
     const sessionToken = await getSessionToken();
@@ -466,24 +468,6 @@ export const verifyQrCode = async (passcode, token) => {
   }
 };
 
-export const forgotPassword = async (data) => {
-  try {
-    const response = await axios.post(`${apiUrl}/users/password`, {
-      user: { email: data.email },
-    });
-
-    return response.data;
-  } catch (error) {
-    const errorMessage =
-      error.response?.data?.error || error.response?.data || error.message;
-    console.error("Failed to send password reset email:", errorMessage);
-
-    return {
-      error: "Some error occurred. Please enter a valid email address.",
-    };
-  }
-};
-
 // get banned users
 export const fetchBannedUsers = async () => {
   try {
@@ -502,5 +486,71 @@ export const fetchBannedUsers = async () => {
     return data;
   } catch (error) {
     return { error: "Failed to fetch banned users. Please try again!" };
+  }
+};
+
+// forgot password
+export const forgotPassword = async (data) => {
+  try {
+    const response = await axios.post(`${apiUrl}/users/password`, {
+      user: { email: data.email },
+    });
+
+    return response.data;
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
+    console.error("Failed to send password reset email:", errorMessage);
+
+    return {
+      error: "Some error occurred. Please enter a valid email address.",
+    };
+  }
+};
+
+// reset user password
+export const resetUserPassword = async ({ password, token }) => {
+  try {
+    const { data } = await axios.patch(
+      `${apiUrl}/users/member-data/update_password`,
+      {
+        password,
+        reset_password_token: token,
+      }
+    );
+
+    return data;
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
+    console.error("Failed to reset user password:", errorMessage);
+
+    return {
+      error:
+        errorMessage || "An error occurred while resetting the user password.",
+    };
+  }
+};
+
+// check if user exists
+export const doesUserExist = async (email) => {
+  try {
+    const { data } = await axios.get(
+      `${apiUrl}/users/member-data/user_exists`,
+      {
+        params: {
+          email,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to check if user exists:", errorMessage);
+
+    return {
+      error: "An error occurred while checking if user exists.",
+    };
   }
 };
