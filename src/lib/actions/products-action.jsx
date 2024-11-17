@@ -33,8 +33,6 @@ export const fetchGameById = async (gameId) => {
 
 // add game
 export const addGame = async (gameData) => {
-  console.log("add game data ", gameData);
-
   try {
     const sessionToken = await getSessionToken();
 
@@ -70,8 +68,6 @@ export const addGame = async (gameData) => {
         },
       }
     );
-
-    console.log("add game response ", response.data);
 
     return response.data;
   } catch (error) {

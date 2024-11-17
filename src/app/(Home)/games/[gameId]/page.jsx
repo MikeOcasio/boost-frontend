@@ -49,8 +49,6 @@ const GamePage = ({ params }) => {
     try {
       const result = await fetchGameById(params.gameId);
 
-      console.log("fetch game ", result);
-
       if (result.error) {
         setError(true);
         toast.error(result.error);

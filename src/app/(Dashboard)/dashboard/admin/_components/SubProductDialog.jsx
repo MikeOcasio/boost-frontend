@@ -102,8 +102,9 @@ export const SubProductDialog = ({
         toast.error(JSON.stringify(response.error));
       } else {
         toast.success("Game added successfully!");
+
         setGame(null);
-        handleClosed();
+        onClose();
       }
     } catch (error) {
       toast.error(error.message);
@@ -126,8 +127,6 @@ export const SubProductDialog = ({
     setGame(null);
     onClose();
   };
-
-  console.log("dialog data ", dialogData);
 
   return (
     <Dialog

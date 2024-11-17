@@ -36,8 +36,6 @@ const GamesPage = () => {
     try {
       const result = await fetchAllGames();
 
-      console.log("fetch games ", result);
-
       if (result.error) {
         setError(true);
         toast.error(result.error);

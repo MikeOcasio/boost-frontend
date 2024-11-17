@@ -286,6 +286,49 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
     });
   };
 
+  const copyFromParent = () => {
+    const prod_attr_cat_ids = parentData?.prod_attr_cats?.map((id) => id.id);
+
+    setGame({ ...parentData, id: null, prod_attr_cat_ids: prod_attr_cat_ids });
+  };
+
+  const copyFromChildren = (e) => {
+    const child = parentData.children[e.target.value];
+
+    const platformArr = child?.platforms?.map((platform) => platform.id);
+
+    const dropdownOptions = parentData.children[
+      e.target.value
+    ]?.dropdown_options?.map((option) => {
+      try {
+        return option && JSON.parse(option);
+      } catch (error) {
+        console.warn("Failed to parse dropdown option:", option, error);
+        return {}; // Default empty object in case of parsing error
+      }
+    });
+
+    const sliderRanges = child?.slider_range?.map((range) => {
+      try {
+        return range && JSON.parse(range);
+      } catch (error) {
+        console.warn("Failed to parse slider range:", range, error);
+        return {}; // Default empty object in case of parsing error
+      }
+    });
+
+    const prod_attr_cat_ids = child?.prod_attr_cats?.map((id) => id.id);
+
+    setGame({
+      ...child,
+      id: null,
+      platform_ids: platformArr,
+      dropdown_options: dropdownOptions,
+      slider_range: sliderRanges,
+      prod_attr_cat_ids: prod_attr_cat_ids,
+    });
+  };
+
   if (loading) {
     return <BiLoader className="h-8 w-8 animate-spin mx-auto" />;
   }
@@ -305,7 +348,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
       {isSubProduct && parentData && (
         <div className="flex flex-wrap items-center gap-2 w-full">
           <button
-            onClick={() => setGame({ ...parentData, id: null })}
+            onClick={copyFromParent}
             className="bg-black/20 p-2 rounded-lg hover:bg-Gold/50 text-Gold hover:text-white border border-Gold flex-1 flex items-center justify-center gap-2"
           >
             <AiOutlineInsertRowBelow className="h-5 w-5" />
@@ -317,9 +360,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
             parentData?.children.length > 0 && (
               <select
                 value={""}
-                onChange={(e) =>
-                  setGame({ ...parentData.children[e.target.value], id: null })
-                }
+                onChange={copyFromChildren}
                 className="flex-1 rounded-lg bg-black/20 p-3 hover:bg-Gold/50 text-Gold hover:text-white border border-Gold"
               >
                 <option value="" className="bg-neutral-800 ">
@@ -384,7 +425,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
         />
       </Field>
 
-      {/* Category and Product Attribute Dropdowns */}
+      {/* Category and Product Attribute category */}
       <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
         {/* category */}
         <Field className="flex min-w-fit flex-col gap-1 flex-1">
