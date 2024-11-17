@@ -9,7 +9,6 @@ import { addGame } from "@/lib/actions/products-action";
 import toast from "react-hot-toast";
 
 export const SubProductDialog = ({
-  setDialogData,
   dialogData,
   dialogOpen,
   onClose,
@@ -30,7 +29,7 @@ export const SubProductDialog = ({
       errors.push("Select at least one attribute");
     if (game?.is_priority === null) errors.push("Product priority is missing");
     if (!game?.tax) errors.push("Product tax is missing");
-    if (!game?.platform_ids.length) errors.push("At least one platform");
+    if (!game?.platform_ids?.length) errors.push("At least one platform");
     if (game?.is_active === null)
       errors.push("Product active status is missing");
     if (game?.most_popular === null)
@@ -82,7 +81,7 @@ export const SubProductDialog = ({
   const handleCreateGame = async () => {
     if (!validateGame()) return;
 
-    // stingfy dropdown and slider ranges object and make the array of stingified objects
+    // stingfy dropdown and slider ranges object and make the array of stringified objects
     const dropdownOptions = game?.dropdown_options?.map((option) => {
       return JSON.stringify(option);
     });
@@ -92,21 +91,12 @@ export const SubProductDialog = ({
 
     setLoading(true);
     try {
-      console.log("add game ", {
-        ...game,
-        parent_id: dialogData?.id,
-        dropdown_options: dropdownOptions,
-        slider_range: sliderRanges,
-      });
-
       const response = await addGame({
         ...game,
         parent_id: dialogData?.id,
         dropdown_options: dropdownOptions,
         slider_range: sliderRanges,
       });
-
-      console.log("add game response ", response);
 
       if (response.error) {
         toast.error(JSON.stringify(response.error));
@@ -137,10 +127,12 @@ export const SubProductDialog = ({
     onClose();
   };
 
+  console.log("dialog data ", dialogData);
+
   return (
     <Dialog
       open={dialogOpen}
-      onClose={onClose}
+      onClose={handleClosed}
       as="div"
       className="relative z-50 text-white"
     >
@@ -187,7 +179,12 @@ export const SubProductDialog = ({
               </div>
             )}
 
-            <EditGame data={game} setData={setGame} />
+            <EditGame
+              data={game}
+              setData={setGame}
+              isSubProduct={true}
+              parentData={dialogData}
+            />
           </div>
         </DialogPanel>
       </div>

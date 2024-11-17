@@ -23,8 +23,9 @@ import { deleteGame } from "@/lib/actions/products-action";
 import { fetchCategories } from "@/lib/actions/categories-actions";
 import { fetchAttribute } from "@/lib/actions/attributes-action";
 import { fetchPlatforms } from "@/lib/actions/platforms-action";
+import { AiOutlineInsertRowBelow } from "react-icons/ai";
 
-export const EditGame = ({ data, setData }) => {
+export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
   const router = useRouter();
 
   const [initialValues, setInitialValues] = useState(data || getDefaultGame());
@@ -300,6 +301,40 @@ export const EditGame = ({ data, setData }) => {
 
   return (
     <div className="flex flex-col justify-between items-start gap-4 text-base">
+      {/* copy from parent */}
+      {isSubProduct && parentData && (
+        <div className="flex flex-wrap items-center gap-2 w-full">
+          <button
+            onClick={() => setGame({ ...parentData, id: null })}
+            className="bg-black/20 p-2 rounded-lg hover:bg-Gold/50 text-Gold hover:text-white border border-Gold flex-1 flex items-center justify-center gap-2"
+          >
+            <AiOutlineInsertRowBelow className="h-5 w-5" />
+            Copy from parent
+          </button>
+
+          {/* copy from children */}
+          {parentData?.children?.length > 0 &&
+            parentData?.children.length > 0 && (
+              <select
+                value={""}
+                onChange={(e) =>
+                  setGame({ ...parentData.children[e.target.value], id: null })
+                }
+                className="flex-1 rounded-lg bg-black/20 p-3 hover:bg-Gold/50 text-Gold hover:text-white border border-Gold"
+              >
+                <option value="" className="bg-neutral-800 ">
+                  📑 Copy from children
+                </option>
+                {parentData?.children?.map((child, index) => (
+                  <option key={index} value={index} className="bg-neutral-800">
+                    {child.name} | ${child.price}
+                  </option>
+                ))}
+              </select>
+            )}
+        </div>
+      )}
+
       {/* id */}
       {data?.id && (
         <Button
@@ -445,9 +480,9 @@ export const EditGame = ({ data, setData }) => {
                 onChange={() => {
                   setGame({
                     ...game,
-                    platform_ids: game.platform_ids.includes(platform.id)
+                    platform_ids: game.platform_ids?.includes(platform.id)
                       ? game.platform_ids.filter((id) => id !== platform.id)
-                      : [...game.platform_ids, platform.id],
+                      : [...game?.platform_ids, platform.id],
                   });
                 }}
               />
@@ -946,7 +981,7 @@ export const EditGame = ({ data, setData }) => {
           </button>
         </div>
 
-        {game.features.map((feature, index) => (
+        {game.features?.map((feature, index) => (
           <div key={index} className="flex flex-wrap gap-2 items-center">
             <Input
               type="text"

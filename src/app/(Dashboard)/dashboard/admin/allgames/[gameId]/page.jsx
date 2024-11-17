@@ -242,7 +242,6 @@ const GameEditPage = ({ params }) => {
         dialogOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         dialogData={game}
-        setDialogData={setGame}
         fetchGame={fetchGames}
       />
     </div>

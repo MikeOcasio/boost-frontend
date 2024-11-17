@@ -33,6 +33,8 @@ export const fetchGameById = async (gameId) => {
 
 // add game
 export const addGame = async (gameData) => {
+  console.log("add game data ", gameData);
+
   try {
     const sessionToken = await getSessionToken();
 
@@ -60,6 +62,7 @@ export const addGame = async (gameData) => {
         dropdown_options: gameData.dropdown_options,
         is_slider: gameData.is_slider,
         slider_range: gameData.slider_range,
+        parent_id: gameData.parent_id,
       },
       {
         headers: {
@@ -67,6 +70,8 @@ export const addGame = async (gameData) => {
         },
       }
     );
+
+    console.log("add game response ", response.data);
 
     return response.data;
   } catch (error) {
