@@ -7,7 +7,7 @@ import Link from "next/link";
 const highlightMatch = (text, searchTerm) => {
   if (!searchTerm) return text; // If no search term, return the original text
   const regex = new RegExp(`(${searchTerm})`, "gi"); // Case-insensitive match
-  const parts = text.split(regex); // Split the text into matching and non-matching parts
+  const parts = text?.split(regex); // Split the text into matching and non-matching parts
 
   return parts.map((part, index) =>
     regex.test(part) ? <mark key={index}>{part}</mark> : part
@@ -63,12 +63,12 @@ const GameCard = ({ game, searchTerm }) => {
 
         <div className="flex flex-col gap-2 items-center">
           <p className="text-xl font-bold leading-6 text-white text-center">
-            {game.name.length > 50
+            {game.name?.length > 50
               ? highlightMatch(game.name, searchTerm).slice(0, 50) + "..."
               : highlightMatch(game.name, searchTerm)}
           </p>
           <p className="text-xs text-white/70 font-semibold text-center">
-            {game.tag_line.length > 50
+            {game.tag_line?.length > 50
               ? highlightMatch(game.tag_line, searchTerm).slice(0, 50) + "..."
               : highlightMatch(game.tag_line, searchTerm)}
           </p>
@@ -78,7 +78,7 @@ const GameCard = ({ game, searchTerm }) => {
           role="list"
           className="space-y-2 text-sm text-left leading-6 text-white/90 px-2"
         >
-          {game.features.map((feature, index) => (
+          {game.features?.map((feature, index) => (
             <li key={index} className="flex gap-x-3">
               <CheckIcon
                 className="h-6 w-5 flex-none text-green-500"

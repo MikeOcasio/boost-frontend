@@ -31,10 +31,23 @@ export const SliderQty = ({
     }
   }, [minVal, maxVal, getPercent]);
 
-  // Notify parent of changes
+  // Notify parent of changes (debounced)
   useEffect(() => {
-    onChange({ min: minVal, max: maxVal });
+    const handler = setTimeout(() => {
+      onChange({ min: minVal, max: maxVal });
+    }, 300); // Adjust debounce time as needed
+    return () => clearTimeout(handler);
   }, [minVal, maxVal, onChange]);
+
+  const handleMinChange = (event) => {
+    const value = Math.min(+event.target.value, maxVal - 1);
+    if (value !== minVal) setMinVal(value); // Only update if value changes
+  };
+
+  const handleMaxChange = (event) => {
+    const value = Math.max(+event.target.value, minVal + 1);
+    if (value !== maxVal) setMaxVal(value); // Only update if value changes
+  };
 
   return (
     <div
@@ -52,11 +65,7 @@ export const SliderQty = ({
         max={max}
         value={minVal}
         ref={minValRef}
-        onChange={(event) => {
-          const value = Math.min(+event.target.value, maxVal - 1);
-          setMinVal(value);
-          event.target.value = value.toString();
-        }}
+        onChange={handleMinChange}
         className="thumb w-full h-1 appearance-none bg-transparent z-20"
       />
       <input
@@ -66,11 +75,7 @@ export const SliderQty = ({
         max={max}
         value={maxVal}
         ref={maxValRef}
-        onChange={(event) => {
-          const value = Math.max(+event.target.value, minVal + 1);
-          setMaxVal(value);
-          event.target.value = value.toString();
-        }}
+        onChange={handleMaxChange}
         className="thumb w-full h-1 appearance-none bg-transparent z-30"
       />
 

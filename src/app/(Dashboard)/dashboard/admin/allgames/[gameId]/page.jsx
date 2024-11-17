@@ -3,11 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { BiLoader, BiUpload } from "react-icons/bi";
+import { BiLoader, BiPlus, BiUpload } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 
 import { fetchGameById, updateGame } from "@/lib/actions/products-action";
 import { EditGame } from "../../_components/EditGame";
+import { SubProductDialog } from "../../_components/SubProductDialog";
 
 const GameEditPage = ({ params }) => {
   const { gameId } = params;
@@ -18,6 +19,9 @@ const GameEditPage = ({ params }) => {
   const [error, setError] = useState(false);
 
   const [missingFields, setMissingFields] = useState([]);
+
+  // Sub product dialog
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const fetchGames = useCallback(async () => {
     setLoading(true);
@@ -165,6 +169,10 @@ const GameEditPage = ({ params }) => {
     }
   };
 
+  const handleSubProduct = () => {
+    setDialogOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
@@ -213,11 +221,30 @@ const GameEditPage = ({ params }) => {
       )}
 
       {!loading && !error && game ? (
-        <EditGame data={game} setData={setGame} />
+        <div className="flex flex-col gap-4">
+          {/* Add sub product */}
+          <button
+            onClick={handleSubProduct}
+            className="flex flex-wrap justify-center items-center gap-2 rounded-lg p-2 hover:bg-Gold border border-Gold text-Gold hover:text-white max-w-xl w-full mx-auto"
+          >
+            <BiPlus className="h-5 w-5" />
+            <p className="text-sm">Add Sub Product</p>
+          </button>
+
+          <EditGame data={game} setData={setGame} />
+        </div>
       ) : (
         !loading &&
         !error && <BiLoader className="h-8 w-8 animate-spin mx-auto" />
       )}
+
+      <SubProductDialog
+        dialogOpen={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        dialogData={game}
+        setDialogData={setGame}
+        fetchGame={fetchGames}
+      />
     </div>
   );
 };
