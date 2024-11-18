@@ -17,7 +17,7 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
         }}
       >
         {game.most_popular && (
-          <p className="text-xs px-2 rounded-md bg-Gold/50 absolute top-0 right-0 m-2">
+          <p className="text-xs px-2 rounded-md bg-Gold/50 absolute top-0 right-0 m-2 backdrop-blur-xl">
             {game.most_popular && "Popular"}
           </p>
         )}

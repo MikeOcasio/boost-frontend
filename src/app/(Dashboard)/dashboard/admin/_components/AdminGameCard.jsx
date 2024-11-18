@@ -4,7 +4,8 @@ import Image from "next/image";
 import { BiChevronRight, BiImage, BiPencil } from "react-icons/bi";
 import Link from "next/link";
 import clsx from "clsx";
-import { FaExternalLinkAlt } from "react-icons/fa";
+import { FaExternalLinkAlt, FaGamepad } from "react-icons/fa";
+import { AdminSubProducts } from "./AdminSubProducts";
 
 // Helper function to highlight matching terms
 const highlightMatch = (text, searchTerm) => {
@@ -36,14 +37,20 @@ export const AdminGameCard = ({ game, searchTerm }) => {
       )}
 
       <div className="flex justify-between items-center flex-wrap-reverse">
-        <div className="text-xs font-semibold">
+        <div className="text-xs font-semibold flex items-center gap-2">
           <span>{highlightMatch(game.category.name, searchTerm)} / </span>
-          <span>
-            {game.platforms
-              .map((platform) => highlightMatch(platform.name, searchTerm))
-              .join(", ")}
+
+          <span className="flex items-center gap-2">
+            <FaGamepad className="h-4 w-4" />
+            {game.platforms?.map((platform, index) => (
+              <span key={index}>
+                {highlightMatch(platform.name, searchTerm)}
+                {index < game.platforms.length - 1 && ", "}
+              </span>
+            ))}
           </span>
         </div>
+
         <Link href={`/dashboard/admin/allgames/${game.id}`}>
           <button className="flex items-center gap-2 px-3 py-2 transition-all hover:bg-white/10 rounded-lg">
             <BiPencil />
@@ -100,6 +107,12 @@ export const AdminGameCard = ({ game, searchTerm }) => {
                 Priority
               </p>
             )}
+
+            {game.children?.length > 0 && (
+              <p className="font-semibold px-2 rounded-full bg-orange-600">
+                {highlightMatch("Sub Products", searchTerm)}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-wrap justify-between items-center gap-2">
@@ -124,9 +137,12 @@ export const AdminGameCard = ({ game, searchTerm }) => {
         {game.prod_attr_cats?.length > 0 && (
           <p className="text-sm font-semibold bg-white/10 px-2 rounded-md">
             Product Attribute Category:{" "}
-            {game.prod_attr_cats
-              .map((item) => highlightMatch(item.name, searchTerm))
-              .join(", ")}
+            {game.prod_attr_cats.map((item, index) => (
+              <span key={index}>
+                {highlightMatch(item.name, searchTerm)}
+                {index < game.prod_attr_cats.length - 1 && ", "}
+              </span>
+            ))}
           </p>
         )}
       </div>
@@ -167,6 +183,19 @@ export const AdminGameCard = ({ game, searchTerm }) => {
           Visit Game
         </Link>
       </div>
+
+      {/* sub products */}
+
+      {game.children?.length > 0 && (
+        <p className="text-sm font-semibold border-t pt-2 border-white/20">
+          Sub Products
+        </p>
+      )}
+      <AdminSubProducts
+        game={game}
+        highlightMatch={highlightMatch}
+        searchTerm={searchTerm}
+      />
     </div>
   );
 };

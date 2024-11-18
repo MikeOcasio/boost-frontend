@@ -13,6 +13,7 @@ import { fetchGameById } from "@/lib/actions/products-action";
 import Badges from "../_components/Badges";
 import { useCartStore } from "@/store/use-cart";
 import { SliderQty } from "../_components/SliderQty";
+import { SubProductsList } from "../_components/SubProductsList";
 
 const GamePage = ({ params }) => {
   const router = useRouter();
@@ -517,6 +518,9 @@ const GamePage = ({ params }) => {
                 )}
               </div>
             </div>
+
+            {/* sub products list */}
+            <SubProductsList game={game} />
 
             {/* game badges */}
             <div className="flex flex-col gap-y-12">

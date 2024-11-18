@@ -35,6 +35,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
   const [categories, setCategories] = useState([]);
   const [attribute, setAttribute] = useState([]);
   const [platforms, setPlatforms] = useState([]);
+  const [selectedChild, setSelectedChild] = useState("");
 
   function getDefaultGame() {
     return {
@@ -293,6 +294,8 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
   };
 
   const copyFromChildren = (e) => {
+    setSelectedChild(e.target.value);
+
     const child = parentData.children[e.target.value];
 
     const platformArr = child?.platforms?.map((platform) => platform.id);
@@ -359,7 +362,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
           {parentData?.children?.length > 0 &&
             parentData?.children.length > 0 && (
               <select
-                value={""}
+                value={selectedChild || ""}
                 onChange={copyFromChildren}
                 className="flex-1 rounded-lg bg-black/20 p-3 hover:bg-Gold/50 text-Gold hover:text-white border border-Gold"
               >
@@ -845,7 +848,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
       {/* image */}
       <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
         <Label>Image</Label>
-        <div className="flex flex-wrap gap-4 flex-1 items-center">
+        <div className="flex flex-wrap gap-4 flex-1">
           {game?.image && (
             <div className="group relative cursor-pointer">
               <Image
@@ -854,7 +857,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
                 width={200}
                 height={200}
                 priority
-                className="rounded-lg bg-white/10 p-2"
+                className="rounded-lg bg-white/10 p-2 w-full"
               />
               <IoMdClose
                 className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
@@ -862,7 +865,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
               />
             </div>
           )}
-          <div className="flex flex-col gap-2 flex-1">
+          <div className="flex flex-col gap-2 flex-1 min-w-fit">
             <label
               htmlFor="dropzone-file"
               className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
@@ -910,7 +913,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
                 width={200}
                 height={200}
                 priority
-                className="rounded-lg bg-white/10 p-2"
+                className="rounded-lg bg-white/10 p-2 w-full"
               />
               <IoMdClose
                 className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
@@ -926,7 +929,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
 
           <label
             htmlFor="dropzone-file"
-            className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
+            className="relative flex-1 min-w-fit flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
           >
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
               <BiUpload className="h-8 w-8 text-gray-500" />
@@ -1010,7 +1013,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
       </div>
 
       {/* Feature List with Add and Remove Buttons */}
-      <Field className="space-y-4 w-full">
+      <Field className="space-y-4 w-full border border-white/10 rounded-lg p-4 bg-white/5 hover:border-white/20">
         <div className="flex items-center justify-between gap-4">
           <Label>Features</Label>
           <button

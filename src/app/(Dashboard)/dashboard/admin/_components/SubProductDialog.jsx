@@ -25,7 +25,7 @@ export const SubProductDialog = ({
     if (!game?.description) errors.push("Product description is missing");
     if (!game?.price) errors.push("Product price is missing");
     if (!game?.category_id) errors.push("Product category is missing");
-    if (!game?.prod_attr_cats.length)
+    if (!game?.prod_attr_cats?.length)
       errors.push("Select at least one attribute");
     if (game?.is_priority === null) errors.push("Product priority is missing");
     if (!game?.tax) errors.push("Product tax is missing");

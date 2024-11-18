@@ -3,12 +3,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { BiLoader, BiPlus, BiUpload } from "react-icons/bi";
+import { BiLoader, BiPencil, BiPlus, BiUpload } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 
 import { fetchGameById, updateGame } from "@/lib/actions/products-action";
 import { EditGame } from "../../_components/EditGame";
 import { SubProductDialog } from "../../_components/SubProductDialog";
+import Link from "next/link";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { AdminSubProducts } from "../../_components/AdminSubProducts";
 
 const GameEditPage = ({ params }) => {
   const { gameId } = params;
@@ -22,6 +25,7 @@ const GameEditPage = ({ params }) => {
 
   // Sub product dialog
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showSubProducts, setShowSubProducts] = useState(false);
 
   const fetchGames = useCallback(async () => {
     setLoading(true);
@@ -181,7 +185,7 @@ const GameEditPage = ({ params }) => {
         <button
           onClick={handleUpdateGame}
           disabled={loading}
-          className="bg-Gold/60 hover:bg-Gold/80 border border-black rounded-lg p-2 flex items-center justify-center gap-2 w-fit backdrop-blur-sm"
+          className="bg-Gold hover:bg-Gold/80 border border-black rounded-lg p-2 flex items-center justify-center gap-2 w-fit backdrop-blur-sm"
         >
           {loading ? (
             <BiLoader className="h-5 w-5 animate-spin" />
@@ -223,13 +227,41 @@ const GameEditPage = ({ params }) => {
       {!loading && !error && game ? (
         <div className="flex flex-col gap-4">
           {/* Add sub product */}
-          <button
-            onClick={handleSubProduct}
-            className="flex flex-wrap justify-center items-center gap-2 rounded-lg p-2 hover:bg-Gold border border-Gold text-Gold hover:text-white max-w-xl w-full mx-auto"
-          >
-            <BiPlus className="h-5 w-5" />
-            <p className="text-sm">Add Sub Product</p>
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            {game.parent_id && (
+              <>
+                <Link
+                  href={`/dashboard/admin/allgames/${game.parent_id}`}
+                  target="_blank"
+                  className="flex flex-wrap justify-center items-center gap-2 rounded-lg p-2 hover:bg-Gold/50 border border-Gold text-Gold hover:text-white flex-1"
+                >
+                  <BiPencil className="h-5 w-5" />
+                  <p className="text-sm">Edit parent</p>
+                </Link>
+
+                <Link
+                  href={`/games/${game.parent_id}`}
+                  target="_blank"
+                  className="flex flex-wrap justify-center items-center gap-2 rounded-lg p-2 hover:bg-Gold/50 border border-Gold text-Gold hover:text-white flex-1"
+                >
+                  <FaExternalLinkAlt className="h-5 w-5" />
+                  <p className="text-sm">View parent</p>
+                </Link>
+              </>
+            )}
+
+            {/* add sub product */}
+            <button
+              onClick={handleSubProduct}
+              className="flex flex-wrap justify-center items-center gap-2 rounded-lg p-2 hover:bg-Gold/50 border border-Gold text-Gold hover:text-white flex-1"
+            >
+              <BiPlus className="h-5 w-5" />
+              <p className="text-sm">Add Sub Product</p>
+            </button>
+          </div>
+
+          {/* sub products List */}
+          <AdminSubProducts game={game} />
 
           <EditGame data={game} setData={setGame} />
         </div>

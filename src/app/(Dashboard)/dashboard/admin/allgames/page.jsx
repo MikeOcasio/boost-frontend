@@ -88,7 +88,29 @@ const AllGames = () => {
           game.prod_attr_cats.some((attr) =>
             normalize(attr.name).includes(term)
           ) ||
-          game.features.some((feature) => normalize(feature).includes(term))
+          game.features.some((feature) => normalize(feature).includes(term)) ||
+          // child products
+          game.children.some((child) => normalize(child.name).includes(term)) ||
+          game.children.some((child) =>
+            normalize(child.description).includes(term)
+          ) ||
+          game.children.some((child) =>
+            normalize(String(child.id)).includes(term)
+          ) ||
+          game.children.some((child) =>
+            normalize(child.tag_line).includes(term)
+          ) ||
+          game.children.some((child) =>
+            child.platforms.some((platform) =>
+              normalize(platform.name).includes(term)
+            )
+          ) ||
+          game.children.some((child) =>
+            child.prod_attr_cats.some((attr) =>
+              normalize(attr.name).includes(term)
+            )
+          ) ||
+          (game.children.length > 0 && "subproducts".includes(term))
         );
       })
       .filter((game) => (filter.mostPopular ? game.most_popular : true))
@@ -253,7 +275,8 @@ const AllGames = () => {
             ) : (
               sortedGames?.map(
                 (game) =>
-                  game?.is_active && (
+                  game?.is_active &&
+                  !game.parent_id && (
                     <AdminGameCard
                       key={game.id}
                       game={game}
