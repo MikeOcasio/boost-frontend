@@ -10,7 +10,7 @@ export const SubProductsList = ({ game }) => {
       <div className="flex flex-col gap-2 p-4 rounded-lg border border-white/10 bg-white/10">
         <p className="text-lg font-semibold">Recommendation for you</p>
 
-        <div className="flex flex-col gap-2 max-h-screen overflow-y-auto no-scrollbar">
+        <div className="flex flex-col gap-2 max-h-screen overflow-y-auto">
           {game?.children?.length > 0 &&
             game.children.map(
               (child, index) =>

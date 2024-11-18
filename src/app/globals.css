@@ -74,3 +74,18 @@ input[type="number"] {
   pointer-events: all;
   position: relative;
 }
+
+/* scrollbar like apple */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(194, 141, 4, 0.85);
+  border-radius: 8px;
+}
