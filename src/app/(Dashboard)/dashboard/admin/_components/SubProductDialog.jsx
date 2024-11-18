@@ -149,7 +149,7 @@ export const SubProductDialog = ({
             Add Sub Product
           </DialogTitle>
 
-          <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
+          <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh]">
             {/* Submit Button */}
             <button
               onClick={handleCreateGame}
