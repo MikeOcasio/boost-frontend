@@ -270,7 +270,7 @@ const GamePage = ({ params }) => {
             {/* product details */}
             <div className="flex flex-col lg:flex-row gap-6 justify-center rounded-xl bg-cover bg-center">
               <div
-                className="relative z-10 bg-black/50 rounded-xl h-fit p-8 backdrop-blur-sm"
+                className="relative z-10 bg-black/50 rounded-xl h-fit p-4 backdrop-blur-sm"
                 style={{ backgroundColor: game.primary_color + 80 }}
               >
                 <Image
@@ -279,7 +279,7 @@ const GamePage = ({ params }) => {
                   width={200}
                   height={200}
                   priority
-                  className="w-full h-auto max-w-[200px] object-contain mx-auto rounded-md"
+                  className="w-full h-auto max-w-[200px] object-contain mx-auto rounded-lg"
                 />
               </div>
 
@@ -306,215 +306,220 @@ const GamePage = ({ params }) => {
                   ))}
                 </ul>
 
-                {/* dropdown */}
-                {game.is_dropdown && (
+                {game.price && game.tax && (
                   <>
-                    <p className="text-xs -mb-2">
-                      Select where are you currently at and where you want to
-                      reach in the game.
-                    </p>
-                    <div className="flex flex-wrap gap-2 items-center justify-between bg-white/10 border border-white/10 hover:border-white/20 rounded-lg p-2">
-                      <select
-                        disabled={cartItem?.quantity > 0}
-                        value={selectedDropdown}
-                        onChange={handleDropdownChange}
-                        className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 flex-1"
-                      >
-                        <option value="" className="bg-neutral-800">
-                          Where you at?
-                        </option>
-
-                        {game.dropdown_options.map((option, index) => (
-                          <option
-                            key={index}
-                            value={index}
-                            className="bg-neutral-800"
-                          >
-                            {option.option}
-                          </option>
-                        ))}
-                      </select>
-
-                      {String(selectedDropdown) &&
-                        game?.dropdown_options?.length - 1 !==
-                          Number(selectedDropdown) && (
+                    {/* dropdown */}
+                    {game.is_dropdown && (
+                      <>
+                        <p className="text-xs -mb-2">
+                          Select where are you currently at and where you want
+                          to reach in the game.
+                        </p>
+                        <div className="flex flex-wrap gap-2 items-center justify-between bg-white/10 border border-white/10 hover:border-white/20 rounded-lg p-2">
                           <select
-                            disabled={
-                              cartItem?.quantity > 0 ||
-                              game?.dropdown_options?.length - 1 ===
-                                Number(selectedDropdown)
-                            }
-                            value={selectedDropdown2}
-                            onChange={handleDropdown2Change}
+                            disabled={cartItem?.quantity > 0}
+                            value={selectedDropdown}
+                            onChange={handleDropdownChange}
                             className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 flex-1"
                           >
                             <option value="" className="bg-neutral-800">
-                              Where you want to reach?
+                              Where you at?
                             </option>
-                            {game.dropdown_options.map(
-                              (option, index) =>
-                                index > selectedDropdown && (
-                                  <option
-                                    key={index}
-                                    value={index}
-                                    className="bg-neutral-800"
-                                  >
-                                    {option.option}
-                                  </option>
-                                )
-                            )}
+
+                            {game.dropdown_options.map((option, index) => (
+                              <option
+                                key={index}
+                                value={index}
+                                className="bg-neutral-800"
+                              >
+                                {option.option}
+                              </option>
+                            ))}
                           </select>
-                        )}
-                    </div>
-                  </>
-                )}
 
-                {game?.is_slider && (
-                  <>
-                    <p className="text-xs -mb-2">
-                      Select the starting point and select the range of the
-                      slider where you want to boost.
-                    </p>
+                          {String(selectedDropdown) &&
+                            game?.dropdown_options?.length - 1 !==
+                              Number(selectedDropdown) && (
+                              <select
+                                disabled={
+                                  cartItem?.quantity > 0 ||
+                                  game?.dropdown_options?.length - 1 ===
+                                    Number(selectedDropdown)
+                                }
+                                value={selectedDropdown2}
+                                onChange={handleDropdown2Change}
+                                className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 flex-1"
+                              >
+                                <option value="" className="bg-neutral-800">
+                                  Where you want to reach?
+                                </option>
+                                {game.dropdown_options.map(
+                                  (option, index) =>
+                                    index > selectedDropdown && (
+                                      <option
+                                        key={index}
+                                        value={index}
+                                        className="bg-neutral-800"
+                                      >
+                                        {option.option}
+                                      </option>
+                                    )
+                                )}
+                              </select>
+                            )}
+                        </div>
+                      </>
+                    )}
 
-                    <div className="flex flex-wrap gap-2 items-center justify-between bg-white/10 border border-white/10 hover:border-white/20 rounded-lg p-4">
-                      {cartItem ? (
-                        (selectedDropdown || selectedDropdown2) && (
-                          <SliderQty
-                            min={game.slider_range[0].min_quantity}
-                            max={
-                              game.slider_range[game.slider_range.length - 1]
-                                .max_quantity
-                            }
-                            selectedMin={selectedDropdown || 10}
-                            selectedMax={selectedDropdown2 || 20}
-                            cartItem={cartItem}
-                            onChange={({ min, max }) => {
-                              setSelectedDropdown(min);
-                              setSelectedDropdown2(max);
-                            }}
-                          />
-                        )
-                      ) : (
-                        <SliderQty
-                          min={game.slider_range[0].min_quantity}
-                          max={
-                            game.slider_range[game.slider_range.length - 1]
-                              .max_quantity
-                          }
-                          selectedMin={selectedDropdown || 10}
-                          selectedMax={selectedDropdown2 || 20}
-                          onChange={({ min, max }) => {
-                            setSelectedDropdown(min);
-                            setSelectedDropdown2(max);
-                          }}
-                        />
-                      )}
-                    </div>
-                  </>
-                )}
+                    {game?.is_slider && (
+                      <>
+                        <p className="text-xs -mb-2">
+                          Select the starting point and select the range of the
+                          slider where you want to boost.
+                        </p>
 
-                {/* platform dropdown */}
-                <div className="flex flex-wrap justify-between gap-2 items-center">
-                  {/* price */}
-                  <p>Price: </p>
-                  <div className="flex items-center gap-2 text-2xl flex-1">
-                    <span className="font-bold text-green-500">
-                      ${/* dropdown price */}
-                      {game?.is_dropdown &&
-                        (selectedDropdownRange?.length > 0
-                          ? selectedDropdownRange
-                              .reduce((acc, curr) => acc + curr.price, 0)
-                              .toFixed(2)
-                          : game.price)}
-                      {/* slider price */}
-                      {game?.is_slider &&
-                        (selectedSliderRange?.length > 0
-                          ? selectedSliderRange
-                              .reduce((acc, curr) => acc + curr.price, 0)
-                              .toFixed(2)
-                          : game.price)}
-                      {/* game price */}
-                      {!game?.is_slider && !game?.is_dropdown && game.price}
-                    </span>
-                  </div>
+                        <div className="flex flex-wrap gap-2 items-center justify-between bg-white/10 border border-white/10 hover:border-white/20 rounded-lg p-4">
+                          {cartItem ? (
+                            (selectedDropdown || selectedDropdown2) && (
+                              <SliderQty
+                                min={game.slider_range[0].min_quantity}
+                                max={
+                                  game.slider_range[
+                                    game.slider_range.length - 1
+                                  ].max_quantity
+                                }
+                                selectedMin={selectedDropdown || 10}
+                                selectedMax={selectedDropdown2 || 20}
+                                cartItem={cartItem}
+                                onChange={({ min, max }) => {
+                                  setSelectedDropdown(min);
+                                  setSelectedDropdown2(max);
+                                }}
+                              />
+                            )
+                          ) : (
+                            <SliderQty
+                              min={game.slider_range[0].min_quantity}
+                              max={
+                                game.slider_range[game.slider_range.length - 1]
+                                  .max_quantity
+                              }
+                              selectedMin={selectedDropdown || 10}
+                              selectedMax={selectedDropdown2 || 20}
+                              onChange={({ min, max }) => {
+                                setSelectedDropdown(min);
+                                setSelectedDropdown2(max);
+                              }}
+                            />
+                          )}
+                        </div>
+                      </>
+                    )}
 
-                  <div className="flex flex-wrap gap-2 items-center">
-                    <p>Platform: </p>
-                    <select
-                      disabled={cartItem?.quantity > 0}
-                      value={selectedPlatform}
-                      onChange={(e) => setSelectedPlatform(e.target.value)}
-                      className="px-2 py-1 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
-                    >
-                      {game.platforms.map((platform) => (
-                        <option
-                          key={platform.id}
-                          value={platform.id}
-                          className="bg-neutral-800"
+                    {/* platform dropdown */}
+                    <div className="flex flex-wrap justify-between gap-2 items-center">
+                      {/* price */}
+                      <p>Price: </p>
+                      <div className="flex items-center gap-2 text-2xl flex-1">
+                        <span className="font-bold text-green-500">
+                          ${/* dropdown price */}
+                          {game?.is_dropdown &&
+                            (selectedDropdownRange?.length > 0
+                              ? selectedDropdownRange
+                                  .reduce((acc, curr) => acc + curr.price, 0)
+                                  .toFixed(2)
+                              : game.price)}
+                          {/* slider price */}
+                          {game?.is_slider &&
+                            (selectedSliderRange?.length > 0
+                              ? selectedSliderRange
+                                  .reduce((acc, curr) => acc + curr.price, 0)
+                                  .toFixed(2)
+                              : game.price)}
+                          {/* game price */}
+                          {!game?.is_slider && !game?.is_dropdown && game.price}
+                        </span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <p>Platform: </p>
+                        <select
+                          disabled={cartItem?.quantity > 0}
+                          value={selectedPlatform}
+                          onChange={(e) => setSelectedPlatform(e.target.value)}
+                          className="px-2 py-1 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
                         >
-                          {platform.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {!!game.is_active ? (
-                  <div>
-                    {cartItem ? (
-                      <div className="flex items-center gap-4 w-full">
-                        {!(game.is_slider || game.is_dropdown) && (
-                          <>
-                            <button
-                              onClick={() => decreaseQuantity(game.id)}
-                              className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
+                          {game.platforms.map((platform) => (
+                            <option
+                              key={platform.id}
+                              value={platform.id}
+                              className="bg-neutral-800"
                             >
-                              <BiMinus className="h-6 w-6" />
-                            </button>
+                              {platform.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
 
-                            <span className="text-lg font-bold">
-                              {cartItem.quantity}
-                            </span>
+                    {!!game.is_active ? (
+                      <div>
+                        {cartItem ? (
+                          <div className="flex items-center gap-4 w-full">
+                            {!(game.is_slider || game.is_dropdown) && (
+                              <>
+                                <button
+                                  onClick={() => decreaseQuantity(game.id)}
+                                  className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
+                                >
+                                  <BiMinus className="h-6 w-6" />
+                                </button>
 
-                            <button
-                              onClick={() => increaseQuantity(game.id)}
-                              className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
-                            >
-                              <BiPlus className="h-6 w-6" />
-                            </button>
-                          </>
-                        )}
+                                <span className="text-lg font-bold">
+                                  {cartItem.quantity}
+                                </span>
 
-                        {(game.is_dropdown || game.is_slider) && (
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => removeFromCart(game.id)}
-                              className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
-                            >
-                              <BiTrash className="h-5 w-5 text-red-600" />
-                            </button>
+                                <button
+                                  onClick={() => increaseQuantity(game.id)}
+                                  className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
+                                >
+                                  <BiPlus className="h-6 w-6" />
+                                </button>
+                              </>
+                            )}
+
+                            {(game.is_dropdown || game.is_slider) && (
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => removeFromCart(game.id)}
+                                  className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
+                                >
+                                  <BiTrash className="h-5 w-5 text-red-600" />
+                                </button>
+                              </div>
+                            )}
+
+                            <Link href="/checkout" className="flex-1">
+                              <button className="p-2 rounded-lg bg-Gold/90 w-full">
+                                Checkout
+                              </button>
+                            </Link>
                           </div>
-                        )}
-
-                        <Link href="/checkout" className="flex-1">
-                          <button className="p-2 rounded-lg bg-Gold/90 w-full">
-                            Checkout
+                        ) : (
+                          <button
+                            onClick={handleAddToCart}
+                            className="p-2 rounded-lg bg-Gold/90 w-full"
+                          >
+                            Add to cart
                           </button>
-                        </Link>
+                        )}
                       </div>
                     ) : (
-                      <button
-                        onClick={handleAddToCart}
-                        className="p-2 rounded-lg bg-Gold/90 w-full"
-                      >
-                        Add to cart
-                      </button>
+                      <p className="text-md mx-4 cursor-wait rounded-md bg-white/20 py-2 text-center italic">
+                        Coming Soon
+                      </p>
                     )}
-                  </div>
-                ) : (
-                  <p className="text-md mx-4 cursor-wait rounded-md bg-white/20 py-2 text-center italic">
-                    Coming Soon
-                  </p>
+                  </>
                 )}
               </div>
             </div>

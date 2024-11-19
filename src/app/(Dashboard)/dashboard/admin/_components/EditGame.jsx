@@ -350,32 +350,38 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
       {/* copy from parent */}
       {isSubProduct && parentData && (
         <div className="flex flex-wrap items-center gap-2 w-full">
-          <button
-            onClick={copyFromParent}
-            className="bg-black/20 p-2 rounded-lg hover:bg-Gold/50 text-Gold hover:text-white border border-Gold flex-1 flex items-center justify-center gap-2"
-          >
-            <AiOutlineInsertRowBelow className="h-5 w-5" />
-            Copy from parent
-          </button>
+          <div className="flex-1 w-full">
+            <p className="text-xs">Inherit data from parent</p>
+            <button
+              onClick={copyFromParent}
+              className="bg-black/20 p-2 rounded-lg hover:bg-Gold/50 text-Gold hover:text-white border border-Gold flex items-center justify-center gap-2 w-full"
+            >
+              <AiOutlineInsertRowBelow className="h-5 w-5" />
+              Copy from parent
+            </button>
+          </div>
 
           {/* copy from children */}
-          {parentData?.children?.length > 0 &&
-            parentData?.children.length > 0 && (
+          {parentData?.children?.length > 0 && (
+            <div className="flex-1 w-full">
+              <p className="text-xs">Inherit data from children</p>
               <select
                 value={selectedChild || ""}
                 onChange={copyFromChildren}
-                className="flex-1 rounded-lg bg-black/20 p-3 hover:bg-Gold/50 text-Gold hover:text-white border border-Gold"
+                className="w-full rounded-lg bg-black/20 p-3 hover:bg-Gold/50 text-Gold hover:text-white border border-Gold"
               >
                 <option value="" className="bg-neutral-800 ">
                   📑 Copy from children
                 </option>
                 {parentData?.children?.map((child, index) => (
                   <option key={index} value={index} className="bg-neutral-800">
-                    {child.name} | ${child.price}
+                    {child.name}
+                    {child.price && ` | ${child.price}`}
                   </option>
                 ))}
               </select>
-            )}
+            </div>
+          )}
         </div>
       )}
 
@@ -857,7 +863,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
                 width={200}
                 height={200}
                 priority
-                className="rounded-lg bg-white/10 p-2 w-full"
+                className="rounded-lg bg-white/10 p-2"
               />
               <IoMdClose
                 className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
@@ -913,7 +919,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
                 width={200}
                 height={200}
                 priority
-                className="rounded-lg bg-white/10 p-2 w-full"
+                className="rounded-lg bg-white/10 p-2"
               />
               <IoMdClose
                 className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"

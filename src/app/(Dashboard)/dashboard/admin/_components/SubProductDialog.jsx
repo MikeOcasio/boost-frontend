@@ -23,12 +23,10 @@ export const SubProductDialog = ({
 
     if (!game?.name) errors.push("Product name is missing");
     if (!game?.description) errors.push("Product description is missing");
-    if (!game?.price) errors.push("Product price is missing");
     if (!game?.category_id) errors.push("Product category is missing");
     if (!game?.prod_attr_cats?.length)
       errors.push("Select at least one attribute");
     if (game?.is_priority === null) errors.push("Product priority is missing");
-    if (!game?.tax) errors.push("Product tax is missing");
     if (!game?.platform_ids?.length) errors.push("At least one platform");
     if (game?.is_active === null)
       errors.push("Product active status is missing");
@@ -80,6 +78,15 @@ export const SubProductDialog = ({
 
   const handleCreateGame = async () => {
     if (!validateGame()) return;
+
+    // show warning if there is no price and tax
+    if (!game?.price && !game?.tax) {
+      const confirmed = confirm(
+        "Are you sure you want to create this product without a price and tax? Recommended for folders/warper only."
+      );
+
+      if (!confirmed) return;
+    }
 
     // stingfy dropdown and slider ranges object and make the array of stringified objects
     const dropdownOptions = game?.dropdown_options?.map((option) => {

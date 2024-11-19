@@ -45,7 +45,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="mt-10 text-white">
+    <div className="mt-10 text-white overflow-x-hidden">
       <div className="h-screen w-full">
         <div className="fixed top-0 -z-10 h-full w-full">
           <Image

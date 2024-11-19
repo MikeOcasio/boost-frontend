@@ -54,7 +54,7 @@ export const AdminSubProducts = ({ game, highlightMatch, searchTerm }) => {
                   /{" "}
                 </span>
 
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-1">
                   <FaGamepad className="h-4 w-4" />
                   {child.platforms?.map((platform, index) => (
                     <span key={index}>
@@ -140,6 +140,16 @@ export const AdminSubProducts = ({ game, highlightMatch, searchTerm }) => {
                       : child.tag_line.substring(0, 150)}
                     {child.tag_line.length > 150 && "..."}
                   </div>
+
+                  {child.price && child.tax && (
+                    <div className="flex flex-wrap justify-between items-center gap-2">
+                      <p>Tax: ${child.tax}</p>
+
+                      <p className="text-lg font-semibold text-right flex-1">
+                        Price: ${child.price}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 

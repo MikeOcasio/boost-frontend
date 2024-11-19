@@ -2,7 +2,7 @@ import Link from "next/link";
 import { GiConsoleController, GiPlatform } from "react-icons/gi";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { BiReceipt } from "react-icons/bi";
-import { MdCategory } from "react-icons/md";
+import { MdCategory, MdEmojiPeople } from "react-icons/md";
 import { CgAttribution } from "react-icons/cg";
 
 const AdminTabs = () => {
@@ -16,6 +16,11 @@ const AdminTabs = () => {
       name: "Users",
       href: "/dashboard/admin/allusers",
       icon: <BsFillPeopleFill size={22} />,
+    },
+    {
+      name: "Skillmasters Applications",
+      href: "/dashboard/admin/skillmaster-applications",
+      icon: <MdEmojiPeople size={22} />,
     },
     {
       name: "Orders",
@@ -35,6 +40,11 @@ const AdminTabs = () => {
     {
       name: "Platforms",
       href: "/dashboard/admin/platforms",
+      icon: <GiPlatform size={22} />,
+    },
+    {
+      name: "Promotions",
+      href: "/dashboard/admin/promotions",
       icon: <GiPlatform size={22} />,
     },
   ];

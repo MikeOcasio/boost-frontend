@@ -48,12 +48,19 @@ export function Footer() {
         </Link>
       </div>
       <div className="w-full flex flex-wrap gap-2 text-sm items-center justify-between md:px-4">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap">
           <Link
             href="/terms"
-            className="text-sm text-white/50 hover:text-white transition-all"
+            className="text-sm text-white/50 hover:text-white transition-all hover:bg-white/10 rounded-md px-2"
           >
             Terms & conditions
+          </Link>
+
+          <Link
+            href="/skillmaster-application"
+            className="text-sm text-white/50 hover:text-white transition-all hover:bg-white/10 rounded-md px-2"
+          >
+            Skillmaster Application
           </Link>
         </div>
 

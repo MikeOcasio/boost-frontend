@@ -40,7 +40,7 @@ export const AdminGameCard = ({ game, searchTerm }) => {
         <div className="text-xs font-semibold flex items-center gap-2">
           <span>{highlightMatch(game.category.name, searchTerm)} / </span>
 
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-1">
             <FaGamepad className="h-4 w-4" />
             {game.platforms?.map((platform, index) => (
               <span key={index}>
@@ -115,13 +115,15 @@ export const AdminGameCard = ({ game, searchTerm }) => {
             )}
           </div>
 
-          <div className="flex flex-wrap justify-between items-center gap-2">
-            <p>Tax: ${game.tax}</p>
+          {game.price && game.tax && (
+            <div className="flex flex-wrap justify-between items-center gap-2">
+              <p>Tax: ${game.tax}</p>
 
-            <p className="text-lg font-semibold text-right flex-1">
-              Price: ${game.price}
-            </p>
-          </div>
+              <p className="text-lg font-semibold text-right flex-1">
+                Price: ${game.price}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

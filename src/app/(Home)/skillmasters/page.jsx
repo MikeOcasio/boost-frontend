@@ -9,8 +9,8 @@ import { IoWarning } from "react-icons/io5";
 import { SkillmasterCard } from "../games/_components/SkillmasterCard";
 import toast from "react-hot-toast";
 
-import { fetchAllSkillmasters } from "@/lib/actions/user-actions";
 import { useRouter } from "next/navigation";
+import { fetchAllSkillmasters } from "@/lib/actions/skillmasters-action";
 
 const SkillMastersPage = () => {
   const [skillMasters, setSkillMasters] = useState([]);

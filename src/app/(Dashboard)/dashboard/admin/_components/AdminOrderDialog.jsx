@@ -2,7 +2,7 @@ import {
   assignOrderToSkillMaster,
   updateOrderStatus,
 } from "@/lib/actions/orders-action";
-import { fetchAllSkillmasters } from "@/lib/actions/user-actions";
+import { fetchAllSkillmasters } from "@/lib/actions/skillmasters-action";
 import { adminOrderStatus } from "@/lib/data";
 import { useUserStore } from "@/store/use-user";
 import { Dialog, DialogPanel, DialogTitle, Select } from "@headlessui/react";
