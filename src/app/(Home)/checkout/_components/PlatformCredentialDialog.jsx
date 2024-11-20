@@ -65,7 +65,7 @@ export const PlatformCredentialDialog = ({
       toast.error(error.message);
     } finally {
       handleUserFetch();
-      await (loadOrders && loadOrders());
+      loadOrders && loadOrders();
       setLoading(false);
     }
   };

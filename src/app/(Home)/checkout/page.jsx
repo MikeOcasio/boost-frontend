@@ -36,7 +36,7 @@ const CheckoutPage = () => {
 
   const [showPromotion, setShowPromotion] = useState(false);
   const [promotionCode, setPromotionCode] = useState("");
-  const [activePromotion, setActivePromotion] = useState("");
+  const [activePromotion, setActivePromotion] = useState(null);
 
   // State for clientSecret
   const [clientSecret, setClientSecret] = useState("");
@@ -78,103 +78,108 @@ const CheckoutPage = () => {
     handleUserFetch();
   }, [handleUserFetch, router, userToken]);
 
-  const loadOrders = useCallback(async () => {
-    setLoading(true);
-    setError(false);
-    let validOrders = [];
-    let calculatedTotal = 0;
-    let platformOrders = {};
+  const loadOrders = useCallback(
+    async (promotion) => {
+      setLoading(true);
+      setError(false);
+      let validOrders = [];
+      let calculatedTotal = 0;
+      let platformOrders = {};
 
-    try {
-      for (const item of cartItems) {
-        const product = await fetchGameById(item.id);
+      try {
+        for (const item of cartItems) {
+          const product = await fetchGameById(item.id);
 
-        if (product?.error) {
-          emptyCart();
-          toast.error("Invalid product in cart. Please try again!");
-          router.push("/");
-          return;
-        } else {
-          // Create the updated order object
-          const order = {
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            image: product.image,
-            is_active: product.is_active,
-            tax: product.tax,
-            category_id: product.category_id,
-            prod_attr_cats: product.prod_attr_cats,
-            platform: item.platform,
-            quantity: item.quantity,
-            promotion_code: activePromotion,
-          };
-
-          if (item.is_dropdown) {
-            order.is_dropdown = product.is_dropdown;
-            order.dropdown_options = item.dropdown_options;
-            order.starting_point = item.starting_point;
-            order.ending_point = item.ending_point;
-            order.item_qty = item.dropdown_options.length;
-            order.quantity = 1;
-            order.price = item.dropdown_options.reduce(
-              (acc, curr) => acc + curr.price,
-              0
-            );
-          }
-
-          if (item.is_slider) {
-            order.is_slider = product.is_slider;
-            order.slider_range = item.slider_range;
-            order.item_qty = item.slider_range.length - 1;
-            order.quantity = 1;
-            order.starting_point = item.starting_point;
-            order.ending_point = item.ending_point;
-            order.price = item.slider_range.reduce(
-              (acc, curr) => acc + curr.price,
-              0
-            );
-          }
-
-          validOrders.push(order);
-
-          // Update total price, including tax
-          if (item.is_dropdown) {
-            calculatedTotal +=
-              parseFloat(order.price) + parseFloat(order.tax) * order.item_qty;
-          } else if (item.is_slider) {
-            calculatedTotal +=
-              parseFloat(order.price) + parseFloat(order.tax) * order.item_qty;
+          if (product?.error) {
+            emptyCart();
+            toast.error("Invalid product in cart. Please try again!");
+            router.push("/");
+            return;
           } else {
-            calculatedTotal +=
-              parseFloat(order.price) * order.quantity +
-              parseFloat(order.tax) * order.quantity;
-          }
+            // Create the updated order object
+            const order = {
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image: product.image,
+              is_active: product.is_active,
+              tax: product.tax,
+              category_id: product.category_id,
+              prod_attr_cats: product.prod_attr_cats,
+              platform: item.platform,
+              quantity: item.quantity,
+              promotion_code: promotion || {},
+            };
 
-          // Group orders by platform ID
-          const platformId = item.platform.id;
-          if (!platformOrders[platformId]) {
-            platformOrders[platformId] = [];
+            if (item.is_dropdown) {
+              order.is_dropdown = product.is_dropdown;
+              order.dropdown_options = item.dropdown_options;
+              order.starting_point = item.starting_point;
+              order.ending_point = item.ending_point;
+              order.item_qty = item.dropdown_options.length;
+              order.quantity = 1;
+              order.price = item.dropdown_options.reduce(
+                (acc, curr) => acc + curr.price,
+                0
+              );
+            }
+
+            if (item.is_slider) {
+              order.is_slider = product.is_slider;
+              order.slider_range = item.slider_range;
+              order.item_qty = item.slider_range.length - 1;
+              order.quantity = 1;
+              order.starting_point = item.starting_point;
+              order.ending_point = item.ending_point;
+              order.price = item.slider_range.reduce(
+                (acc, curr) => acc + curr.price,
+                0
+              );
+            }
+
+            validOrders.push(order);
+
+            // Update total price, including tax
+            if (item.is_dropdown) {
+              calculatedTotal +=
+                parseFloat(order.price) +
+                parseFloat(order.tax) * order.item_qty;
+            } else if (item.is_slider) {
+              calculatedTotal +=
+                parseFloat(order.price) +
+                parseFloat(order.tax) * order.item_qty;
+            } else {
+              calculatedTotal +=
+                parseFloat(order.price) * order.quantity +
+                parseFloat(order.tax) * order.quantity;
+            }
+
+            // Group orders by platform ID
+            const platformId = item.platform.id;
+            if (!platformOrders[platformId]) {
+              platformOrders[platformId] = [];
+            }
+            platformOrders[platformId].push(order);
           }
-          platformOrders[platformId].push(order);
         }
+
+        // Convert grouped orders to an array of arrays
+        const groupedOrders = Object.values(platformOrders);
+
+        setOrderByPlatform(groupedOrders);
+        setTotalPrice(calculatedTotal.toFixed(2));
+
+        localStorage.setItem("totalPrice", calculatedTotal.toFixed(2));
+        localStorage.setItem("cartItems", JSON.stringify(validOrders));
+      } catch (error) {
+        setError(true);
+        toast.error("Failed to load orders. Please try again!");
+      } finally {
+        setLoading(false);
       }
-
-      // Convert grouped orders to an array of arrays
-      const groupedOrders = Object.values(platformOrders);
-
-      setOrderByPlatform(groupedOrders);
-      setTotalPrice(calculatedTotal.toFixed(2));
-
-      localStorage.setItem("totalPrice", calculatedTotal.toFixed(2));
-      localStorage.setItem("cartItems", JSON.stringify(validOrders));
-    } catch (error) {
-      setError(true);
-      toast.error("Failed to load orders. Please try again!");
-    } finally {
-      setLoading(false);
-    }
-  }, [cartItems, emptyCart, router, setTotalPrice]);
+    },
+    [cartItems, emptyCart, router, setTotalPrice]
+  );
 
   // Function to fetch clientSecret
   const fetchClientSecret = useCallback(
@@ -189,10 +194,9 @@ const CheckoutPage = () => {
               ...order,
               price: order.price + order.tax * order.item_qty,
               tax: 0,
-              promotion_code: activePromotion,
             };
           } else {
-            return { ...order, promotion_code: activePromotion };
+            return order;
           }
         });
 
@@ -274,37 +278,34 @@ const CheckoutPage = () => {
   };
 
   const verifyPromotionCode = async (code) => {
+    setLoading(true);
+
     try {
-      setLoading(true);
       const response = await fetchPromotionByCode(code);
 
       if (response.error) {
         toast.error(response.error);
 
         setPromotionCode("");
-        setActivePromotion("");
-        setShowPromotion(false);
+        setActivePromotion(null);
       } else {
-        setActivePromotion(promotionCode);
+        setActivePromotion(response);
 
-        await loadOrders();
-        setShowPromotion(false);
-
-        toast.success("Promotion applied successfully!");
+        await loadOrders(response);
+        toast.success("Promotion code applied successfully!");
       }
     } catch (error) {
+      console.log("error", error);
+
       toast.error("Failed to verify promotion code. Please try again!");
 
       setPromotionCode("");
-      setActivePromotion("");
-      setShowPromotion(false);
+      setActivePromotion(null);
     } finally {
       setLoading(false);
+      setShowPromotion(false);
     }
   };
-
-  console.log("activePromotion", activePromotion);
-  console.log("orders data", orderByPlatform);
 
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
@@ -317,7 +318,11 @@ const CheckoutPage = () => {
           <IoWarning className="h-5 w-5 mr-2" />
           Some error occurred. Please try again!
           {/* reload */}
-          <button onClick={loadOrders} className="p-2 rounded-lg bg-white/10">
+          <button
+            type="button"
+            onClick={loadOrders}
+            className="p-2 rounded-lg bg-white/10"
+          >
             Reload
           </button>
         </p>
@@ -493,12 +498,12 @@ const CheckoutPage = () => {
 
             {activePromotion && (
               <p className="text-sm flex flex-wrap gap-2 justify-between items-center w-fit h-fit border rounded-lg border-white/10 px-2 py-1">
-                {activePromotion}
+                {activePromotion.code}
                 <button
                   type="button"
                   onClick={() => {
                     setPromotionCode("");
-                    setActivePromotion("");
+                    setActivePromotion(null);
                     setShowPromotion(false);
                   }}
                 >
