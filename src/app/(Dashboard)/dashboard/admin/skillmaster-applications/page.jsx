@@ -3,7 +3,7 @@
 import { fetchAllSkillmasterApplications } from "@/lib/actions/skillmasters-action";
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { BiImage, BiLoader, BiPencil } from "react-icons/bi";
+import { BiImage, BiLink, BiLoader, BiPencil } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import { SkillmasterApplicationDialog } from "../_components/SkillmasterApplicationDialog";
 
@@ -40,7 +40,7 @@ const AdminSkillmasterApplication = () => {
         toast.error(result.error);
       } else {
         // sort applications by created_at
-        const sortedApplications = response.data.sort((a, b) => {
+        const sortedApplications = response?.sort((a, b) => {
           return new Date(b.created_at) - new Date(a.created_at);
         });
 
@@ -73,6 +73,7 @@ const AdminSkillmasterApplication = () => {
         normalize(application.reasons).includes(term) ||
         normalize(String(application.id)).includes(term) ||
         normalize(String(application.user_id)).includes(term) ||
+        normalize(String(application.reviewer_id)).includes(term) ||
         normalize(application.status).includes(term)
       );
     });
@@ -95,6 +96,13 @@ const AdminSkillmasterApplication = () => {
         <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
           <IoWarning className="h-5 w-5 mr-2" />
           Failed to load Applications. Please try again!
+          {/* reload */}
+          <button
+            onClick={loadApplications}
+            className="p-2 rounded-lg bg-white/10"
+          >
+            Reload
+          </button>
         </p>
       )}
 
@@ -130,7 +138,8 @@ const AdminSkillmasterApplication = () => {
                   >
                     <div className="space-y-2 text-start">
                       <p className="text-xs font-semibold">
-                        Application ID: {highlightMatch(app.id, searchTerm)}
+                        Application ID:{" "}
+                        {highlightMatch(String(app.id), searchTerm)}
                       </p>
 
                       <p className="text-lg font-semibold break-all">
@@ -138,7 +147,8 @@ const AdminSkillmasterApplication = () => {
                       </p>
 
                       <p className="text-xs font-semibold">
-                        User ID: {highlightMatch(app.user_id, searchTerm)}
+                        User ID:{" "}
+                        {highlightMatch(String(app.user_id), searchTerm)}
                       </p>
 
                       <p className="text-xs font-semibold">
@@ -153,9 +163,17 @@ const AdminSkillmasterApplication = () => {
                         {app.images?.length} Images
                       </p>
 
+                      {app?.channels.length > 0 && (
+                        <p className="text-xs font-semibold flex gap-1 items-center">
+                          <BiLink className="h-5 w-5 mr-2" />
+                          {app.channels?.length} Links
+                        </p>
+                      )}
+
                       {app.reviewer_id && (
                         <p className="text-xs font-semibold">
-                          Reviewer ID: {app.reviewer_id}
+                          Reviewer ID:{" "}
+                          {highlightMatch(String(app.reviewer_id), searchTerm)}
                         </p>
                       )}
 

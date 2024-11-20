@@ -37,6 +37,7 @@ const GameCategoriesPage = () => {
 
     try {
       const result = await fetchCategories();
+
       if (result.error) {
         setError(true);
         toast.error(result.error);
@@ -110,6 +111,13 @@ const GameCategoriesPage = () => {
         <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
           <IoWarning className="h-5 w-5 mr-2" />
           Failed to load categories. Please try again!
+          {/* reload */}
+          <button
+            onClick={loadCategories}
+            className="p-2 rounded-lg bg-white/10"
+          >
+            Reload
+          </button>
         </p>
       )}
 

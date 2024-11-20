@@ -8,6 +8,9 @@ import { IoClose, IoCopy } from "react-icons/io5";
 import Image from "next/image";
 import { useUserStore } from "@/store/use-user";
 import { updateSkillmasterApplication } from "@/lib/actions/skillmasters-action";
+import { BiLink } from "react-icons/bi";
+import Link from "next/link";
+import { updateUser } from "@/lib/actions/user-actions";
 
 export const SkillmasterApplicationDialog = ({
   dialogData,
@@ -59,7 +62,41 @@ export const SkillmasterApplicationDialog = ({
         userId: user?.id,
       });
 
-      console.log(response.data);
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        if (response.data.status === "approved") {
+          await updateUserRole({ role: "skillmaster" });
+        }
+        if (response.data.status === "denied") {
+          await updateUserRole({ role: "customer" });
+        }
+
+        handleClosed();
+      }
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Something went wrong! Please try again later.");
+    } finally {
+      setLoading(false);
+      loadApplications();
+    }
+  };
+
+  const updateUserRole = async ({ role }) => {
+    const user = {
+      id: application.user_id,
+      role: role,
+      gamer_tag: application.gamer_tag,
+    };
+
+    setLoading(true);
+
+    try {
+      const response = await updateUser(user);
+
+      console.log("updates user role ", response.data);
 
       if (response.error) {
         toast.error(response.error);
@@ -73,7 +110,6 @@ export const SkillmasterApplicationDialog = ({
       toast.error("Something went wrong! Please try again later.");
     } finally {
       setLoading(false);
-      loadApplications();
     }
   };
 
@@ -166,6 +202,26 @@ export const SkillmasterApplicationDialog = ({
                 </p>
               )}
 
+              {application?.channels.length > 0 && (
+                <div className="border border-white/10 rounded-lg p-2 space-y-2 bg-white/5">
+                  <p>Channels Links</p>
+
+                  <div className="flex flex-wrap gap-2 items-center">
+                    {application?.channels?.map((channel, index) => (
+                      <Link
+                        key={index}
+                        href={channel}
+                        target="_blank"
+                        className="rounded-md w-full p-2 border border-white/10 hover:border-white/20 bg-white/5 flex items-center gap-2 justify-between flex-wrap-reverse"
+                      >
+                        <span>{channel}</span>
+                        <BiLink className="h-8 w-8 hover:bg-white/10 rounded-lg p-1 border border-white/10" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="border border-white/10 rounded-lg p-2 space-y-2 bg-white/5">
                 <p>Images</p>
 
@@ -178,7 +234,7 @@ export const SkillmasterApplicationDialog = ({
                       width={200}
                       height={200}
                       priority
-                      className="rounded-md w-full object-cover min-w-[200px] h-[200px] flex-1"
+                      className="rounded-md w-full object-cover sm:min-w-[200px] h-[200px] flex-1"
                       onClick={openImage}
                     />
                   ))}

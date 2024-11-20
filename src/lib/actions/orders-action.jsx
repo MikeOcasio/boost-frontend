@@ -198,6 +198,8 @@ export const updateOrderStatus = async (orderId, orderState) => {
 
 // stripe checkout session
 export const checkoutSession = async (items) => {
+  console.log("items for checkout", items);
+
   try {
     const sessionToken = await getSessionToken();
     if (!sessionToken) {
@@ -210,6 +212,7 @@ export const checkoutSession = async (items) => {
         currency: "usd",
         description: "Boost Payment",
         products: items,
+        promotion: items[0].promotion_code,
       },
       {
         headers: { Authorization: `Bearer ${sessionToken}` },

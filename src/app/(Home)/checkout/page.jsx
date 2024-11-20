@@ -15,6 +15,8 @@ import { fetchGameById } from "@/lib/actions/products-action";
 import { checkoutSession } from "@/lib/actions/orders-action";
 import { fetchCurrentUser } from "@/lib/actions/user-actions";
 import { fetchPlatformById } from "@/lib/actions/platforms-action";
+import { fetchPromotionByCode } from "@/lib/actions/promotions-action";
+import { CgClose } from "react-icons/cg";
 
 // load stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
@@ -31,6 +33,10 @@ const CheckoutPage = () => {
   // dialog
   const [dialogId, setDialogId] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const [showPromotion, setShowPromotion] = useState(false);
+  const [promotionCode, setPromotionCode] = useState("");
+  const [activePromotion, setActivePromotion] = useState("");
 
   // State for clientSecret
   const [clientSecret, setClientSecret] = useState("");
@@ -101,6 +107,7 @@ const CheckoutPage = () => {
             prod_attr_cats: product.prod_attr_cats,
             platform: item.platform,
             quantity: item.quantity,
+            promotion_code: activePromotion,
           };
 
           if (item.is_dropdown) {
@@ -176,15 +183,16 @@ const CheckoutPage = () => {
         setLoading(true);
 
         // if order is slider or dropdown then add tax to the price and make the tax 0
-        const options = orders.map((order) => {
+        let options = orders.map((order) => {
           if (order.is_dropdown || order.is_slider) {
             return {
               ...order,
               price: order.price + order.tax * order.item_qty,
               tax: 0,
+              promotion_code: activePromotion,
             };
           } else {
-            return order;
+            return { ...order, promotion_code: activePromotion };
           }
         });
 
@@ -265,6 +273,39 @@ const CheckoutPage = () => {
     }
   };
 
+  const verifyPromotionCode = async (code) => {
+    try {
+      setLoading(true);
+      const response = await fetchPromotionByCode(code);
+
+      if (response.error) {
+        toast.error(response.error);
+
+        setPromotionCode("");
+        setActivePromotion("");
+        setShowPromotion(false);
+      } else {
+        setActivePromotion(promotionCode);
+
+        await loadOrders();
+        setShowPromotion(false);
+
+        toast.success("Promotion applied successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to verify promotion code. Please try again!");
+
+      setPromotionCode("");
+      setActivePromotion("");
+      setShowPromotion(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  console.log("activePromotion", activePromotion);
+  console.log("orders data", orderByPlatform);
+
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
       <p className="text-center text-4xl font-title sm:text-5xl">Checkout</p>
@@ -285,7 +326,7 @@ const CheckoutPage = () => {
       {!loading &&
       !error &&
       (orderByPlatform?.length < 1 || cartItems?.length < 1) ? (
-        <p className="w-full">No order found!</p>
+        <p className="w-full text-center">No order found!</p>
       ) : (
         (orderByPlatform.length > 0 || cartItems.length > 0) &&
         orderByPlatform.map((platformOrders, index) => {
@@ -432,10 +473,67 @@ const CheckoutPage = () => {
         })
       )}
 
-      <div className="text-right text-2xl font-bold flex items-center justify-between gap-2 border border-white/10 rounded-lg p-4">
-        <span>Total Price</span>
-        <span>${totalPrice}</span>
-      </div>
+      {totalPrice > 0 && (
+        <div className="flex flex-col gap-4">
+          <hr className="border-white/20" />
+
+          {/* promotion Code */}
+          <div className="flex flex-col gap-4 border border-white/10 rounded-lg p-4 bg-white/10">
+            <div className="flex flex-wrap gap-2 justify-between items-center">
+              <p className="text-lg">Promotion Code</p>
+
+              <button
+                disabled={loading}
+                className="p-2 rounded-lg border border-white/10 hover:border-white/20 disabled:bg-gray-500/20"
+                onClick={() => setShowPromotion(true)}
+              >
+                Add Promotion Code
+              </button>
+            </div>
+
+            {activePromotion && (
+              <p className="text-sm flex flex-wrap gap-2 justify-between items-center w-fit h-fit border rounded-lg border-white/10 px-2 py-1">
+                {activePromotion}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPromotionCode("");
+                    setActivePromotion("");
+                    setShowPromotion(false);
+                  }}
+                >
+                  <CgClose className="h-8 w-8 hover:bg-white/10 rounded-lg p-2" />
+                </button>
+              </p>
+            )}
+
+            {showPromotion && (
+              <div className="flex flex-wrap gap-2 justify-between items-center">
+                <input
+                  type="text"
+                  placeholder="Promotion Code"
+                  className="input-field"
+                  value={promotionCode}
+                  onChange={(e) => setPromotionCode(e.target.value)}
+                />
+
+                <button
+                  disabled={loading || !promotionCode.trim()}
+                  className="bg-Gold p-2 rounded-lg hover:bg-Gold/80 disabled:bg-gray-500/20 flex-1"
+                  onClick={() => verifyPromotionCode(promotionCode)}
+                >
+                  Apply
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="text-right text-2xl font-bold flex items-center justify-between gap-2 border border-white/10 rounded-lg p-4">
+            <span>Total Price</span>
+            <span>${totalPrice}</span>
+          </div>
+        </div>
+      )}
 
       {/* dialog */}
       <PlatformCredentialDialog

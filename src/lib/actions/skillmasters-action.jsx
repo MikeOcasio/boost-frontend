@@ -78,7 +78,7 @@ export const fetchAllSkillmasterApplications = async () => {
       }
     );
 
-    return { success: true, data };
+    return data;
   } catch (error) {
     const errorMessage = error.response?.data || error.message;
     console.error("Failed to fetch applications:", errorMessage);
@@ -168,11 +168,12 @@ export const updateSkillmasterApplication = async ({ id, status, userId }) => {
   }
 
   try {
-    const { data } = await axios.patch(
+    const response = await axios.patch(
       `${apiUrl}/users/skillmaster_applications/${id}`,
       {
         status: status,
         reviewer_id: userId,
+        reviewed_at: new Date(),
       },
       {
         headers: {
@@ -181,7 +182,7 @@ export const updateSkillmasterApplication = async ({ id, status, userId }) => {
       }
     );
 
-    return { success: true, data };
+    return response.data;
   } catch (error) {
     const errorMessage = error.response?.data || error.message;
     console.error("Failed to update application:", errorMessage);

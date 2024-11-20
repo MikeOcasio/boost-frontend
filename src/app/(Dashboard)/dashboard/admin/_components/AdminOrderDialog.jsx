@@ -1,3 +1,5 @@
+"use client";
+
 import {
   assignOrderToSkillMaster,
   updateOrderStatus,
@@ -26,7 +28,7 @@ export const AdminOrderDialog = ({
 
   const [skillmasterId, setSkillmasterId] = useState();
   const [loading, setLoading] = useState(false);
-  const [currentOrderState, setCurrentOrderState] = useState(order?.state);
+  const [currentOrderState, setCurrentOrderState] = useState("");
   const [skillmasters, setSkillmasters] = useState(null);
 
   useEffect(() => {
