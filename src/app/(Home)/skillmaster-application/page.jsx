@@ -3,13 +3,14 @@
 import { createSkillmasterApplication } from "@/lib/actions/skillmasters-action";
 import { fetchCurrentUser } from "@/lib/actions/user-actions";
 import { useUserStore } from "@/store/use-user";
-import { Field, Label } from "@headlessui/react";
+import { Field, Input, Label } from "@headlessui/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader, BiUpload } from "react-icons/bi";
-import { IoMdClose } from "react-icons/io";
+import { IoMdAdd, IoMdClose, IoMdRemove } from "react-icons/io";
 
 const SkillmasterApplicationPage = () => {
   const router = useRouter();
@@ -20,6 +21,7 @@ const SkillmasterApplicationPage = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [images, setImages] = useState([]);
+  const [channels, setChannels] = useState([]);
 
   useEffect(() => {
     if (user) {
@@ -64,6 +66,16 @@ const SkillmasterApplicationPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!name || !email || !message || !images.length) {
+      toast.error("Please fill in all the required fields");
+      return;
+    }
+
+    if (channels.length < 1 || channels.some((channel) => !channel)) {
+      toast.error("Please add at least one channel");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -71,19 +83,48 @@ const SkillmasterApplicationPage = () => {
         name,
         email,
         message,
-        images
+        images,
+        channels
       );
+
       if (response?.error) {
+        router.push("/");
         toast.error(response.error);
-        return;
+      } else {
+        toast.success("Application submitted successfully!");
+        router.push("/");
       }
-      toast.success("Application submitted successfully!");
     } catch (err) {
+      router.push("/");
       toast.error(
         err.message || "An error occurred while submitting the application."
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const removeChannel = (index) => {
+    setChannels(channels.filter((_, i) => i !== index));
+  };
+
+  const addChannel = () => {
+    if (channels[channels.length - 1] !== "") {
+      setChannels([...channels, ""]);
+    } else {
+      toast.error(
+        "Please fill in the current channel before adding a new one."
+      );
+    }
+  };
+
+  const handleChannelChange = (index, value) => {
+    const updatedChannels = [...channels];
+    updatedChannels[index] = value;
+
+    // Prevent empty strings from being added
+    if (value.trim() !== "" || index < updatedChannels.length - 1) {
+      setChannels(updatedChannels);
     }
   };
 
@@ -174,7 +215,6 @@ const SkillmasterApplicationPage = () => {
           </div>
 
           {/* Images */}
-
           <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
             <Label className="font-semibold text-white">
               Proof of skills (max 3MB combined)
@@ -235,6 +275,41 @@ const SkillmasterApplicationPage = () => {
             </div>
           </Field>
 
+          {/* channels */}
+          {/* channel List with Add and Remove Buttons */}
+          <Field className="space-y-4 w-full border border-white/10 rounded-lg p-4 bg-white/5 hover:border-white/20">
+            <div className="flex items-center justify-between gap-4">
+              <Label>Channels</Label>
+              <button
+                type="button"
+                onClick={addChannel}
+                className="p-2 rounded-lg hover:bg-white/10 flex gap-2 items-center border border-white/10"
+              >
+                <IoMdAdd className="h-5 w-5" />
+                Add more links
+              </button>
+            </div>
+
+            {channels?.map((channel, index) => (
+              <div key={index} className="flex flex-wrap gap-2 items-center">
+                <Input
+                  type="text"
+                  value={channel || ""}
+                  placeholder={`Link ${index + 1}`}
+                  className="input-field"
+                  onChange={(e) => handleChannelChange(index, e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeChannel(index)}
+                  className="border rounded-lg p-2 hover:bg-white/10 border-white/10"
+                >
+                  <IoMdRemove className="h-6 w-6" />
+                </button>
+              </div>
+            ))}
+          </Field>
+
           <button
             type="submit"
             className="bg-Gold/80 p-2 rounded-lg hover:bg-Gold/60 disabled:bg-gray-500/20 flex-1 w-full disabled:gray-500/20"
@@ -242,6 +317,19 @@ const SkillmasterApplicationPage = () => {
             Submit
           </button>
         </form>
+
+        <p className="text-xs text-center mt-4">
+          By submitting this form, you agree to the{" "}
+          <Link
+            href="/terms#skillmaster-term"
+            target="_blank"
+            rel="noreferrer"
+            className="text-Gold hover:underline"
+          >
+            Terms of Service
+          </Link>
+          .
+        </p>
       </div>
     </div>
   );

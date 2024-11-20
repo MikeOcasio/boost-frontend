@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { GiConsoleController, GiPlatform } from "react-icons/gi";
 import { BsFillPeopleFill } from "react-icons/bs";
-import { BiReceipt } from "react-icons/bi";
+import { BiReceipt, BiSolidOffer } from "react-icons/bi";
 import { MdCategory, MdEmojiPeople } from "react-icons/md";
 import { CgAttribution } from "react-icons/cg";
 
@@ -45,7 +45,7 @@ const AdminTabs = () => {
     {
       name: "Promotions",
       href: "/dashboard/admin/promotions",
-      icon: <GiPlatform size={22} />,
+      icon: <BiSolidOffer size={22} />,
     },
   ];
 
@@ -57,9 +57,9 @@ const AdminTabs = () => {
           <Link
             href={item.href}
             key={index}
-            className="flex items-center flex-1 min-w-fit flex-wrap rounded-lg p-2 bg-gray-500/20 hover:bg-gray-500/30"
+            className="flex items-center flex-1 min-w-fit flex-wrap rounded-lg p-2 px-6 bg-gray-500/20 hover:bg-gray-500/30"
           >
-            <button className="flex flex-wrap items-center gap-4 mx-auto">
+            <button className="flex flex-wrap items-center gap-2 mx-auto">
               {item.icon}
               <p className="text-sm font-semibold">{item.name}</p>
             </button>

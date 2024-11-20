@@ -122,7 +122,8 @@ export const createSkillmasterApplication = async (
   name,
   email,
   message,
-  images
+  images,
+  channels
 ) => {
   const sessionToken = await getSessionToken();
   if (!sessionToken) {
@@ -137,7 +138,7 @@ export const createSkillmasterApplication = async (
         email: email,
         reasons: message,
         images: images,
-        status: "submitted",
+        channels: channels,
       },
       {
         headers: {
@@ -148,32 +149,31 @@ export const createSkillmasterApplication = async (
     const data = response.data;
     return data;
   } catch (error) {
-    const errorMessage = error.response?.data || error.message;
+    const errorMessage =
+      error.response?.data?.error || error.response?.data || error.message;
     console.error("Failed to submit application:", errorMessage);
 
     return {
-      error: "An error occurred while submitting the application.",
+      error:
+        errorMessage || "An error occurred while submitting the application.",
     };
   }
 };
 
 // update skillmaster application
-export const updateSkillmasterApplication = async (
-  id,
-  name,
-  email,
-  message,
-  images
-) => {
+export const updateSkillmasterApplication = async ({ id, status, userId }) => {
   const sessionToken = await getSessionToken();
   if (!sessionToken) {
     return { error: "No token found. Please login again." };
   }
 
   try {
-    const { data } = await axios.put(
+    const { data } = await axios.patch(
       `${apiUrl}/users/skillmaster_applications/${id}`,
-      { gamer_tag: name, email: email, reasons: message, images: images },
+      {
+        status: status,
+        reviewer_id: userId,
+      },
       {
         headers: {
           Authorization: `Bearer ${sessionToken}`,

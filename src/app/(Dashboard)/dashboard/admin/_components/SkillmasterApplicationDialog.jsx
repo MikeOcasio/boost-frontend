@@ -1,20 +1,13 @@
 "use client";
 
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  Field,
-  Input,
-  Label,
-} from "@headlessui/react";
-import clsx from "clsx";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
 
-import { BiLoader, BiTrash } from "react-icons/bi";
 import Image from "next/image";
+import { useUserStore } from "@/store/use-user";
+import { updateSkillmasterApplication } from "@/lib/actions/skillmasters-action";
 
 export const SkillmasterApplicationDialog = ({
   dialogData,
@@ -24,6 +17,14 @@ export const SkillmasterApplicationDialog = ({
 }) => {
   const [application, setApplication] = useState(dialogData);
   const [loading, setLoading] = useState(false);
+
+  const statusOptions = [
+    { label: "Approved", value: "approved" },
+    { label: "Denied", value: "denied" },
+  ];
+  const [updatedStatus, setUpdatedStatus] = useState("");
+
+  const { user } = useUserStore();
 
   useEffect(() => {
     if (dialogData) {
@@ -38,10 +39,48 @@ export const SkillmasterApplicationDialog = ({
     window.open(image, "_blank");
   };
 
+  const handleClosed = () => {
+    setUpdatedStatus("");
+    onClose();
+  };
+
+  const updateStatus = async () => {
+    if (!updatedStatus) {
+      toast.error("Please select a status");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await updateSkillmasterApplication({
+        id: application.id,
+        status: updatedStatus,
+        userId: user?.id,
+      });
+
+      console.log(response.data);
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Application status updated successfully");
+        handleClosed();
+      }
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Something went wrong! Please try again later.");
+    } finally {
+      setLoading(false);
+      loadApplications();
+    }
+  };
+
   return (
     <Dialog
       open={dialogOpen}
-      onClose={onClose}
+      onClose={handleClosed}
       as="div"
       className="relative z-50 text-white"
     >
@@ -49,7 +88,7 @@ export const SkillmasterApplicationDialog = ({
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <DialogPanel className="w-full max-w-xl rounded-lg bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
           <button
-            onClick={onClose}
+            onClick={handleClosed}
             className="rounded-lg hover:bg-white/10 absolute right-0 top-0 m-4"
           >
             <IoClose className="h-8 w-8" />
@@ -77,31 +116,80 @@ export const SkillmasterApplicationDialog = ({
               </button>
             )}
 
-            <div className="flex flex-col gap-2 w-full">
-              <p>Gamer Tag: {application?.gamer_tag}</p>
-              <p>Reasons: {application?.reasons}</p>
-              <p>Images:</p>
-
-              <div className="flex flex-wrap gap-2 items-center">
-                {application?.images?.map((image, index) => (
-                  <Image
-                    key={index}
-                    src={image}
-                    alt="Product image"
-                    width={200}
-                    height={200}
-                    priority
-                    className="rounded-lg bg-white/10 p-2 h-full w-full object-cover min-w-[200px] max-h-[200px]"
-                    onClick={openImage}
-                  />
+            {/* change status */}
+            <div className="flex flex-wrap gap-2 items-center">
+              <select
+                className="rounded-lg border border-white/10 bg-white/5 p-2 text-sm flex-1"
+                value={updatedStatus}
+                onChange={(e) => setUpdatedStatus(e.target.value)}
+              >
+                <option value="pending">Select Status</option>
+                {statusOptions.map((option, index) => (
+                  <option key={index} value={option.value}>
+                    {option.label}
+                  </option>
                 ))}
-              </div>
+              </select>
+
+              <button
+                disabled={loading || !application.id}
+                onClick={updateStatus}
+                className="bg-Gold px-4 py-2 rounded-full text-white flex-1 text-center"
+              >
+                {loading ? "Updating..." : "Update Status"}
+              </button>
             </div>
 
-            {/* created at */}
-            <p className="text-xs font-semibold">
-              Created at: {new Date(application.created_at).toLocaleString()}
-            </p>
+            <div className="flex flex-col gap-2 w-full">
+              <p>GamerTag: {application?.gamer_tag}</p>
+              <p>User ID: {application?.user_id}</p>
+
+              <p className="text-xs font-semibold">
+                Status:
+                <span className="ml-2 border border-white/10 rounded-md px-2 py-1 bg-white/5">
+                  {application?.status}
+                </span>
+              </p>
+
+              <p>Reasons: {application?.reasons}</p>
+
+              {application.reviewer_id && (
+                <p className="text-xs font-semibold">
+                  Reviewer ID: {application.reviewer_id}
+                </p>
+              )}
+
+              {application.reviewer_id && (
+                <p className="text-xs font-semibold">
+                  reviewed at:{" "}
+                  {new Date(application.reviewed_at).toLocaleString()}
+                </p>
+              )}
+
+              <div className="border border-white/10 rounded-lg p-2 space-y-2 bg-white/5">
+                <p>Images</p>
+
+                <div className="flex flex-wrap gap-2 items-center bg-white/10 p-2 rounded-lg">
+                  {application?.images?.map((image, index) => (
+                    <Image
+                      key={index}
+                      src={image}
+                      alt="Product image"
+                      width={200}
+                      height={200}
+                      priority
+                      className="rounded-md w-full object-cover min-w-[200px] h-[200px] flex-1"
+                      onClick={openImage}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* created at */}
+              <p className="text-xs font-semibold">
+                Created at: {new Date(application.created_at).toLocaleString()}
+              </p>
+            </div>
           </div>
         </DialogPanel>
       </div>

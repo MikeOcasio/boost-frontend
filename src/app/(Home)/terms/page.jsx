@@ -6,7 +6,7 @@ const TermsAndConditions = () => {
       <p className="text-center text-xl font-bold">Terms and Conditions</p>
 
       <p className="text-lg font-semibold">
-        Service Terms and Conditions for Raven
+        Service Terms and Conditions for RavenBoost
       </p>
       <p>
         By accessing and using our website, you confirm that you are 18 years of

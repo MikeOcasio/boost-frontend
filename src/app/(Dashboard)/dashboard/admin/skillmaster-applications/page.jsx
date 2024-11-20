@@ -3,7 +3,7 @@
 import { fetchAllSkillmasterApplications } from "@/lib/actions/skillmasters-action";
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { BiLoader, BiPencil } from "react-icons/bi";
+import { BiImage, BiLoader, BiPencil } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import { SkillmasterApplicationDialog } from "../_components/SkillmasterApplicationDialog";
 
@@ -19,13 +19,14 @@ const highlightMatch = (text, searchTerm) => {
 };
 
 const AdminSkillmasterApplication = () => {
+  const [applications, setApplications] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [applications, setApplications] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const [dialogData, setDialogData] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const loadApplications = async () => {
     setLoading(true);
@@ -110,12 +111,12 @@ const AdminSkillmasterApplication = () => {
                 autoFocus
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search users..."
+                placeholder="Search applications..."
                 className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
               />
             </div>
 
-            <div className="flex flex-wrap gap-4 justify-between items-center">
+            <div className="flex flex-wrap gap-4 justify-between">
               {!loading && !error && applications?.length < 1 ? (
                 <p className="text-center w-full">
                   No applications have been added yet!
@@ -128,19 +129,42 @@ const AdminSkillmasterApplication = () => {
                     className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
                   >
                     <div className="space-y-2 text-start">
+                      <p className="text-xs font-semibold">
+                        Application ID: {highlightMatch(app.id, searchTerm)}
+                      </p>
+
                       <p className="text-lg font-semibold break-all">
-                        {highlightMatch(app.gamer_tag, searchTerm)}
+                        GamerTag: {highlightMatch(app.gamer_tag, searchTerm)}
                       </p>
 
                       <p className="text-xs font-semibold">
-                        Status: {app.status}
+                        User ID: {highlightMatch(app.user_id, searchTerm)}
                       </p>
 
                       <p className="text-xs font-semibold">
-                        User ID: {app.user_id}
+                        Status:
+                        <span className="ml-2 border border-white/10 rounded-md px-2 py-1 bg-white/5">
+                          {highlightMatch(app.status, searchTerm)}
+                        </span>
                       </p>
 
-                      <p className="text-xs font-semibold"></p>
+                      <p className="text-xs font-semibold flex gap-1 items-center">
+                        <BiImage className="h-5 w-5 mr-2" />
+                        {app.images?.length} Images
+                      </p>
+
+                      {app.reviewer_id && (
+                        <p className="text-xs font-semibold">
+                          Reviewer ID: {app.reviewer_id}
+                        </p>
+                      )}
+
+                      {app.reviewer_id && (
+                        <p className="text-xs font-semibold">
+                          Reviewed at :{" "}
+                          {new Date(app.reviewed_at).toLocaleString()}
+                        </p>
+                      )}
 
                       {/* created at */}
                       <p className="text-xs font-semibold">
