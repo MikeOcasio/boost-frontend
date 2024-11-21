@@ -11,7 +11,7 @@ import { AdminSubProducts } from "./AdminSubProducts";
 const highlightMatch = (text, searchTerm) => {
   if (!searchTerm) return text; // If no search term, return the original text
   const regex = new RegExp(`(${searchTerm})`, "gi"); // Case-insensitive match
-  const parts = text.split(regex); // Split the text into matching and non-matching parts
+  const parts = text?.split(regex); // Split the text into matching and non-matching parts
 
   return parts.map((part, index) =>
     regex.test(part) ? <mark key={index}>{part}</mark> : part
@@ -129,11 +129,11 @@ export const AdminGameCard = ({ game, searchTerm }) => {
 
       <div className="flex flex-wrap gap-2 items-center">
         <p className="text-sm font-semibold bg-white/10 px-2 rounded-md">
-          ID: {highlightMatch(game.id.toString(), searchTerm)}
+          ID: {highlightMatch(String(game.id), searchTerm)}
         </p>
 
         <p className="text-sm font-semibold bg-white/10 px-2 rounded-md">
-          Category ID: {highlightMatch(game.category_id.toString(), searchTerm)}
+          Category ID: {highlightMatch(String(game.category_id), searchTerm)}
         </p>
 
         {game.prod_attr_cats?.length > 0 && (

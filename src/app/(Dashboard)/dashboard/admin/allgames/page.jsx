@@ -112,7 +112,7 @@ const AllGames = () => {
               normalize(attr.name)?.includes(term)
             )
           ) ||
-          (game.children.length > 0 && "subproducts"?.includes(term))
+          (game.children.length > 0 && "subproducts".includes(term))
         );
       })
       .filter((game) => (filter.mostPopular ? game.most_popular : true))
