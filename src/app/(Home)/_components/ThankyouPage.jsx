@@ -26,6 +26,7 @@ const ThankyouPage = () => {
 
     try {
       const result = await fetchOrderById(params);
+
       if (result.error) {
         setError(true);
         toast.error(result.error);
@@ -89,8 +90,8 @@ const ThankyouPage = () => {
             </h2>
 
             <p className="text-center text-white/80 font-semibold max-w-md mx-auto text-xs">
-              Your order has been successfully placed. Skillmaster will assign
-              to your order shortly.
+              Your order has been successfully placed. A Skillmaster will be
+              assigned to your order shortly.
             </p>
 
             <p className="font-semibold">
@@ -185,12 +186,20 @@ const ThankyouPage = () => {
                       .toFixed(2)}
                   </span>
                 </p>
-                {orderData.order.promotion_id && (
+
+                {orderData.order.promo_data && (
                   <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
-                    Promotion
-                    <span>{orderData.order.promotion_id}</span>
+                    Discount
+                    <span>
+                      {
+                        JSON.parse(orderData.order.promo_data)
+                          .discount_percentage
+                      }
+                      %
+                    </span>
                   </p>
                 )}
+
                 <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
                   Tax
                   <span>
@@ -211,7 +220,14 @@ const ThankyouPage = () => {
                   {new Date(orderData.order.created_at).toLocaleString()}
                 </p>
                 <p className="text-lg font-semibold">
-                  Price: ${orderData.order.total_price}
+                  Price: $
+                  {orderData.order?.promo_data
+                    ? orderData.order.total_price -
+                      (orderData.order.total_price *
+                        JSON.parse(orderData.order?.promo_data)
+                          .discount_percentage) /
+                        100
+                    : orderData.order.total_price}
                 </p>
               </div>
             </div>

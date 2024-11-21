@@ -178,7 +178,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
         router.push("/dashboard/admin/allgames");
       }
     } catch (error) {
-      console.log("Error deleting product:", error.message);
+      // console.log("Error deleting product:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);

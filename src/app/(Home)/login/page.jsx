@@ -75,7 +75,7 @@ export default function Login() {
         setDialogOpen(true);
       }
     } catch (error) {
-      console.log("Error logging in user:", error.message);
+      // console.log("Error logging in user:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -92,7 +92,7 @@ export default function Login() {
         return response;
       }
     } catch (error) {
-      console.log("Error fetching QR code:", error.message);
+      // console.log("Error fetching QR code:", error.message);
       toast.error(error.message);
     }
   };

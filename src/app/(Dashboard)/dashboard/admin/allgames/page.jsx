@@ -159,7 +159,9 @@ const AllGames = () => {
   return (
     <div className="space-y-6 mx-auto max-w-7xl">
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h2 className="text-center text-lg font-semibold">All Products</h2>
+        <h2 className="text-center text-lg font-semibold">
+          All Products ({games?.length})
+        </h2>
 
         <Link href="/dashboard/admin/allgames/newgame">
           <button className="bg-Gold/60 hover:bg-Gold/80 border border-black rounded-lg p-2 px-4 flex items-center justify-center gap-2 w-fit backdrop-blur-sm">

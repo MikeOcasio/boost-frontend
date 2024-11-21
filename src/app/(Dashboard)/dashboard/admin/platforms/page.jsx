@@ -89,7 +89,9 @@ const PlatformsPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h1 className="text-xl font-semibold">All Platforms</h1>
+        <h1 className="text-xl font-semibold">
+          All Platforms ({platforms?.length})
+        </h1>
 
         <button
           onClick={newPlatform}

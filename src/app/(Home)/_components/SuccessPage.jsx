@@ -59,6 +59,7 @@ const SuccessPage = () => {
         platform: platformId,
         product_ids: productIds,
         ordersData: orderData.orders,
+        promo_data: JSON.stringify(orderData?.orders[0]?.promotion_code),
       };
 
       if (orderData.subplatform) {

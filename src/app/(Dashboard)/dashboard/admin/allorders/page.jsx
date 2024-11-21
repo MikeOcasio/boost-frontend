@@ -11,6 +11,7 @@ import { NewOrderDialog } from "../_components/NewOrderDialog";
 import { useUserStore } from "@/store/use-user";
 import { FilterButton } from "@/components/FilterButton";
 import { OrderSearchFilter } from "@/app/(Dashboard)/_components/OrderSearchFilter";
+import { fetchAllSkillmasters } from "@/lib/actions/skillmasters-action";
 
 const AllOrders = () => {
   const [orders, setOrders] = useState(null);
@@ -31,6 +32,8 @@ const AllOrders = () => {
     state: "",
     sortBy: "",
   });
+
+  const [skillmasters, setSkillmasters] = useState(null);
 
   const { user } = useUserStore();
 
@@ -126,6 +129,27 @@ const AllOrders = () => {
           return 0;
       }
     });
+
+  const getSkillmasters = async () => {
+    try {
+      setLoading(true);
+
+      const result = await fetchAllSkillmasters();
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setSkillmasters(result);
+      }
+    } catch (error) {
+      toast.error("Failed to load skillmasters. Please try again!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getSkillmasters();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -234,6 +258,7 @@ const AllOrders = () => {
                     order={order}
                     loadOrders={loadOrders}
                     searchTerm={searchTerm}
+                    skillmasters={skillmasters}
                   />
                 ))}
               </div>

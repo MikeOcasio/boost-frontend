@@ -33,7 +33,12 @@ const groupProducts = (products) => {
   }, []);
 };
 
-export const AdminOrderCard = ({ order, loadOrders, searchTerm }) => {
+export const AdminOrderCard = ({
+  order,
+  loadOrders,
+  searchTerm,
+  skillmasters,
+}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const onClose = () => setDialogOpen(false);
 
@@ -140,6 +145,7 @@ export const AdminOrderCard = ({ order, loadOrders, searchTerm }) => {
         order={order}
         groupedProducts={groupedProducts}
         loadOrders={loadOrders}
+        skillmasters={skillmasters}
       />
     </div>
   );

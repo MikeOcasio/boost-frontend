@@ -89,7 +89,9 @@ const PromotionsPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h1 className="text-xl font-semibold">All promotions</h1>
+        <h1 className="text-xl font-semibold">
+          All promotions ({promotions?.length})
+        </h1>
 
         <button
           onClick={newPromotion}

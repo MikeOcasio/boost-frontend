@@ -295,8 +295,6 @@ const CheckoutPage = () => {
         toast.success("Promotion code applied successfully!");
       }
     } catch (error) {
-      console.log("error", error);
-
       toast.error("Failed to verify promotion code. Please try again!");
 
       setPromotionCode("");
@@ -454,7 +452,7 @@ const CheckoutPage = () => {
                   <span>Pay Now</span>
                   <span>
                     $
-                    {totalPrice &&
+                    {/* {totalPrice &&
                       platformOrders
                         ?.reduce(
                           (acc, curr) =>
@@ -469,7 +467,34 @@ const CheckoutPage = () => {
                                 ),
                           0
                         )
-                        .toFixed(2)}
+                        .toFixed(2)} */}
+                    {(() => {
+                      const total = platformOrders
+                        ?.reduce(
+                          (acc, curr) =>
+                            curr.is_dropdown || curr.is_slider
+                              ? acc +
+                                Number(curr.price) +
+                                Number(curr.tax * curr.item_qty)
+                              : acc +
+                                Number(
+                                  curr.price * curr.quantity +
+                                    curr.tax * curr.quantity
+                                ),
+                          0
+                        )
+                        .toFixed(2);
+
+                      const discount = activePromotion
+                        ? (
+                            (total *
+                              Number(activePromotion.discount_percentage)) /
+                            100
+                          ).toFixed(2)
+                        : 0;
+
+                      return (total - discount).toFixed(2);
+                    })()}
                   </span>
                 </button>
               </div>
@@ -498,7 +523,8 @@ const CheckoutPage = () => {
 
             {activePromotion && (
               <p className="text-sm flex flex-wrap gap-2 justify-between items-center w-fit h-fit border rounded-lg border-white/10 px-2 py-1">
-                {activePromotion.code}
+                {activePromotion.code} | {activePromotion.discount_percentage}%
+                OFF
                 <button
                   type="button"
                   onClick={() => {
@@ -513,9 +539,10 @@ const CheckoutPage = () => {
             )}
 
             {showPromotion && (
-              <div className="flex flex-wrap gap-2 justify-between items-center">
+              <form className="flex flex-wrap gap-2 justify-between items-center">
                 <input
                   type="text"
+                  autoFocus
                   placeholder="Promotion Code"
                   className="input-field"
                   value={promotionCode}
@@ -523,19 +550,40 @@ const CheckoutPage = () => {
                 />
 
                 <button
+                  type="submit"
                   disabled={loading || !promotionCode.trim()}
                   className="bg-Gold p-2 rounded-lg hover:bg-Gold/80 disabled:bg-gray-500/20 flex-1"
                   onClick={() => verifyPromotionCode(promotionCode)}
                 >
                   Apply
                 </button>
-              </div>
+              </form>
             )}
           </div>
 
           <div className="text-right text-2xl font-bold flex items-center justify-between gap-2 border border-white/10 rounded-lg p-4">
             <span>Total Price</span>
-            <span>${totalPrice}</span>
+            <span className="flex items-center">
+              {/* show the total price as a discounted price cut  */}
+              <div className="flex items-center gap-2">
+                {activePromotion && (
+                  <span className="line-through ml-2 text-white/20">
+                    ${totalPrice}
+                  </span>
+                )}
+                <span>
+                  $
+                  {activePromotion
+                    ? (
+                        totalPrice -
+                        (totalPrice *
+                          Number(activePromotion.discount_percentage)) /
+                          100
+                      ).toFixed(2)
+                    : totalPrice}
+                </span>
+              </div>
+            </span>
           </div>
         </div>
       )}

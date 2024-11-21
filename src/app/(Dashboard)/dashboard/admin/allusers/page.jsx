@@ -131,7 +131,7 @@ const AllUsers = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h1 className="text-xl font-semibold">All Users</h1>
+        <h1 className="text-xl font-semibold">All Users ({users?.length})</h1>
 
         <button
           onClick={newUser}

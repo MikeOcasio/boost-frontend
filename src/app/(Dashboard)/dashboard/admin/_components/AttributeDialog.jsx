@@ -78,7 +78,7 @@ export const AttributeDialog = ({
 
       handleClosed();
     } catch (error) {
-      console.log("Error submitting attribute:", error.message);
+      // console.log("Error submitting attribute:", error.message);
       toast.error(error.message);
     } finally {
       loadAttributes();
@@ -107,7 +107,7 @@ export const AttributeDialog = ({
         handleClosed();
       }
     } catch (error) {
-      console.log("Error deleting attribute:", error.message);
+      // console.log("Error deleting attribute:", error.message);
       toast.error(error.message);
     } finally {
       loadAttributes();

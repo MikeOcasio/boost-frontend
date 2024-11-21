@@ -120,7 +120,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
 
       handleClosed();
     } catch (error) {
-      console.log("Error submitting user:", error.message);
+      // console.log("Error submitting user:", error.message);
       toast.error(error.message);
     } finally {
       loadUsers();
@@ -150,7 +150,7 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
         handleClosed();
       }
     } catch (error) {
-      console.log("Error deleting user:", error.message);
+      // console.log("Error deleting user:", error.message);
       toast.error(error.message);
     } finally {
       loadUsers();

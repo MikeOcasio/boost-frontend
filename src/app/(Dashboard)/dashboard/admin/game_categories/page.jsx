@@ -93,7 +93,9 @@ const GameCategoriesPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h1 className="text-xl font-semibold">All Game Categories</h1>
+        <h1 className="text-xl font-semibold">
+          All Game Categories ({categories?.length})
+        </h1>
 
         <button
           onClick={newCategory}

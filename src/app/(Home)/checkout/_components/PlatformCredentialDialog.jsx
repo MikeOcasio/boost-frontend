@@ -61,7 +61,7 @@ export const PlatformCredentialDialog = ({
         handleClosed();
       }
     } catch (error) {
-      console.log("Error submitting platform:", error.message);
+      // console.log("Error submitting platform:", error.message);
       toast.error(error.message);
     } finally {
       handleUserFetch();

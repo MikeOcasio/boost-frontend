@@ -76,7 +76,7 @@ export default function SignIn() {
         getUserSession();
       }
     } catch (error) {
-      console.log("Error logging in user:", error.message);
+      // console.log("Error logging in user:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -115,7 +115,7 @@ export default function SignIn() {
         }
       }
     } catch (error) {
-      console.log("Error fetching QR code:", error.message);
+      // console.log("Error fetching QR code:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -132,7 +132,7 @@ export default function SignIn() {
         return response;
       }
     } catch (error) {
-      console.log("Error fetching QR code:", error.message);
+      // console.log("Error fetching QR code:", error.message);
       toast.error(error.message);
     }
   };

@@ -52,7 +52,9 @@ const OrderGraveyardPage = () => {
 
   return (
     <div className="space-y-4">
-      <p className="font-bold text-2xl">Orders Graveyard</p>
+      <p className="font-bold text-2xl">
+        Orders Graveyard ({graveyardOrders?.length})
+      </p>
 
       <p className="text-xs text-white/80">
         You can fulfill any order as you like.

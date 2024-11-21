@@ -198,8 +198,6 @@ export const updateOrderStatus = async (orderId, orderState) => {
 
 // stripe checkout session
 export const checkoutSession = async (items) => {
-  console.log("items for checkout", items);
-
   try {
     const sessionToken = await getSessionToken();
     if (!sessionToken) {

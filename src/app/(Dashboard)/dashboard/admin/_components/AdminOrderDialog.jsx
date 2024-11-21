@@ -23,13 +23,20 @@ export const AdminOrderDialog = ({
   order,
   groupedProducts,
   loadOrders,
+  skillmasters: masters,
 }) => {
   const { user } = useUserStore();
 
   const [skillmasterId, setSkillmasterId] = useState();
   const [loading, setLoading] = useState(false);
   const [currentOrderState, setCurrentOrderState] = useState("");
-  const [skillmasters, setSkillmasters] = useState(null);
+  const [skillmasters, setSkillmasters] = useState(masters);
+
+  useEffect(() => {
+    if (masters) {
+      setSkillmasters(masters);
+    }
+  }, [masters]);
 
   useEffect(() => {
     if (order?.state) {
@@ -88,27 +95,6 @@ export const AdminOrderDialog = ({
       loadOrders();
     }
   };
-
-  const getSkillmasters = async () => {
-    try {
-      setLoading(true);
-
-      const result = await fetchAllSkillmasters();
-      if (result.error) {
-        toast.error(result.error);
-      } else {
-        setSkillmasters(result);
-      }
-    } catch (error) {
-      toast.error("Failed to load skillmasters. Please try again!");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getSkillmasters();
-  }, []);
 
   return (
     <Dialog

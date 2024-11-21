@@ -83,8 +83,8 @@ export const PlatformDialog = ({
       }
 
       handleClosed();
-    } catch (error) {
-      console.log("Error submitting platform:", error.message);
+      // } catch (error) {
+      //   console.log("Error submitting platform:", error.message);
       toast.error(error.message);
     } finally {
       loadPlatforms();
@@ -113,7 +113,7 @@ export const PlatformDialog = ({
         handleClosed();
       }
     } catch (error) {
-      console.log("Error deleting platform:", error.message);
+      // console.log("Error deleting platform:", error.message);
       toast.error(error.message);
     } finally {
       loadPlatforms();
@@ -157,7 +157,7 @@ export const PlatformDialog = ({
         );
       }
     } catch (error) {
-      console.log("Error enabling subplatform:", error.message);
+      // console.log("Error enabling subplatform:", error.message);
 
       toast.error(error.message);
     } finally {
@@ -180,7 +180,7 @@ export const PlatformDialog = ({
         setSubplatforms(response);
       }
     } catch (error) {
-      console.log("Error fetching subplatforms:", error.message);
+      // console.log("Error fetching subplatforms:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -212,7 +212,7 @@ export const PlatformDialog = ({
         toast.success("Subplatform added successfully!");
       }
     } catch (error) {
-      console.log("Error adding subplatform:", error.message);
+      // console.log("Error adding subplatform:", error.message);
       toast.error(error.message);
     } finally {
       getSubplatforms();
@@ -236,7 +236,7 @@ export const PlatformDialog = ({
         toast.success("Subplatform deleted successfully!");
       }
     } catch (error) {
-      console.log("Error deleting subplatform:", error.message);
+      // console.log("Error deleting subplatform:", error.message);
       toast.error(error.message);
     } finally {
       getSubplatforms();
@@ -266,7 +266,7 @@ export const PlatformDialog = ({
         toast.success("Subplatform updated successfully!");
       }
     } catch (error) {
-      console.log("Error updating subplatform:", error.message);
+      // console.log("Error updating subplatform:", error.message);
       toast.error(error.message);
     } finally {
       getSubplatforms();

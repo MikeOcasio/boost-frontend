@@ -9,7 +9,6 @@ import {
   DialogPanel,
   DialogTitle,
   Field,
-  Input,
   Label,
   Select,
 } from "@headlessui/react";
@@ -44,7 +43,7 @@ export const NewOrderDialog = ({ dialogOpen, onClose, loadOrders }) => {
         setAllUsers(response);
       }
     } catch (error) {
-      console.log("Error loading users:", error.message);
+      // console.log("Error loading users:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -63,7 +62,7 @@ export const NewOrderDialog = ({ dialogOpen, onClose, loadOrders }) => {
         setAllProducts(response);
       }
     } catch (error) {
-      console.log("Error loading products:", error.message);
+      // console.log("Error loading products:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -100,7 +99,7 @@ export const NewOrderDialog = ({ dialogOpen, onClose, loadOrders }) => {
         handleClosed();
       }
     } catch (error) {
-      console.log("Error submitting Order:", error.message);
+      // console.log("Error submitting Order:", error.message);
       toast.error(error.message);
     } finally {
       loadOrders();

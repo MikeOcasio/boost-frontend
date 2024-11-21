@@ -87,7 +87,9 @@ const AdminSkillmasterApplication = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h1 className="text-xl font-semibold">All skillmasters applications</h1>
+        <h1 className="text-xl font-semibold">
+          All skillmasters applications ({applications?.length})
+        </h1>
       </div>
 
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}

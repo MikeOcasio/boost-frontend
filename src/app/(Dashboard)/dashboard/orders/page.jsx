@@ -129,7 +129,9 @@ const OrdersPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h1 className="text-2xl font-semibold">All Orders</h1>
+        <h1 className="text-2xl font-semibold">
+          All Orders ({orders?.length})
+        </h1>
         {(user?.role === "admin" || user?.role === "dev") && (
           <button
             onClick={() => setDialogOpen(true)}

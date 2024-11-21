@@ -87,7 +87,7 @@ export const CategoryDialog = ({
 
       handleClosed();
     } catch (error) {
-      console.log("Error submitting category:", error.message);
+      // console.log("Error submitting category:", error.message);
       toast.error(error.message);
     } finally {
       loadCategories();
@@ -116,7 +116,7 @@ export const CategoryDialog = ({
         handleClosed();
       }
     } catch (error) {
-      console.log("Error deleting category:", error.message);
+      // console.log("Error deleting category:", error.message);
       toast.error(error.message);
     } finally {
       loadCategories();

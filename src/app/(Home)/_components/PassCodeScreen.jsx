@@ -40,7 +40,7 @@ export const PassCodeScreen = ({
         return;
       }
     } catch (error) {
-      console.log("Error verifying QR code:", error.message);
+      // console.log("Error verifying QR code:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -69,7 +69,7 @@ export const PassCodeScreen = ({
         router.push("/");
       }
     } catch (error) {
-      console.log("Error verifying QR code:", error.message);
+      // console.log("Error verifying QR code:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);

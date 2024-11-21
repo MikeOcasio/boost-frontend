@@ -138,8 +138,8 @@ export function Header() {
         toast.success("Logged out!");
       }
     } catch (err) {
+      // console.log("Error logging out user:", err);
       toast.error("Failed to log out user.");
-      console.log("Error logging out user:", err);
     } finally {
       setLoading(false);
 

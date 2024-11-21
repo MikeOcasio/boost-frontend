@@ -47,7 +47,7 @@ const ResetPasswordPage = () => {
         toast.error(response.error);
       }
     } catch (error) {
-      console.log("Error fetching current user:", error.message);
+      // console.log("Error fetching current user:", error.message);
 
       removeToken();
       router.push("/login");
@@ -99,7 +99,7 @@ const ResetPasswordPage = () => {
         router.push("/login");
       }
     } catch (error) {
-      console.log("Error logging in user:", error.message);
+      // console.log("Error logging in user:", error.message);
       toast.error(error.message);
     } finally {
       setPassword("");

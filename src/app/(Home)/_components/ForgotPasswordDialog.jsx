@@ -39,7 +39,7 @@ export const ForgotPasswordDialog = ({ dialogOpen, onClose, dialogData }) => {
         onClose();
       }
     } catch (error) {
-      console.log("Error logging in user:", error.message);
+      // console.log("Error logging in user:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);

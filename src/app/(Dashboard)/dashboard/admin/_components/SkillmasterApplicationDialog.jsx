@@ -75,8 +75,6 @@ export const SkillmasterApplicationDialog = ({
         handleClosed();
       }
     } catch (error) {
-      console.log(error);
-
       toast.error("Something went wrong! Please try again later.");
     } finally {
       setLoading(false);
@@ -96,8 +94,6 @@ export const SkillmasterApplicationDialog = ({
     try {
       const response = await updateUser(user);
 
-      console.log("updates user role ", response.data);
-
       if (response.error) {
         toast.error(response.error);
       } else {
@@ -105,8 +101,6 @@ export const SkillmasterApplicationDialog = ({
         handleClosed();
       }
     } catch (error) {
-      console.log(error);
-
       toast.error("Something went wrong! Please try again later.");
     } finally {
       setLoading(false);
