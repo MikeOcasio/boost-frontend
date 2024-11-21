@@ -109,18 +109,23 @@ export const PromotionDialog = ({
       setLoading(false);
     }
   };
+
   const formatDateForInput = (dateString) => {
-    if (!dateString) return "";
     const date = new Date(dateString);
 
-    // Convert to a format that datetime-local input expects
-    return date.toISOString().slice(0, 16);
+    // Extract components using Date methods
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  const handleDateChange = (field, value) => {
-    const localDate = new Date(value); // User's local time input
-    const utcDate = new Date(localDate.toISOString()); // Convert to UTC
-    setPromotion({ ...promotion, [field]: utcDate });
+  const convertToUTC = (localDateString) => {
+    const date = new Date(localDateString);
+    return date.toISOString(); // Converts to UTC in ISO 8601 format
   };
 
   if (!promotion) return null;
@@ -192,8 +197,8 @@ export const PromotionDialog = ({
                   min={0}
                   max={100}
                   placeholder="Discount percentage"
-                  value={promotion?.discount_percentage || ""}
                   className="input-field"
+                  value={promotion?.discount_percentage || ""}
                   onChange={(e) =>
                     setPromotion({
                       ...promotion,
@@ -216,7 +221,10 @@ export const PromotionDialog = ({
                       : ""
                   }
                   onChange={(e) =>
-                    handleDateChange("start_date", e.target.value)
+                    setPromotion({
+                      ...promotion,
+                      start_date: convertToUTC(e.target.value),
+                    })
                   }
                 />
               </Field>
@@ -233,7 +241,12 @@ export const PromotionDialog = ({
                       ? formatDateForInput(promotion.end_date)
                       : ""
                   }
-                  onChange={(e) => handleDateChange("end_date", e.target.value)}
+                  onChange={(e) =>
+                    setPromotion({
+                      ...promotion,
+                      end_date: convertToUTC(e.target.value),
+                    })
+                  }
                 />
               </Field>
 

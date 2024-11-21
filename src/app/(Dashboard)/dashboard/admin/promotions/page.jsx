@@ -168,18 +168,34 @@ const PromotionsPage = () => {
                       <div className="flex flex-col gap-2 border border-white/10 rounded-lg p-2 bg-white/5">
                         <p className="text-xs font-semibold">
                           From (Start Date) :{" "}
-                          {new Date(promo.start_date).toLocaleString()}
+                          {promo.start_date
+                            ? new Intl.DateTimeFormat("en-US", {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                              }).format(new Date(promo.start_date))
+                            : "Not set"}
                         </p>
+
                         <p className="text-xs font-semibold">
                           Till (End Date) :{" "}
-                          {new Date(promo.end_date).toLocaleString()}
+                          {promo.end_date
+                            ? new Intl.DateTimeFormat("en-US", {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                              }).format(new Date(promo.end_date))
+                            : "Not set"}
                         </p>
                       </div>
 
                       {/* created at */}
                       <p className="text-xs font-semibold">
                         Created at:{" "}
-                        {new Date(promo.created_at).toLocaleString()}
+                        {promo.created_at
+                          ? new Intl.DateTimeFormat("en-US", {
+                              dateStyle: "medium",
+                              timeStyle: "short",
+                            }).format(new Date(promo.created_at))
+                          : "Not set"}
                       </p>
                     </div>
                     <BiPencil className="h-8 w-8 ml-2 hover:bg-white/10 rounded-lg p-2" />

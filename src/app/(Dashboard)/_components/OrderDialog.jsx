@@ -336,7 +336,14 @@ export const OrderDialog = ({
             <div className="flex flex-wrap gap-4 justify-between items-center">
               {/* Date */}
               <p className="text-sm text-gray-300">
-                Order Date: {new Date(order.created_at).toLocaleString()}
+                {/* Order Date: {new Date(order.created_at).toLocaleString()} */}
+
+                {order.created_at
+                  ? new Intl.DateTimeFormat("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(new Date(order.created_at))
+                  : "Not set"}
               </p>
 
               {/* totol_price */}
