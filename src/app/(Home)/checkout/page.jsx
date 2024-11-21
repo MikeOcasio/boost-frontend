@@ -349,8 +349,7 @@ const CheckoutPage = () => {
             >
               {!userHasPlatformCredential && (
                 <p className="text-center text-sm text-red-500">
-                  You do not have any credential for this platform. Please add
-                  your credential to continue.
+                  Please add your platform credential to continue.
                 </p>
               )}
 
