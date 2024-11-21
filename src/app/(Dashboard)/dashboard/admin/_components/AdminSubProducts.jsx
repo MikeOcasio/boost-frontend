@@ -134,10 +134,10 @@ export const AdminSubProducts = ({ game, highlightMatch, searchTerm }) => {
                     </span>
                     {highlightMatch
                       ? highlightMatch(
-                          child.tag_line.substring(0, 150),
+                          child.tag_line?.substring(0, 150),
                           searchTerm
                         )
-                      : child.tag_line.substring(0, 150)}
+                      : child.tag_line?.substring(0, 150)}
                     {child.tag_line.length > 150 && "..."}
                   </div>
 
@@ -173,10 +173,10 @@ export const AdminSubProducts = ({ game, highlightMatch, searchTerm }) => {
                 <span className="font-semibold text-white">Description : </span>
                 {highlightMatch
                   ? highlightMatch(
-                      child.description.substring(0, 150),
+                      child.description?.substring(0, 150),
                       searchTerm
                     )
-                  : child.description.substring(0, 150)}
+                  : child.description?.substring(0, 150)}
                 {child.description.length > 150 && "..."}
               </div>
 
