@@ -73,19 +73,19 @@ const GamesPage = () => {
       ?.filter((game) => {
         return (
           !term ||
-          normalize(game.name).includes(term) ||
-          normalize(game.description).includes(term) ||
-          normalize(game.category.name).includes(term) ||
-          normalize(game.category.description).includes(term) ||
-          normalize(String(game.id)).includes(term) ||
-          normalize(game.tag_line).includes(term) ||
+          normalize(game.name)?.includes(term) ||
+          normalize(game.description)?.includes(term) ||
+          normalize(game.category.name)?.includes(term) ||
+          normalize(game.category.description)?.includes(term) ||
+          normalize(String(game.id))?.includes(term) ||
+          normalize(game.tag_line)?.includes(term) ||
           game.platforms.some((platform) =>
-            normalize(platform.name).includes(term)
+            normalize(platform.name)?.includes(term)
           ) ||
           game.prod_attr_cats.some((attr) =>
-            normalize(attr.name).includes(term)
+            normalize(attr.name)?.includes(term)
           ) ||
-          game.features.some((feature) => normalize(feature).includes(term))
+          game.features.some((feature) => normalize(feature)?.includes(term))
         );
       })
       .filter((game) => (filter.mostPopular ? game.most_popular : true))
