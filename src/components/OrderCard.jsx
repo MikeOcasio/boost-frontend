@@ -144,9 +144,24 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
           </span>
         </div>
 
+        {order.promo_data && (
+          <p className="text-sm flex flex-wrap gap-2 items-center p-2 border border-white/10 rounded-md bg-white/10 w-fit font-semibold">
+            Promo Applied:
+            <span>
+              {JSON.parse(order.promo_data).code} |{" "}
+              {JSON.parse(order.promo_data).discount_percentage}%
+            </span>
+          </p>
+        )}
+
         <div className="flex flex-wrap gap-4 justify-between items-center">
           <p className="text-sm">
-            Order Date: {new Date(order.created_at).toLocaleString()}
+            {order.created_at
+              ? new Intl.DateTimeFormat("en-US", {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                }).format(new Date(order.created_at))
+              : "Not set"}
           </p>
           <p className="text-lg font-semibold">Price: ${order.total_price}</p>
         </div>

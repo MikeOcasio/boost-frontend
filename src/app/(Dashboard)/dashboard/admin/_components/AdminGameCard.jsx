@@ -173,7 +173,13 @@ export const AdminGameCard = ({ game, searchTerm }) => {
       {/* Created At */}
       <div className="flex justify-between items-center flex-wrap gap-2">
         <p className="text-xs font-semibold">
-          Created at: {new Date(game.created_at).toLocaleString()}
+          Created at:{" "}
+          {game.created_at
+            ? new Intl.DateTimeFormat("en-US", {
+                dateStyle: "medium",
+                timeStyle: "short",
+              }).format(new Date(game.created_at))
+            : "Not set"}
         </p>
 
         <Link

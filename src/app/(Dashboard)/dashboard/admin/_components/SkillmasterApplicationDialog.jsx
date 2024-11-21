@@ -192,7 +192,12 @@ export const SkillmasterApplicationDialog = ({
               {application.reviewer_id && (
                 <p className="text-xs font-semibold">
                   reviewed at:{" "}
-                  {new Date(application.reviewed_at).toLocaleString()}
+                  {application.created_at
+                    ? new Intl.DateTimeFormat("en-US", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      }).format(new Date(application.created_at))
+                    : "Not set"}
                 </p>
               )}
 
@@ -208,7 +213,7 @@ export const SkillmasterApplicationDialog = ({
                         target="_blank"
                         className="rounded-md w-full p-2 border border-white/10 hover:border-white/20 bg-white/5 flex items-center gap-2 justify-between flex-wrap-reverse"
                       >
-                        <span>{channel}</span>
+                        <span className="break-all">{channel}</span>
                         <BiLink className="h-8 w-8 hover:bg-white/10 rounded-lg p-1 border border-white/10" />
                       </Link>
                     ))}
@@ -237,7 +242,13 @@ export const SkillmasterApplicationDialog = ({
 
               {/* created at */}
               <p className="text-xs font-semibold">
-                Created at: {new Date(application.created_at).toLocaleString()}
+                Created at:
+                {application.created_at
+                  ? new Intl.DateTimeFormat("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(new Date(application.created_at))
+                  : "Not set"}
               </p>
             </div>
           </div>

@@ -343,13 +343,23 @@ const AllUsers = () => {
                               <div className="flex flex-wrap gap-x-4 gap-y-2 items-center justify-between">
                                 <p className="text-xs break-all">
                                   Created At:{" "}
-                                  {new Date(user.created_at).toLocaleString()}
+                                  {user.created_at
+                                    ? new Intl.DateTimeFormat("en-US", {
+                                        dateStyle: "medium",
+                                        timeStyle: "short",
+                                      }).format(new Date(user.created_at))
+                                    : "Not set"}
                                 </p>
 
                                 {user.deleted_at && (
                                   <p className="text-xs break-all">
                                     Deleted At:{" "}
-                                    {new Date(user.deleted_at).toLocaleString()}
+                                    {user.deleted_at
+                                      ? new Intl.DateTimeFormat("en-US", {
+                                          dateStyle: "medium",
+                                          timeStyle: "short",
+                                        }).format(new Date(user.deleted_at))
+                                      : "Not set"}
                                   </p>
                                 )}
                               </div>
@@ -512,13 +522,23 @@ const AllUsers = () => {
                               <div className="flex flex-wrap gap-x-4 gap-y-2 items-center justify-between">
                                 <p className="text-xs break-all">
                                   Created At:{" "}
-                                  {new Date(user.created_at).toLocaleString()}
+                                  {user.created_at
+                                    ? new Intl.DateTimeFormat("en-US", {
+                                        dateStyle: "medium",
+                                        timeStyle: "short",
+                                      }).format(new Date(user.created_at))
+                                    : "Not set"}
                                 </p>
 
                                 {user.deleted_at && (
                                   <p className="text-xs break-all">
                                     Deleted At:{" "}
-                                    {new Date(user.deleted_at).toLocaleString()}
+                                    {user.deleted_at
+                                      ? new Intl.DateTimeFormat("en-US", {
+                                          dateStyle: "medium",
+                                          timeStyle: "short",
+                                        }).format(new Date(user.deleted_at))
+                                      : "Not set"}
                                   </p>
                                 )}
                               </div>

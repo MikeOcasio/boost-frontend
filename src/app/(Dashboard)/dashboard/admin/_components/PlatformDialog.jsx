@@ -237,7 +237,7 @@ export const PlatformDialog = ({
       }
     } catch (error) {
       // console.log("Error deleting subplatform:", error.message);
-      toast.error(error.message);
+      toast.error("Error deleting subplatform");
     } finally {
       getSubplatforms();
       setLoading(false);

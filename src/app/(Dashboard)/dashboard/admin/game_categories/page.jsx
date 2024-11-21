@@ -172,7 +172,12 @@ const GameCategoriesPage = () => {
                       {/* created at */}
                       <p className="text-xs font-semibold">
                         Created at:{" "}
-                        {new Date(category.created_at).toLocaleString()}
+                        {category.created_at
+                          ? new Intl.DateTimeFormat("en-US", {
+                              dateStyle: "medium",
+                              timeStyle: "short",
+                            }).format(new Date(category.created_at))
+                          : "Not set"}
                       </p>
                     </div>
                     <BiPencil className="h-8 w-8 ml-auto hover:bg-white/10 rounded-lg p-2" />

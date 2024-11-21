@@ -69,7 +69,6 @@ export const SubProductsList = ({ game }) => {
                 child.is_active && (
                   <Link
                     href={`/games/${child.id}`}
-                    target="_blank"
                     key={index}
                     className="flex flex-col gap-2 p-3 transition-all bg-CardPlum rounded-lg border border-white/10 backdrop-blur-xl"
                     style={{

@@ -176,6 +176,19 @@ export const AttributeDialog = ({
               />
             </Field>
 
+            {/* created at */}
+            {attribute.created_at && (
+              <p className="text-xs font-semibold">
+                Created at:{" "}
+                {attribute.created_at
+                  ? new Intl.DateTimeFormat("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(new Date(attribute.created_at))
+                  : "Not set"}
+              </p>
+            )}
+
             <div className="flex items-center justify-between gap-4">
               {/* Delete Button */}
 

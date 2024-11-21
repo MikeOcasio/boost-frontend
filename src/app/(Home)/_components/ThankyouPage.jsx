@@ -217,7 +217,12 @@ const ThankyouPage = () => {
               <div className="flex flex-wrap gap-4 justify-between items-center">
                 <p className="text-sm">
                   Order Date:{" "}
-                  {new Date(orderData.order.created_at).toLocaleString()}
+                  {orderData.order.created_at
+                    ? new Intl.DateTimeFormat("en-US", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      }).format(new Date(orderData.order.created_at))
+                    : "Not set"}
                 </p>
                 <p className="text-lg font-semibold">
                   Price: $

@@ -262,6 +262,17 @@ export const OrderDialog = ({
                   <span>{order.promotion_id}</span>
                 </p>
               )}
+
+              {order.promo_data && (
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
+                  Promo Applied
+                  <span>
+                    {JSON.parse(order.promo_data).code} |{" "}
+                    {JSON.parse(order.promo_data).discount_percentage}%
+                  </span>
+                </p>
+              )}
+
               <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
                 Tax
                 <span>
@@ -336,8 +347,7 @@ export const OrderDialog = ({
             <div className="flex flex-wrap gap-4 justify-between items-center">
               {/* Date */}
               <p className="text-sm text-gray-300">
-                {/* Order Date: {new Date(order.created_at).toLocaleString()} */}
-
+                Order Date:
                 {order.created_at
                   ? new Intl.DateTimeFormat("en-US", {
                       dateStyle: "medium",

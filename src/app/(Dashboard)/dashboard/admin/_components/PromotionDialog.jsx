@@ -252,7 +252,13 @@ export const PromotionDialog = ({
 
               {/* created at */}
               <p className="text-xs font-semibold">
-                Created at: {new Date(promotion.created_at).toLocaleString()}
+                Created at:
+                {promotion.created_at
+                  ? new Intl.DateTimeFormat("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(new Date(promotion.created_at))
+                  : "Not set"}
               </p>
 
               <div className="flex items-center justify-between gap-4">

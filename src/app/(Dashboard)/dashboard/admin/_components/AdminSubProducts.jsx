@@ -181,7 +181,13 @@ export const AdminSubProducts = ({ game, highlightMatch, searchTerm }) => {
               </div>
 
               <p className="text-xs font-semibold">
-                Created at: {new Date(game.created_at).toLocaleString()}
+                Created at:{" "}
+                {game.created_at
+                  ? new Intl.DateTimeFormat("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(new Date(game.created_at))
+                  : "Not set"}
               </p>
 
               <div className="flex flex-wrap gap-2">
@@ -196,7 +202,6 @@ export const AdminSubProducts = ({ game, highlightMatch, searchTerm }) => {
 
                 <Link
                   href={`/dashboard/admin/allgames/${child.id}`}
-                  target="_blank"
                   className="flex items-center gap-2 px-3 py-2 transition-all hover:bg-white/10 rounded-lg border border-white/10 flex-1 min-w-fit justify-center"
                 >
                   <BiPencil className="h-4 w-4" />

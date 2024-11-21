@@ -182,13 +182,24 @@ const AdminSkillmasterApplication = () => {
                       {app.reviewer_id && (
                         <p className="text-xs font-semibold">
                           Reviewed at :{" "}
-                          {new Date(app.reviewed_at).toLocaleString()}
+                          {app.reviewed_at
+                            ? new Intl.DateTimeFormat("en-US", {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                              }).format(new Date(app.reviewed_at))
+                            : "Not set"}
                         </p>
                       )}
 
                       {/* created at */}
                       <p className="text-xs font-semibold">
-                        Created at: {new Date(app.created_at).toLocaleString()}
+                        Created at:{" "}
+                        {app.created_at
+                          ? new Intl.DateTimeFormat("en-US", {
+                              dateStyle: "medium",
+                              timeStyle: "short",
+                            }).format(new Date(app.created_at))
+                          : "Not set"}
                       </p>
                     </div>
                     <BiPencil className="h-8 w-8 ml-2 hover:bg-white/10 rounded-lg p-2" />

@@ -534,7 +534,19 @@ export const UserDialog = ({ dialogData, dialogOpen, onClose, loadUsers }) => {
                 )}
               </Field>
             )}
-            {/* platforms */}
+
+            {/* created at */}
+            {user.created_at && (
+              <p className="text-xs font-semibold">
+                Created at:{" "}
+                {user.created_at
+                  ? new Intl.DateTimeFormat("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(new Date(user.created_at))
+                  : "Not set"}
+              </p>
+            )}
 
             {/* delete & submit button */}
             <div className="flex items-center justify-between gap-4">

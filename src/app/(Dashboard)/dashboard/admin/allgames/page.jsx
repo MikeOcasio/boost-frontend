@@ -76,41 +76,43 @@ const AllGames = () => {
       ?.filter((game) => {
         return (
           !term ||
-          normalize(game.name).includes(term) ||
-          normalize(game.description).includes(term) ||
-          normalize(game.category.name).includes(term) ||
-          normalize(game.category.description).includes(term) ||
-          normalize(String(game.id)).includes(term) ||
-          normalize(game.tag_line).includes(term) ||
+          normalize(game.name)?.includes(term) ||
+          normalize(game.description)?.includes(term) ||
+          normalize(game.category.name)?.includes(term) ||
+          normalize(game.category.description)?.includes(term) ||
+          normalize(String(game.id))?.includes(term) ||
+          normalize(game.tag_line)?.includes(term) ||
           game.platforms.some((platform) =>
-            normalize(platform.name).includes(term)
+            normalize(platform.name)?.includes(term)
           ) ||
           game.prod_attr_cats.some((attr) =>
-            normalize(attr.name).includes(term)
+            normalize(attr.name)?.includes(term)
           ) ||
-          game.features.some((feature) => normalize(feature).includes(term)) ||
+          game.features.some((feature) => normalize(feature)?.includes(term)) ||
           // child products
-          game.children.some((child) => normalize(child.name).includes(term)) ||
           game.children.some((child) =>
-            normalize(child.description).includes(term)
+            normalize(child.name)?.includes(term)
           ) ||
           game.children.some((child) =>
-            normalize(String(child.id)).includes(term)
+            normalize(child.description)?.includes(term)
           ) ||
           game.children.some((child) =>
-            normalize(child.tag_line).includes(term)
+            normalize(String(child.id))?.includes(term)
+          ) ||
+          game.children.some((child) =>
+            normalize(child.tag_line)?.includes(term)
           ) ||
           game.children.some((child) =>
             child.platforms.some((platform) =>
-              normalize(platform.name).includes(term)
+              normalize(platform.name)?.includes(term)
             )
           ) ||
           game.children.some((child) =>
             child.prod_attr_cats.some((attr) =>
-              normalize(attr.name).includes(term)
+              normalize(attr.name)?.includes(term)
             )
           ) ||
-          (game.children.length > 0 && "subproducts".includes(term))
+          (game.children.length > 0 && "subproducts"?.includes(term))
         );
       })
       .filter((game) => (filter.mostPopular ? game.most_popular : true))

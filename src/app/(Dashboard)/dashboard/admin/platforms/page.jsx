@@ -160,7 +160,12 @@ const PlatformsPage = () => {
 
                       <p className="text-xs font-semibold">
                         Created at:{" "}
-                        {new Date(platform.created_at).toLocaleString()}
+                        {platform.created_at
+                          ? new Intl.DateTimeFormat("en-US", {
+                              dateStyle: "medium",
+                              timeStyle: "short",
+                            }).format(new Date(platform.created_at))
+                          : "Not set"}
                       </p>
                     </div>
                     <BiPencil className="h-8 w-8 ml-2 hover:bg-white/10 rounded-lg p-2" />
