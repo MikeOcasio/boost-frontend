@@ -109,15 +109,18 @@ export const PromotionDialog = ({
       setLoading(false);
     }
   };
-
   const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
     const date = new Date(dateString);
 
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    // Convert to a format that datetime-local input expects
+    return date.toISOString().slice(0, 16);
+  };
 
-    return `${year}-${month}-${day}`;
+  const handleDateChange = (field, value) => {
+    const localDate = new Date(value); // User's local time input
+    const utcDate = new Date(localDate.toISOString()); // Convert to UTC
+    setPromotion({ ...promotion, [field]: utcDate });
   };
 
   if (!promotion) return null;
@@ -204,16 +207,16 @@ export const PromotionDialog = ({
               <Field className="flex flex-col gap-1 w-full">
                 <Label>Start Date</Label>
                 <Input
-                  type="date"
+                  type="datetime-local"
                   placeholder="Start Date"
+                  className="input-field"
                   value={
                     promotion?.start_date
                       ? formatDateForInput(promotion.start_date)
                       : ""
                   }
-                  className="input-field"
                   onChange={(e) =>
-                    setPromotion({ ...promotion, start_date: e.target.value })
+                    handleDateChange("start_date", e.target.value)
                   }
                 />
               </Field>
@@ -222,17 +225,15 @@ export const PromotionDialog = ({
               <Field className="flex flex-col gap-1 w-full">
                 <Label>End Date</Label>
                 <Input
-                  type="date"
+                  type="datetime-local"
                   placeholder="End Date"
+                  className="input-field"
                   value={
                     promotion?.end_date
                       ? formatDateForInput(promotion.end_date)
                       : ""
                   }
-                  className="input-field"
-                  onChange={(e) =>
-                    setPromotion({ ...promotion, end_date: e.target.value })
-                  }
+                  onChange={(e) => handleDateChange("end_date", e.target.value)}
                 />
               </Field>
 

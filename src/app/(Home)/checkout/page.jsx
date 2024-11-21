@@ -289,8 +289,27 @@ const CheckoutPage = () => {
         setPromotionCode("");
         setActivePromotion(null);
       } else {
-        setActivePromotion(response);
+        // Validate promotion dates
+        const currentDate = new Date();
+        const startDate = new Date(response.start_date);
+        const endDate = new Date(response.end_date);
 
+        if (startDate > currentDate) {
+          toast.error("Promotion code is not yet active.");
+          setPromotionCode("");
+          setActivePromotion(null);
+          return;
+        }
+
+        if (endDate < currentDate) {
+          toast.error("Promotion code has expired.");
+          setPromotionCode("");
+          setActivePromotion(null);
+          return;
+        }
+
+        // If valid, set promotion and reload orders
+        setActivePromotion(response);
         await loadOrders(response);
         toast.success("Promotion code applied successfully!");
       }
@@ -451,22 +470,6 @@ const CheckoutPage = () => {
                   <span>Pay Now</span>
                   <span>
                     $
-                    {/* {totalPrice &&
-                      platformOrders
-                        ?.reduce(
-                          (acc, curr) =>
-                            curr.is_dropdown || curr.is_slider
-                              ? acc +
-                                Number(curr.price) +
-                                Number(curr.tax * curr.item_qty)
-                              : acc +
-                                Number(
-                                  curr.price * curr.quantity +
-                                    curr.tax * curr.quantity
-                                ),
-                          0
-                        )
-                        .toFixed(2)} */}
                     {(() => {
                       const total = platformOrders
                         ?.reduce(

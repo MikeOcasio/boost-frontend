@@ -109,6 +109,16 @@ const Badges = ({
           <IoWarning className="h-5 w-5 mr-2" />
           Failed to load {categoryId ? "categories" : "attributes"}. Please try
           again!
+          {/* reload */}
+          <button
+            onClick={() => {
+              loadAttribute();
+              loadCategories();
+            }}
+            className="p-2 rounded-lg bg-white/10"
+          >
+            Reload
+          </button>
         </p>
       )}
 

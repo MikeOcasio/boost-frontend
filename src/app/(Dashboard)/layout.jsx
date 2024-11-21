@@ -65,7 +65,7 @@ const DashboardLayout = ({ children }) => {
 
   if (error) {
     return (
-      <p className="mt-4 w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
+      <p className="mt-4 w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2 flex-wrap text-center">
         <IoWarning className="h-5 w-5 mr-2" />
         Some error occurred. Please try again!
         {/* reload page */}

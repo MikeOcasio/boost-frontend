@@ -66,9 +66,16 @@ export const OrderSearchFilter = ({ filter, setFilter }) => {
         {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 
         {error && (
-          <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
+          <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2 flex-wrap text-center">
             <IoWarning className="h-5 w-5 mr-2" />
             Failed to load data. Please try again!
+            {/* reload */}
+            <button
+              onClick={loadPlatforms}
+              className="bg-white/10 p-2 rounded-lg"
+            >
+              Reload
+            </button>
           </p>
         )}
 

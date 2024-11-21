@@ -131,14 +131,21 @@ const UserDashboard = () => {
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 
       {error && (
-        <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
+        <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2 flex-wrap text-center">
           <IoWarning className="h-5 w-5 mr-2" />
           Failed to load orders. Please try again!
           {/* reload */}
           <button
             onClick={() => {
-              loadGraveyardOrders();
               loadOrders();
+
+              if (
+                user.role === "admin" ||
+                user.role === "dev" ||
+                user.role === "skillmaster"
+              ) {
+                loadGraveyardOrders();
+              }
             }}
             className="p-2 rounded-lg bg-white/10"
           >

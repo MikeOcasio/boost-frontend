@@ -173,6 +173,16 @@ const AllOrders = () => {
         <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
           <IoWarning className="h-5 w-5 mr-2" />
           Failed to load orders. Please try again!
+          {/* reload */}
+          <button
+            onClick={() => {
+              loadOrders();
+              getSkillmasters();
+            }}
+            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all"
+          >
+            Reload
+          </button>
         </p>
       )}
 
