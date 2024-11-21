@@ -286,7 +286,6 @@ const AllGames = () => {
             ) : (
               sortedGames?.map(
                 (game) =>
-                  game?.is_active &&
                   !game.parent_id && (
                     <AdminGameCard
                       key={game.id}
