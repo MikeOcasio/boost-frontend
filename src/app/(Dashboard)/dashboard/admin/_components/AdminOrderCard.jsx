@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiImage, BiPencil } from "react-icons/bi";
 import clsx from "clsx";
 import { AdminOrderDialog } from "./AdminOrderDialog";
@@ -43,6 +43,12 @@ export const AdminOrderCard = ({
   const onClose = () => setDialogOpen(false);
 
   const groupedProducts = groupProducts(order.products);
+
+  const [promoData, setPromoData] = useState(null);
+
+  useEffect(() => {
+    order && setPromoData(JSON.parse(order.promo_data));
+  }, [order]);
 
   return (
     <div className="flex-1 min-w-fit space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20">
@@ -126,12 +132,11 @@ export const AdminOrderCard = ({
         </span>
       </div>
 
-      {order.promo_data && (
+      {promoData?.id && (
         <p className="text-sm flex flex-wrap gap-2 items-center p-2 border border-white/10 rounded-md bg-white/10 w-fit font-semibold">
           Promo Applied:
           <span>
-            {JSON.parse(order.promo_data).code} |{" "}
-            {JSON.parse(order.promo_data).discount_percentage}%
+            {promoData.code} | {promoData.discount_percentage}%
           </span>
         </p>
       )}
@@ -146,7 +151,13 @@ export const AdminOrderCard = ({
               }).format(new Date(order.created_at))
             : "Not set"}
         </p>
-        <p className="text-lg font-semibold">Price: ${order.total_price}</p>
+        <p className="text-lg font-semibold">
+          Price: $
+          {promoData?.id
+            ? order.total_price -
+              (order.total_price * promoData?.discount_percentage) / 100
+            : order.total_price}
+        </p>
       </div>
 
       <div className="flex flex-wrap gap-4 items-center">

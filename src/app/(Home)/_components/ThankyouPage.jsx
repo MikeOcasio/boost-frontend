@@ -64,6 +64,12 @@ const ThankyouPage = () => {
     loadOrderData();
   }, [loadOrderData]);
 
+  const [promoData, setPromoData] = useState(null);
+
+  useEffect(() => {
+    orderData && setPromoData(JSON.parse(orderData.order.promo_data));
+  }, [orderData]);
+
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen flex flex-col items-center justify-center gap-6 p-4">
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
@@ -187,16 +193,10 @@ const ThankyouPage = () => {
                   </span>
                 </p>
 
-                {orderData.order.promo_data && (
+                {promoData?.id && (
                   <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
                     Discount
-                    <span>
-                      {
-                        JSON.parse(orderData.order.promo_data)
-                          .discount_percentage
-                      }
-                      %
-                    </span>
+                    <span>{promoData.discount_percentage}% OFF</span>
                   </p>
                 )}
 
@@ -226,11 +226,10 @@ const ThankyouPage = () => {
                 </p>
                 <p className="text-lg font-semibold">
                   Price: $
-                  {orderData.order?.promo_data
+                  {promoData?.id
                     ? orderData.order.total_price -
                       (orderData.order.total_price *
-                        JSON.parse(orderData.order?.promo_data)
-                          .discount_percentage) /
+                        promoData.discount_percentage) /
                         100
                     : orderData.order.total_price}
                 </p>

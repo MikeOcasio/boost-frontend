@@ -79,6 +79,12 @@ export const OrderDialog = ({
     }
   };
 
+  const [promoData, setPromoData] = useState(null);
+
+  useEffect(() => {
+    order && setPromoData(JSON.parse(order.promo_data));
+  }, [order]);
+
   return (
     <Dialog
       open={dialogOpen}
@@ -263,12 +269,14 @@ export const OrderDialog = ({
                 </p>
               )}
 
-              {order.promo_data && (
+              {promoData?.id && (
                 <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
                   Promo Applied
-                  <span>
-                    {JSON.parse(order.promo_data).code} |{" "}
-                    {JSON.parse(order.promo_data).discount_percentage}%
+                  <span className="flex gap-2 items-center">
+                    <span className="bg-white/10 px-2 rounded-md">
+                      {promoData.code}
+                    </span>
+                    {promoData.discount_percentage}% OFF
                   </span>
                 </p>
               )}
@@ -357,7 +365,13 @@ export const OrderDialog = ({
               </p>
 
               {/* totol_price */}
-              <p className="text-lg">Total Price: ${order.total_price}</p>
+              <p className="text-lg">
+                Total Price: $
+                {promoData?.id
+                  ? order.total_price -
+                    (order.total_price * promoData?.discount_percentage) / 100
+                  : order.total_price}
+              </p>
             </div>
           </div>
         </DialogPanel>

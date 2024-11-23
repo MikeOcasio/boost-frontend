@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import clsx from "clsx";
 
@@ -44,6 +44,12 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
   const onClose = () => setDialogOpen(false);
 
   const groupedProducts = groupProducts(order.products);
+
+  const [promoData, setPromoData] = useState(null);
+
+  useEffect(() => {
+    order && setPromoData(JSON.parse(order.promo_data));
+  }, [order]);
 
   return (
     <div
@@ -144,12 +150,11 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
           </span>
         </div>
 
-        {order.promo_data && (
+        {promoData?.id && (
           <p className="text-sm flex flex-wrap gap-2 items-center p-2 border border-white/10 rounded-md bg-white/10 w-fit font-semibold">
             Promo Applied:
             <span>
-              {JSON.parse(order.promo_data).code} |{" "}
-              {JSON.parse(order.promo_data).discount_percentage}%
+              {promoData.code} | {promoData.discount_percentage}%
             </span>
           </p>
         )}
@@ -163,7 +168,13 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
                 }).format(new Date(order.created_at))
               : "Not set"}
           </p>
-          <p className="text-lg font-semibold">Price: ${order.total_price}</p>
+          <p className="text-lg font-semibold">
+            Price: $
+            {promoData?.id
+              ? order.total_price -
+                (order.total_price * promoData?.discount_percentage) / 100
+              : order.total_price}
+          </p>
         </div>
 
         <OrderDialog
