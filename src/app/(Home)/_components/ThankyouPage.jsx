@@ -67,7 +67,8 @@ const ThankyouPage = () => {
   const [promoData, setPromoData] = useState(null);
 
   useEffect(() => {
-    orderData && setPromoData(JSON.parse(orderData.order.promo_data));
+    orderData?.order?.promo_data &&
+      setPromoData(JSON.parse(orderData?.order?.promo_data));
   }, [orderData]);
 
   return (
@@ -227,10 +228,12 @@ const ThankyouPage = () => {
                 <p className="text-lg font-semibold">
                   Price: $
                   {promoData?.id
-                    ? orderData.order.total_price -
-                      (orderData.order.total_price *
-                        promoData.discount_percentage) /
-                        100
+                    ? (
+                        orderData.order.total_price -
+                        (orderData.order.total_price *
+                          promoData.discount_percentage) /
+                          100
+                      ).toFixed(2)
                     : orderData.order.total_price}
                 </p>
               </div>

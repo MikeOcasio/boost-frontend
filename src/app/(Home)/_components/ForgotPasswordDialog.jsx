@@ -6,9 +6,6 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 import { IoClose } from "react-icons/io5";
-import CryptoJS from "crypto-js";
-
-const SECRET_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
 
 export const ForgotPasswordDialog = ({ dialogOpen, onClose, dialogData }) => {
   const [email, setEmail] = useState(dialogData || "");
@@ -25,9 +22,6 @@ export const ForgotPasswordDialog = ({ dialogOpen, onClose, dialogData }) => {
     setLoading(true);
 
     try {
-      const encryptedEmail = CryptoJS.AES.encrypt(email, SECRET_KEY).toString();
-      localStorage.setItem("forgotUserToken", encryptedEmail);
-
       const response = await forgotPassword({ email });
 
       if (response.error) {

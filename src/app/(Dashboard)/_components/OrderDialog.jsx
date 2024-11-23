@@ -28,11 +28,14 @@ export const OrderDialog = ({
   const [currentOrderState, setCurrentOrderState] = useState(order?.state);
   const [loading, setLoading] = useState(false);
 
+  const [promoData, setPromoData] = useState(null);
+
   // get order by id
   const getOrderById = async (orderId) => {
     try {
       setLoading(true);
       const result = await fetchOrderById(orderId);
+
       if (result.error) {
         toast.error(result.error);
       } else {
@@ -79,10 +82,8 @@ export const OrderDialog = ({
     }
   };
 
-  const [promoData, setPromoData] = useState(null);
-
   useEffect(() => {
-    order && setPromoData(JSON.parse(order.promo_data));
+    order?.promo_data && setPromoData(JSON.parse(order?.promo_data));
   }, [order]);
 
   return (
@@ -91,6 +92,7 @@ export const OrderDialog = ({
       onClose={() => {
         onClose();
         setIsEditing(false);
+        setCurrentOrder(null);
       }}
       as="div"
       className="relative z-50 text-white"
@@ -201,17 +203,26 @@ export const OrderDialog = ({
                 )}
               </div>
 
-              {order.skill_master.gamer_tag && (
-                <div className="flex flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1">
+              {order.skill_master.id && (
+                <Link
+                  href={`/skillmasters/${order.skill_master.id}`}
+                  target="_blank"
+                  className="flex flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1"
+                >
                   <p>Assigned Skillmaster:</p>
                   <p
                     className={clsx(
                       "px-2 rounded-full h-fit border border-white/10"
                     )}
                   >
-                    {order.skill_master.gamer_tag}
+                    {!order.skill_master.gamer_tag && (
+                      <span>Skillmaster# {order.skill_master.id}</span>
+                    )}
+
+                    {order.skill_master.gamer_tag &&
+                      order.skill_master.gamer_tag}
                   </p>
-                </div>
+                </Link>
               )}
             </div>
 
@@ -368,8 +379,10 @@ export const OrderDialog = ({
               <p className="text-lg">
                 Total Price: $
                 {promoData?.id
-                  ? order.total_price -
-                    (order.total_price * promoData?.discount_percentage) / 100
+                  ? (
+                      order.total_price -
+                      (order.total_price * promoData?.discount_percentage) / 100
+                    ).toFixed(2)
                   : order.total_price}
               </p>
             </div>

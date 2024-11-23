@@ -324,6 +324,17 @@ const CheckoutPage = () => {
     }
   };
 
+  useEffect(() => {
+    // Reload orders when the active promotion changes
+    loadOrders(activePromotion);
+  }, [activePromotion, loadOrders]);
+
+  const removePromotionCode = () => {
+    setPromotionCode("");
+    setActivePromotion(null);
+    setShowPromotion(false);
+  };
+
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
       <p className="text-center text-4xl font-title sm:text-5xl">Checkout</p>
@@ -527,14 +538,7 @@ const CheckoutPage = () => {
               <p className="text-sm flex flex-wrap gap-2 justify-between items-center w-fit h-fit border rounded-lg border-white/10 px-2 py-1">
                 {activePromotion.code} | {activePromotion.discount_percentage}%
                 OFF
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPromotionCode("");
-                    setActivePromotion(null);
-                    setShowPromotion(false);
-                  }}
-                >
+                <button type="button" onClick={removePromotionCode}>
                   <CgClose className="h-8 w-8 hover:bg-white/10 rounded-lg p-2" />
                 </button>
               </p>

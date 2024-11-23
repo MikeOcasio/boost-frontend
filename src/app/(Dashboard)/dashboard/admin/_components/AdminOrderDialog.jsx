@@ -2,6 +2,7 @@
 
 import {
   assignOrderToSkillMaster,
+  fetchOrderById,
   updateOrderStatus,
 } from "@/lib/actions/orders-action";
 import { fetchAllSkillmasters } from "@/lib/actions/skillmasters-action";
@@ -13,7 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { BiImage } from "react-icons/bi";
+import { BiCopy, BiImage } from "react-icons/bi";
 import { IoClose, IoCopy } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
 
@@ -31,6 +32,9 @@ export const AdminOrderDialog = ({
   const [loading, setLoading] = useState(false);
   const [currentOrderState, setCurrentOrderState] = useState("");
   const [skillmasters, setSkillmasters] = useState(masters);
+
+  const [promoData, setPromoData] = useState(null);
+  const [currentOrder, setCurrentOrder] = useState(null);
 
   useEffect(() => {
     if (masters) {
@@ -96,11 +100,30 @@ export const AdminOrderDialog = ({
     }
   };
 
-  const [promoData, setPromoData] = useState(null);
-
+  // promo code data
   useEffect(() => {
-    order && setPromoData(JSON.parse(order.promo_data));
+    order?.promo_data && setPromoData(JSON.parse(order?.promo_data));
   }, [order]);
+
+  // get order by id
+  const getOrderById = async (orderId) => {
+    try {
+      setLoading(true);
+      const result = await fetchOrderById(orderId);
+
+      console.log("result", result);
+
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setCurrentOrder(result);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch order details. Please try again!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Dialog
@@ -212,57 +235,72 @@ export const AdminOrderDialog = ({
                 </Select>
               </div>
 
-              {order.skill_master.gamer_tag && (
-                <div className="flex flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1">
+              {order.skill_master.id && (
+                <Link
+                  href={`/skillmasters/${order.skill_master.id}`}
+                  target="_blank"
+                  className="flex flex-wrap gap-2 bg-black/20 p-2 rounded-lg text-sm flex-1"
+                >
                   <p>Assigned Skillmaster:</p>
                   <p
                     className={clsx(
-                      "px-2 rounded-full border border-white/10 h-fit"
+                      "px-2 rounded-full h-fit border border-white/10"
                     )}
                   >
-                    {order.skill_master.gamer_tag}
+                    {!order.skill_master.gamer_tag && (
+                      <span>Skillmaster# {order.skill_master.id}</span>
+                    )}
+
+                    {order.skill_master.gamer_tag &&
+                      order.skill_master.gamer_tag}
                   </p>
-                </div>
+                </Link>
               )}
             </div>
 
             {/* assign order to skillmaster */}
-            <div className="flex flex-wrap gap-2 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-              {skillmasters?.length > 0 && (
-                <select
-                  value={skillmasterId}
-                  onChange={(e) => setSkillmasterId(e.target.value)}
-                  className="block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3 flex-1 min-w-fit"
-                >
-                  <option value="" className="bg-neutral-800" unselectable="on">
-                    Select Skillmaster
-                  </option>
-
-                  {skillmasters.map((skillmaster) => (
+            {!order.skill_master.id && (
+              <div className="flex flex-wrap gap-2 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                {skillmasters?.length > 0 && (
+                  <select
+                    value={skillmasterId}
+                    onChange={(e) => setSkillmasterId(e.target.value)}
+                    className="block w-full rounded-lg bg-black/20 hover:bg-black/30 py-1.5 px-3 flex-1 min-w-fit"
+                  >
                     <option
-                      key={skillmaster.id}
-                      value={skillmaster.id}
+                      value=""
                       className="bg-neutral-800"
+                      unselectable="on"
                     >
-                      ID: {skillmaster.id} |{" "}
-                      {skillmaster.gamer_tag ||
-                        skillmaster.first_name +
-                          " " +
-                          skillmaster.last_name}{" "}
-                      | {skillmaster.email}
+                      Select Skillmaster
                     </option>
-                  ))}
-                </select>
-              )}
 
-              <button
-                onClick={() => handleAssignOrder()}
-                disabled={loading || !skillmasterId}
-                className="bg-Gold/80 p-2 rounded-lg hover:bg-Gold/60 disabled:bg-gray-500/20 flex-1"
-              >
-                {loading ? "Assigning..." : "Assign Order to Skillmaster"}
-              </button>
-            </div>
+                    {skillmasters.map((skillmaster) => (
+                      <option
+                        key={skillmaster.id}
+                        value={skillmaster.id}
+                        className="bg-neutral-800"
+                      >
+                        ID: {skillmaster.id} |{" "}
+                        {skillmaster.gamer_tag ||
+                          skillmaster.first_name +
+                            " " +
+                            skillmaster.last_name}{" "}
+                        | {skillmaster.email}
+                      </option>
+                    ))}
+                  </select>
+                )}
+
+                <button
+                  onClick={() => handleAssignOrder()}
+                  disabled={loading || !skillmasterId}
+                  className="bg-Gold/80 p-2 rounded-lg hover:bg-Gold/60 disabled:bg-gray-500/20 flex-1"
+                >
+                  {loading ? "Assigning..." : "Assign Order to Skillmaster"}
+                </button>
+              </div>
+            )}
 
             {/* Product Info */}
             <div className="flex flex-col gap-1 w-full">
@@ -341,6 +379,65 @@ export const AdminOrderDialog = ({
               </p>
             </div>
 
+            {/* get credential */}
+            {!currentOrder?.platform_credentials && (
+              <button
+                onClick={() => getOrderById(order.id)}
+                className="flex-1 bg-Gold rounded-lg p-2 text-base font-bold min-w-fit"
+              >
+                Get platform credential
+              </button>
+            )}
+
+            {/* credential */}
+            {currentOrder?.platform_credentials && (
+              <div className="flex flex-col gap-2 border border-white/10 p-4 rounded-lg">
+                <p className="text-xs flex flex-wrap gap-2 items-center">
+                  <span>Platform Credentials</span>
+
+                  {currentOrder?.platform_credentials && (
+                    <span className="bg-white/10 px-2 rounded-md">
+                      {currentOrder?.platform_credentials.platform.name || ""} /{" "}
+                      {currentOrder?.platform_credentials?.sub_platform.name ||
+                        ""}
+                    </span>
+                  )}
+                </p>
+
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center border-b pb-2 border-white/10">
+                  Username:
+                  <span
+                    className="font-semibold bg-white/10 px-2 py-1 rounded-md flex gap-1 items-center hover:bg-white/20 cursor-pointer transition-all"
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        currentOrder?.platform_credentials.username
+                      );
+                      toast.success("Copied to clipboard!");
+                    }}
+                  >
+                    <BiCopy className="h-5 w-5 hover:bg-black/10 p-1 rounded-md" />
+                    ******
+                  </span>
+                </p>
+
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
+                  Password:{" "}
+                  <span
+                    className="font-semibold bg-white/10 px-2 py-1 rounded-md flex gap-1 items-center hover:bg-white/20 cursor-pointer transition-all"
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        currentOrder?.platform_credentials.password
+                      );
+                      toast.success("Copied to clipboard!");
+                    }}
+                  >
+                    <BiCopy className="h-5 w-5 hover:bg-black/10 p-1 rounded-md" />
+                    ******
+                  </span>
+                </p>
+              </div>
+            )}
+
             {/* data and price */}
             <div className="flex flex-wrap gap-4 justify-between items-center">
               {/* Date */}
@@ -358,8 +455,10 @@ export const AdminOrderDialog = ({
               <p className="text-lg">
                 Total Price: $
                 {promoData?.id
-                  ? order.total_price -
-                    (order.total_price * promoData?.discount_percentage) / 100
+                  ? (
+                      order.total_price -
+                      (order.total_price * promoData?.discount_percentage) / 100
+                    ).toFixed(2)
                   : order.total_price}
               </p>
             </div>

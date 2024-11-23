@@ -8,10 +8,10 @@ import { BsTrophyFill } from "react-icons/bs";
 import { IoMdPerson } from "react-icons/io";
 import { IoWarning } from "react-icons/io5";
 
-import { fetchSkillmasterById } from "@/lib/actions/user-actions";
 import { EmbededFrame } from "../_components/EmbededFrame";
 import { PiGameControllerFill } from "react-icons/pi";
 import { useRouter } from "next/navigation";
+import { fetchSkillmasterById } from "@/lib/actions/skillmasters-action";
 
 const MasterPage = ({ params }) => {
   const [skillMaster, setSkillMaster] = useState(null);
@@ -40,6 +40,8 @@ const MasterPage = ({ params }) => {
         await prefetchGameplayUrls(result.gameplay_info);
       }
     } catch (error) {
+      console.log("error while fetching skillmaster", error);
+
       setError(true);
       toast.error("An unexpected error occurred.");
     } finally {

@@ -2,7 +2,7 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
 
@@ -50,6 +50,12 @@ export const OrderGraveyardDialog = ({
       loadGraveyardOrders();
     }
   };
+
+  const [promoData, setPromoData] = useState(null);
+
+  useEffect(() => {
+    order?.promo_data && setPromoData(JSON.parse(order?.promo_data));
+  }, [order]);
 
   return (
     <Dialog
@@ -199,6 +205,16 @@ export const OrderGraveyardDialog = ({
                   <span>{order.promotion_id}</span>
                 </p>
               )}
+
+              {promoData?.id && (
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
+                  Promo Applied
+                  <span className="flex gap-2 items-center">
+                    {promoData?.discount_percentage}% OFF
+                  </span>
+                </p>
+              )}
+
               <p className="text-sm flex flex-wrap gap-2 justify-between items-center ">
                 Tax
                 <span>
@@ -224,7 +240,15 @@ export const OrderGraveyardDialog = ({
               </p>
 
               {/* totol_price */}
-              <p className="text-lg">Total Price: ${order.total_price}</p>
+              <p className="text-lg">
+                Total Price: $
+                {promoData?.id
+                  ? (
+                      order.total_price -
+                      (order.total_price * promoData?.discount_percentage) / 100
+                    ).toFixed(2)
+                  : order.total_price}
+              </p>
             </div>
           </div>
         </DialogPanel>

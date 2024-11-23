@@ -48,7 +48,7 @@ export const SubProductsList = ({ game }) => {
   return (
     game?.children?.length > 0 && (
       <div className="flex flex-col gap-2 p-4 rounded-lg border border-white/10 bg-white/10 backdrop-blur-lg">
-        <p className="text-lg font-semibold">Recommendation for you</p>
+        <p className="text-lg font-semibold">Pick your {game.name}</p>
 
         {/* search for sub products */}
         <div className="flex flex-wrap items-center gap-4">

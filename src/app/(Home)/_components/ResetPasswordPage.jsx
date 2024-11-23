@@ -1,17 +1,13 @@
 "use client";
 
-import { doesUserExist, resetUserPassword } from "@/lib/actions/user-actions";
-import { useUserStore } from "@/store/use-user";
+import { resetUserPassword } from "@/lib/actions/user-actions";
 import { Field, Input, Label } from "@headlessui/react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
-import CryptoJS from "crypto-js";
-
-const SECRET_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
 
 const ResetPasswordPage = () => {
   const router = useRouter();
@@ -24,42 +20,6 @@ const ResetPasswordPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const { removeToken } = useUserStore();
-
-  const verifyForgotUserToken = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      const forgotUserToken = localStorage.getItem("forgotUserToken");
-
-      const forgotUserEmail = CryptoJS.AES.decrypt(
-        forgotUserToken,
-        SECRET_KEY
-      ).toString(CryptoJS.enc.Utf8);
-
-      // check if the email exists in the database
-      const response = await doesUserExist(forgotUserEmail);
-
-      if (response.error) {
-        removeToken();
-        router.push("/login");
-        toast.error(response.error);
-      }
-    } catch (error) {
-      // console.log("Error fetching current user:", error.message);
-
-      removeToken();
-      router.push("/login");
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [removeToken, router]);
-
-  useEffect(() => {
-    verifyForgotUserToken();
-  }, [verifyForgotUserToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -94,7 +54,8 @@ const ResetPasswordPage = () => {
         toast.error(response.error || "Error resetting password!");
       } else {
         localStorage.removeItem("forgotUserToken");
-        removeToken();
+        localStorage.removeItem("jwtToken");
+
         toast.success("Password reset successfully!");
         router.push("/login");
       }

@@ -47,7 +47,7 @@ export const AdminOrderCard = ({
   const [promoData, setPromoData] = useState(null);
 
   useEffect(() => {
-    order && setPromoData(JSON.parse(order.promo_data));
+    order?.promo_data && setPromoData(JSON.parse(order?.promo_data));
   }, [order]);
 
   return (
@@ -98,11 +98,18 @@ export const AdminOrderCard = ({
         ))}
       </div>
 
-      {order.skill_master.gamer_tag && (
+      {order.skill_master.id && (
         <div className="flex flex-wrap gap-2 text-sm items-center">
           <span>Assigned Skill Master:</span>
           <span className="font-semibold px-1 rounded-md border border-white/10">
-            {highlightMatch(order.skill_master.gamer_tag, searchTerm)}
+            {!order.skill_master.gamer_tag &&
+              highlightMatch(
+                "Skillmaster#" + order.skill_master.id,
+                searchTerm
+              )}
+
+            {order.skill_master.gamer_tag &&
+              highlightMatch(order.skill_master.gamer_tag, searchTerm)}
           </span>
         </div>
       )}
@@ -154,8 +161,10 @@ export const AdminOrderCard = ({
         <p className="text-lg font-semibold">
           Price: $
           {promoData?.id
-            ? order.total_price -
-              (order.total_price * promoData?.discount_percentage) / 100
+            ? (
+                order.total_price -
+                (order.total_price * promoData?.discount_percentage) / 100
+              ).toFixed(2)
             : order.total_price}
         </p>
       </div>

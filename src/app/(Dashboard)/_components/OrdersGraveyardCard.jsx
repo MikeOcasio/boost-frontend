@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { OrderGraveyardDialog } from "./OrderGraveyardDialog";
 import clsx from "clsx";
@@ -31,6 +31,12 @@ const OrdersGraveyardCard = ({ order, loadGraveyardOrders, loadOrders }) => {
   };
 
   const groupedProducts = groupProducts(order.products);
+
+  const [promoData, setPromoData] = useState(null);
+
+  useEffect(() => {
+    order?.promo_data && setPromoData(JSON.parse(order?.promo_data));
+  }, [order]);
 
   return (
     <div
@@ -121,7 +127,15 @@ const OrdersGraveyardCard = ({ order, loadGraveyardOrders, loadOrders }) => {
           </p>
 
           {/* totol_price */}
-          <p className="text-lg">Price: ${order.total_price}</p>
+          <p className="text-lg">
+            Price: $
+            {promoData?.id
+              ? (
+                  order.total_price -
+                  (order.total_price * promoData?.discount_percentage) / 100
+                ).toFixed(2)
+              : order.total_price}
+          </p>
         </div>
 
         <OrderGraveyardDialog

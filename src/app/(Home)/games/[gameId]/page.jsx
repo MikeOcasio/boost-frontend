@@ -529,7 +529,7 @@ const GamePage = ({ params }) => {
             </div>
 
             {/* sub products list */}
-            {game.length > 0 && <SubProductsList game={game} />}
+            {game.children?.length > 0 && <SubProductsList game={game} />}
 
             {/* game badges */}
             <div className="flex flex-col gap-y-12">
