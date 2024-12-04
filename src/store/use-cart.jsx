@@ -14,9 +14,46 @@ const getInitialCart = () => {
   return [];
 };
 
+// Helper function to calculate total price
+const calculateTotalPrice = (cartItems) => {
+  const totalPrice = cartItems
+    .reduce(
+      (total, item) =>
+        total +
+        (item.is_dropdown
+          ? item.dropdown_options.reduce(
+              (acc, curr) => acc + Number(curr.price),
+              0
+            )
+          : item.is_slider
+          ? item.slider_range.reduce((acc, curr) => acc + Number(curr.price), 0)
+          : Number(item.price) * Number(item.quantity)),
+      0
+    )
+    .toFixed(2);
+
+  localStorage.setItem("totalPrice", totalPrice);
+
+  return totalPrice;
+};
+
+// get total price from localStorage
+const getTotalPrice = () => {
+  if (typeof window !== "undefined") {
+    const storedTotalPrice = localStorage.getItem("totalPrice");
+    return storedTotalPrice ? parseFloat(storedTotalPrice) : 0;
+  }
+  return 0;
+};
+
 export const useCartStore = create((set) => ({
-  // Initialize cart from localStorage
+  totalPrice: getTotalPrice(),
+  setTotalPrice: (totalPrice) => set({ totalPrice }),
+
   cartItems: getInitialCart(),
+
+  // set cart items
+  setCartItems: (cartItems) => set({ cartItems }),
 
   // Add item to cart (only specific keys)
   addToCart: (product) =>
@@ -40,28 +77,41 @@ export const useCartStore = create((set) => ({
           quantity: 1,
           price: product.price,
           platform: product.platform,
-          image_url: product.image_url,
+          image: product.image,
+          is_active: product.is_active,
+          tax: product.tax,
+          category_id: product.category_id,
+          prod_attr_cats: product.prod_attr_cats,
+          dropdown_options: product.dropdown_options,
+          starting_point: product.starting_point,
+          ending_point: product.ending_point,
+          is_dropdown: product.is_dropdown,
+          is_slider: product.is_slider,
+          slider_range: product.slider_range,
         };
         updatedCart = [...state.cartItems, newItem];
       }
-      // Update localStorage
+
+      // Update localStorage and total price
       updateLocalStorage(updatedCart);
-      return { cartItems: updatedCart };
+      const newTotalPrice = calculateTotalPrice(updatedCart);
+      return { cartItems: updatedCart, totalPrice: newTotalPrice };
     }),
 
   // Remove item from cart
   removeFromCart: (id) =>
     set((state) => {
       const updatedCart = state.cartItems.filter((item) => item.id !== id);
-      // Update localStorage
+      // Update localStorage and total price
       updateLocalStorage(updatedCart);
-      return { cartItems: updatedCart };
+      const newTotalPrice = calculateTotalPrice(updatedCart);
+      return { cartItems: updatedCart, totalPrice: newTotalPrice };
     }),
 
   // Empty cart
   emptyCart: () => {
     updateLocalStorage([]);
-    return { cartItems: [] };
+    return { cartItems: [], totalPrice: 0 };
   },
 
   // Increase item quantity
@@ -70,9 +120,10 @@ export const useCartStore = create((set) => ({
       const updatedCart = state.cartItems.map((item) =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       );
-      // Update localStorage
+      // Update localStorage and total price
       updateLocalStorage(updatedCart);
-      return { cartItems: updatedCart };
+      const newTotalPrice = calculateTotalPrice(updatedCart);
+      return { cartItems: updatedCart, totalPrice: newTotalPrice };
     }),
 
   // Decrease item quantity
@@ -83,8 +134,9 @@ export const useCartStore = create((set) => ({
           item.id === id ? { ...item, quantity: item.quantity - 1 } : item
         )
         .filter((item) => item.quantity > 0); // Remove item if quantity is 0
-      // Update localStorage
+      // Update localStorage and total price
       updateLocalStorage(updatedCart);
-      return { cartItems: updatedCart };
+      const newTotalPrice = calculateTotalPrice(updatedCart);
+      return { cartItems: updatedCart, totalPrice: newTotalPrice };
     }),
 }));

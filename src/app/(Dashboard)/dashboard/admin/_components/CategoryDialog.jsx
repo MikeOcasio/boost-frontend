@@ -14,9 +14,13 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
-
-import { addCategory, deleteCategory, updateCategory } from "@/lib/actions";
 import { BiLoader, BiTrash } from "react-icons/bi";
+
+import {
+  addCategory,
+  deleteCategory,
+  updateCategory,
+} from "@/lib/actions/categories-actions";
 
 export const CategoryDialog = ({
   dialogData,
@@ -66,7 +70,7 @@ export const CategoryDialog = ({
         const response = await updateCategory(categoryData);
 
         if (response.error) {
-          toast.error(response.error);
+          toast.error(JSON.stringify(response.error));
         } else {
           toast.success("Category updated successfully!");
         }
@@ -75,7 +79,7 @@ export const CategoryDialog = ({
         const response = await addCategory(categoryData);
 
         if (response.error) {
-          toast.error(response.error);
+          toast.error(JSON.stringify(response.error));
         } else {
           toast.success("Category added successfully!");
         }
@@ -83,7 +87,7 @@ export const CategoryDialog = ({
 
       handleClosed();
     } catch (error) {
-      console.log("Error submitting category:", error.message);
+      // console.log("Error submitting category:", error.message);
       toast.error(error.message);
     } finally {
       loadCategories();
@@ -112,7 +116,7 @@ export const CategoryDialog = ({
         handleClosed();
       }
     } catch (error) {
-      console.log("Error deleting category:", error.message);
+      // console.log("Error deleting category:", error.message);
       toast.error(error.message);
     } finally {
       loadCategories();
@@ -130,7 +134,7 @@ export const CategoryDialog = ({
       open={dialogOpen}
       onClose={onClose}
       as="div"
-      className="relative z-50"
+      className="relative z-50 text-white"
     >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -146,7 +150,7 @@ export const CategoryDialog = ({
             {dialogData ? "Update Game Category" : "Add New Game Category"}
           </DialogTitle>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             {/* id */}
             {category.id && (
               <button
@@ -209,6 +213,19 @@ export const CategoryDialog = ({
                 />
               </Switch>
             </div>
+
+            {/* created at */}
+            {category.created_at && (
+              <p className="text-xs font-semibold">
+                Created at:{" "}
+                {category.created_at
+                  ? new Intl.DateTimeFormat("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(new Date(category.created_at))
+                  : "Not set"}
+              </p>
+            )}
 
             <div className="flex items-center justify-between gap-4">
               {/* Delete Button */}

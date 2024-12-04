@@ -6,76 +6,6 @@ import {
 import { GiProgression } from "react-icons/gi";
 import { MdAssignment } from "react-icons/md";
 
-import APEX from "@/images/photos/apexLogo.png";
-import DESTINY from "@/images/photos/destinyLogo.png";
-import COD from "@/images/photos/codLogo.png";
-
-export const games = [
-  {
-    name: "Destiny 2",
-    id: 1,
-    slug: "game-destiny-2",
-    href: "#",
-    isActive: false,
-    mostPopular: true,
-    tagLine: "Dominate the Destiny 2 Universe",
-    description:
-      "Mention the custom boosting services for leveling, raid completions, and exotic quests with the assistance of experienced players.",
-    features: [
-      "Custom boosting services for leveling",
-      "Raid completions",
-      "Exotic quests assistance",
-      "PVP Glory ranks boost",
-    ],
-    image: DESTINY,
-    altText: "logo for Destiny 2",
-    bgImage: "/apex-game-bg.png",
-    primaryColor: "#c2bbb2",
-  },
-  {
-    name: "Apex Legends",
-    id: 2,
-    slug: "game-apex-legends",
-    href: "#",
-    isActive: false,
-    mostPopular: true,
-    tagLine: "Elevate Your Apex Legends Experience",
-    description:
-      "Highlight the opportunity to boost rankings, improve kill/death ratios (K/D), and level up faster with the help of top-tier players.",
-    features: [
-      "Custom boosting services for leveling",
-      "Rank boosting",
-      "Kill/death ratio improvement",
-      "Level up faster",
-    ],
-    image: APEX,
-    altText: "logo for Apex Legends",
-    bgImage: "/apex-game-bg.png",
-    primaryColor: "#FF0202",
-  },
-  {
-    name: "Call of Duty",
-    id: 3,
-    slug: "game-call-of-duty",
-    href: "#",
-    isActive: false,
-    mostPopular: true,
-    tagLine: "Achieve Call of Duty Supremacy",
-    description:
-      "Focus on the boost services for multiplayer and Warzone, including rank boosting, weapon leveling, and unlocking achievements.",
-    features: [
-      "Custom boosting services for multiplayer and Warzone",
-      "Rank boosting",
-      "Weapon leveling",
-      "Achievement unlocking",
-    ],
-    image: COD,
-    altText: "logo for Call of Duty",
-    bgImage: "/apex-game-bg.png",
-    primaryColor: "#688823",
-  },
-];
-
 export const people = [
   {
     name: "iShardTV",
@@ -173,111 +103,20 @@ export const steps = [
   },
 ];
 
-export const orders = [
-  {
-    id: 1,
-    order_id: 1,
-    internal_id: 1,
-    product: [
-      {
-        product_id: "COD",
-        product_name: "COD",
-        quantity: 1,
-        price: "100",
-        platform: "PS",
-        skill_master_id: "Nikhil",
-        image_url: "/badges/kill.png",
-      },
-      {
-        product_id: "COD",
-        product_name: "COD",
-        quantity: 2,
-        price: "100",
-        platform: "PS",
-        skill_master_id: "Nikhil",
-        image_url: "/badges/kill.png",
-      },
-      {
-        product_id: "COD",
-        product_name: "COD",
-        quantity: 1,
-        price: 100,
-        platform: "PS",
-        skill_master_id: "Nikhil",
-        image_url: "/badges/kill.png",
-      },
-    ],
-    total_price: 100,
-    order_status: "Pending",
-    payment_status: "paid",
-    promotion_id: "10",
-    tax: "0.1",
-    date: "2023-03-01",
-  },
-  {
-    id: 2,
-    order_id: 2,
-    internal_id: 2,
-    product: [
-      {
-        product_id: "COD",
-        product_name: "COD",
-        quantity: 2,
-        price: 100,
-        platform: "PS",
-        skill_master_id: "Nikhil",
-        image_url: "/game/apex.png",
-      },
-    ],
-    total_price: 100,
-    order_status: "Pending",
-    payment_status: "paid",
-    promotion_id: "10",
-    tax: "0.1",
-    date: "2023-03-01",
-  },
-  {
-    id: 3,
-    order_id: 3,
-    internal_id: 3,
-    product: [
-      {
-        product_id: "COD",
-        product_name: "COD",
-        quantity: 3,
-        price: 100,
-        platform: "PS",
-        skill_master_id: "Nikhil",
-        image_url: "/game/destiny.png",
-      },
-    ],
-    total_price: 100,
-    order_status: "Pending",
-    payment_status: "paid",
-    promotion_id: "10",
-    tax: "0.1",
-    date: "2023-03-01",
-  },
-  {
-    id: 4,
-    order_id: 4,
-    internal_id: 4,
-    product: [
-      {
-        product_id: "COD",
-        product_name: "COD",
-        quantity: 4,
-        price: 100,
-        platform: "PS",
-        skill_master_id: "Nikhil",
-        image_url: "/game/cod.png",
-      },
-    ],
-    total_price: 100,
-    order_status: "Pending",
-    payment_status: "paid",
-    promotion_id: "10",
-    tax: "0.1",
-    date: "2023-03-01",
-  },
+export const adminOrderStatus = [
+  { name: "Open", value: "open" },
+  { name: "Assigned", value: "assigned" },
+  { name: "Delayed", value: "delayed" },
+  { name: "Disputed", value: "disputed" },
+  { name: "Re Assigned", value: "re_assigned" },
+  { name: "In Progress", value: "in_progress" },
+  { name: "Complete", value: "complete" },
+];
+
+export const orderStatus = [
+  { name: "In Progress", value: "in_progress" },
+  { name: "Delayed", value: "delayed" },
+  { name: "Disputed", value: "disputed" },
+  { name: "Assigned", value: "assigned" },
+  { name: "Complete", value: "complete" },
 ];

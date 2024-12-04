@@ -9,8 +9,10 @@ import { useRouter } from "next/navigation";
 import { BiLoader } from "react-icons/bi";
 import toast from "react-hot-toast";
 
-import { loginUser } from "@/lib/actions";
+import { getQrCode, loginUser } from "@/lib/actions/user-actions";
 import { useUserStore } from "@/store/use-user";
+import { QrCodeDialog } from "../_components/QrCodeDialog";
+import { ForgotPasswordDialog } from "../_components/ForgotPasswordDialog";
 
 export default function Login() {
   const router = useRouter();
@@ -19,35 +21,79 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
-  const { userToken, setUserToken } = useUserStore();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogData, setDialogData] = useState(null);
+  const [openForgotDialog, setOpenForgotDialog] = useState(false);
+
+  const { userToken } = useUserStore();
 
   useEffect(() => {
     if (userToken) {
       router.push("/");
     }
-  }, []);
+  }, [router, userToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (loading) return;
+
+    if (!email || !password) {
+      toast.error("Email or password is missing");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await loginUser(email, password);
+      const response = await loginUser({ email, password });
+
+      if (response.error === "OTP required") {
+        setDialogData(response.res);
+        setDialogOpen(true);
+        return;
+      }
+
+      if (response.error) {
+        toast.error(response.error);
+      } else if (
+        !dialogData?.user?.otp_required_for_login ||
+        !dialogData?.user?.otp_setup_complete
+      ) {
+        const qrCode = await loadQrCode(response.token);
+
+        setDialogData({
+          ...response,
+          qr_code: qrCode.qr_code,
+          otp_secret: qrCode.otp_secret,
+        });
+        setDialogOpen(true);
+      } else {
+        setDialogData(response);
+        setDialogOpen(true);
+      }
+    } catch (error) {
+      // console.log("Error logging in user:", error.message);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadQrCode = async (token) => {
+    try {
+      const response = await getQrCode(token);
 
       if (response.error) {
         toast.error(response.error);
       } else {
-        setUserToken(response.token);
-
-        toast.success("Login successful!");
-        router.push("/");
+        return response;
       }
     } catch (error) {
-      console.log("Error logging in user:", error.message);
+      // console.log("Error fetching QR code:", error.message);
       toast.error(error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -71,7 +117,8 @@ export default function Login() {
           <Field className="flex flex-col gap-1 w-full">
             <Label className="text-sm">Email</Label>
             <Input
-              type="text"
+              type="email"
+              required
               placeholder="Email"
               autoFocus
               className="input-field"
@@ -86,6 +133,7 @@ export default function Login() {
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
+                  required
                   placeholder="Password"
                   className="input-field w-full"
                   value={password}
@@ -101,12 +149,28 @@ export default function Login() {
                 </button>
               </div>
             </Field>
+
             <button
               type="button"
-              className="text-end text-sm text-blue-600 hover:text-blue-500"
+              onClick={() => setOpenForgotDialog(true)}
+              className="text-end text-sm text-blue-600 hover:text-blue-500 w-fit ml-auto"
             >
               Forgot your password?
             </button>
+          </div>
+
+          {/* add rember me checkbox */}
+          <div className="flex items-center gap-2">
+            <input
+              id="rememberMe"
+              type="checkbox"
+              className="h-4 w-4 rounded border-gray-300 text-Gold focus:ring-Gold"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            <label htmlFor="rememberMe" className="text-sm">
+              Remember me
+            </label>
           </div>
 
           <button
@@ -129,6 +193,22 @@ export default function Login() {
           </Link>
         </p>
       </div>
+
+      {/* Qr Code Dialog */}
+      <QrCodeDialog
+        dialogOpen={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        rememberMe={rememberMe}
+        email={email}
+        password={password}
+        dialogData={dialogData}
+      />
+
+      {/* Forgot Password Dialog */}
+      <ForgotPasswordDialog
+        dialogOpen={openForgotDialog}
+        onClose={() => setOpenForgotDialog(false)}
+      />
     </div>
   );
 }

@@ -3,28 +3,62 @@
 import { Field, Input, Label } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { useRouter } from "next/navigation";
-import { BiLoader, BiUpload } from "react-icons/bi";
+import { BiLoader } from "react-icons/bi";
 import toast from "react-hot-toast";
-import { IoMdClose } from "react-icons/io";
-import { createUser } from "@/lib/actions";
+
+import { useUserStore } from "@/store/use-user";
+import { createUser, getQrCode, loginUser } from "@/lib/actions/user-actions";
+import { QrCodeDialog } from "../_components/QrCodeDialog";
 
 export default function SignIn() {
   const router = useRouter();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [image, setImage] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogData, setDialogData] = useState(null);
+
+  const { userToken } = useUserStore();
+
+  useEffect(() => {
+    if (userToken) {
+      router.push("/");
+    }
+  }, [router, userToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!firstName || !email || !password || !confirmPassword) {
+      toast.error("All fields are required.");
+      return;
+    }
+
+    // Password complexity check: 8 characters, at least one uppercase, one special character
+    const passwordComplexityRegex = /^(?=.*[A-Z])(?=.*[!@#$&*]).{8,}$/;
+    if (!passwordComplexityRegex.test(password)) {
+      toast.error(
+        "Password must be at least 8 characters long, include one uppercase letter, and one special character."
+      );
+      return;
+    }
+
+    // Confirm password check
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -33,23 +67,73 @@ export default function SignIn() {
         lastName,
         email,
         password,
-        image,
+        confirmPassword,
       });
 
-      console.log("response", response);
-
       if (response.error) {
-        // toast.error(response.error);
-        toast.error("Error signing in user!");
+        toast.error(response.error || "Error signing in user!");
       } else {
-        toast.success("Sign in successful!");
-        router.push("/");
+        getUserSession();
       }
     } catch (error) {
-      console.log("Error logging in user:", error.message);
+      // console.log("Error logging in user:", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getUserSession = async () => {
+    if (!email || !password) {
+      toast.error("Email or password is missing");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await loginUser({ email, password });
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        if (
+          !dialogData?.user?.otp_required_for_login ||
+          !dialogData?.user?.otp_setup_complete
+        ) {
+          const qrCode = await loadQrCode(response.token);
+
+          setDialogData({
+            ...response,
+            qr_code: qrCode.qr_code,
+            otp_secret: qrCode.otp_secret,
+          });
+          setDialogOpen(true);
+        } else {
+          setDialogData(response);
+          setDialogOpen(true);
+        }
+      }
+    } catch (error) {
+      // console.log("Error fetching QR code:", error.message);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadQrCode = async (token) => {
+    try {
+      const response = await getQrCode(token);
+
+      if (response.error) {
+        toast.error(response.error);
+      } else {
+        return response;
+      }
+    } catch (error) {
+      // console.log("Error fetching QR code:", error.message);
+      toast.error(error.message);
     }
   };
 
@@ -70,58 +154,6 @@ export default function SignIn() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* image upload */}
-          {image ? (
-            <div className="space-y-2 bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-              <p>Profile Image</p>
-              <div className="group relative cursor-pointer rounded-lg w-fit mx-auto">
-                <Image
-                  src={image}
-                  alt="Profile Image"
-                  width={150}
-                  height={150}
-                  className="mx-auto rounded-lg object-cover bg-white/10"
-                />
-                <IoMdClose
-                  type="button"
-                  className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
-                  onClick={() => setImage(null)}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2 justify-center w-full">
-              <label htmlFor="dropzone-file">Profile Image</label>
-              <label
-                for="dropzone-file"
-                className="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
-              >
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <BiUpload className="h-8 w-8 text-gray-500" />
-                  <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    Click or drag and drop your image here
-                  </p>
-                </div>
-                <input
-                  id="dropzone-file"
-                  type="file"
-                  accept="image/*"
-                  className="absolute border h-full w-full opacity-0"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setImage(reader.result);
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                />
-              </label>
-            </div>
-          )}
-
           {/* first name & last name */}
           <div className="flex flex-wrap gap-4 w-full">
             <Field className="flex flex-col gap-1 flex-1">
@@ -130,6 +162,7 @@ export default function SignIn() {
                 type="text"
                 placeholder="Jone"
                 autoFocus
+                required
                 className="input-field"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
@@ -152,9 +185,10 @@ export default function SignIn() {
           <Field className="flex flex-col gap-1 w-full">
             <Label className="text-sm">Email</Label>
             <Input
-              type="text"
+              type="email"
               placeholder="Email"
               className="input-field"
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -168,6 +202,7 @@ export default function SignIn() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 className="input-field w-full"
+                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -182,6 +217,29 @@ export default function SignIn() {
             </div>
           </Field>
 
+          {/* confirm password */}
+          <Field className="flex flex-col gap-1 w-full">
+            <Label className="text-sm">Confirm password</Label>
+            <div className="relative">
+              <Input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm password"
+                className="input-field w-full"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+
+              <button
+                type="button"
+                className="absolute right-1 top-1/2 h-7 w-8 p-1.5 rounded-lg hover:bg-white/10 -translate-y-1/2 text-gray-400 hover:text-gray-500 flex items-center justify-center"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <BsEyeSlash /> : <BsEye />}
+              </button>
+            </div>
+          </Field>
+
           <button
             type="submit"
             disabled={loading}
@@ -190,6 +248,14 @@ export default function SignIn() {
             {loading && <BiLoader className="h-5 w-5 animate-spin" />}
             Sign in
           </button>
+
+          <p className="text-xs text-center text-white/80">
+            By signing in, you agree to our{" "}
+            <Link href="/terms" className="font-semibold text-Gold">
+              Terms and Conditions
+            </Link>
+            .
+          </p>
         </form>
 
         <p className="mt-10 text-center text-sm text-gray-500">
@@ -202,6 +268,15 @@ export default function SignIn() {
           </Link>
         </p>
       </div>
+
+      {/* Qr Code Dialog */}
+      <QrCodeDialog
+        dialogOpen={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        email={email}
+        password={password}
+        dialogData={dialogData}
+      />
     </div>
   );
 }

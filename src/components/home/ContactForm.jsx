@@ -1,11 +1,9 @@
 "use client";
 
-import { Switch, Label } from "@headlessui/react";
-import clsx from "clsx";
+import { Switch } from "@headlessui/react";
 import { useState } from "react";
 import Image from "next/image";
-import APEX from "@/images/APEX.webp";
-import COD_Ghosts from "@/images/COD_Ghosts.png";
+import { BsDiscord } from "react-icons/bs";
 import Link from "next/link";
 
 export const ContactForm = () => {
@@ -25,28 +23,45 @@ export const ContactForm = () => {
         {/* Right Side Image */}
         <div className="relative lg:w-[40%] min-h-96 lg:h-auto flex flex-col items-center justify-center bg-black/30">
           <Image
-            src={APEX}
+            src="/utils/APEX.webp"
             alt="APEX logo"
-            quality={100}
+            width={500}
+            height={500}
             className="absolute -z-10 inset-0 w-full h-full object-cover -scale-x-100 blur-sm"
           />
           <p className="z-10 p-4 md:p-6 text-lg leading-8 text-center">
             Got questions, need assistance, or want to share your feedback?
-            We're all ears! At Raven Boost, your gaming experience and
+            We&apos;re all ears! At Raven Boost, your gaming experience and
             satisfaction are our top priorities. Use the options below to get in
-            touch with us, and we'll make sure to address your needs as swiftly
-            as possible.
+            touch with us, and we&apos;ll make sure to address your needs as
+            swiftly as possible.
           </p>
           <Image
-            src={COD_Ghosts}
+            src="/utils/COD_Ghosts.png"
             alt="COD Ghosts"
-            quality={100}
+            width={500}
+            height={500}
             className="w-1/2 h-1/2 object-contain -mb-16 -ml-10 mr-auto"
           />
         </div>
 
+        <div className="mx-auto w-full lg:w-[60%] bg-gradient-to-r from-CardPlum/50 to-CardGold/50 p-6 backdrop-blur-xl flex flex-col items-center justify-center">
+          <p className="text-center text-xl font-bold">
+            Send your query on Discord we are here to help you!
+          </p>
+
+          <Link
+            href="https://discord.gg/2BVynY4WSc"
+            target="_blank"
+            className="mt-4 bg-purple-500/50 py-2 px-4 rounded-full mx-auto flex items-center justify-center gap-4"
+          >
+            <BsDiscord className="text-4xl" />
+            <p className="text-center text-lg font-bold">Join Discord</p>
+          </Link>
+        </div>
+
         {/* Contact Form */}
-        <form
+        {/* <form
           action="#"
           method="POST"
           className="mx-auto w-full lg:w-[60%] bg-gradient-to-r from-CardPlum/50 to-CardGold/50 p-6 backdrop-blur-xl"
@@ -65,9 +80,8 @@ export const ContactForm = () => {
               autoComplete="email"
             />
             <InputField label="Subject" type="text" id="subject" />
-            <InputField label="Order #" type="number" id="order-number" />
+            <InputField label="Order #" type="text" id="order-number" />
 
-            {/* Message Field */}
             <div className="sm:col-span-2">
               <label
                 htmlFor="message"
@@ -86,7 +100,6 @@ export const ContactForm = () => {
               </div>
             </div>
 
-            {/* Switch for Agreement */}
             <div className="flex items-center gap-2 sm:col-span-2">
               <Switch
                 checked={agreed}
@@ -109,38 +122,37 @@ export const ContactForm = () => {
             </div>
           </div>
 
-          {/* Submit Button */}
           <div className="mt-10">
             <button
               type="submit"
               className="block w-full rounded-full bg-Gold px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-Plum focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Gold transition-all"
             >
-              Let's talk
+              Let&apos;s talk
             </button>
           </div>
-        </form>
+        </form> */}
       </div>
     </div>
   );
 };
 
-// InputField Component for Form Fields
-const InputField = ({ label, type, id, autoComplete }) => (
-  <div>
-    <label
-      htmlFor={id}
-      className="block text-sm font-semibold leading-6 text-white"
-    >
-      {label}
-    </label>
-    <div className="mt-2.5">
-      <input
-        type={type}
-        name={id}
-        id={id}
-        autoComplete={autoComplete}
-        className="block w-full rounded-md border-0 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-Gold sm:text-sm sm:leading-6 bg-transparent"
-      />
-    </div>
-  </div>
-);
+// // InputField Component for Form Fields
+// const InputField = ({ label, type, id, autoComplete }) => (
+//   <div>
+//     <label
+//       htmlFor={id}
+//       className="block text-sm font-semibold leading-6 text-white"
+//     >
+//       {label}
+//     </label>
+//     <div className="mt-2.5">
+//       <input
+//         type={type}
+//         name={id}
+//         id={id}
+//         autoComplete={autoComplete}
+//         className="block w-full rounded-md border-0 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-Gold sm:text-sm sm:leading-6 bg-transparent"
+//       />
+//     </div>
+//   </div>
+// );

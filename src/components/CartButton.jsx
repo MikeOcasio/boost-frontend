@@ -1,4 +1,11 @@
-import { BiCart, BiCross, BiMinus, BiPlus, BiTrash } from "react-icons/bi";
+import {
+  BiCart,
+  BiCross,
+  BiImage,
+  BiMinus,
+  BiPlus,
+  BiTrash,
+} from "react-icons/bi";
 import {
   Popover,
   PopoverBackdrop,
@@ -10,13 +17,18 @@ import Link from "next/link";
 import Image from "next/image";
 
 export const CartButton = ({ mobileNav }) => {
-  const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart } =
-    useCartStore();
+  const {
+    cartItems,
+    increaseQuantity,
+    decreaseQuantity,
+    removeFromCart,
+    totalPrice,
+  } = useCartStore();
 
   return (
     <Popover>
       {mobileNav ? (
-        <PopoverButton className="w-full group relative flex flex-wrap items-center gap-x-6 rounded-lg my-2 p-2 hover:bg-yellow-600/30">
+        <PopoverButton className="w-full group relative flex flex-wrap items-center gap-x-6 rounded-lg my-2 p-2 hover:bg-yellow-600/30 text-white">
           <BiCart className="bg-inherit p-2 h-11 w-11 rounded-lg" />
           <span>Cart</span>
         </PopoverButton>
@@ -34,31 +46,39 @@ export const CartButton = ({ mobileNav }) => {
       <PopoverPanel
         focus
         transition
-        className="fixed max-w-2xl min-h-40 mx-auto inset-x-4 top-20 z-50 origin-top rounded-xl p-4 ring-1 ring-zinc-900/5 dark:bg-zinc-900 dark:ring-zinc-800 overflow-y-auto transition duration-200 ease-in-out [--anchor-gap:var(--spacing-5)] data-[closed]:-translate-y-1 data-[closed]:opacity-0"
+        className="fixed max-w-2xl min-h-40 mx-auto inset-x-4 top-20 z-50 origin-top rounded-xl p-4 ring-1 ring-zinc-900/5 bg-zinc-900 ring-zinc-800 overflow-y-auto transition duration-200 ease-in-out [--anchor-gap:var(--spacing-5)] data-[closed]:-translate-y-1 data-[closed]:opacity-0 text-white"
       >
         <div className="flex flex-row-reverse items-center justify-between">
           <PopoverButton aria-label="Close menu" className="p-1">
-            <BiCross className="h-6 w-6 text-zinc-500 dark:text-zinc-400 rotate-45" />
+            <BiCross className="h-6 w-6 text-zinc-500 rotate-45" />
           </PopoverButton>
 
           <h3 className="text-lg font-semibold">Cart</h3>
         </div>
 
-        {cartItems.length > 0 ? (
-          <div className="mt-4 space-y-4">
-            {cartItems.map((item) => (
+        {cartItems?.length < 1 ? (
+          <p className="text-sm text-gray-300 text-center mt-4">
+            Your cart is empty. Add items to your cart to continue.
+          </p>
+        ) : (
+          <div className="mt-4 space-y-4 text-white">
+            {cartItems?.map((item) => (
               <div
                 key={item.id}
                 className="flex flex-wrap gap-4 items-center border-b border-white/10 pb-2"
               >
-                <Image
-                  src={item.image_url}
-                  alt={item.name}
-                  quality={100}
-                  width={100}
-                  height={100}
-                  className="mx-auto w-[100px] object-contain bg-white/10 rounded-md p-2"
-                />
+                {item.image ? (
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    quality={100}
+                    width={100}
+                    height={100}
+                    className="mx-auto w-[100px] object-contain bg-white/10 rounded-md p-2"
+                  />
+                ) : (
+                  <BiImage className="h-24 w-24 bg-white/10 p-2 rounded-md" />
+                )}
 
                 <div className="flex flex-col gap-2 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -66,29 +86,40 @@ export const CartButton = ({ mobileNav }) => {
 
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-sm px-2 bg-white/10 rounded-md">
-                        Platform: {item.platform?.name}
+                        {item.platform?.name}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 flex-wrap justify-between">
                     <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => decreaseQuantity(item.id)}
-                        className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
-                      >
-                        <BiMinus className="h-5 w-5" />
-                      </button>
+                      {!item.is_slider && !item.is_dropdown && (
+                        <>
+                          <button
+                            onClick={() => decreaseQuantity(item.id)}
+                            className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
+                          >
+                            <BiMinus className="h-5 w-5" />
+                          </button>
 
-                      <p>{item.quantity}</p>
+                          <p>{item.quantity}</p>
 
-                      <button
-                        onClick={() => increaseQuantity(item.id)}
-                        className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
-                      >
-                        <BiPlus className="h-5 w-5" />
-                      </button>
+                          <button
+                            onClick={() => increaseQuantity(item.id)}
+                            className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
+                          >
+                            <BiPlus className="h-5 w-5" />
+                          </button>
+                        </>
+                      )}
 
+                      {(item.is_dropdown || item.is_slider) && (
+                        <p className="text-xs">
+                          Qty:{" "}
+                          {item.dropdown_options?.length ||
+                            item.slider_range?.length - 1}
+                        </p>
+                      )}
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => removeFromCart(item.id)}
@@ -101,23 +132,42 @@ export const CartButton = ({ mobileNav }) => {
 
                     {/* Price */}
                     <p className="text-lg font-semibold">
-                      ${item.price * item.quantity}
+                      $
+                      {!item.is_dropdown &&
+                        !item.is_slider &&
+                        (item.price * item.quantity).toFixed(2)}
+                      {/* dropdown price */}
+                      {item.is_dropdown &&
+                        (item.dropdown_options?.length > 0
+                          ? item.dropdown_options
+                              .reduce((acc, curr) => acc + curr.price, 0)
+                              .toFixed(2)
+                          : item.price)}
+                      {/* slider price */}
+                      {item.is_slider &&
+                        (item.slider_range?.length > 0
+                          ? item.slider_range
+                              .reduce((acc, curr) => acc + curr.price, 0)
+                              .toFixed(2)
+                          : item.price)}
                     </p>
                   </div>
                 </div>
               </div>
             ))}
 
+            {/* total price */}
+            <div className="flex flex-wrap gap-4 justify-between items-center">
+              <p>Total Price</p>
+              <p className="text-lg font-semibold">${totalPrice}</p>
+            </div>
+
             <Link href="/checkout">
-              <button className="w-full mt-4 p-2 rounded-lg bg-Gold/90">
+              <PopoverButton className="w-full mt-4 p-2 rounded-lg bg-Gold/90">
                 Buy Now
-              </button>
+              </PopoverButton>
             </Link>
           </div>
-        ) : (
-          <p className="text-sm text-gray-300 text-center mt-4">
-            Your cart is empty. Add items to your cart to continue.
-          </p>
         )}
       </PopoverPanel>
     </Popover>

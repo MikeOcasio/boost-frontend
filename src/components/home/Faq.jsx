@@ -1,6 +1,5 @@
 import { faqs } from "@/lib/data";
 import Image from "next/image";
-import trunk from "@/images/trunk.png";
 import { useState } from "react";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
@@ -20,7 +19,7 @@ export const Faq = () => {
           <p className="">
             Discover answers to your questions about our services for PC, Xbox,
             and PlayStation gamers. Explore customization options, pricing, and
-            our commitment to safety. We're here to enhance your gaming
+            our commitment to safety. We&apos;re here to enhance your gaming
             experience.
           </p>
 
@@ -48,9 +47,10 @@ export const Faq = () => {
           </div>
 
           <Image
-            src={trunk}
+            src="/utils/trunk.png"
+            width={500}
+            height={500}
             alt="shiny purple and gold controllers with keyboard"
-            quality={100}
             className="absolute -bottom-10 -right-10 z-10 hidden lg:block drop-shadow-[-10px_20px_8px_rgba(0,0,0,0.5)]"
           />
         </div>

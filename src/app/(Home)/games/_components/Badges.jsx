@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
@@ -9,11 +9,12 @@ import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import {
   fetchProductByAttribute,
   fetchProductByCategories,
-} from "@/lib/actions";
+} from "@/lib/actions/products-action";
 import RelatedGameCard from "./RelatedGameCard";
 
 const Badges = ({
   categoryId,
+  categoryName,
   attributeId,
   primary_color,
   secondary_color,
@@ -25,8 +26,11 @@ const Badges = ({
   const [error, setError] = useState(false);
   const scrollContainerRef = useRef(null);
 
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
+    if (!categoryId) return;
+
     try {
+      setLoading(true);
       const result = await fetchProductByCategories(categoryId);
       if (result.error) {
         setError(true);
@@ -42,43 +46,45 @@ const Badges = ({
     } catch (error) {
       setError(true);
       toast.error("Failed to load badges. Please try again!");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [categoryId, currentGameId]);
 
-  const loadAttribute = async () => {
+  const loadAttribute = useCallback(async () => {
+    if (!attributeId || attributeId.length < 1) return;
+
+    const attributeArr = [];
+
     try {
-      const result = await fetchProductByAttribute(attributeId);
-      if (result.error) {
-        setError(true);
-        toast.error(result.error);
-      } else {
-        // Filter out the current game from the attributes list
-        const filteredAttributes = result.filter(
-          (game) => game.id !== currentGameId
-        );
+      setLoading(true);
+      for (const item of attributeId) {
+        const result = await fetchProductByAttribute(item?.id);
+        if (result.error) {
+          setError(true);
+          toast.error(result.error);
+        } else {
+          // Filter out the current game from the attributes list
+          const filteredAttributes = result.filter(
+            (game) => game.id !== currentGameId
+          );
+          attributeArr.push(filteredAttributes);
+        }
 
-        setProductAttribute(filteredAttributes);
+        setProductAttribute(...attributeArr);
       }
     } catch (error) {
       setError(true);
       toast.error("Failed to load badges. Please try again!");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const loadRelatedGames = async () => {
-    setLoading(true);
-    setError(false);
-
-    if (categoryId) loadCategories();
-
-    if (attributeId) loadAttribute();
-
-    setLoading(false);
-  };
+  }, [attributeId, currentGameId]);
 
   useEffect(() => {
-    loadRelatedGames();
-  }, []);
+    loadCategories();
+    loadAttribute();
+  }, [loadAttribute, loadCategories]);
 
   // Scroll left function
   const scrollLeft = () => {
@@ -103,6 +109,16 @@ const Badges = ({
           <IoWarning className="h-5 w-5 mr-2" />
           Failed to load {categoryId ? "categories" : "attributes"}. Please try
           again!
+          {/* reload */}
+          <button
+            onClick={() => {
+              loadAttribute();
+              loadCategories();
+            }}
+            className="p-2 rounded-lg bg-white/10"
+          >
+            Reload
+          </button>
         </p>
       )}
 
@@ -112,7 +128,9 @@ const Badges = ({
           <div className="space-y-4 border-t border-white/10 pt-6">
             <div className="flex flex-wrap justify-between items-center gap-4">
               <h3 className="text-lg font-semibold">
-                {categoryId ? "Recommendations" : "Similar Products"}
+                {categoryId
+                  ? `Recommendations for ${categoryName}`
+                  : "Similar Products"}
               </h3>
 
               <div className="flex items-center gap-4 w-fit">
@@ -140,24 +158,30 @@ const Badges = ({
               className="flex h-full gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar"
             >
               {categoryId
-                ? productCategories?.map((game, index) => (
-                    <RelatedGameCard
-                      key={game.id}
-                      index={index}
-                      game={game}
-                      primary_color={primary_color}
-                      secondary_color={secondary_color}
-                    />
-                  ))
-                : productAttribute?.map((game, index) => (
-                    <RelatedGameCard
-                      key={game.id}
-                      index={index}
-                      game={game}
-                      primary_color={primary_color}
-                      secondary_color={secondary_color}
-                    />
-                  ))}
+                ? productCategories?.map(
+                    (game, index) =>
+                      game.is_active && (
+                        <RelatedGameCard
+                          key={game.id}
+                          index={index}
+                          game={game}
+                          primary_color={primary_color}
+                          secondary_color={secondary_color}
+                        />
+                      )
+                  )
+                : productAttribute?.map(
+                    (game, index) =>
+                      game.is_active && (
+                        <RelatedGameCard
+                          key={game.id}
+                          index={index}
+                          game={game}
+                          primary_color={primary_color}
+                          secondary_color={secondary_color}
+                        />
+                      )
+                  )}
             </div>
           </div>
         )}

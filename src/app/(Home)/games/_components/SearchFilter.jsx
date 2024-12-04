@@ -4,23 +4,26 @@ import {
   PopoverButton,
   PopoverPanel,
 } from "@headlessui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiCross, BiFilter, BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 
-import { fetchAttribute, fetchCategories, fetchPlatforms } from "@/lib/actions";
+import { fetchPlatforms } from "@/lib/actions/platforms-action";
+import { fetchCategories } from "@/lib/actions/categories-actions";
+import { fetchAttribute } from "@/lib/actions/attributes-action";
 
 export const SearchFilter = ({ filter, setFilter }) => {
   const [categories, setCategories] = useState(null);
   const [attribute, setAttribute] = useState(null);
   const [platforms, setPlatforms] = useState(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
+      setLoading(true);
       const result = await fetchCategories();
       if (result.error) {
         setError(true);
@@ -30,11 +33,14 @@ export const SearchFilter = ({ filter, setFilter }) => {
     } catch (error) {
       setError(true);
       toast.error("Failed to load categories");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const loadAttribute = async () => {
+  const loadAttribute = useCallback(async () => {
     try {
+      setLoading(true);
       const result = await fetchAttribute();
       if (result.error) {
         setError(true);
@@ -44,11 +50,14 @@ export const SearchFilter = ({ filter, setFilter }) => {
     } catch (error) {
       setError(true);
       toast.error("Failed to load attributes");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const loadPlatforms = async () => {
+  const loadPlatforms = useCallback(async () => {
     try {
+      setLoading(true);
       const result = await fetchPlatforms();
       if (result.error) {
         setError(true);
@@ -58,19 +67,16 @@ export const SearchFilter = ({ filter, setFilter }) => {
     } catch (error) {
       setError(true);
       toast.error("Failed to load platforms");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-    await Promise.all([loadCategories(), loadAttribute(), loadPlatforms()]);
-    setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    loadCategories();
+    loadAttribute();
+    loadPlatforms();
+  }, [loadAttribute, loadCategories, loadPlatforms]);
 
   return (
     <Popover>
@@ -86,11 +92,11 @@ export const SearchFilter = ({ filter, setFilter }) => {
       <PopoverPanel
         focus
         transition
-        className="fixed max-w-sm mx-auto inset-x-4 top-[30%] z-50 origin-top rounded-xl p-4 ring-1 ring-zinc-900/5 dark:bg-zinc-900 dark:ring-zinc-800 overflow-y-auto transition duration-200 ease-in-out [--anchor-gap:var(--spacing-5)] data-[closed]:-translate-y-1 data-[closed]:opacity-0"
+        className="fixed max-w-sm mx-auto inset-x-4 top-[30%] z-50 origin-top rounded-xl p-4 ring-1 ring-zinc-900/5 bg-zinc-900 ring-zinc-800 overflow-y-auto transition duration-200 ease-in-out [--anchor-gap:var(--spacing-5)] data-[closed]:-translate-y-1 data-[closed]:opacity-0"
       >
         <div className="flex flex-row-reverse items-center justify-between">
           <PopoverButton aria-label="Close menu" className="p-1">
-            <BiCross className="h-6 w-6 text-zinc-500 dark:text-zinc-400 rotate-45" />
+            <BiCross className="h-6 w-6 text-zinc-500 rotate-45" />
           </PopoverButton>
 
           <h3 className="text-lg font-semibold">Filters</h3>
@@ -102,6 +108,17 @@ export const SearchFilter = ({ filter, setFilter }) => {
           <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
             <IoWarning className="h-5 w-5 mr-2" />
             Failed to load data. Please try again!
+            {/* reload */}
+            <button
+              onClick={() => {
+                loadCategories();
+                loadAttribute();
+                loadPlatforms();
+              }}
+              className="p-2 rounded-lg bg-white/10"
+            >
+              Reload
+            </button>
           </p>
         )}
 
@@ -122,7 +139,7 @@ export const SearchFilter = ({ filter, setFilter }) => {
               <span className="text-white">Most Popular</span>
             </label>
 
-            <label className="flex items-center space-x-2 border-b border-white/10 pb-2">
+            {/* <label className="flex items-center space-x-2 border-b border-white/10 pb-2">
               <input
                 type="checkbox"
                 checked={filter.active}
@@ -135,7 +152,35 @@ export const SearchFilter = ({ filter, setFilter }) => {
                 className="form-checkbox"
               />
               <span className="text-white">Active</span>
-            </label>
+            </label> */}
+
+            {/* sort by */}
+            <select
+              value={filter.sortBy}
+              onChange={(e) =>
+                setFilter((prev) => ({
+                  ...prev,
+                  sortBy: e.target.value,
+                }))
+              }
+              className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+            >
+              <option value="" className="bg-neutral-800" unselectable="on">
+                Sort By
+              </option>
+              <option value="latest" className="bg-neutral-800">
+                Latest
+              </option>
+              <option value="priceHighToLow" className="bg-neutral-800">
+                Price: High to Low
+              </option>
+              <option value="priceLowToHigh" className="bg-neutral-800">
+                Price: Low to High
+              </option>
+              <option value="oldest" className="bg-neutral-800">
+                Oldest
+              </option>
+            </select>
 
             {/* platforms filter */}
             <select
@@ -183,15 +228,18 @@ export const SearchFilter = ({ filter, setFilter }) => {
               <option value="" className="bg-neutral-800" unselectable="on">
                 Select Category
               </option>
-              {categories?.map((category) => (
-                <option
-                  key={category.id}
-                  value={category.id}
-                  className="bg-neutral-800"
-                >
-                  {category.name}
-                </option>
-              ))}
+              {categories?.map(
+                (category) =>
+                  category.is_active && (
+                    <option
+                      key={category.id}
+                      value={category.id}
+                      className="bg-neutral-800"
+                    >
+                      {category.name}
+                    </option>
+                  )
+              )}
             </select>
 
             {/* attribute filter */}

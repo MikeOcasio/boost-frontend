@@ -1,46 +1,84 @@
 "use client";
 
 import {
-  fetchPlatforms,
-  fetchSkillMasters,
-  fetchUserById,
-  updateUser,
-} from "@/lib/actions";
-import { Field, Input, Label } from "@headlessui/react";
+  Field,
+  Input,
+  Label,
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+  Textarea,
+} from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { BiLoader, BiPencil, BiUpload } from "react-icons/bi";
+import {
+  BiLoader,
+  BiPencil,
+  BiPlus,
+  BiShield,
+  BiTrophy,
+  BiUpload,
+} from "react-icons/bi";
 import { BsUpload } from "react-icons/bs";
-import { IoMdClose } from "react-icons/io";
-import { IoWarning } from "react-icons/io5";
+import { IoMdAdd, IoMdClose, IoMdPerson, IoMdRemove } from "react-icons/io";
+import { IoInformation, IoWarning } from "react-icons/io5";
+import { PiGameControllerFill } from "react-icons/pi";
+
+import { PlatformCredentialDialog } from "@/app/(Home)/checkout/_components/PlatformCredentialDialog";
+import { fetchCurrentUser, updateUser } from "@/lib/actions/user-actions";
+import { fetchPlatforms } from "@/lib/actions/platforms-action";
+import { useUserStore } from "@/store/use-user";
+import { ForgotPasswordDialog } from "@/app/(Home)/_components/ForgotPasswordDialog";
+import { CgPassword } from "react-icons/cg";
 
 const AccountPage = () => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-
   const [platforms, setPlatforms] = useState([]);
 
-  const loadUser = async () => {
+  // dialog
+  const [dialogId, setDialogId] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openForgotDialog, setOpenForgotDialog] = useState(false);
+
+  const { removeToken } = useUserStore();
+
+  const loadUser = useCallback(async () => {
     try {
-      const result = await fetchUserById(1);
+      setLoading(true);
+      const result = await fetchCurrentUser();
+
       if (result.error) {
-        setError(true);
         toast.error(result.error);
+
+        await removeToken();
+        router.push("/login");
       } else {
-        setUser(result);
+        const gameplayInfo = result.gameplay_info.map((gameplay) => {
+          // parsing array of objects
+          const gameplayData = JSON.parse(
+            gameplay.replace(/"=>/g, '":').replace(/=>/g, ":")
+          );
+          return gameplayData;
+        });
+
+        setUser({ ...result, gameplay_info: gameplayInfo });
       }
     } catch (e) {
       setError(true);
       toast.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [removeToken]);
 
   const loadPlatforms = async () => {
     try {
+      setLoading(true);
       const result = await fetchPlatforms();
       if (result.error) {
         setError(true);
@@ -51,25 +89,16 @@ const AccountPage = () => {
     } catch (e) {
       setError(true);
       toast.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  //  load user data by default and if edititng is true, load the platform data
-  const loadData = async () => {
-    setLoading(true);
-    setError(false);
-
-    if (isEditing) {
-      await loadPlatforms();
-    }
-    await loadUser();
-
-    setLoading(false);
-  };
-
+  // load data
   useEffect(() => {
-    loadData();
-  }, []);
+    loadPlatforms();
+    loadUser();
+  }, [loadUser]);
 
   const handleUpdateProfile = async () => {
     if (!user?.id) return;
@@ -78,7 +107,7 @@ const AccountPage = () => {
     setError(false);
 
     try {
-      const result = await updateUser(user.id);
+      const result = await updateUser(user);
 
       if (result.error) {
         setError(true);
@@ -91,27 +120,113 @@ const AccountPage = () => {
       toast.error("An unexpected error occurred.");
     } finally {
       setLoading(false);
+      loadUser();
     }
   };
 
   const handleEdit = () => {
     if (isEditing) {
-      setIsEditing(false);
       handleUpdateProfile();
+      setIsEditing(false);
     } else {
       setIsEditing(true);
-      loadData();
     }
+  };
+
+  const handleDiscardChanges = () => {
+    setIsEditing(false);
+    loadUser();
   };
 
   if (!user) return null;
 
+  // credential dialog
+  const handleCredentialDialog = (platform) => {
+    setDialogId(platform);
+    setOpenDialog(true);
+  };
+
+  const handleAchievementChange = (index, value) => {
+    const updatedAchievements = [...user.achievements];
+    updatedAchievements[index] = value;
+
+    // Prevent empty strings from being added
+    if (value.trim() !== "" || index < updatedAchievements.length - 1) {
+      setUser({ ...user, achievements: updatedAchievements });
+    }
+  };
+
+  const addAchievement = () => {
+    if (user.achievements[user.achievements.length - 1] !== "") {
+      setUser({ ...user, achievements: [...user.achievements, ""] });
+    } else {
+      toast.error(
+        "Please fill in the current achievement before adding a new one."
+      );
+    }
+  };
+
+  const removeAchievement = (index) => {
+    setUser({
+      ...user,
+      achievements: user.achievements.filter((_, i) => i !== index),
+    });
+  };
+
+  const handleGameplayNameChange = (index, value) => {
+    const updatedGameplayInfo = [...user.gameplay_info];
+    updatedGameplayInfo[index] = { ...updatedGameplayInfo[index], name: value };
+
+    setUser({ ...user, gameplay_info: updatedGameplayInfo });
+  };
+
+  const handleGameplayUrlChange = (index, value) => {
+    const updatedGameplayInfo = [...user.gameplay_info];
+    updatedGameplayInfo[index] = { ...updatedGameplayInfo[index], url: value };
+
+    setUser({ ...user, gameplay_info: updatedGameplayInfo });
+  };
+
+  const addGameplayInfo = () => {
+    // Allow adding a new entry if at least one field is filled
+    if (
+      user.gameplay_info[user.gameplay_info.length - 1]?.name !== "" &&
+      user.gameplay_info[user.gameplay_info.length - 1]?.url !== ""
+    ) {
+      setUser({
+        ...user,
+        gameplay_info: [...user.gameplay_info, { name: "", url: "" }],
+      });
+    } else {
+      toast.error(
+        "Please provide at least one field in the current gameplay info before adding a new one."
+      );
+    }
+  };
+
+  const removeGameplay = (index) => {
+    setUser({
+      ...user,
+      gameplay_info: user.gameplay_info.filter((_, i) => i !== index),
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h1 className="text-2xl font-semibold">{user?.first_name}'s Account</h1>
+        <h1 className="text-2xl font-semibold flex gap-2 items-center">
+          {user?.first_name}&apos;s Account
+          {(user.role === "admin" ||
+            user.role === "dev" ||
+            user.role === "skillmaster") && (
+            <span className="px-2 py-1 rounded-md bg-white/10 ml-2 text-xs">
+              {user.role}
+            </span>
+          )}
+        </h1>
 
         <button
+          type="button"
           onClick={handleEdit}
           className={clsx(
             "flex flex-wrap gap-2 items-center rounded-lg p-2 hover:bg-white/10 border border-white/10",
@@ -130,27 +245,38 @@ const AccountPage = () => {
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 
       {error && (
-        <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
+        <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2 flex-wrap text-center">
           <IoWarning className="h-5 w-5 mr-2" />
           Failed to load user details. Please try again!
+          {/* reload */}
+          <button
+            onClick={() => {
+              loadPlatforms();
+              loadUser();
+            }}
+            className="p-2 rounded-lg bg-white/10"
+          >
+            Reload
+          </button>
         </p>
       )}
 
       {user && (
-        <div className="flex flex-col gap-4 max-w-2xl mx-auto">
+        <div className="flex flex-col gap-4 max-w-3xl mx-auto">
           <div className="flex flex-wrap gap-4">
             {/* user image */}
             {isEditing ? (
               <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
                 <Label className="text-sm">Profile Image</Label>
-                {!user.image ? (
+                {user.image_url ? (
                   <div className="group relative cursor-pointer rounded-lg w-fit mx-auto">
                     <Image
-                      src={user.image || "/logo.svg"}
+                      src={user.image_url}
                       alt="User Image"
                       width={200}
                       height={200}
-                      className="mx-auto rounded-lg object-cover bg-white/10"
+                      priority
+                      className="mx-auto w-auto h-auto rounded-lg object-contain bg-white/10"
                     />
                     <IoMdClose
                       type="button"
@@ -158,8 +284,7 @@ const AccountPage = () => {
                       onClick={() =>
                         setUser({
                           ...user,
-                          image: null,
-                          remove_image: "true",
+                          image_url: null,
                         })
                       }
                     />
@@ -167,12 +292,12 @@ const AccountPage = () => {
                 ) : (
                   <div className="flex flex-col gap-2 justify-center w-full">
                     <label
-                      for="dropzone-file"
+                      htmlFor="dropzone-file"
                       className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <BiUpload className="h-8 w-8 text-gray-500" />
-                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                        <p className="mb-2 text-sm text-gray-500">
                           Click or drag and drop your image here
                         </p>
                       </div>
@@ -188,8 +313,7 @@ const AccountPage = () => {
                             reader.onloadend = () => {
                               setUser({
                                 ...user,
-                                image: reader.result,
-                                remove_image: "false",
+                                image_url: reader.result,
                               });
                             };
                             reader.readAsDataURL(file);
@@ -203,13 +327,18 @@ const AccountPage = () => {
             ) : (
               <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
                 <Label className="text-sm">Profile Image</Label>
-                <Image
-                  src={user.image || "/logo.svg"}
-                  alt="User Image"
-                  width={150}
-                  height={150}
-                  className="mx-auto rounded-lg object-cover bg-white/10"
-                />
+                {user.image_url ? (
+                  <Image
+                    src={user.image_url}
+                    alt="User Image"
+                    width={150}
+                    height={150}
+                    priority
+                    className="mx-auto h-auto w-auto rounded-lg object-contain bg-white/10"
+                  />
+                ) : (
+                  <IoMdPerson className="h-28 w-28 bg-white/10 rounded-full p-4 mx-auto" />
+                )}
               </Field>
             )}
 
@@ -250,7 +379,7 @@ const AccountPage = () => {
             <Field className="flex flex-col gap-1 w-full">
               <Label className="text-sm">Email</Label>
               <Input
-                disabled={!isEditing}
+                disabled
                 type="email"
                 placeholder="john@doe.com"
                 autoFocus
@@ -261,98 +390,259 @@ const AccountPage = () => {
             </Field>
 
             {/* platforms */}
-            {isEditing ? (
-              <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-                <Label>Platform</Label>
+            <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+              <Label>Preferred Platforms</Label>
 
-                <div className="flex flex-wrap gap-4 items-center">
-                  {platforms.map((platform) => (
-                    <label
-                      key={platform.id}
-                      className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-wrap flex-1"
-                    >
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4"
-                        value={platform.id}
-                        checked={user?.platforms.includes(platform.id) || false}
-                        onChange={() => {
-                          setUser({
-                            ...user,
-                            platforms: user.platforms.includes(platform.id)
-                              ? user.platforms.filter(
-                                  (id) => id !== platform.id
-                                )
-                              : [...user.platforms, platform.id],
-                          });
-                        }}
-                      />
-                      {platform.name}
-                    </label>
-                  ))}
-                </div>
-              </Field>
-            ) : (
-              <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-                <Label>Preferred Platforms</Label>
-
-                <div className="flex flex-wrap gap-4 items-center">
-                  {user.platforms.map((platform) => (
-                    <p
-                      key={platform}
-                      className="text-xs text-gray-300 bg-black/10 px-1 rounded-md"
-                    >
-                      {platform} asd
-                    </p>
-                  ))}
-                </div>
-              </Field>
-            )}
-
-            {/* preferred skill masters */}
-            {/* <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
-              <Label>Preferred Skill Masters</Label>
-
-              <div className="flex flex-wrap gap-4 items-center">
-                {skillMasters.map((skillMaster) => (
-                  <label
-                    key={skillMaster.id}
-                    className="flex items-center gap-2 p-2 rounded-lg bg-black/20 hover:bg-black/30 flex-wrap flex-1"
+              <div className="flex flex-col gap-2 items-center mt-2">
+                {platforms.map((platform) => (
+                  <div
+                    key={platform.id}
+                    className="flex flex-wrap gap-4 items-center justify-between w-full"
                   >
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4"
-                      value={skillMaster.id}
-                      checked={
-                        user?.preferred_skill_master_ids.includes(
-                          skillMaster.id
-                        ) || false
-                      }
-                      onChange={() => {
-                        setUser({
-                          ...user,
-                          preferred_skill_master_ids:
-                            user.preferred_skill_masters.includes(
-                              skillMaster.id
-                            )
-                              ? user.preferred_skill_master_ids.filter(
-                                  (id) => id !== skillMaster.id
-                                )
-                              : [
-                                  ...user.preferred_skill_master_ids,
-                                  skillMaster.id,
-                                ],
-                        });
-                      }}
-                    />
-                    {skillMaster.name}
-                  </label>
+                    <p
+                      key={platform.id}
+                      className="font-semibold bg-white/5 p-2 rounded-md flex gap-4 flex-1 min-w-sm items-center"
+                    >
+                      <PiGameControllerFill className="h-5 w-5" />
+                      <span className="w-full">{platform.name}</span>
+                    </p>
+
+                    {/* add platform */}
+                    {user?.platforms.find(
+                      (p) => p.id === platform.id && !p.has_sub_platforms
+                    ) ? (
+                      <div className="bg-white/10 rounded-lg p-2 flex gap-2 items-center flex-1 justify-center">
+                        <BiShield className="h-5 w-5 text-green-500" />
+                        <span>Added securely</span>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleCredentialDialog(platform)}
+                        disabled={loading}
+                        className="bg-Gold/80 hover:bg-Gold/60 rounded-lg p-2 flex gap-2 items-center flex-1 justify-center"
+                      >
+                        <BiPlus className="h-5 w-5" />
+                        Add {platform.has_sub_platforms ? "Sub" : ""} Platform
+                      </button>
+                    )}
+                  </div>
                 ))}
               </div>
-            </Field> */}
+            </Field>
+
+            {/* gamer tag */}
+            {(user.role === "admin" ||
+              user.role === "dev" ||
+              user.role === "skillmaster") &&
+              (isEditing || user.gamer_tag) && (
+                <Field className="flex flex-col gap-1 w-full">
+                  <Label className="text-sm">Gamer Tag</Label>
+                  <Input
+                    disabled={!isEditing}
+                    type="text"
+                    placeholder="Gamer tag name"
+                    className="input-field"
+                    value={user.gamer_tag}
+                    onChange={(e) =>
+                      setUser({ ...user, gamer_tag: e.target.value })
+                    }
+                  />
+                </Field>
+              )}
+
+            {/* bio */}
+            {(user.role === "admin" ||
+              user.role === "dev" ||
+              user.role === "skillmaster") &&
+              (isEditing || user.bio) && (
+                <Field className="flex flex-col gap-1 w-full">
+                  <Label className="text-sm">Bio</Label>
+                  <Textarea
+                    disabled={!isEditing}
+                    placeholder="Bio"
+                    className="input-field"
+                    value={user.bio}
+                    onChange={(e) => setUser({ ...user, bio: e.target.value })}
+                  />
+                </Field>
+              )}
+
+            {/* user achievements */}
+            {(user.role === "admin" ||
+              user.role === "dev" ||
+              user.role === "skillmaster") &&
+              (isEditing || user.achievements.length > 0) && (
+                <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                  <div className="flex items-center justify-between gap-4">
+                    <Label>Achievements</Label>
+                    {isEditing && (
+                      <button
+                        onClick={addAchievement}
+                        className="p-2 rounded-lg hover:bg-white/10 flex gap-2 items-center border border-white/10"
+                      >
+                        <IoMdAdd className="h-5 w-5" />
+                        Add more
+                      </button>
+                    )}
+                  </div>
+
+                  {user.achievements.map((achievement, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-wrap gap-2 items-center"
+                    >
+                      <BiTrophy className="h-5 w-5 text-Gold" />
+                      <Input
+                        type="text"
+                        autoFocus
+                        disabled={!isEditing}
+                        value={achievement}
+                        placeholder={`Achievement ${index + 1}`}
+                        className="input-field"
+                        onChange={(e) =>
+                          handleAchievementChange(index, e.target.value)
+                        }
+                      />
+                      {isEditing && (
+                        <button
+                          onClick={() => removeAchievement(index)}
+                          className="border rounded-lg p-2 hover:bg-white/10 border-white/10"
+                        >
+                          <IoMdRemove className="h-6 w-6" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </Field>
+              )}
+
+            {/* game play info */}
+            {(user.role === "admin" ||
+              user.role === "dev" ||
+              user.role === "skillmaster") &&
+              (isEditing || user.gameplay_info.length > 0) && (
+                <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-2">
+                      <Label>Gameplay Info</Label>
+
+                      {isEditing && (
+                        <div
+                          title="Gameplay Url only supports Youtube, Twitch, Mp4 formats"
+                          className="cursor-pointer"
+                        >
+                          <Popover>
+                            <PopoverButton>
+                              <IoInformation className="h-5 w-5 text-Gold border border-Gold rounded-full p-0.5" />
+                            </PopoverButton>
+                            <PopoverPanel
+                              transition
+                              anchor="bottom"
+                              className="rounded-xl bg-neutral-800/50 border border-white/10 backdrop-blur-md text-sm/6 transition duration-200 ease-in-out z-10 mt-2"
+                            >
+                              <div className="p-3">
+                                <span>
+                                  Gameplay Url only supports Youtube, Twitch,
+                                  Mp4 formats
+                                </span>
+                              </div>
+                            </PopoverPanel>
+                          </Popover>
+                        </div>
+                      )}
+                    </div>
+
+                    {isEditing && (
+                      <button
+                        onClick={addGameplayInfo}
+                        className="p-2 rounded-lg hover:bg-white/10 flex gap-2 items-center border border-white/10"
+                      >
+                        <IoMdAdd className="h-5 w-5" />
+                        Add more
+                      </button>
+                    )}
+                  </div>
+
+                  {user.gameplay_info.map((gameplay, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-wrap gap-2 items-center"
+                    >
+                      <Input
+                        type="text"
+                        autoFocus
+                        disabled={!isEditing}
+                        value={gameplay.name}
+                        placeholder={`Gameplay Name ${index + 1}`}
+                        className="input-field"
+                        onChange={(e) =>
+                          handleGameplayNameChange(index, e.target.value)
+                        }
+                      />
+
+                      <Input
+                        type="text"
+                        disabled={!isEditing}
+                        value={gameplay.url}
+                        placeholder={`Gameplay URL ${index + 1}`}
+                        className="input-field"
+                        onChange={(e) =>
+                          handleGameplayUrlChange(index, e.target.value)
+                        }
+                      />
+
+                      {isEditing && (
+                        <button
+                          onClick={() => removeGameplay(index)}
+                          className="border rounded-lg p-2 hover:bg-white/10 border-white/10"
+                        >
+                          <IoMdRemove className="h-6 w-6" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </Field>
+              )}
+          </div>
+
+          {isEditing && (
+            <button
+              onClick={handleDiscardChanges}
+              disabled={loading}
+              type="button"
+              className="border border-red-500 p-2 px-4 text-red-500 hover:bg-red-500/10 hover:text-white rounded-lg"
+            >
+              Discard Changes
+            </button>
+          )}
+
+          {/* change password */}
+          <div className="flex flex-col gap-4 items-center">
+            <button
+              type="button"
+              onClick={() => setOpenForgotDialog(true)}
+              className="text-blue-600 hover:text-blue-500 p-2 rounded-lg bg-white/10 hover:bg-white/20 flex items-center gap-4 w-full justify-center max-w-xl"
+            >
+              <CgPassword className="h-5 w-5" />
+              Change your password?
+            </button>
+
+            <ForgotPasswordDialog
+              dialogOpen={openForgotDialog}
+              onClose={() => setOpenForgotDialog(false)}
+              dialogData={user.email}
+            />
           </div>
         </div>
       )}
+
+      {/* dialog */}
+      <PlatformCredentialDialog
+        dialogId={dialogId}
+        dialogOpen={openDialog}
+        onClose={() => setOpenDialog(false)}
+        handleUserFetch={loadUser}
+      />
     </div>
   );
 };

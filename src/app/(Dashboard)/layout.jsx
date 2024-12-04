@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import toast from "react-hot-toast";
@@ -10,8 +10,9 @@ import Link from "next/link";
 
 import { Navbar } from "./_components/Navbar";
 import { Footer } from "@/components/Footer";
-import { fetchCurrentUser } from "@/lib/actions";
 import { useUserStore } from "@/store/use-user";
+import { fetchCurrentUser } from "@/lib/actions/user-actions";
+import { Button } from "@/components/Button";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
@@ -20,13 +21,19 @@ const DashboardLayout = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const handleUserFetch = async () => {
+  const handleUserFetch = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await fetchCurrentUser();
+
       if (response?.error) {
-        throw new Error(response.error);
+        toast.error(response.error);
+
+        await removeToken();
+        router.push("/login");
+      } else {
+        setUser(response);
       }
-      setUser(response);
     } catch (err) {
       toast.error(err.message || "An error occurred while fetching the user.");
       setError(true);
@@ -35,7 +42,7 @@ const DashboardLayout = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, setUser, removeToken]);
 
   useEffect(() => {
     if (!userToken) {
@@ -46,7 +53,7 @@ const DashboardLayout = ({ children }) => {
     }
 
     handleUserFetch();
-  }, [userToken]);
+  }, [handleUserFetch, router, userToken]);
 
   if (loading) {
     return (
@@ -58,7 +65,7 @@ const DashboardLayout = ({ children }) => {
 
   if (error) {
     return (
-      <p className="mt-4 w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
+      <p className="mt-4 w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2 flex-wrap text-center">
         <IoWarning className="h-5 w-5 mr-2" />
         Some error occurred. Please try again!
         {/* reload page */}
@@ -81,19 +88,26 @@ const DashboardLayout = ({ children }) => {
             alt="Not authorized"
             height={500}
             width={700}
+            priority
             className="h-96 w-full object-contain"
           />
         </div>
         Not authorized. Please log in to access this page.
+        <Link href="/">
+          <Button variant="secondary" className="mt-4">
+            Go back home
+          </Button>
+        </Link>
       </div>
     );
   }
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm" />
+      {/* Background */}
+      <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
       <Navbar />
-      <div className="relative z-10 mt-28 min-h-[90vh] max-w-7xl mx-auto p-4">
+      <div className="relative z-10 mt-28 min-h-[90vh] max-w-7xl mx-auto p-4 text-white">
         {children}
       </div>
       <Footer />

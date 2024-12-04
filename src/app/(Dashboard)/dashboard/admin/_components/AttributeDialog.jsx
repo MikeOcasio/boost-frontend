@@ -13,7 +13,11 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
 
-import { addAttribute, deleteAttribute, updateAttribute } from "@/lib/actions";
+import {
+  addAttribute,
+  deleteAttribute,
+  updateAttribute,
+} from "@/lib/actions/attributes-action";
 import { BiLoader, BiTrash } from "react-icons/bi";
 
 export const AttributeDialog = ({
@@ -74,7 +78,7 @@ export const AttributeDialog = ({
 
       handleClosed();
     } catch (error) {
-      console.log("Error submitting attribute:", error.message);
+      // console.log("Error submitting attribute:", error.message);
       toast.error(error.message);
     } finally {
       loadAttributes();
@@ -103,7 +107,7 @@ export const AttributeDialog = ({
         handleClosed();
       }
     } catch (error) {
-      console.log("Error deleting attribute:", error.message);
+      // console.log("Error deleting attribute:", error.message);
       toast.error(error.message);
     } finally {
       loadAttributes();
@@ -121,7 +125,7 @@ export const AttributeDialog = ({
       open={dialogOpen}
       onClose={onClose}
       as="div"
-      className="relative z-50"
+      className="relative z-50 text-white"
     >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -139,7 +143,7 @@ export const AttributeDialog = ({
               : "Add New product attribute"}
           </DialogTitle>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 overflow-y-auto max-h-[80vh] no-scrollbar">
             {/* id */}
             {attribute.id && (
               <button
@@ -171,6 +175,19 @@ export const AttributeDialog = ({
                 }
               />
             </Field>
+
+            {/* created at */}
+            {attribute.created_at && (
+              <p className="text-xs font-semibold">
+                Created at:{" "}
+                {attribute.created_at
+                  ? new Intl.DateTimeFormat("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(new Date(attribute.created_at))
+                  : "Not set"}
+              </p>
+            )}
 
             <div className="flex items-center justify-between gap-4">
               {/* Delete Button */}

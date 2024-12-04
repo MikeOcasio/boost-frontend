@@ -5,34 +5,38 @@ import Link from "next/link";
 
 const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
   return (
-    <div className="bg-black rounded-lg">
+    <div className="bg-black rounded-lg select-none">
       <div
         key={game.id}
         className={clsx(
-          "flex flex-col justify-between w-[300px] md:w-[400px] h-full rounded-lg bg-CardPlum p-4 md:px-6 shadow-xl drop-shadow-xl hover:border-Gold gap-4"
+          "flex flex-col justify-between w-[300px] md:w-[400px] h-full rounded-lg bg-CardPlum p-4 shadow-xl drop-shadow-xl hover:border-Gold gap-4 relative"
         )}
         style={{
           backgroundColor:
             index % 2 === 0 ? secondary_color + 70 : primary_color + 70,
         }}
       >
-        <div className="bg-white/20 rounded-lg">
-          <div
-            className="flex h-[150px] items-center justify-between gap-x-4 bg-white/10 rounded-lg"
-            style={{
-              backgroundColor:
-                index % 2 === 0 ? primary_color + 30 : secondary_color + 30,
-            }}
-          >
-            <Image
-              src={game.image}
-              alt={game.name}
-              quality={100}
-              width={200}
-              height={200}
-              className="mx-auto w-full max-w-[200px] object-contain rounded-md"
-            />
-          </div>
+        {game.most_popular && (
+          <p className="text-xs px-2 rounded-md bg-Gold/50 absolute top-0 right-0 m-2">
+            {game.most_popular && "Popular"}
+          </p>
+        )}
+
+        <div
+          className="flex h-[150px] items-center justify-between gap-x-4 bg-white/10 rounded-lg"
+          style={{
+            backgroundColor:
+              index % 2 === 0 ? primary_color + 30 : secondary_color + 30,
+          }}
+        >
+          <Image
+            src={game.image || "/game/empty-image.gif"}
+            alt={game.name}
+            priority
+            width={200}
+            height={200}
+            className="mx-auto h-full w-fit max-w-[200px] max-h-[130px] object-contain rounded-md"
+          />
         </div>
 
         <div className="flex flex-col gap-2 items-center">
@@ -40,9 +44,12 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
           <p className="text-xs text-white/70 font-semibold">{game.tag_line}</p>
         </div>
 
-        <ul role="list" className="space-y-2 text-sm leading-6 text-white/90">
-          {game.features.map((feature) => (
-            <li key={feature} className="flex gap-x-3">
+        <ul
+          role="list"
+          className="space-y-2 text-sm leading-6 text-white/90 px-2"
+        >
+          {game.features?.map((feature, index) => (
+            <li key={index} className="flex gap-x-3">
               <CheckIcon
                 className="h-6 w-5 flex-none text-green-500"
                 aria-hidden="true"

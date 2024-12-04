@@ -4,32 +4,44 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BiLoader, BiMinus, BiPlus } from "react-icons/bi";
+import { BiLoader, BiMinus, BiPlus, BiTrash } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 
-import { fetchGameById } from "@/lib/actions";
+import { fetchGameById } from "@/lib/actions/products-action";
 import Badges from "../_components/Badges";
 import { useCartStore } from "@/store/use-cart";
+import { SliderQty } from "../_components/SliderQty";
+import { SubProductsList } from "../_components/SubProductsList";
 
 const GamePage = ({ params }) => {
   const router = useRouter();
 
   const [game, setGame] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState("");
+  const [selectedDropdown, setSelectedDropdown] = useState("");
+  const [selectedDropdown2, setSelectedDropdown2] = useState("");
+  const [selectedDropdownRange, setSelectedDropdownRange] = useState([]);
+  const [selectedSliderRange, setSelectedSliderRange] = useState([]);
 
-  const [selectedPlatform, setSelectedPlatform] = useState(null);
+  const {
+    cartItems,
+    addToCart,
+    increaseQuantity,
+    decreaseQuantity,
+    removeFromCart,
+  } = useCartStore();
 
   useEffect(() => {
-    setSelectedPlatform(game?.platforms[0].id);
+    if (game && game.platforms) {
+      setSelectedPlatform(game?.platforms[0].id);
+    }
   }, [game]);
 
-  const cartStore = useCartStore();
-
-  const cartItem =
-    game && cartStore.cartItems.find((item) => item.id === game.id);
+  const cartItem = game && cartItems.find((item) => item.id === game.id);
 
   const loadGame = async () => {
     setLoading(true);
@@ -37,11 +49,39 @@ const GamePage = ({ params }) => {
 
     try {
       const result = await fetchGameById(params.gameId);
+
       if (result.error) {
         setError(true);
         toast.error(result.error);
         router.push("/games");
       } else {
+        if (result.is_dropdown) {
+          result.dropdown_options = result.dropdown_options.map((option) => {
+            try {
+              return JSON.parse(option);
+            } catch (error) {
+              console.warn("Failed to parse dropdown option:", option, error);
+              return {}; // Default empty object in case of parsing error
+            }
+          });
+        }
+
+        if (result.is_slider) {
+          result.slider_range = result.slider_range.map((range) => {
+            try {
+              return JSON.parse(range);
+            } catch (error) {
+              console.warn("Failed to parse slider range:", range, error);
+              return {}; // Default empty object in case of parsing error
+            }
+          });
+        }
+
+        // sort dropdown options by price if dropdown
+        if (result.is_dropdown) {
+          result.dropdown_options.sort((a, b) => a.price - b.price);
+        }
+
         setGame(result);
       }
     } catch (error) {
@@ -58,7 +98,15 @@ const GamePage = ({ params }) => {
   }, []);
 
   const handleAddToCart = () => {
-    if (!game) return;
+    if (!game || !game.is_active) return;
+
+    if (
+      (game.is_dropdown || game.is_slider) &&
+      (!selectedDropdown2 || !selectedDropdown)
+    ) {
+      toast.error("Please select dropdown options.");
+      return;
+    }
 
     const platform_obj = game?.platforms.find(
       (platform) => platform.id === Number(selectedPlatform)
@@ -70,21 +118,129 @@ const GamePage = ({ params }) => {
       price: game.price,
       tax: game.tax,
       platform: platform_obj,
-      image_url: game.image,
+      image: game.image,
       is_active: game.is_active,
+      category_id: game.category_id,
+      prod_attr_cats: game.prod_attr_cats,
+      dropdown_options: selectedDropdownRange,
+      starting_point:
+        game.dropdown_options[Number(selectedDropdown)] ||
+        selectedSliderRange[0],
+      ending_point:
+        game.dropdown_options[Number(selectedDropdown2)] ||
+        selectedSliderRange[selectedSliderRange.length - 1],
+      is_dropdown: game.is_dropdown,
+      is_slider: game.is_slider,
+      slider_range: selectedSliderRange,
     };
 
-    cartStore.addToCart(product);
+    addToCart(product);
   };
 
+  const setDropdownRange = () => {
+    const range = game?.dropdown_options.slice(
+      Number(selectedDropdown),
+      Number(selectedDropdown2) + 1
+    );
+    setSelectedDropdownRange(range);
+
+    console.log("range", selectedDropdownRange);
+  };
+
+  const setSliderRange = () => {
+    const range = game?.slider_range.reduce((acc, item) => {
+      const { min_quantity, max_quantity, price } = item;
+
+      // Find values within the selected range
+      for (let i = min_quantity; i <= max_quantity; i++) {
+        if (i >= selectedDropdown && i <= selectedDropdown2) {
+          acc.push({ index: i, price });
+        }
+      }
+      return acc;
+    }, []);
+
+    setSelectedSliderRange(range);
+  };
+
+  // render cart data
+  useEffect(() => {
+    if (game && cartItem) {
+      // starting index
+      if (cartItem.is_dropdown) {
+        const startingIndex = game.dropdown_options.findIndex(
+          (option) => option.option === cartItem.starting_point.option
+        );
+
+        // ending index
+        const endingIndex = game.dropdown_options?.findIndex(
+          (option) => option.option === cartItem.ending_point.option
+        );
+
+        setSelectedDropdown(startingIndex);
+        setSelectedDropdown2(endingIndex);
+        setDropdownRange();
+      }
+
+      if (cartItem.is_slider) {
+        setSelectedDropdown(cartItem.slider_range[0].index);
+        setSelectedDropdown2(
+          cartItem.slider_range[cartItem.slider_range.length - 1].index
+        );
+        setSelectedSliderRange(cartItem.slider_range);
+      }
+    } else {
+      setSelectedDropdown("");
+      setSelectedDropdown2("");
+      setSelectedSliderRange([]);
+      setDropdownRange();
+    }
+  }, [cartItem, game]);
+
+  const handleDropdownChange = (e) => {
+    if (
+      game?.dropdown_options?.length - 1 !== Number(e.target.value) ||
+      selectedDropdown === ""
+    ) {
+      setSelectedDropdown2("");
+      setSelectedDropdownRange([]);
+    }
+    setSelectedDropdown(e.target.value);
+  };
+
+  const handleDropdown2Change = (e) => {
+    if (selectedDropdown2 === "") {
+      setSelectedDropdownRange([]);
+    }
+    setSelectedDropdown2(e.target.value);
+  };
+
+  // set drop down range
+  useEffect(() => {
+    if (selectedDropdown && selectedDropdown2 && game?.dropdown_options) {
+      setDropdownRange();
+    }
+  }, [selectedDropdown, selectedDropdown2, game?.dropdown_options]);
+
+  // set slider range
+  useEffect(() => {
+    if (selectedDropdown && selectedDropdown2 && game.slider_range) {
+      setSliderRange();
+    }
+  }, [selectedDropdown, selectedDropdown2, game?.slider_range]);
+
   return (
-    <div className="mt-24 max-w-7xl mx-auto min-h-screen p-4">
+    <div className="pt-24 max-w-7xl mx-auto min-h-screen p-4">
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 
       {error && (
         <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
           <IoWarning className="h-5 w-5 mr-2" />
           Failed to load Game. Please try again!
+          {/* reload */}
+          <button onClick={loadGame} className="p-2 rounded-lg bg-white/10">
+            Reload
+          </button>
         </p>
       )}
 
@@ -105,7 +261,7 @@ const GamePage = ({ params }) => {
                   src={game.bg_image}
                   alt={game.name}
                   fill
-                  unoptimized
+                  priority
                   className="h-full w-full fixed top-0 object-cover -z-10 blur-sm"
                 />
               )}
@@ -113,27 +269,27 @@ const GamePage = ({ params }) => {
             </div>
 
             {/* boost game */}
-            <h2 className="text-center text-4xl font-title text-white sm:text-5xl dark:text-white">
+            <h2 className="text-center text-4xl font-title text-white sm:text-5xl">
               Boost Your Game
             </h2>
 
             {/* product details */}
             <div className="flex flex-col lg:flex-row gap-6 justify-center rounded-xl bg-cover bg-center">
               <div
-                className="relative z-10 bg-black/50 rounded-xl h-fit p-8 backdrop-blur-sm"
+                className="relative z-10 bg-black/50 rounded-xl h-fit p-4 backdrop-blur-sm"
                 style={{ backgroundColor: game.primary_color + 80 }}
               >
                 <Image
-                  src={game.image}
+                  src={game.image || "/game/empty-image.gif"}
                   alt={game.name}
-                  quality={100}
                   width={200}
                   height={200}
-                  className="w-full max-w-[200px] object-contain mx-auto rounded-md"
+                  priority
+                  className="w-full h-auto max-w-[200px] object-contain mx-auto rounded-lg"
                 />
               </div>
 
-              <div className="relative z-10 flex flex-col gap-4">
+              <div className="relative z-10 flex flex-col gap-4 flex-1 max-w-3xl">
                 <p className="text-xs -mb-4 font-semibold">
                   {game.category.name}
                 </p>
@@ -144,9 +300,9 @@ const GamePage = ({ params }) => {
                   {game.description}
                 </p>
 
-                <ul role="list" className="space-y-2">
-                  {game.features.map((feature) => (
-                    <li key={feature} className="flex gap-x-3">
+                <ul role="list" className="space-y-2 ms-2">
+                  {game.features.map((feature, index) => (
+                    <li key={index} className="flex gap-x-3">
                       <CheckIcon
                         className="h-6 w-5 flex-none text-green-500"
                         aria-hidden="true"
@@ -156,99 +312,239 @@ const GamePage = ({ params }) => {
                   ))}
                 </ul>
 
-                {/* platform dropdown */}
-                <div className="flex flex-wrap justify-between gap-2 items-center">
-                  {/* price */}
-                  <div className="flex items-center gap-2 text-2xl">
-                    <p>Price: </p>
-                    <span className="font-bold text-green-500">
-                      ${game.price}
-                    </span>
-                  </div>
+                {game.price && game.tax && (
+                  <>
+                    {/* dropdown */}
+                    {game.is_dropdown && (
+                      <>
+                        <p className="text-xs -mb-2">
+                          Select starting point and where you want to reach in
+                          the game.
+                        </p>
+                        <div className="flex flex-wrap gap-2 items-center justify-between bg-white/10 border border-white/10 hover:border-white/20 rounded-lg p-2">
+                          <select
+                            disabled={cartItem?.quantity > 0}
+                            value={selectedDropdown}
+                            onChange={handleDropdownChange}
+                            className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 flex-1"
+                          >
+                            <option value="" className="bg-neutral-800">
+                              Starting from?
+                            </option>
 
-                  <div className="flex flex-wrap gap-2 items-center">
-                    <p>Platform: </p>
-                    <select
-                      value={selectedPlatform}
-                      onChange={(e) => setSelectedPlatform(e.target.value)}
-                      className="px-2 py-1 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
-                    >
-                      <option
-                        value=""
-                        className="bg-neutral-800"
-                        unselectable="on"
-                      >
-                        Select Platform
-                      </option>
-                      {game.platforms.map((platform) => (
-                        <option
-                          key={platform.id}
-                          value={platform.id}
-                          className="bg-neutral-800"
-                        >
-                          {platform.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                            {game.dropdown_options.map((option, index) => (
+                              <option
+                                key={index}
+                                value={index}
+                                className="bg-neutral-800"
+                              >
+                                {option.option}
+                              </option>
+                            ))}
+                          </select>
 
-                {!!game.is_active ? (
-                  <div>
-                    {cartItem ? (
-                      <div className="flex items-center gap-4 w-full">
-                        <button
-                          onClick={() => cartStore.decreaseQuantity(game.id)}
-                          className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
-                        >
-                          <BiMinus className="h-6 w-6" />
-                        </button>
+                          {String(selectedDropdown) &&
+                            game?.dropdown_options?.length - 1 !==
+                              Number(selectedDropdown) && (
+                              <select
+                                disabled={
+                                  cartItem?.quantity > 0 ||
+                                  game?.dropdown_options?.length - 1 ===
+                                    Number(selectedDropdown)
+                                }
+                                value={selectedDropdown2}
+                                onChange={handleDropdown2Change}
+                                className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 flex-1"
+                              >
+                                <option value="" className="bg-neutral-800">
+                                  Where you want to reach?
+                                </option>
+                                {game.dropdown_options.map(
+                                  (option, index) =>
+                                    index > selectedDropdown && (
+                                      <option
+                                        key={index}
+                                        value={index}
+                                        className="bg-neutral-800"
+                                      >
+                                        {option.option}
+                                      </option>
+                                    )
+                                )}
+                              </select>
+                            )}
+                        </div>
+                      </>
+                    )}
 
-                        <span className="text-lg font-bold">
-                          {cartItem.quantity}
+                    {game?.is_slider && (
+                      <>
+                        <p className="text-xs -mb-2">
+                          Select the starting point and select the range of the
+                          slider where you want to boost.
+                        </p>
+
+                        <div className="flex flex-wrap gap-2 items-center justify-between bg-white/10 border border-white/10 hover:border-white/20 rounded-lg p-4">
+                          {cartItem ? (
+                            (selectedDropdown || selectedDropdown2) && (
+                              <SliderQty
+                                min={game.slider_range[0].min_quantity}
+                                max={
+                                  game.slider_range[
+                                    game.slider_range.length - 1
+                                  ].max_quantity
+                                }
+                                selectedMin={selectedDropdown || 10}
+                                selectedMax={selectedDropdown2 || 20}
+                                cartItem={cartItem}
+                                onChange={({ min, max }) => {
+                                  setSelectedDropdown(min);
+                                  setSelectedDropdown2(max);
+                                }}
+                              />
+                            )
+                          ) : (
+                            <SliderQty
+                              min={game.slider_range[0].min_quantity}
+                              max={
+                                game.slider_range[game.slider_range.length - 1]
+                                  .max_quantity
+                              }
+                              selectedMin={selectedDropdown || 10}
+                              selectedMax={selectedDropdown2 || 20}
+                              onChange={({ min, max }) => {
+                                setSelectedDropdown(min);
+                                setSelectedDropdown2(max);
+                              }}
+                            />
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                    {/* platform dropdown */}
+                    <div className="flex flex-wrap justify-between gap-2 items-center">
+                      {/* price */}
+                      <p>Price: </p>
+                      <div className="flex items-center gap-2 text-2xl flex-1">
+                        <span className="font-bold text-green-500">
+                          ${/* dropdown price */}
+                          {game?.is_dropdown &&
+                            (selectedDropdownRange?.length > 0
+                              ? selectedDropdownRange
+                                  .reduce((acc, curr) => acc + curr.price, 0)
+                                  .toFixed(2)
+                              : game.price)}
+                          {/* slider price */}
+                          {game?.is_slider &&
+                            (selectedSliderRange?.length > 0
+                              ? selectedSliderRange
+                                  .reduce((acc, curr) => acc + curr.price, 0)
+                                  .toFixed(2)
+                              : game.price)}
+                          {/* game price */}
+                          {!game?.is_slider && !game?.is_dropdown && game.price}
                         </span>
+                      </div>
 
-                        <button
-                          onClick={() => cartStore.increaseQuantity(game.id)}
-                          className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <p>Platform: </p>
+                        <select
+                          disabled={cartItem?.quantity > 0}
+                          value={selectedPlatform}
+                          onChange={(e) => setSelectedPlatform(e.target.value)}
+                          className="px-2 py-1 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
                         >
-                          <BiPlus className="h-6 w-6" />
-                        </button>
+                          {game.platforms.map((platform) => (
+                            <option
+                              key={platform.id}
+                              value={platform.id}
+                              className="bg-neutral-800"
+                            >
+                              {platform.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
 
-                        <Link href="/checkout" className="flex-1">
-                          <button className="p-2 rounded-lg bg-Gold/90 w-full">
-                            Checkout
+                    {!!game.is_active ? (
+                      <div>
+                        {cartItem ? (
+                          <div className="flex items-center gap-4 w-full">
+                            {!(game.is_slider || game.is_dropdown) && (
+                              <>
+                                <button
+                                  onClick={() => decreaseQuantity(game.id)}
+                                  className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
+                                >
+                                  <BiMinus className="h-6 w-6" />
+                                </button>
+
+                                <span className="text-lg font-bold">
+                                  {cartItem.quantity}
+                                </span>
+
+                                <button
+                                  onClick={() => increaseQuantity(game.id)}
+                                  className="p-2 border border-white/10 bg-white/10 hover:border-white/20 rounded-lg"
+                                >
+                                  <BiPlus className="h-6 w-6" />
+                                </button>
+                              </>
+                            )}
+
+                            {(game.is_dropdown || game.is_slider) && (
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => removeFromCart(game.id)}
+                                  className="p-1 border border-white/10 bg-white/10 hover:border-white/20 rounded-md"
+                                >
+                                  <BiTrash className="h-5 w-5 text-red-600" />
+                                </button>
+                              </div>
+                            )}
+
+                            <Link href="/checkout" className="flex-1">
+                              <button className="p-2 rounded-lg bg-Gold/90 w-full">
+                                Checkout
+                              </button>
+                            </Link>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={handleAddToCart}
+                            className="p-2 rounded-lg bg-Gold/90 w-full"
+                          >
+                            Add to cart
                           </button>
-                        </Link>
+                        )}
                       </div>
                     ) : (
-                      <button
-                        onClick={handleAddToCart}
-                        className="p-2 rounded-lg bg-Gold/90 w-full"
-                      >
-                        Add to cart
-                      </button>
+                      <p className="text-md mx-4 cursor-wait rounded-md bg-white/20 py-2 text-center italic">
+                        Coming Soon
+                      </p>
                     )}
-                  </div>
-                ) : (
-                  <p className="text-md mx-4 cursor-wait rounded-md bg-white/20 py-2 text-center italic">
-                    Coming Soon
-                  </p>
+                  </>
                 )}
               </div>
             </div>
+
+            {/* sub products list */}
+            {game.children?.length > 0 && <SubProductsList game={game} />}
 
             {/* game badges */}
             <div className="flex flex-col gap-y-12">
               <Badges
                 categoryId={game.category_id}
+                categoryName={game.category?.name}
                 primary_color={game.primary_color}
                 secondary_color={game.secondary_color}
                 currentGameId={game.id}
               />
 
               <Badges
-                attributeId={game.product_attribute_category_id}
+                attributeId={game.prod_attr_cats}
                 primary_color={game.primary_color}
                 secondary_color={game.secondary_color}
                 currentGameId={game.id}

@@ -28,7 +28,6 @@ const SkillMasters = () => {
                   alt={person.name}
                   height={400}
                   width={400}
-                  quality={100}
                   priority
                   className="object-contain h-full transition-transform duration-300 ease-in-out transform group-hover:scale-110"
                 />
