@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiCopy, BiImage } from "react-icons/bi";
+import { IoIosArrowRoundForward } from "react-icons/io";
 import { IoClose, IoCopy } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
 
@@ -35,6 +36,7 @@ export const AdminOrderDialog = ({
 
   const [promoData, setPromoData] = useState(null);
   const [currentOrder, setCurrentOrder] = useState(null);
+  const [ordersInfo, setOrdersInfo] = useState(null);
 
   useEffect(() => {
     if (masters) {
@@ -103,6 +105,9 @@ export const AdminOrderDialog = ({
   // promo code data
   useEffect(() => {
     order?.promo_data && setPromoData(JSON.parse(order?.promo_data));
+
+    order?.order_data &&
+      setOrdersInfo(order?.order_data?.map((data) => JSON.parse(data)));
   }, [order]);
 
   // get order by id
@@ -110,8 +115,6 @@ export const AdminOrderDialog = ({
     try {
       setLoading(true);
       const result = await fetchOrderById(orderId);
-
-      console.log("result", result);
 
       if (result.error) {
         toast.error(result.error);
@@ -305,11 +308,7 @@ export const AdminOrderDialog = ({
             {/* Product Info */}
             <div className="flex flex-col gap-1 w-full">
               {groupedProducts?.map((product, index) => (
-                <Link
-                  key={index}
-                  href={`/games/${product.product_id}`}
-                  target="_blank"
-                >
+                <Link key={index} href={`/games/${product.id}`} target="_blank">
                   <div className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30">
                     <div className="flex flex-wrap items-center gap-x-2">
                       {product.image ? (
@@ -326,12 +325,39 @@ export const AdminOrderDialog = ({
                       )}
                       <div className="flex flex-col gap-y-1">
                         <p className="text-sm font-semibold">{product.name}</p>
-                        <p className="text-sm">Qty: {product.quantity}</p>
+                        <p className="text-sm">
+                          Qty:{" "}
+                          {(ordersInfo?.length > 0 &&
+                            ordersInfo[index]?.item_qty) ||
+                            product.quantity}
+                        </p>
                       </div>
                     </div>
                     <p className="text-sm font-semibold">
-                      ${(product.price * product.quantity).toFixed(2)}
+                      $
+                      {(ordersInfo?.length > 0 && ordersInfo[index]?.price) ||
+                        (product.price * product.quantity).toFixed(2)}
                     </p>
+
+                    {ordersInfo?.length > 0 &&
+                      ordersInfo[index]?.starting_point && (
+                        <div className="flex flex-wrap gap-2 text-sm items-center w-full border-t border-white/10 pt-2">
+                          <p className="text-sm flex flex-wrap gap-2 justify-between">
+                            {product.name}:
+                            <span className="flex flex-wrap gap-2 items-center flex-1 min-w-fit">
+                              <span className="bg-white/10 px-2 rounded">
+                                {ordersInfo[index]?.starting_point?.index ||
+                                  ordersInfo[index]?.starting_point?.option}
+                              </span>
+                              <IoIosArrowRoundForward className="h-4 w-4" />
+                              <span className="bg-white/10 px-2 rounded">
+                                {ordersInfo[index]?.ending_point?.index ||
+                                  ordersInfo[index]?.ending_point?.option}
+                              </span>
+                            </span>
+                          </p>
+                        </div>
+                      )}
                   </div>
                 </Link>
               ))}
@@ -343,9 +369,16 @@ export const AdminOrderDialog = ({
                 <span>Price</span>
                 <span>
                   $
-                  {order.products
-                    .reduce((acc, curr) => acc + Number(curr.price), 0)
-                    .toFixed(2)}
+                  {(ordersInfo?.length > 0 &&
+                    ordersInfo
+                      .reduce(
+                        (acc, curr) => acc + Number(curr.price * curr.quantity),
+                        0
+                      )
+                      .toFixed(2)) ||
+                    order.products
+                      .reduce((acc, curr) => acc + Number(curr.price), 0)
+                      .toFixed(2)}
                 </span>
               </p>
 
@@ -372,9 +405,19 @@ export const AdminOrderDialog = ({
                 Tax
                 <span>
                   $
-                  {order.products
-                    .reduce((acc, curr) => acc + Number(curr.tax), 0)
-                    .toFixed(2)}
+                  {ordersInfo?.length > 0
+                    ? ordersInfo
+                        .reduce(
+                          (acc, curr) =>
+                            curr.is_dropdown || curr.is_slider
+                              ? acc + Number(curr.tax) * curr.item_qty
+                              : acc + Number(curr.tax) * curr.quantity,
+                          0
+                        )
+                        .toFixed(2)
+                    : order.products
+                        .reduce((acc, curr) => acc + Number(curr.tax), 0)
+                        .toFixed(2)}
                 </span>
               </p>
             </div>
@@ -459,7 +502,7 @@ export const AdminOrderDialog = ({
                       order.total_price -
                       (order.total_price * promoData?.discount_percentage) / 100
                     ).toFixed(2)
-                  : order.total_price}
+                  : Number(order.total_price).toFixed(2)}
               </p>
             </div>
           </div>

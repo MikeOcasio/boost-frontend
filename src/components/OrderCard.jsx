@@ -9,6 +9,7 @@ import { OrderDialog } from "../app/(Dashboard)/_components/OrderDialog";
 import { PiGameControllerFill, PiPencil } from "react-icons/pi";
 import { useUserStore } from "@/store/use-user";
 import { BiImage } from "react-icons/bi";
+import { IoIosArrowRoundForward } from "react-icons/io";
 
 // Helper function to highlight matching terms
 const highlightMatch = (text, searchTerm) => {
@@ -46,9 +47,13 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
   const groupedProducts = groupProducts(order.products);
 
   const [promoData, setPromoData] = useState(null);
+  const [ordersInfo, setOrdersInfo] = useState(null);
 
   useEffect(() => {
     order?.promo_data && setPromoData(JSON.parse(order?.promo_data));
+
+    order?.order_data &&
+      setOrdersInfo(order?.order_data.map((data) => JSON.parse(data)));
   }, [order]);
 
   return (
@@ -105,12 +110,39 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
                 <p className="text-sm font-semibold">
                   {highlightMatch(product.name, searchTerm)}
                 </p>
-                <p className="text-sm">Qty: {product.quantity}</p>
+                <p className="text-sm">
+                  Qty:
+                  {(ordersInfo?.length > 0 && ordersInfo[index]?.item_qty) ||
+                    product.quantity}
+                </p>
               </div>
             </div>
-            <p className="text-sm font-semibold">
-              ${(product.price * product.quantity).toFixed(2)}
-            </p>
+            {user.role !== "skillmaster" && (
+              <p className="text-sm font-semibold">
+                $
+                {(ordersInfo?.length > 0 && ordersInfo[index]?.price) ||
+                  (product.price * product.quantity).toFixed(2)}
+              </p>
+            )}
+
+            {ordersInfo?.length > 0 && ordersInfo[index]?.starting_point && (
+              <div className="flex flex-wrap gap-2 text-sm items-center w-full border-t border-white/10 pt-2">
+                <p className="text-sm flex flex-wrap gap-2 justify-between">
+                  {product.name}:
+                  <span className="flex flex-wrap gap-2 items-center flex-1 min-w-fit">
+                    <span className="bg-white/10 px-2 rounded">
+                      {ordersInfo[index]?.starting_point?.index ||
+                        ordersInfo[index]?.starting_point?.option}
+                    </span>
+                    <IoIosArrowRoundForward className="h-4 w-4" />
+                    <span className="bg-white/10 px-2 rounded">
+                      {ordersInfo[index]?.ending_point?.index ||
+                        ordersInfo[index]?.ending_point?.option}
+                    </span>
+                  </span>
+                </p>
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -175,15 +207,17 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
                 }).format(new Date(order.created_at))
               : "Not set"}
           </p>
-          <p className="text-lg font-semibold">
-            Price: $
-            {promoData?.id
-              ? (
-                  order.total_price -
-                  (order.total_price * promoData?.discount_percentage) / 100
-                ).toFixed(2)
-              : order.total_price}
-          </p>
+          {user.role !== "skillmaster" && (
+            <p className="text-lg font-semibold">
+              Price: $
+              {promoData?.id
+                ? (
+                    order.total_price -
+                    (order.total_price * promoData?.discount_percentage) / 100
+                  ).toFixed(2)
+                : Number(order.total_price).toFixed(2)}
+            </p>
+          )}
         </div>
 
         <OrderDialog

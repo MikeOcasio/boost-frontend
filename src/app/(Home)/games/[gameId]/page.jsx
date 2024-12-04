@@ -139,10 +139,12 @@ const GamePage = ({ params }) => {
 
   const setDropdownRange = () => {
     const range = game?.dropdown_options.slice(
-      Number(selectedDropdown) + 1,
+      Number(selectedDropdown),
       Number(selectedDropdown2) + 1
     );
     setSelectedDropdownRange(range);
+
+    console.log("range", selectedDropdownRange);
   };
 
   const setSliderRange = () => {
@@ -316,8 +318,8 @@ const GamePage = ({ params }) => {
                     {game.is_dropdown && (
                       <>
                         <p className="text-xs -mb-2">
-                          Select where are you currently at and where you want
-                          to reach in the game.
+                          Select starting point and where you want to reach in
+                          the game.
                         </p>
                         <div className="flex flex-wrap gap-2 items-center justify-between bg-white/10 border border-white/10 hover:border-white/20 rounded-lg p-2">
                           <select
@@ -327,7 +329,7 @@ const GamePage = ({ params }) => {
                             className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 flex-1"
                           >
                             <option value="" className="bg-neutral-800">
-                              Where you at?
+                              Starting from?
                             </option>
 
                             {game.dropdown_options.map((option, index) => (

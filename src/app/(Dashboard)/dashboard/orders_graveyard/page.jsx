@@ -22,6 +22,7 @@ const OrderGraveyardPage = () => {
 
     try {
       const result = await fetchAllGraveyardOrders();
+
       if (result.error) {
         setError(true);
         toast.error(result.error);

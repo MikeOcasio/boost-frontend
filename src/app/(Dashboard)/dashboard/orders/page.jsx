@@ -40,6 +40,7 @@ const OrdersPage = () => {
 
     try {
       const result = await fetchAllOrders();
+
       if (result.error) {
         setError(true);
         toast.error(result.error);

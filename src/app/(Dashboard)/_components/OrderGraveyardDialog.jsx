@@ -52,9 +52,13 @@ export const OrderGraveyardDialog = ({
   };
 
   const [promoData, setPromoData] = useState(null);
+  const [ordersInfo, setOrdersInfo] = useState(null);
 
   useEffect(() => {
     order?.promo_data && setPromoData(JSON.parse(order?.promo_data));
+
+    order?.order_data &&
+      setOrdersInfo(order?.order_data?.map((data) => JSON.parse(data)));
   }, [order]);
 
   return (
@@ -156,11 +160,7 @@ export const OrderGraveyardDialog = ({
             {/* Product Info */}
             <div className="flex flex-col gap-1 w-full">
               {groupedProducts?.map((product, index) => (
-                <Link
-                  key={index}
-                  href={`/games/${product.product_id}`}
-                  target="_blank"
-                >
+                <Link key={index} href={`/games/${product.id}`} target="_blank">
                   <div className="flex gap-4 flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30">
                     <div className="flex flex-wrap items-center gap-x-2">
                       {product.image ? (
@@ -177,54 +177,83 @@ export const OrderGraveyardDialog = ({
                       )}
                       <div className="flex flex-col gap-1">
                         <p className="text-sm font-semibold">{product.name}</p>
-                        <p className="text-sm">Qty: {product.quantity}</p>
+                        <p className="text-sm">
+                          Qty:{" "}
+                          {(ordersInfo?.length > 0 &&
+                            ordersInfo[index]?.item_qty) ||
+                            product.quantity}
+                        </p>
                       </div>
                     </div>
-                    <p className="text-sm font-semibold">
-                      ${(product.price * product.quantity).toFixed(2)}
-                    </p>
+                    {(user.role === "admin" || user.role === "dev") && (
+                      <p className="text-sm font-semibold">
+                        $
+                        {(ordersInfo?.length > 0 && ordersInfo[index]?.price) ||
+                          (product.price * product.quantity).toFixed(2)}
+                      </p>
+                    )}
                   </div>
                 </Link>
               ))}
             </div>
 
             {/* tax & promotion */}
-            <div className="flex flex-col gap-2 border border-white/10 p-4 rounded-lg">
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center border-b pb-2 border-white/10">
-                <span>Price</span>
-                <span>
-                  $
-                  {order.products
-                    .reduce((acc, curr) => acc + Number(curr.price), 0)
-                    .toFixed(2)}
-                </span>
-              </p>
-              {order.promotion_id && (
-                <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
-                  Promotion
-                  <span>{order.promotion_id}</span>
-                </p>
-              )}
-
-              {promoData?.id && (
-                <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
-                  Promo Applied
-                  <span className="flex gap-2 items-center">
-                    {promoData?.discount_percentage}% OFF
+            {(user.role === "admin" || user.role === "dev") && (
+              <div className="flex flex-col gap-2 border border-white/10 p-4 rounded-lg">
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center border-b pb-2 border-white/10">
+                  <span>Price</span>
+                  <span>
+                    $
+                    {(ordersInfo?.length > 0 &&
+                      ordersInfo
+                        .reduce(
+                          (acc, curr) =>
+                            acc + Number(curr.price * curr.quantity),
+                          0
+                        )
+                        .toFixed(2)) ||
+                      order.products
+                        .reduce((acc, curr) => acc + Number(curr.price), 0)
+                        .toFixed(2)}
                   </span>
                 </p>
-              )}
+                {order.promotion_id && (
+                  <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
+                    Promotion
+                    <span>{order.promotion_id}</span>
+                  </p>
+                )}
 
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center ">
-                Tax
-                <span>
-                  $
-                  {order.products
-                    .reduce((acc, curr) => acc + Number(curr.tax), 0)
-                    .toFixed(2)}
-                </span>
-              </p>
-            </div>
+                {promoData?.id && (
+                  <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
+                    Promo Applied
+                    <span className="flex gap-2 items-center">
+                      {promoData?.discount_percentage}% OFF
+                    </span>
+                  </p>
+                )}
+
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center ">
+                  Tax
+                  <span>
+                    $
+                    {ordersInfo?.length > 0
+                      ? ordersInfo
+                          .reduce(
+                            (acc, curr) =>
+                              curr.is_dropdown || curr.is_slider
+                                ? acc + Number(curr.tax) * curr.item_qty
+                                : acc + Number(curr.tax) * curr.quantity,
+                            0
+                          )
+                          .toFixed(2)
+                      : order.products
+                          .reduce((acc, curr) => acc + Number(curr.tax), 0)
+                          .toFixed(2)}
+                  </span>
+                </p>
+              </div>
+            )}
 
             {/* data and price */}
             <div className="flex flex-wrap gap-4 justify-between items-center">
@@ -240,15 +269,18 @@ export const OrderGraveyardDialog = ({
               </p>
 
               {/* totol_price */}
-              <p className="text-lg">
-                Total Price: $
-                {promoData?.id
-                  ? (
-                      order.total_price -
-                      (order.total_price * promoData?.discount_percentage) / 100
-                    ).toFixed(2)
-                  : order.total_price}
-              </p>
+              {(user.role === "admin" || user.role === "dev") && (
+                <p className="text-lg">
+                  Total Price: $
+                  {promoData?.id
+                    ? (
+                        order.total_price -
+                        (order.total_price * promoData?.discount_percentage) /
+                          100
+                      ).toFixed(2)
+                    : Number(order.total_price).toFixed(2)}
+                </p>
+              )}
             </div>
           </div>
         </DialogPanel>

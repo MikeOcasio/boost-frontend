@@ -260,8 +260,7 @@ const GamesPage = () => {
               ) : (
                 sortedGames?.map(
                   (game) =>
-                    game?.is_active &&
-                    !game.parent_id && (
+                    game?.is_active && (
                       <GameCard
                         key={game.id}
                         game={game}

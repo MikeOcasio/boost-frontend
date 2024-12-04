@@ -11,6 +11,7 @@ import { fetchOrderById, updateOrderStatus } from "@/lib/actions/orders-action";
 import { orderStatus } from "@/lib/data";
 import { useUserStore } from "@/store/use-user";
 import { BiCopy, BiImage } from "react-icons/bi";
+import { IoIosArrowRoundForward } from "react-icons/io";
 
 export const OrderDialog = ({
   dialogOpen,
@@ -29,6 +30,7 @@ export const OrderDialog = ({
   const [loading, setLoading] = useState(false);
 
   const [promoData, setPromoData] = useState(null);
+  const [ordersInfo, setOrdersInfo] = useState(null);
 
   // get order by id
   const getOrderById = async (orderId) => {
@@ -84,6 +86,9 @@ export const OrderDialog = ({
 
   useEffect(() => {
     order?.promo_data && setPromoData(JSON.parse(order?.promo_data));
+
+    order?.order_data &&
+      setOrdersInfo(order?.order_data?.map((data) => JSON.parse(data)));
   }, [order]);
 
   return (
@@ -229,11 +234,7 @@ export const OrderDialog = ({
             {/* Product Info */}
             <div className="flex flex-col gap-1 w-full">
               {groupedProducts?.map((product, index) => (
-                <Link
-                  key={index}
-                  href={`/games/${product.product_id}`}
-                  target="_blank"
-                >
+                <Link key={index} href={`/games/${product.id}`} target="_blank">
                   <div className="flex gap-4 flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30">
                     <div className="flex flex-wrap items-center gap-x-2">
                       {product.image ? (
@@ -251,57 +252,107 @@ export const OrderDialog = ({
 
                       <div className="flex flex-col gap-1">
                         <p className="text-sm font-semibold">{product.name}</p>
-                        <p className="text-sm">Qty: {product.quantity}</p>
+                        <p className="text-sm">
+                          Qty:{" "}
+                          {(ordersInfo?.length > 0 &&
+                            ordersInfo[index]?.item_qty) ||
+                            product.quantity}
+                        </p>
                       </div>
                     </div>
-                    <p className="text-sm font-semibold">
-                      ${(product.price * product.quantity).toFixed(2)}
-                    </p>
+                    {user.role !== "skillmaster" && (
+                      <p className="text-sm font-semibold">
+                        $
+                        {(ordersInfo?.length > 0 && ordersInfo[index]?.price) ||
+                          (product.price * product.quantity).toFixed(2)}
+                      </p>
+                    )}
+
+                    {ordersInfo?.length > 0 &&
+                      ordersInfo[index]?.starting_point && (
+                        <div className="flex flex-wrap gap-2 text-sm items-center w-full border-t border-white/10 pt-2">
+                          <p className="text-sm flex flex-wrap gap-2 justify-between">
+                            {product.name}:
+                            <span className="flex flex-wrap gap-2 items-center flex-1 min-w-fit">
+                              <span className="bg-white/10 px-2 rounded">
+                                {ordersInfo[index]?.starting_point?.index ||
+                                  ordersInfo[index]?.starting_point?.option}
+                              </span>
+                              <IoIosArrowRoundForward className="h-4 w-4" />
+                              <span className="bg-white/10 px-2 rounded">
+                                {ordersInfo[index]?.ending_point?.index ||
+                                  ordersInfo[index]?.ending_point?.option}
+                              </span>
+                            </span>
+                          </p>
+                        </div>
+                      )}
                   </div>
                 </Link>
               ))}
             </div>
 
             {/* tax & promotion */}
-            <div className="flex flex-col gap-2 border border-white/10 p-4 rounded-lg">
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center border-b pb-2 border-white/10">
-                <span>Price</span>
-                <span>
-                  $
-                  {order.products
-                    .reduce((acc, curr) => acc + Number(curr.price), 0)
-                    .toFixed(2)}
-                </span>
-              </p>
-              {order.promotion_id && (
-                <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
-                  Promotion
-                  <span>{order.promotion_id}</span>
-                </p>
-              )}
-
-              {promoData?.id && (
-                <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
-                  Promo Applied
-                  <span className="flex gap-2 items-center">
-                    <span className="bg-white/10 px-2 rounded-md">
-                      {promoData.code}
-                    </span>
-                    {promoData.discount_percentage}% OFF
+            {user.role !== "skillmaster" && (
+              <div className="flex flex-col gap-2 border border-white/10 p-4 rounded-lg">
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center border-b pb-2 border-white/10">
+                  <span>Price</span>
+                  <span>
+                    $
+                    {(ordersInfo?.length > 0 &&
+                      ordersInfo
+                        .reduce(
+                          (acc, curr) =>
+                            acc + Number(curr.price * curr.quantity),
+                          0
+                        )
+                        .toFixed(2)) ||
+                      order.products
+                        .reduce((acc, curr) => acc + Number(curr.price), 0)
+                        .toFixed(2)}
                   </span>
                 </p>
-              )}
 
-              <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
-                Tax
-                <span>
-                  $
-                  {order.products
-                    .reduce((acc, curr) => acc + Number(curr.tax), 0)
-                    .toFixed(2)}
-                </span>
-              </p>
-            </div>
+                {order.promotion_id && (
+                  <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
+                    Promotion
+                    <span>{order.promotion_id}</span>
+                  </p>
+                )}
+
+                {promoData?.id && (
+                  <p className="text-sm flex flex-wrap gap-2 justify-between items-center pb-2 border-b border-white/10">
+                    Promo Applied
+                    <span className="flex gap-2 items-center">
+                      <span className="bg-white/10 px-2 rounded-md">
+                        {promoData.code}
+                      </span>
+                      {promoData.discount_percentage}% OFF
+                    </span>
+                  </p>
+                )}
+
+                <p className="text-sm flex flex-wrap gap-2 justify-between items-center">
+                  Tax
+                  <span>
+                    $
+                    {ordersInfo?.length > 0
+                      ? ordersInfo
+                          .reduce(
+                            (acc, curr) =>
+                              curr.is_dropdown || curr.is_slider
+                                ? acc + Number(curr.tax) * curr.item_qty
+                                : acc + Number(curr.tax) * curr.quantity,
+                            0
+                          )
+                          .toFixed(2)
+                      : order.products
+                          .reduce((acc, curr) => acc + Number(curr.tax), 0)
+                          .toFixed(2)}
+                  </span>
+                </p>
+              </div>
+            )}
 
             {/* get credential */}
             {!currentOrder?.platform_credentials && (
@@ -376,15 +427,18 @@ export const OrderDialog = ({
               </p>
 
               {/* totol_price */}
-              <p className="text-lg">
-                Total Price: $
-                {promoData?.id
-                  ? (
-                      order.total_price -
-                      (order.total_price * promoData?.discount_percentage) / 100
-                    ).toFixed(2)
-                  : order.total_price}
-              </p>
+              {user.role !== "skillmaster" && (
+                <p className="text-lg">
+                  Total Price: $
+                  {promoData?.id
+                    ? (
+                        order.total_price -
+                        (order.total_price * promoData?.discount_percentage) /
+                          100
+                      ).toFixed(2)
+                    : Number(order.total_price).toFixed(2)}
+                </p>
+              )}
             </div>
           </div>
         </DialogPanel>

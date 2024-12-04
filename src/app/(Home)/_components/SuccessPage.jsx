@@ -50,6 +50,10 @@ const SuccessPage = () => {
         Array(order.quantity).fill(order.id)
       );
 
+      const stringOrderData = await orderData.orders.map((order) =>
+        JSON.stringify(order)
+      );
+
       const data = {
         order: {
           user_id: user?.id,
@@ -58,8 +62,10 @@ const SuccessPage = () => {
         session_id: sessionId,
         platform: platformId,
         product_ids: productIds,
-        ordersData: orderData.orders,
-        promo_data: JSON.stringify(orderData?.orders[0]?.promotion_code),
+        order_data: stringOrderData,
+        promo_data: orderData?.orders[0]?.promotion_code
+          ? JSON.stringify(orderData?.orders[0]?.promotion_code)
+          : null,
       };
 
       if (orderData.subplatform) {

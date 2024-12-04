@@ -284,16 +284,13 @@ const AllGames = () => {
             {!loading && !error && filteredGames?.length < 1 ? (
               <p className="text-center w-full">No games found!</p>
             ) : (
-              sortedGames?.map(
-                (game) =>
-                  !game.parent_id && (
-                    <AdminGameCard
-                      key={game.id}
-                      game={game}
-                      searchTerm={searchTerm}
-                    />
-                  )
-              )
+              sortedGames?.map((game) => (
+                <AdminGameCard
+                  key={game.id}
+                  game={game}
+                  searchTerm={searchTerm}
+                />
+              ))
             )}
           </div>
         </div>

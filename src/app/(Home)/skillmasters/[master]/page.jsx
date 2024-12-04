@@ -40,7 +40,7 @@ const MasterPage = ({ params }) => {
         await prefetchGameplayUrls(result.gameplay_info);
       }
     } catch (error) {
-      console.log("error while fetching skillmaster", error);
+      // console.log("error while fetching skillmaster", error);
 
       setError(true);
       toast.error("An unexpected error occurred.");

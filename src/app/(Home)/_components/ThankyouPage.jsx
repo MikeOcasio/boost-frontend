@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiImage, BiLoader, BiReceipt } from "react-icons/bi";
+import { IoIosArrowRoundForward } from "react-icons/io";
 import { IoWarning } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
 
@@ -19,6 +20,7 @@ const ThankyouPage = () => {
   const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [ordersInfo, setOrdersInfo] = useState(null);
 
   const loadOrderData = useCallback(async () => {
     setLoading(true);
@@ -69,6 +71,11 @@ const ThankyouPage = () => {
   useEffect(() => {
     orderData?.order?.promo_data &&
       setPromoData(JSON.parse(orderData?.order?.promo_data));
+
+    orderData?.order?.order_data &&
+      setOrdersInfo(
+        orderData?.order?.order_data.map((order) => JSON.parse(order))
+      );
   }, [orderData]);
 
   return (
@@ -111,7 +118,7 @@ const ThankyouPage = () => {
                   key={index}
                   target="_blank"
                   href={`/games/${product.id}`}
-                  className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30"
+                  className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30 border border-white/10 gap-2 w-full"
                 >
                   <div className="flex flex-wrap items-center gap-x-2">
                     {product.image ? (
@@ -129,13 +136,38 @@ const ThankyouPage = () => {
                     <div className="flex flex-col gap-y-1">
                       <p className="text-sm font-semibold">{product.name}</p>
                       <p className="text-sm font-semibold">
-                        Qty: {product.quantity}
+                        Qty:{" "}
+                        {(ordersInfo?.length > 0 &&
+                          ordersInfo[index]?.item_qty) ||
+                          product.quantity}
                       </p>
                     </div>
                   </div>
                   <p className="text-sm font-semibold">
-                    ${(product.price * product.quantity).toFixed(2)}
+                    $
+                    {(ordersInfo?.length > 0 && ordersInfo[index]?.price) ||
+                      (product.price * product.quantity).toFixed(2)}
                   </p>
+
+                  {ordersInfo?.length > 0 &&
+                    ordersInfo[index]?.starting_point && (
+                      <div className="flex flex-wrap gap-2 text-sm items-center w-full border-t border-white/10 pt-2">
+                        <p className="text-sm flex flex-wrap gap-2 justify-between">
+                          {product.name}:
+                          <span className="flex flex-wrap gap-2 items-center flex-1 min-w-fit">
+                            <span className="bg-white/10 px-2 rounded">
+                              {ordersInfo[index]?.starting_point?.index ||
+                                ordersInfo[index]?.starting_point?.option}
+                            </span>
+                            <IoIosArrowRoundForward className="h-4 w-4" />
+                            <span className="bg-white/10 px-2 rounded">
+                              {ordersInfo[index]?.ending_point?.index ||
+                                ordersInfo[index]?.ending_point?.option}
+                            </span>
+                          </span>
+                        </p>
+                      </div>
+                    )}
                 </Link>
               ))}
             </div>
@@ -185,12 +217,21 @@ const ThankyouPage = () => {
                   <span>Price</span>
                   <span>
                     $
-                    {orderData.order.products
-                      .reduce(
-                        (acc, curr) => acc + Number(curr.price * curr.quantity),
-                        0
-                      )
-                      .toFixed(2)}
+                    {(ordersInfo?.length > 0 &&
+                      ordersInfo
+                        .reduce(
+                          (acc, curr) =>
+                            acc + Number(curr.price * curr.quantity),
+                          0
+                        )
+                        .toFixed(2)) ||
+                      orderData.order.products
+                        .reduce(
+                          (acc, curr) =>
+                            acc + Number(curr.price * curr.quantity),
+                          0
+                        )
+                        .toFixed(2)}
                   </span>
                 </p>
 
@@ -205,12 +246,24 @@ const ThankyouPage = () => {
                   Tax
                   <span>
                     $
-                    {orderData.order.products
-                      .reduce(
-                        (acc, curr) => acc + Number(curr.tax * curr.quantity),
+                    {(ordersInfo?.length > 0 &&
+                      ordersInfo.reduce(
+                        (acc, curr) =>
+                          curr.tax && curr.item_qty
+                            ? acc +
+                              Number(curr.tax * curr.item_qty || curr.quantity)
+                            : 0,
                         0
-                      )
-                      .toFixed(2)}
+                      )) ||
+                      orderData.order.products
+                        .reduce(
+                          (acc, curr) =>
+                            curr.tax && curr.quantity
+                              ? acc + Number(curr.tax * curr.quantity)
+                              : 0,
+                          0
+                        )
+                        .toFixed(2)}
                   </span>
                 </p>
               </div>
@@ -234,7 +287,7 @@ const ThankyouPage = () => {
                           promoData.discount_percentage) /
                           100
                       ).toFixed(2)
-                    : orderData.order.total_price}
+                    : Number(orderData.order.total_price).toFixed(2)}
                 </p>
               </div>
             </div>
