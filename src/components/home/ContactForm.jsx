@@ -51,7 +51,7 @@ export const ContactForm = () => {
           </p>
 
           <Link
-            href="https://discord.gg/2BVynY4WSc"
+            href="https://discord.gg/Wr9n9EynKQ"
             target="_blank"
             className="mt-4 bg-purple-500/50 py-2 px-4 rounded-full mx-auto flex items-center justify-center gap-4"
           >
