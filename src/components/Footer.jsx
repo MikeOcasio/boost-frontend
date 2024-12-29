@@ -38,7 +38,7 @@ export function Footer() {
         </div>
 
         <Link
-          href="https://discord.gg/2BVynY4WSc"
+          href="https://discord.gg/Wr9n9EynKQ"
           target="_blank"
           className="flex flex-wrap gap-2 text-sm rounded-full px-4 py-2 border-2 border-white/10 hover:bg-white/10 transition-all"
         >
