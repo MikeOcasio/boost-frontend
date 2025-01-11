@@ -61,7 +61,7 @@ const RelatedGameCard = ({ game, primary_color, secondary_color, index }) => {
 
         {game.is_active ? (
           <div>
-            <Link href={`/games/${game.id}`}>
+            <Link href={`/products/${game.id}`}>
               <button
                 aria-describedby={game.id}
                 aria-label="Boost Button"

@@ -308,7 +308,11 @@ export const AdminOrderDialog = ({
             {/* Product Info */}
             <div className="flex flex-col gap-1 w-full">
               {groupedProducts?.map((product, index) => (
-                <Link key={index} href={`/games/${product.id}`} target="_blank">
+                <Link
+                  key={index}
+                  href={`/products/${product.id}`}
+                  target="_blank"
+                >
                   <div className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30">
                     <div className="flex flex-wrap items-center gap-x-2">
                       {product.image ? (

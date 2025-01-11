@@ -3,10 +3,10 @@
 import { FilterButton } from "@/components/FilterButton";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import SkillmasterFilter from "../games/_components/SkillmasterFilter";
+import SkillmasterFilter from "../products/_components/SkillmasterFilter";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
-import { SkillmasterCard } from "../games/_components/SkillmasterCard";
+import { SkillmasterCard } from "../products/_components/SkillmasterCard";
 import toast from "react-hot-toast";
 
 import { useRouter } from "next/navigation";

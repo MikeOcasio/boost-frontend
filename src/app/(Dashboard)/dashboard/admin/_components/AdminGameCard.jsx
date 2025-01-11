@@ -183,12 +183,12 @@ export const AdminGameCard = ({ game, searchTerm }) => {
         </p>
 
         <Link
-          href={`/games/${game.id}`}
+          href={`/products/${game.id}`}
           target="_blank"
           className="flex items-center gap-2 px-3 py-2 transition-all hover:bg-white/10 rounded-lg border border-white/10"
         >
           <FaExternalLinkAlt className="h-4 w-4" />
-          Visit Game
+          Visit Product
         </Link>
       </div>
 

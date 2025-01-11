@@ -53,7 +53,7 @@ const GamePage = ({ params }) => {
       if (result.error) {
         setError(true);
         toast.error(result.error);
-        router.push("/games");
+        router.push("/products");
       } else {
         if (result.is_dropdown) {
           result.dropdown_options = result.dropdown_options.map((option) => {
@@ -87,7 +87,7 @@ const GamePage = ({ params }) => {
     } catch (error) {
       setError(true);
       toast.error("Failed to load game. Please try again!");
-      router.push("/games");
+      router.push("/products");
     } finally {
       setLoading(false);
     }
@@ -247,7 +247,7 @@ const GamePage = ({ params }) => {
       {game?.length < 1 ? (
         <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
           <IoWarning className="h-5 w-5 mr-2" />
-          No Games Available. Please try again!
+          No products available. Please try again!
         </p>
       ) : (
         !loading &&
@@ -394,8 +394,18 @@ const GamePage = ({ params }) => {
                                     game.slider_range.length - 1
                                   ].max_quantity
                                 }
-                                selectedMin={selectedDropdown || 10}
-                                selectedMax={selectedDropdown2 || 20}
+                                selectedMin={
+                                  selectedDropdown ||
+                                  game.slider_range[0].min_quantity
+                                }
+                                selectedMax={
+                                  selectedDropdown2 ||
+                                  Math.ceil(
+                                    game.slider_range[
+                                      game.slider_range.length - 1
+                                    ].max_quantity / 2
+                                  )
+                                }
                                 cartItem={cartItem}
                                 onChange={({ min, max }) => {
                                   setSelectedDropdown(min);
@@ -410,8 +420,18 @@ const GamePage = ({ params }) => {
                                 game.slider_range[game.slider_range.length - 1]
                                   .max_quantity
                               }
-                              selectedMin={selectedDropdown || 10}
-                              selectedMax={selectedDropdown2 || 20}
+                              selectedMin={
+                                selectedDropdown ||
+                                game.slider_range[0].min_quantity
+                              }
+                              selectedMax={
+                                selectedDropdown2 ||
+                                Math.ceil(
+                                  game.slider_range[
+                                    game.slider_range.length - 1
+                                  ].max_quantity / 2
+                                )
+                              }
                               onChange={({ min, max }) => {
                                 setSelectedDropdown(min);
                                 setSelectedDropdown2(max);

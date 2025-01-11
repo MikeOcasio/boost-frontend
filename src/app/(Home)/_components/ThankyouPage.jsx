@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiImage, BiLoader, BiReceipt } from "react-icons/bi";
+import { BsDiscord } from "react-icons/bs";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { IoWarning } from "react-icons/io5";
 import { PiGameControllerFill } from "react-icons/pi";
@@ -32,7 +33,7 @@ const ThankyouPage = () => {
       if (result.error) {
         setError(true);
         toast.error(result.error);
-        router.push("/games");
+        router.push("/products");
       } else {
         // Group products by their ID and sum the quantities
 
@@ -56,7 +57,7 @@ const ThankyouPage = () => {
     } catch (error) {
       setError(true);
       toast.error(true);
-      router.push("/games");
+      router.push("/products");
     } finally {
       setLoading(false);
     }
@@ -77,6 +78,8 @@ const ThankyouPage = () => {
         orderData?.order?.order_data.map((order) => JSON.parse(order))
       );
   }, [orderData]);
+
+  // console.log("orderData", orderData);
 
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen flex flex-col items-center justify-center gap-6 p-4">
@@ -117,7 +120,7 @@ const ThankyouPage = () => {
                 <Link
                   key={index}
                   target="_blank"
-                  href={`/games/${product.id}`}
+                  href={`/products/${product.id}`}
                   className="flex flex-wrap justify-between items-center bg-black/20 rounded-lg p-2 hover:bg-black/30 border border-white/10 gap-2 w-full"
                 >
                   <div className="flex flex-wrap items-center gap-x-2">
@@ -295,11 +298,11 @@ const ThankyouPage = () => {
 
           <div className="flex flex-wrap gap-4 items-center w-full max-w-xl">
             <Link
-              href="/games"
+              href="/products"
               className="bg-white/10 p-2 rounded-lg hover:bg-white/20 flex-1 flex items-center gap-2 justify-center min-w-fit"
             >
               <PiGameControllerFill className="h-5 w-5" />
-              <p className="text-sm">Browse more games</p>
+              <p className="text-sm">Browse more products</p>
             </Link>
 
             <Link
@@ -308,6 +311,19 @@ const ThankyouPage = () => {
             >
               <BiReceipt className="h-5 w-5" />
               <p className="text-sm">See all orders</p>
+            </Link>
+
+            <p className="text-center text-sm w-full text-white/80">
+              Get in touch with you skill masters
+            </p>
+
+            <Link
+              href="https://discord.gg/Wr9n9EynKQ"
+              target="_blank"
+              className="bg-purple-500/50 py-2 px-4 rounded-full mx-auto flex items-center justify-center gap-4 w-full"
+            >
+              <BsDiscord className="text-4xl" />
+              <p className="text-center text-lg font-bold">Join Discord</p>
             </Link>
           </div>
         </>

@@ -68,7 +68,7 @@ export const SubProductsList = ({ game }) => {
               (child, index) =>
                 child.is_active && (
                   <Link
-                    href={`/games/${child.id}`}
+                    href={`/products/${child.id}`}
                     key={index}
                     className="flex flex-col gap-2 p-3 transition-all bg-CardPlum rounded-lg border border-white/10 backdrop-blur-xl"
                     style={{
@@ -96,7 +96,7 @@ export const SubProductsList = ({ game }) => {
                       </div>
 
                       <Link
-                        href={`/games/${child.id}`}
+                        href={`/products/${child.id}`}
                         target="_blank"
                         className="flex flex-wrap justify-center items-center gap-2 rounded-lg px-2 py-1 hover:border-white/20 border border-white/10 bg-black/30 backdrop-blur-xl"
                       >

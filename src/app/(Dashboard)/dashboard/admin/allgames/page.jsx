@@ -10,7 +10,7 @@ import { fetchAllGames } from "@/lib/actions/products-action";
 import { AdminGameCard } from "../_components/AdminGameCard";
 import toast from "react-hot-toast";
 import { useUserStore } from "@/store/use-user";
-import { SearchFilter } from "@/app/(Home)/games/_components/SearchFilter";
+import { SearchFilter } from "@/app/(Home)/products/_components/SearchFilter";
 import { FilterButton } from "@/components/FilterButton";
 
 const AllGames = () => {

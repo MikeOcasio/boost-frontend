@@ -90,7 +90,7 @@ const GameCard = ({ game, searchTerm }) => {
         </ul>
 
         {game.is_active ? (
-          <Link href={`/games/${game.id}`}>
+          <Link href={`/products/${game.id}`}>
             <button
               aria-describedby={game.id}
               aria-label="Boost Button"

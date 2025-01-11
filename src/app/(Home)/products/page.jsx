@@ -131,7 +131,7 @@ const GamesPage = () => {
       <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
 
       <h2 className="text-center text-4xl font-title text-white sm:text-5xl">
-        GAMES
+        Products
       </h2>
 
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
@@ -139,7 +139,7 @@ const GamesPage = () => {
       {error && (
         <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
           <IoWarning className="h-5 w-5 mr-2" />
-          Failed to load games. Please try again!
+          Failed to load products. Please try again!
           {/* reload */}
           <button onClick={loadGames} className="p-2 rounded-lg bg-white/10">
             Reload
@@ -149,7 +149,7 @@ const GamesPage = () => {
 
       {/* Search bar */}
       {!loading && !error && games.length < 1 ? (
-        <p className="w-full">No games found!</p>
+        <p className="w-full">No products found!</p>
       ) : (
         games.length > 0 && (
           <div className="space-y-6">
@@ -159,7 +159,7 @@ const GamesPage = () => {
                 autoFocus
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search games..."
+                placeholder="Search products..."
                 className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
               />
 
@@ -243,11 +243,11 @@ const GamesPage = () => {
               mostPopularGames?.length > 0 && (
                 <div className="space-y-2 bg-Gold/10 pb-4 rounded-lg border border-white/10 hover:border-Gold/20">
                   <p className="text-sm font-semibold m-4 mb-0">
-                    Most Popular Games
+                    Most Popular products
                   </p>
 
                   {!loading && !error && mostPopularGames?.length < 1 ? (
-                    <p className="text-center w-full">No games found!</p>
+                    <p className="text-center w-full">No products found!</p>
                   ) : (
                     <HomeGameCarousel data={mostPopularGames} />
                   )}
@@ -256,11 +256,12 @@ const GamesPage = () => {
 
             <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
               {!loading && !error && filteredGames.length < 1 ? (
-                <p className="text-center w-full">No games found!</p>
+                <p className="text-center w-full">No products found!</p>
               ) : (
                 sortedGames?.map(
                   (game) =>
-                    game?.is_active && (
+                    game?.is_active &&
+                    (searchTerm.length > 0 ? true : !game?.parent_id) && (
                       <GameCard
                         key={game.id}
                         game={game}
