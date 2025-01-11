@@ -33,8 +33,8 @@ import { fetchCurrentUser } from "@/lib/actions/user-actions";
 
 const resourcesData = [
   {
-    name: "Games",
-    href: "/games",
+    name: "Products",
+    href: "/products",
     icon: <IoGameControllerOutline size={32} />,
   },
   {

@@ -192,7 +192,7 @@ export const AdminSubProducts = ({ game, highlightMatch, searchTerm }) => {
 
               <div className="flex flex-wrap gap-2">
                 <Link
-                  href={`/games/${child.id}`}
+                  href={`/products/${child.id}`}
                   target="_blank"
                   className="flex items-center gap-2 px-3 py-2 transition-all hover:bg-white/10 rounded-lg border border-white/10 flex-1 min-w-fit justify-center"
                 >

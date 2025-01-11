@@ -589,7 +589,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
                   <Label>Min Quantity</Label>
                   <Input
                     type="number"
-                    placeholder="1"
+                    placeholder="0"
                     className="input-field"
                     disabled={index === 1 || game.slider_range.length > 1}
                     onWheel={(e) => e.target.blur()}
@@ -813,9 +813,9 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
 
       <p className="text-xs -mb-2">
         {game.is_dropdown &&
-          `Add the lowest price of the dropdown. Price should be $${game.dropdown_options[0].price}.`}
+          `Add the lowest price of the dropdown. Price should be $${game?.dropdown_options[0]?.price}.`}
         {game.is_slider &&
-          `Add the lowest price of the slider. Price should be $${game.slider_range[0].price}.`}
+          `Add the lowest price of the slider. Price should be $${game?.slider_range[0]?.price}.`}
       </p>
 
       {/* price & tax */}

@@ -97,7 +97,7 @@ export default function Home() {
         {error && (
           <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto flex items-center justify-center gap-2">
             <IoWarning className="h-5 w-5 mr-2" />
-            Failed to load games. Please try again!
+            Failed to load products. Please try again!
             {/* reload page */}
             <button onClick={loadGames} className="bg-white/10 p-2 rounded-lg">
               Reload

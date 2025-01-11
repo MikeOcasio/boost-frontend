@@ -254,7 +254,7 @@ const GameEditPage = ({ params }) => {
                 </Link>
 
                 <Link
-                  href={`/games/${game.parent_id}`}
+                  href={`/products/${game.parent_id}`}
                   target="_blank"
                   className="flex flex-wrap justify-center items-center gap-2 rounded-lg p-2 hover:bg-Gold/50 border border-Gold text-Gold hover:text-white flex-1"
                 >

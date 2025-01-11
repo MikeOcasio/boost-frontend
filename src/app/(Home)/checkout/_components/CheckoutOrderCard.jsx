@@ -12,7 +12,7 @@ export const CheckoutOrderCard = ({ order }) => {
     <div key={order.id} className="flex flex-col gap-1 w-full">
       <div className="flex flex-wrap justify-between bg-white/5 rounded-lg p-2 border border-white/10 hover:border-white/20 gap-2">
         <div className="flex flex-wrap items-center gap-4">
-          <Link href={`/games/${order.id}`}>
+          <Link href={`/products/${order.id}`}>
             {order.image ? (
               <Image
                 src={order.image}
@@ -28,7 +28,7 @@ export const CheckoutOrderCard = ({ order }) => {
           </Link>
 
           <div className="flex flex-col gap-1 justify-between">
-            <Link href={`/games/${order.id}`}>
+            <Link href={`/products/${order.id}`}>
               <p className="text-base font-semibold">
                 {order.name}{" "}
                 <span className="px-2 py-1 rounded-md bg-black/30">
