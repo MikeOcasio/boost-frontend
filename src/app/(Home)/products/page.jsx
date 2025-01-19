@@ -28,6 +28,8 @@ const GamesPage = () => {
     categoryName: "",
     attributeName: "",
     sortBy: "",
+    minPrice: "",
+    maxPrice: "",
   });
 
   const loadGames = async () => {
@@ -106,6 +108,12 @@ const GamesPage = () => {
               (item) => item.id === Number(filter.attribute)
             )
           : true
+      )
+      .filter((game) =>
+        filter.minPrice ? game.price >= Number(filter.minPrice) : true
+      )
+      .filter((game) =>
+        filter.maxPrice ? game.price <= Number(filter.maxPrice) : true
       );
   }, [games, searchTerm, filter]);
 
@@ -226,6 +234,28 @@ const GamesPage = () => {
                           setFilter({
                             ...filter,
                             sortBy: "",
+                          })
+                        }
+                      />
+                    )}
+                    {filter.minPrice && (
+                      <FilterButton
+                        label={`Min $${filter.minPrice}`}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            minPrice: "",
+                          })
+                        }
+                      />
+                    )}
+                    {filter.maxPrice && (
+                      <FilterButton
+                        label={`Max $${filter.maxPrice}`}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            maxPrice: "",
                           })
                         }
                       />

@@ -12,6 +12,7 @@ import { orderStatus } from "@/lib/data";
 import { useUserStore } from "@/store/use-user";
 import { BiCopy, BiImage } from "react-icons/bi";
 import { IoIosArrowRoundForward } from "react-icons/io";
+import { BsDiscord } from "react-icons/bs";
 
 export const OrderDialog = ({
   dialogOpen,
@@ -357,6 +358,16 @@ export const OrderDialog = ({
                 </p>
               </div>
             )}
+
+            {/* discord link */}
+            <Link
+              href="https://discord.gg/Wr9n9EynKQ"
+              target="_blank"
+              className="bg-purple-500/50 py-2 px-4 rounded-lg mx-auto flex items-center justify-center gap-4 w-full"
+            >
+              <BsDiscord className="text-4xl" />
+              <p className="text-center text-lg font-bold">Join Discord</p>
+            </Link>
 
             {/* get credential */}
             {!currentOrder?.platform_credentials && (

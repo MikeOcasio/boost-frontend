@@ -246,7 +246,7 @@ export default function SignIn() {
             className="flex w-full justify-center rounded-md bg-Gold px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-Gold/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Gold gap-2 items-center"
           >
             {loading && <BiLoader className="h-5 w-5 animate-spin" />}
-            Sign in
+            Sign up
           </button>
 
           <p className="text-xs text-center text-white/80">
