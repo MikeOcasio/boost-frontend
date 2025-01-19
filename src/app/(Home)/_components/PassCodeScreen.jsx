@@ -120,7 +120,9 @@ export const PassCodeScreen = ({
   return (
     <form className="flex flex-col gap-4">
       <p className="text-sm -mt-2">
-        Enter the 6-digit passcode shown on your authentication app to continue.
+        Enter the 6-digit passcode shown on your{" "}
+        <span className="font-bold text-Gold">Authentication App</span> or{" "}
+        <span className="font-bold text-Gold">Email</span> to continue.
       </p>
 
       {/* Passcode Field */}

@@ -144,7 +144,11 @@ export const QrCodeDialog = ({
                 <span className="font-semibold flex-1">
                   Our platform requires two-factor authentication (2FA) by
                   default to protect your account and sensitive information,
-                  supporting Authy and Google Authenticator.
+                  supporting{" "}
+                  <span className="font-bold text-Gold">
+                    Authy and Google Authenticator / Email
+                  </span>
+                  .
                 </span>
               </div>
               <div className="text-xs text-white/80 flex gap-2">

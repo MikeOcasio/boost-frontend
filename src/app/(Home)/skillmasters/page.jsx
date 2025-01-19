@@ -187,7 +187,8 @@ const SkillMastersPage = () => {
             {filteredSkillmasters.length > 0 &&
               filteredSkillmasters.map(
                 (skillMaster) =>
-                  !skillMaster?.deleted_at && (
+                  !skillMaster?.deleted_at &&
+                  skillMaster?.image_url && (
                     <SkillmasterCard
                       key={skillMaster.id}
                       skillMaster={skillMaster}
