@@ -9,7 +9,11 @@ import { useRouter } from "next/navigation";
 import { BiLoader } from "react-icons/bi";
 import toast from "react-hot-toast";
 
-import { getQrCode, loginUser } from "@/lib/actions/user-actions";
+import {
+  getOtpOnEmail,
+  getQrCode,
+  loginUser,
+} from "@/lib/actions/user-actions";
 import { useUserStore } from "@/store/use-user";
 import { QrCodeDialog } from "../_components/QrCodeDialog";
 import { ForgotPasswordDialog } from "../_components/ForgotPasswordDialog";
@@ -48,7 +52,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await loginUser({ email, password });
+      const response = await loginUser({ email, password, rememberMe });
 
       if (response.error === "OTP required") {
         setDialogData(response.res);
@@ -64,13 +68,20 @@ export default function Login() {
       ) {
         const qrCode = await loadQrCode(response.token);
 
+        if (!qrCode.qr_code) {
+          await handleEmailVerification();
+        }
+
         setDialogData({
           ...response,
           qr_code: qrCode.qr_code,
           otp_secret: qrCode.otp_secret,
         });
+
         setDialogOpen(true);
       } else {
+        await handleEmailVerification();
+
         setDialogData(response);
         setDialogOpen(true);
       }
@@ -94,6 +105,24 @@ export default function Login() {
     } catch (error) {
       // console.log("Error fetching QR code:", error.message);
       toast.error(error.message);
+    }
+  };
+
+  const handleEmailVerification = async () => {
+    setLoading(true);
+
+    try {
+      const res = await getOtpOnEmail(email);
+
+      if (res.error) {
+        toast.error("Something went wrong. Please try again");
+      } else {
+        toast.success("OTP sent to your email");
+      }
+    } catch (err) {
+      toast.error("Something went wrong. Please try again");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -186,7 +215,7 @@ export default function Login() {
         <p className="mt-10 text-center text-sm text-gray-500">
           Not a member?{" "}
           <Link
-            href="/signin"
+            href="/signup"
             className="font-semibold leading-6 text-blue-600 hover:text-blue-500"
           >
             create an account

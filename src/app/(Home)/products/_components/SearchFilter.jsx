@@ -182,6 +182,36 @@ export const SearchFilter = ({ filter, setFilter }) => {
               </option>
             </select>
 
+            {/* slider price filter range */}
+            <p className="text-xs -mb-3">Filter by price range</p>
+            <div className="flex items-center justify-between gap-2">
+              <input
+                type="number"
+                value={filter.minPrice}
+                onChange={(e) =>
+                  setFilter((prev) => ({
+                    ...prev,
+                    minPrice: e.target.value,
+                  }))
+                }
+                placeholder="Min Price"
+                className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 w-full flex-1"
+              />
+
+              <input
+                type="number"
+                value={filter.maxPrice}
+                onChange={(e) =>
+                  setFilter((prev) => ({
+                    ...prev,
+                    maxPrice: e.target.value,
+                  }))
+                }
+                placeholder="Max Price"
+                className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 w-full flex-1"
+              />
+            </div>
+
             {/* platforms filter */}
             <select
               value={filter.platform}

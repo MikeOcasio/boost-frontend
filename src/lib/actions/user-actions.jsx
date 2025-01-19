@@ -6,11 +6,13 @@ import { cookies } from "next/headers";
 import { apiUrl } from "../api-url";
 
 // set cookie
-export const setCookie = (value) => {
+export const setCookie = (value, rememberMe) => {
+  const time = 60 * 60 * 24;
+
   cookies().set({
     name: "jwtToken",
     value: value,
-    maxAge: 60 * 60 * 24 * 2, // 2 days
+    maxAge: rememberMe ? time * 15 : time * 2, // 15 days or 2 days
     secure: true,
   });
 };
@@ -51,7 +53,7 @@ export const logoutSession = async () => {
 export const loginUser = async ({
   email,
   password,
-  rememberMe = false,
+  rememberMe,
   passcode = null,
 }) => {
   try {
@@ -67,7 +69,7 @@ export const loginUser = async ({
     const { token } = data;
 
     if (token) {
-      setCookie(token);
+      setCookie(token, rememberMe);
     }
 
     return data;
@@ -382,6 +384,37 @@ export const getQrCode = async (token) => {
     console.error("Failed to get qr code:", errorMessage);
     return {
       error: errorMessage || "An error occurred while getting the qr code.",
+    };
+  }
+};
+
+// get otp on email
+export const getOtpOnEmail = async (email) => {
+  const sessionToken = await getSessionToken();
+
+  if (!sessionToken) {
+    return { error: "No token found. Please login again." };
+  }
+
+  try {
+    const { data } = await axios.post(
+      `${apiUrl}/users/2fa/send_otp_email`,
+      { email },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    const errorMessage = error.response?.data || error.message;
+    console.error("Failed to get otp on email:", errorMessage);
+
+    return {
+      error:
+        errorMessage || "An error occurred while getting the otp on email.",
     };
   }
 };
