@@ -47,7 +47,11 @@ const GameCard = ({ game, searchTerm }) => {
         </div>
 
         {/* price */}
-        <p className="text-lg font-bold text-white text-center">{game.price}</p>
+        {game.price && (
+          <p className="text-lg font-bold text-white text-center">
+            ${Number(game.price)?.toFixed(2)}
+          </p>
+        )}
 
         <div className="flex items-center gap-2 flex-wrap w-full text-xs -mt-2">
           <span className="bg-white/10 px-2 rounded-md flex-1 text-center min-w-fit">
