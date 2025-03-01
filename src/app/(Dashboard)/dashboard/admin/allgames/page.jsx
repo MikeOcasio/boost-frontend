@@ -1,24 +1,44 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import { useEffect, useMemo, useState } from "react";
-import { BiLoader } from "react-icons/bi";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { BiLoader, BiSearch } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 
-import { fetchAllGames } from "@/lib/actions/products-action";
+import {
+  fetchAllGames,
+  fetchSearchProducts,
+} from "@/lib/actions/products-action";
 import { AdminGameCard } from "../_components/AdminGameCard";
 import toast from "react-hot-toast";
 import { useUserStore } from "@/store/use-user";
 import { SearchFilter } from "@/app/(Home)/products/_components/SearchFilter";
 import { FilterButton } from "@/components/FilterButton";
+import PaginationWithIcon from "@/template-components/ui/pagination/PaginationWitIcon";
+import { useRouter, useSearchParams } from "next/navigation";
+import { debounce } from "lodash";
 
-const AllGames = () => {
+// Create a wrapper component that uses searchParams
+const AllGamesWrapper = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  return <AllGamesContent searchParams={searchParams} router={router} />;
+};
+
+// Modify the main component to accept searchParams as prop
+const AllGamesContent = ({ searchParams, router }) => {
   const { user } = useUserStore();
 
   const [games, setGames] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchMode, setSearchMode] = useState(false);
+  const [totalProducts, setTotalProducts] = useState(0);
 
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,24 +54,33 @@ const AllGames = () => {
     sortBy: "",
   });
 
+  useEffect(() => {
+    const page = Number(searchParams.get("page")) || 1;
+    setCurrentPage(page);
+  }, [searchParams]);
+
   // Fetch games from API
-  const loadGames = async () => {
+  const loadGames = useCallback(async (page) => {
     setLoading(true);
     setError(false);
 
     try {
-      const result = await fetchAllGames();
+      const result = await fetchAllGames({ page: page, get_all: true });
 
       if (result.error) {
         setError(true);
         toast.error(result.error);
       } else {
+        setTotalProducts(result?.meta?.total_count);
+        const products = result.products;
+
         // sort to newest first
-        const sortedGames = result.sort(
+        const sortedGames = products.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
 
         setGames(sortedGames);
+        setTotalPages(result?.meta?.total_pages);
       }
     } catch (e) {
       setError(true);
@@ -59,11 +88,18 @@ const AllGames = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    loadGames();
-  }, []);
+    const page = searchParams.get("page");
+    const initialPage = page ? parseInt(page) : 1;
+
+    if (initialPage !== currentPage) {
+      setCurrentPage(initialPage);
+    }
+
+    loadGames(initialPage);
+  }, [currentPage, loadGames, searchParams]);
 
   // Helper function: Normalize strings (remove extra spaces and convert to lowercase)
   const normalize = (str) => str?.toLowerCase().replace(/\s+/g, "").trim();
@@ -155,6 +191,117 @@ const AllGames = () => {
       }
     });
 
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (term, page) => {
+        if (term.length > 0) {
+          setLoading(true);
+          try {
+            const result = await fetchSearchProducts({
+              searchTerm: term,
+              page: page || 1,
+            });
+
+            if (result.error) {
+              setError(true);
+              toast.error(result.error);
+            } else {
+              setGames(result.products);
+              setTotalPages(result?.meta?.total_pages);
+
+              // Update URL with search params
+              const params = new URLSearchParams(searchParams.toString());
+              params.set("search", term);
+              if (page === 1) {
+                params.delete("page");
+              } else {
+                params.set("page", page.toString());
+              }
+
+              router.push(
+                `/dashboard/admin/allgames${
+                  params.toString() ? `?${params.toString()}` : ""
+                }`
+              );
+            }
+          } catch (error) {
+            setError(true);
+            toast.error("Failed to search products");
+          } finally {
+            setLoading(false);
+            setSearchMode(false);
+          }
+        } else {
+          // If search term is empty, load all games
+          loadGames(currentPage);
+
+          // Remove search param from URL
+          const params = new URLSearchParams(searchParams.toString());
+          params.delete("search");
+          router.replace(
+            `/dashboard/admin/allgames${
+              params.toString() ? `?${params.toString()}` : ""
+            }`
+          );
+        }
+      }, 2000),
+    [searchParams, router, loadGames]
+  );
+
+  // Update useEffect to handle initial search term from URL
+  useEffect(() => {
+    const initialSearchTerm = searchParams.get("search") || "";
+    const page = Number(searchParams.get("page")) || 1;
+
+    setSearchTerm(initialSearchTerm);
+    setCurrentPage(page);
+
+    if (initialSearchTerm) {
+      debouncedSearch(initialSearchTerm, page);
+    } else if (!loading) {
+      loadGames(page);
+    }
+  }, [searchParams]);
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    debouncedSearch(term, 1); // Reset to page 1 when searching
+  };
+
+  const handlePageChange = useCallback(
+    (page) => {
+      if (page < 1 || page > totalPages || page === currentPage) return;
+
+      setCurrentPage(page);
+
+      // Update URL with new page
+      const params = new URLSearchParams(searchParams.toString());
+      const currentSearchTerm = searchParams.get("search");
+
+      if (page === 1) {
+        params.delete("page");
+      } else {
+        params.set("page", page.toString());
+      }
+
+      router.replace(
+        `/dashboard/admin/allgames${
+          params.toString() ? `?${params.toString()}` : ""
+        }`
+      );
+
+      // Check if there's a search term
+      if (currentSearchTerm) {
+        debouncedSearch(currentSearchTerm, page);
+      } else {
+        loadGames(page);
+      }
+    },
+    [currentPage, totalPages, searchParams, router, debouncedSearch, loadGames]
+  );
+
   if (!user.role === "admin" || !user.role === "dev")
     return <div>You are not authorized to view this page</div>;
 
@@ -162,7 +309,7 @@ const AllGames = () => {
     <div className="space-y-6 mx-auto max-w-7xl">
       <div className="flex flex-wrap gap-4 justify-between items-center">
         <h2 className="text-center text-lg font-semibold">
-          All Products ({games?.length})
+          All Products ({totalProducts})
         </h2>
 
         <Link href="/dashboard/admin/allgames/newgame">
@@ -181,7 +328,7 @@ const AllGames = () => {
           Failed to load Products. Please try again!
           {/* reload */}
           <button
-            onClick={() => loadGames()}
+            onClick={() => loadGames(currentPage || 1)}
             className="p-2 rounded-lg bg-white/10"
           >
             Reload
@@ -198,19 +345,44 @@ const AllGames = () => {
               <>
                 <input
                   type="text"
-                  autoFocus
                   disabled={loading}
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleSearchChange}
+                  onClick={() => setSearchMode(true)}
+                  onBlur={() => setSearchMode(false)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      debouncedSearch(searchTerm, 1);
+                      setSearchMode(false);
+                    }
+                  }}
                   placeholder="Search products..."
-                  className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
+                  className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 z-20"
                 />
 
-                <SearchFilter filter={filter} setFilter={setFilter} />
+                {/* cover foreground */}
+                {searchMode && (
+                  <div className="fixed top-0 left-0 w-screen h-screen bg-white/10 backdrop-blur-lg z-10" />
+                )}
+
+                {/* search button */}
+                {searchMode && (
+                  <button
+                    onClick={() => debouncedSearch(searchTerm, 1)}
+                    className="p-2 rounded-lg bg-white/10 hover:bg-white/20 z-20 flex items-center gap-2"
+                  >
+                    <BiSearch className="h-6 w-6" />
+                    Search
+                  </button>
+                )}
+
+                {!searchMode && (
+                  <SearchFilter filter={filter} setFilter={setFilter} />
+                )}
               </>
             )}
 
-            <div className="flex items-center gap-2 w-full flex-wrap">
+            <div className="flex items-center gap-2 w-full flex-wrap z-20">
               {/* show applied filters */}
               {Object.keys(filter).length > 0 && (
                 <div className="flex items-center gap-2 flex-wrap">
@@ -293,10 +465,26 @@ const AllGames = () => {
               ))
             )}
           </div>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-center pt-4">
+            <PaginationWithIcon
+              totalPages={totalPages}
+              initialPage={currentPage}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </div>
       )}
     </div>
   );
 };
 
-export default AllGames;
+// Update the default export to wrap with Suspense
+export default function Page() {
+  return (
+    <Suspense fallback={<BiLoader className="h-8 w-8 animate-spin mx-auto" />}>
+      <AllGamesWrapper />
+    </Suspense>
+  );
+}

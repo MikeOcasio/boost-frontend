@@ -21,12 +21,12 @@ export default function Home() {
     setError(false);
 
     try {
-      const result = await fetchAllGames();
+      const result = await fetchAllGames({ page: 1 });
       if (result.error) {
         setError(true);
         toast.error(result.error);
       } else {
-        const popularGames = result.filter(
+        const popularGames = result?.products?.filter(
           (game) => game.is_active && game.most_popular
         );
 

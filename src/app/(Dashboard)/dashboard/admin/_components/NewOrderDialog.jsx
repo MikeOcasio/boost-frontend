@@ -54,12 +54,12 @@ export const NewOrderDialog = ({ dialogOpen, onClose, loadOrders }) => {
     try {
       setLoading(true);
 
-      const response = await fetchAllGames();
+      const response = await fetchAllGames({ page: 1 });
 
       if (response.error) {
         toast.error(response.error);
       } else {
-        setAllProducts(response);
+        setAllProducts(response?.products);
       }
     } catch (error) {
       // console.log("Error loading products:", error.message);

@@ -5,13 +5,28 @@ import { getSessionToken } from "./get-session-token";
 import { apiUrl } from "../api-url";
 
 // get all games
-export const fetchAllGames = async () => {
+export const fetchAllGames = async ({ page, get_all = false }) => {
   try {
-    const { data } = await axios.get(`${apiUrl}/api/products`);
+    const { data } = await axios.get(
+      `${apiUrl}/api/products?page=${page}&per_page=48&get_all=${get_all}`
+    );
 
     return data;
   } catch (error) {
     return { error: "Failed to fetch all games. Please try again!" };
+  }
+};
+
+// fetch search products
+export const fetchSearchProducts = async ({ searchTerm, page }) => {
+  try {
+    const { data } = await axios.get(
+      `${apiUrl}/api/products?page=${page}&per_page=48&search=${searchTerm}`
+    );
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch search products. Please try again!" };
   }
 };
 
