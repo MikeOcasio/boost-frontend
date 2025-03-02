@@ -19,7 +19,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { debounce } from "lodash";
 import Link from "next/link";
 
-// Create a wrapper component that uses searchParams
+// Wrapper to pass searchParams
 const GamesPageWrapper = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -27,11 +27,10 @@ const GamesPageWrapper = () => {
   return <GamesPage searchParams={searchParams} router={router} />;
 };
 
-// Modify the main component to accept searchParams as prop
 const GamesPage = ({ searchParams, router }) => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
   const [mostPopularGames, setMostPopularGames] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -59,7 +58,8 @@ const GamesPage = ({ searchParams, router }) => {
 
   const loadGames = useCallback(async (page) => {
     setLoading(true);
-    setError(null);
+    setError(false);
+
     try {
       const result = await fetchAllGames({ page });
 
@@ -67,23 +67,18 @@ const GamesPage = ({ searchParams, router }) => {
         setError(true);
         toast.error(result.error);
       } else {
-        const products = result.products;
-
-        // sorted to latest first
-        products.sort(
+        const products = result.products.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
 
-        const popularGames = products.filter(
-          (game) => game.is_active && game.most_popular
+        setMostPopularGames(
+          products.filter((game) => game.is_active && game.most_popular)
         );
-        setMostPopularGames(popularGames);
-
         setGames(products);
         setTotalPages(result?.meta?.total_pages);
       }
     } catch (error) {
-      console.error("Failed to load products:", error);
+      // console.error("Failed to load products:", error);
 
       setError(true);
       toast.error("An unexpected error occurred.");
@@ -91,17 +86,6 @@ const GamesPage = ({ searchParams, router }) => {
       setLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    const page = searchParams.get("page");
-    const initialPage = page ? parseInt(page) : 1;
-
-    if (initialPage !== currentPage) {
-      setCurrentPage(initialPage);
-    }
-
-    loadGames(initialPage);
-  }, [currentPage, loadGames, searchParams]);
 
   // Helper function: Normalize strings (remove extra spaces and convert to lowercase)
   const normalize = (str) => str?.toLowerCase().replace(/\s+/g, "").trim();
@@ -194,19 +178,15 @@ const GamesPage = ({ searchParams, router }) => {
               // Update URL with search params
               const params = new URLSearchParams(searchParams.toString());
               params.set("search", term);
-              if (page === 1) {
-                params.delete("page");
-              } else {
-                params.set("page", page.toString());
-              }
+              params.set("page", page.toString());
 
-              router.push(
+              router.replace(
                 `/products${params.toString() ? `?${params.toString()}` : ""}`
               );
             }
           } catch (error) {
             setError(true);
-            toast.error("Failed to search products");
+            toast.error("Search error!");
           } finally {
             setLoading(false);
             setSearchMode(false);
@@ -223,61 +203,56 @@ const GamesPage = ({ searchParams, router }) => {
           );
         }
       }, 2000),
-    [searchParams, router, loadGames]
+    [currentPage, loadGames, router, searchParams]
   );
 
-  // Update useEffect to handle initial search term from URL
   useEffect(() => {
-    const initialSearchTerm = searchParams.get("search") || "";
-    const page = Number(searchParams.get("page")) || 1;
+    const searchQuery = searchParams.get("search") || "";
 
-    setSearchTerm(initialSearchTerm);
-    setCurrentPage(page);
-
-    if (initialSearchTerm) {
-      debouncedSearch(initialSearchTerm, page);
-    } else if (!loading) {
-      // Prevent duplicate loading
-      loadGames(page);
+    if (searchQuery && searchTerm !== searchQuery) {
+      setSearchTerm(searchQuery);
+      debouncedSearch(searchQuery, currentPage);
+    } else if (!searchQuery) {
+      loadGames(currentPage);
     }
-  }, [searchParams]);
+    // don't add searchTerm it wont allow to search
+  }, [currentPage, loadGames, searchParams, debouncedSearch]); // eslint-disable-line
 
   // Handle search input change
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
-    debouncedSearch(term, 1); // Reset to page 1 when searching
+    setLoading(true);
+
+    // Cancel any scheduled debounce
+    debouncedSearch.cancel();
+
+    debouncedSearch(term, 1);
   };
 
-  const handlePageChange = useCallback(
-    (page) => {
-      if (page < 1 || page > totalPages || page === currentPage) return;
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages || page === currentPage) return;
 
-      setCurrentPage(page);
+    setCurrentPage(page);
 
-      // Update URL with new page
-      const params = new URLSearchParams(searchParams.toString());
-      const currentSearchTerm = searchParams.get("search");
+    // Update URL with new page
+    const params = new URLSearchParams(searchParams.toString());
+    const currentSearchTerm = searchParams.get("search");
 
-      if (page === 1) {
-        params.delete("page");
-      } else {
-        params.set("page", page.toString());
-      }
+    params.set("page", page.toString());
+    router.replace(
+      `/products${params.toString() ? `?${params.toString()}` : ""}`
+    );
 
-      router.replace(
-        `/products${params.toString() ? `?${params.toString()}` : ""}`
-      );
+    if (currentSearchTerm) {
+      debouncedSearch(currentSearchTerm, page);
+    }
+  };
 
-      // Check if there's a search term
-      if (currentSearchTerm) {
-        debouncedSearch(currentSearchTerm, page);
-      } else {
-        loadGames(page);
-      }
-    },
-    [currentPage, totalPages, searchParams, router, debouncedSearch, loadGames]
-  );
+  const handleSearchButton = () => {
+    debouncedSearch(searchTerm, 1);
+    setSearchMode(false);
+  };
 
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4 overflow-hidden text-white">
@@ -296,7 +271,7 @@ const GamesPage = ({ searchParams, router }) => {
           Failed to load products. Please try again!
           {/* reload */}
           <button
-            onClick={() => loadGames(currentPage || 1)}
+            onClick={() => loadGames(currentPage)}
             className="p-2 rounded-lg bg-white/10"
           >
             Reload
@@ -319,15 +294,21 @@ const GamesPage = ({ searchParams, router }) => {
               {/* Search bar */}
               <input
                 type="text"
-                disabled={loading}
                 value={searchTerm}
                 onChange={handleSearchChange}
                 onClick={() => setSearchMode(true)}
                 onBlur={() => setSearchMode(false)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    debouncedSearch(searchTerm, 1);
                     setSearchMode(false);
+
+                    if (
+                      searchTerm?.trim()?.length > 0 &&
+                      searchTerm !== searchParams.get("search")
+                    ) {
+                      debouncedSearch.cancel(); // Cancel any scheduled debounce
+                      debouncedSearch(searchTerm, 1); // execute search immediately
+                    }
                   }
                 }}
                 placeholder="Search products..."
@@ -342,7 +323,7 @@ const GamesPage = ({ searchParams, router }) => {
               {/* search button */}
               {searchMode && (
                 <button
-                  onClick={() => debouncedSearch(searchTerm, 1)}
+                  onClick={handleSearchButton}
                   className="p-2 rounded-lg bg-white/10 hover:bg-white/20 z-20 flex items-center gap-2"
                 >
                   <BiSearch className="h-6 w-6" />

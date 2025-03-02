@@ -91,7 +91,7 @@ const GameCard = ({ game, searchTerm }) => {
                 className="h-6 w-5 flex-none text-green-500"
                 aria-hidden="true"
               />
-              {highlightMatch(feature, searchTerm)}
+              <span>{highlightMatch(feature, searchTerm)}</span>
             </li>
           ))}
         </ul>

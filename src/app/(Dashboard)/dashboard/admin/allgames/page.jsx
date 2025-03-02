@@ -245,7 +245,7 @@ const AllGamesContent = ({ searchParams, router }) => {
           );
         }
       }, 2000),
-    [searchParams, router, loadGames]
+    [searchParams, router, loadGames, currentPage]
   );
 
   // Update useEffect to handle initial search term from URL
@@ -261,7 +261,7 @@ const AllGamesContent = ({ searchParams, router }) => {
     } else if (!loading) {
       loadGames(page);
     }
-  }, [searchParams]);
+  }, [debouncedSearch, loadGames, loading, searchParams]);
 
   // Handle search input change
   const handleSearchChange = (e) => {
