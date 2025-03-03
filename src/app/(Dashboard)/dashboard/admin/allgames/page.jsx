@@ -20,7 +20,7 @@ import PaginationWithIcon from "@/template-components/ui/pagination/PaginationWi
 import { useRouter, useSearchParams } from "next/navigation";
 import { debounce } from "lodash";
 
-// Create a wrapper component that uses searchParams
+// Wrapper to pass searchParams
 const AllGamesWrapper = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -28,7 +28,6 @@ const AllGamesWrapper = () => {
   return <AllGamesContent searchParams={searchParams} router={router} />;
 };
 
-// Modify the main component to accept searchParams as prop
 const AllGamesContent = ({ searchParams, router }) => {
   const { user } = useUserStore();
 
@@ -71,16 +70,14 @@ const AllGamesContent = ({ searchParams, router }) => {
         setError(true);
         toast.error(result.error);
       } else {
-        setTotalProducts(result?.meta?.total_count);
-        const products = result.products;
-
         // sort to newest first
-        const sortedGames = products.sort(
+        const sortedGames = result?.products.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
 
         setGames(sortedGames);
         setTotalPages(result?.meta?.total_pages);
+        setTotalProducts(result?.meta?.total_count);
       }
     } catch (e) {
       setError(true);
@@ -89,17 +86,6 @@ const AllGamesContent = ({ searchParams, router }) => {
       setLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    const page = searchParams.get("page");
-    const initialPage = page ? parseInt(page) : 1;
-
-    if (initialPage !== currentPage) {
-      setCurrentPage(initialPage);
-    }
-
-    loadGames(initialPage);
-  }, [currentPage, loadGames, searchParams]);
 
   // Helper function: Normalize strings (remove extra spaces and convert to lowercase)
   const normalize = (str) => str?.toLowerCase().replace(/\s+/g, "").trim();
@@ -196,6 +182,7 @@ const AllGamesContent = ({ searchParams, router }) => {
       debounce(async (term, page) => {
         if (term.length > 0) {
           setLoading(true);
+
           try {
             const result = await fetchSearchProducts({
               searchTerm: term,
@@ -212,13 +199,9 @@ const AllGamesContent = ({ searchParams, router }) => {
               // Update URL with search params
               const params = new URLSearchParams(searchParams.toString());
               params.set("search", term);
-              if (page === 1) {
-                params.delete("page");
-              } else {
-                params.set("page", page.toString());
-              }
+              params.set("page", page.toString());
 
-              router.push(
+              router.replace(
                 `/dashboard/admin/allgames${
                   params.toString() ? `?${params.toString()}` : ""
                 }`
@@ -226,7 +209,7 @@ const AllGamesContent = ({ searchParams, router }) => {
             }
           } catch (error) {
             setError(true);
-            toast.error("Failed to search products");
+            toast.error("Search error!");
           } finally {
             setLoading(false);
             setSearchMode(false);
@@ -245,62 +228,58 @@ const AllGamesContent = ({ searchParams, router }) => {
           );
         }
       }, 2000),
-    [searchParams, router, loadGames, currentPage]
+    [currentPage, loadGames, router, searchParams]
   );
 
-  // Update useEffect to handle initial search term from URL
   useEffect(() => {
-    const initialSearchTerm = searchParams.get("search") || "";
-    const page = Number(searchParams.get("page")) || 1;
+    const searchQuery = searchParams.get("search") || "";
 
-    setSearchTerm(initialSearchTerm);
-    setCurrentPage(page);
-
-    if (initialSearchTerm) {
-      debouncedSearch(initialSearchTerm, page);
-    } else if (!loading) {
-      loadGames(page);
+    if (searchQuery && searchTerm !== searchQuery) {
+      setSearchTerm(searchQuery);
+      debouncedSearch(searchQuery, currentPage);
+    } else if (!searchQuery) {
+      loadGames(currentPage);
     }
-  }, [debouncedSearch, loadGames, loading, searchParams]);
+    // don't add searchTerm it wont allow to search
+  }, [currentPage, loadGames, searchParams, debouncedSearch]); // eslint-disable-line
 
   // Handle search input change
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
-    debouncedSearch(term, 1); // Reset to page 1 when searching
+    setLoading(true);
+
+    // Cancel any scheduled debounce
+    debouncedSearch.cancel();
+
+    debouncedSearch(term, 1);
   };
 
-  const handlePageChange = useCallback(
-    (page) => {
-      if (page < 1 || page > totalPages || page === currentPage) return;
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages || page === currentPage) return;
 
-      setCurrentPage(page);
+    setCurrentPage(page);
 
-      // Update URL with new page
-      const params = new URLSearchParams(searchParams.toString());
-      const currentSearchTerm = searchParams.get("search");
+    // Update URL with new page
+    const params = new URLSearchParams(searchParams.toString());
+    const currentSearchTerm = searchParams.get("search");
 
-      if (page === 1) {
-        params.delete("page");
-      } else {
-        params.set("page", page.toString());
-      }
+    params.set("page", page.toString());
+    router.replace(
+      `/dashboard/admin/allgames${
+        params.toString() ? `?${params.toString()}` : ""
+      }`
+    );
 
-      router.replace(
-        `/dashboard/admin/allgames${
-          params.toString() ? `?${params.toString()}` : ""
-        }`
-      );
+    if (currentSearchTerm) {
+      debouncedSearch(currentSearchTerm, page);
+    }
+  };
 
-      // Check if there's a search term
-      if (currentSearchTerm) {
-        debouncedSearch(currentSearchTerm, page);
-      } else {
-        loadGames(page);
-      }
-    },
-    [currentPage, totalPages, searchParams, router, debouncedSearch, loadGames]
-  );
+  const handleSearchButton = () => {
+    debouncedSearch(searchTerm, 1);
+    setSearchMode(false);
+  };
 
   if (!user.role === "admin" || !user.role === "dev")
     return <div>You are not authorized to view this page</div>;
@@ -337,144 +316,153 @@ const AllGamesContent = ({ searchParams, router }) => {
       )}
 
       {!loading && !error && games?.length < 1 ? (
-        <p className="w-full">No games found!</p>
+        <p className="w-full flex items-center justify-center gap-2">
+          No games found!
+          <Link href="/" className="text-blue-400 hover:underline">
+            go home
+          </Link>
+        </p>
       ) : (
-        <div className="space-y-6">
-          <div className="flex flex-wrap items-center gap-4">
-            {!loading && (
-              <>
-                <input
-                  type="text"
-                  disabled={loading}
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  onClick={() => setSearchMode(true)}
-                  onBlur={() => setSearchMode(false)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      debouncedSearch(searchTerm, 1);
-                      setSearchMode(false);
+        games.length > 0 && (
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center gap-4">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                onClick={() => setSearchMode(true)}
+                onBlur={() => setSearchMode(false)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setSearchMode(false);
+
+                    if (
+                      searchTerm?.trim()?.length > 0 &&
+                      searchTerm !== searchParams.get("search")
+                    ) {
+                      debouncedSearch.cancel(); // Cancel any scheduled debounce
+                      debouncedSearch(searchTerm, 1); // execute search immediately
                     }
-                  }}
-                  placeholder="Search products..."
-                  className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 z-20"
-                />
+                  }
+                }}
+                placeholder="Search products..."
+                className="flex-1 min-w-fit p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20 z-20"
+              />
 
-                {/* cover foreground */}
-                {searchMode && (
-                  <div className="fixed top-0 left-0 w-screen h-screen bg-white/10 backdrop-blur-lg z-10" />
+              {/* cover foreground */}
+              {searchMode && (
+                <div className="fixed top-0 left-0 w-screen h-screen bg-white/10 backdrop-blur-lg z-10" />
+              )}
+
+              {/* search button */}
+              {searchMode && (
+                <button
+                  onClick={handleSearchButton}
+                  className="p-2 rounded-lg bg-white/10 hover:bg-white/20 z-20 flex items-center gap-2"
+                >
+                  <BiSearch className="h-6 w-6" />
+                  Search
+                </button>
+              )}
+
+              {!searchMode && (
+                <SearchFilter filter={filter} setFilter={setFilter} />
+              )}
+
+              <div className="flex items-center gap-2 w-full flex-wrap z-20">
+                {/* show applied filters */}
+                {Object.keys(filter).length > 0 && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {filter.mostPopular && (
+                      <FilterButton
+                        label="Most Popular"
+                        onRemove={() =>
+                          setFilter({ ...filter, mostPopular: false })
+                        }
+                      />
+                    )}
+                    {filter.active && (
+                      <FilterButton
+                        label="Active"
+                        onRemove={() => setFilter({ ...filter, active: false })}
+                      />
+                    )}
+                    {filter.category && (
+                      <FilterButton
+                        label={filter.categoryName}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            category: "",
+                            categoryName: "",
+                          })
+                        }
+                      />
+                    )}
+                    {filter.platform && (
+                      <FilterButton
+                        label={filter.platformName}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            platform: "",
+                            platformName: "",
+                          })
+                        }
+                      />
+                    )}
+                    {filter.attribute && (
+                      <FilterButton
+                        label={filter.attributeName}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            attribute: "",
+                            attributeName: "",
+                          })
+                        }
+                      />
+                    )}
+                    {filter.sortBy && (
+                      <FilterButton
+                        label={filter.sortBy}
+                        onRemove={() =>
+                          setFilter({
+                            ...filter,
+                            sortBy: "",
+                          })
+                        }
+                      />
+                    )}
+                  </div>
                 )}
+              </div>
+            </div>
 
-                {/* search button */}
-                {searchMode && (
-                  <button
-                    onClick={() => debouncedSearch(searchTerm, 1)}
-                    className="p-2 rounded-lg bg-white/10 hover:bg-white/20 z-20 flex items-center gap-2"
-                  >
-                    <BiSearch className="h-6 w-6" />
-                    Search
-                  </button>
-                )}
-
-                {!searchMode && (
-                  <SearchFilter filter={filter} setFilter={setFilter} />
-                )}
-              </>
-            )}
-
-            <div className="flex items-center gap-2 w-full flex-wrap z-20">
-              {/* show applied filters */}
-              {Object.keys(filter).length > 0 && (
-                <div className="flex items-center gap-2 flex-wrap">
-                  {filter.mostPopular && (
-                    <FilterButton
-                      label="Most Popular"
-                      onRemove={() =>
-                        setFilter({ ...filter, mostPopular: false })
-                      }
-                    />
-                  )}
-                  {filter.active && (
-                    <FilterButton
-                      label="Active"
-                      onRemove={() => setFilter({ ...filter, active: false })}
-                    />
-                  )}
-                  {filter.category && (
-                    <FilterButton
-                      label={filter.categoryName}
-                      onRemove={() =>
-                        setFilter({
-                          ...filter,
-                          category: "",
-                          categoryName: "",
-                        })
-                      }
-                    />
-                  )}
-                  {filter.platform && (
-                    <FilterButton
-                      label={filter.platformName}
-                      onRemove={() =>
-                        setFilter({
-                          ...filter,
-                          platform: "",
-                          platformName: "",
-                        })
-                      }
-                    />
-                  )}
-                  {filter.attribute && (
-                    <FilterButton
-                      label={filter.attributeName}
-                      onRemove={() =>
-                        setFilter({
-                          ...filter,
-                          attribute: "",
-                          attributeName: "",
-                        })
-                      }
-                    />
-                  )}
-                  {filter.sortBy && (
-                    <FilterButton
-                      label={filter.sortBy}
-                      onRemove={() =>
-                        setFilter({
-                          ...filter,
-                          sortBy: "",
-                        })
-                      }
-                    />
-                  )}
-                </div>
+            <div className="flex flex-col gap-4">
+              {!loading && !error && filteredGames?.length < 1 ? (
+                <p className="text-center w-full">No games found!</p>
+              ) : (
+                sortedGames?.map((game) => (
+                  <AdminGameCard
+                    key={game.id}
+                    game={game}
+                    searchTerm={searchTerm}
+                  />
+                ))
               )}
             </div>
-          </div>
 
-          <div className="flex flex-col gap-4">
-            {!loading && !error && filteredGames?.length < 1 ? (
-              <p className="text-center w-full">No games found!</p>
-            ) : (
-              sortedGames?.map((game) => (
-                <AdminGameCard
-                  key={game.id}
-                  game={game}
-                  searchTerm={searchTerm}
-                />
-              ))
-            )}
+            {/* Pagination */}
+            <div className="flex items-center justify-center pt-4">
+              <PaginationWithIcon
+                totalPages={totalPages}
+                initialPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            </div>
           </div>
-
-          {/* Pagination */}
-          <div className="flex items-center justify-center pt-4">
-            <PaginationWithIcon
-              totalPages={totalPages}
-              initialPage={currentPage}
-              onPageChange={handlePageChange}
-            />
-          </div>
-        </div>
+        )
       )}
     </div>
   );
