@@ -344,6 +344,14 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
       label: selectedCategory?.name || "",
       href: "/dashboard/admin/allgames?search=" + selectedCategory?.name,
     },
+    ...(game?.parent_id
+      ? [
+          {
+            label: game.parent_name || "Parent Product",
+            href: `/dashboard/admin/allgames/${game?.parent_id}`,
+          },
+        ]
+      : []),
     {
       label: game?.name || "",
       href: "/dashboard/admin/allgames?search=" + game?.name,

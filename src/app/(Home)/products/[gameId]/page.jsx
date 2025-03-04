@@ -15,6 +15,9 @@ import { useCartStore } from "@/store/use-cart";
 import { SliderQty } from "../_components/SliderQty";
 import { SubProductsList } from "../_components/SubProductsList";
 import Breadcrumb from "@/template-components/ui/breadcrumb/Breadcrumb";
+import TrustBox from "@/components/TrustBox";
+import Head from "next/head";
+import Script from "next/script";
 
 const GamePage = ({ params }) => {
   const router = useRouter();
@@ -237,8 +240,18 @@ const GamePage = ({ params }) => {
       label: game?.category?.name,
       href: `/products/?search=${game?.category?.name}`,
     },
+    ...(game?.parent_id
+      ? [
+          {
+            label: game.parent_name || "Parent Product",
+            href: `/products/${game?.parent_id}`,
+          },
+        ]
+      : []),
     { label: game?.name, href: `/products/${game?.id}` },
   ];
+
+  console.log("game data", game);
 
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen p-4">
@@ -562,14 +575,20 @@ const GamePage = ({ params }) => {
                 )}
 
                 {/* Trustpilot Widget */}
-                <div
+                {/* <div
                   className="trustpilot-widget"
                   data-locale="en-US"
-                  data-template-id="5419b6a8b0d04a076446a9ad"
-                  data-businessunit-id="ravenboost.com"
+                  // data-template-id="5419b6a8b0d04a076446a9ad"
+                  // data-businessunit-id="Se8Pwtz3B7Secf3w"
+                  // data-style-height="24px"
+                  // data-style-width="100%"
+                  // data-theme="light"
+                  data-template-id="5419b6ffb0d04a076446a9af"
+                  data-businessunit-id="5c9df8263ff4c4000185ea05"
                   data-style-height="24px"
-                  data-style-width="100%"
-                  data-theme="light"
+                  data-sku="PBC2"
+                  data-no-reviews="hide"
+                  data-scroll-to-list="true"
                 >
                   <a
                     href="https://www.trustpilot.com/review/ravenboost.com"
@@ -579,10 +598,14 @@ const GamePage = ({ params }) => {
                     Trustpilot
                   </a>
                 </div>
-                <script
+
+                <Script
+                  type="text/javascript"
+                  src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
                   async
-                  src="https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
-                ></script>
+                ></Script>
+
+                <TrustBox /> */}
               </div>
             </div>
 

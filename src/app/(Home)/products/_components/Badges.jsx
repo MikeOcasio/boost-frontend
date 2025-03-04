@@ -11,6 +11,7 @@ import {
   fetchProductByCategories,
 } from "@/lib/actions/products-action";
 import RelatedGameCard from "./RelatedGameCard";
+import GameCard from "@/components/GameCard";
 
 const Badges = ({
   categoryId,
@@ -155,13 +156,13 @@ const Badges = ({
             {/* Scrollable Game Cards */}
             <div
               ref={scrollContainerRef}
-              className="flex h-full gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar"
+              className="flex h-full w-full gap-12 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar py-4"
             >
               {categoryId
                 ? productCategories?.map(
                     (game, index) =>
                       game.is_active && (
-                        <RelatedGameCard
+                        <GameCard
                           key={game.id}
                           index={index}
                           game={game}
@@ -173,7 +174,7 @@ const Badges = ({
                 : productAttribute?.map(
                     (game, index) =>
                       game.is_active && (
-                        <RelatedGameCard
+                        <GameCard
                           key={game.id}
                           index={index}
                           game={game}

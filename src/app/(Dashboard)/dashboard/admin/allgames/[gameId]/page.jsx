@@ -25,7 +25,6 @@ const GameEditPage = ({ params }) => {
 
   // Sub product dialog
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [showSubProducts, setShowSubProducts] = useState(false);
 
   const fetchGames = useCallback(async () => {
     setLoading(true);
