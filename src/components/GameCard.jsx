@@ -58,7 +58,7 @@ const GameCard = ({ game, searchTerm, primary_color, secondary_color }) => {
             className="absolute -z-10 top-0 left-0 w-full h-full rounded-md"
             style={{
               background: `linear-gradient(to bottom, transparent, ${
-                secondary_color ? secondary_color + 70 : "#3a064dff"
+                secondary_color ? secondary_color + "e0" : "#3a064d"
               } , ${secondary_color || "#3a064d"})`,
             }}
           />
