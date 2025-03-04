@@ -14,6 +14,7 @@ import Badges from "../_components/Badges";
 import { useCartStore } from "@/store/use-cart";
 import { SliderQty } from "../_components/SliderQty";
 import { SubProductsList } from "../_components/SubProductsList";
+import Breadcrumb from "@/template-components/ui/breadcrumb/Breadcrumb";
 
 const GamePage = ({ params }) => {
   const router = useRouter();
@@ -229,6 +230,16 @@ const GamePage = ({ params }) => {
     }
   }, [selectedDropdown, selectedDropdown2, game?.slider_range]);
 
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Products", href: "/products" },
+    {
+      label: game?.category?.name,
+      href: `/products/?search=${game?.category?.name}`,
+    },
+    { label: game?.name, href: `/products/${game?.id}` },
+  ];
+
   return (
     <div className="pt-24 max-w-7xl mx-auto min-h-screen p-4">
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
@@ -290,9 +301,11 @@ const GamePage = ({ params }) => {
               </div>
 
               <div className="relative z-10 flex flex-col gap-4 flex-1 max-w-3xl">
-                <p className="text-xs -mb-4 font-semibold">
+                <Breadcrumb items={breadcrumbItems} variant="chevron" />
+
+                {/* <p className="text-xs -mb-4 font-semibold">
                   {game.category.name}
-                </p>
+                </p> */}
 
                 <h3 className="text-2xl font-bold">{game.name}</h3>
                 <p className="text-lg text-white/80">{game.tag_line}</p>
@@ -547,6 +560,29 @@ const GamePage = ({ params }) => {
                     )}
                   </>
                 )}
+
+                {/* Trustpilot Widget */}
+                <div
+                  className="trustpilot-widget"
+                  data-locale="en-US"
+                  data-template-id="5419b6a8b0d04a076446a9ad"
+                  data-businessunit-id="ravenboost.com"
+                  data-style-height="24px"
+                  data-style-width="100%"
+                  data-theme="light"
+                >
+                  <a
+                    href="https://www.trustpilot.com/review/ravenboost.com"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Trustpilot
+                  </a>
+                </div>
+                <script
+                  async
+                  src="https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
+                ></script>
               </div>
             </div>
 

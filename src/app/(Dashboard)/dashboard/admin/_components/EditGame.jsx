@@ -24,11 +24,12 @@ import { fetchCategories } from "@/lib/actions/categories-actions";
 import { fetchAttribute } from "@/lib/actions/attributes-action";
 import { fetchPlatforms } from "@/lib/actions/platforms-action";
 import { AiOutlineInsertRowBelow } from "react-icons/ai";
+import Breadcrumb from "@/template-components/ui/breadcrumb/Breadcrumb";
 
 export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
   const router = useRouter();
 
-  const [initialValues, setInitialValues] = useState(data || getDefaultGame());
+  const initialValues = data || getDefaultGame();
   const [game, setGame] = useState(data || getDefaultGame());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -332,6 +333,23 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
     });
   };
 
+  const selectedCategory = categories.find(
+    (category) => category.id === game.category_id
+  );
+
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/dashboard" },
+    { label: "All Games", href: "/dashboard/admin/allgames" },
+    {
+      label: selectedCategory?.name || "",
+      href: "/dashboard/admin/allgames?search=" + selectedCategory?.name,
+    },
+    {
+      label: game?.name || "",
+      href: "/dashboard/admin/allgames?search=" + game?.name,
+    },
+  ];
+
   if (loading) {
     return <BiLoader className="h-8 w-8 animate-spin mx-auto" />;
   }
@@ -388,7 +406,7 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
       {/* id */}
       {data?.id && (
         <Button
-          onClick={(e) => {
+          onClick={() => {
             navigator.clipboard.writeText(data?.id);
 
             toast.success("Copied to clipboard!");
@@ -399,6 +417,9 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
           <IoCopy className="h-8 w-8 ml-2 p-2 hover:bg-black/10 rounded-lg" />
         </Button>
       )}
+
+      {/* breadcrumb */}
+      <Breadcrumb items={breadcrumbItems} variant="chevron" />
 
       {/* Switches for Priority, Active, Popular */}
       <div className="flex flex-wrap gap-4 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20 ">
