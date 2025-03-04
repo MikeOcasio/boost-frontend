@@ -45,13 +45,26 @@ const GameCard = ({ game, searchTerm, primary_color, secondary_color }) => {
           )}
 
           <Image
+            src={game.bg_image || "/game/empty-image.gif"}
+            alt={game.name}
+            width={200}
+            height={200}
+            priority
+            className={clsx(
+              "absolute top-0 left-0 -z-30 mx-auto w-full h-full object-cover !rounded-md group-hover:scale-110 transition-all duration-500 blur-md"
+            )}
+          />
+
+          <Image
             src={game.image || "/game/empty-image.gif"}
             alt={game.name}
             quality={100}
             width={200}
             height={200}
             priority
-            className="absolute top-0 left-0 -z-30 mx-auto w-full h-[90%] object-cover !rounded-md group-hover:scale-110 transition-all duration-500"
+            className={clsx(
+              "absolute top-0 left-0 -z-20 mx-auto w-full h-[50%] object-contain !rounded-md group-hover:scale-110 transition-all duration-500"
+            )}
           />
 
           <div
@@ -112,7 +125,7 @@ const GameCard = ({ game, searchTerm, primary_color, secondary_color }) => {
               ))}
             </ul>
 
-            <div className="flex justify-between gap-2 flex-wrap mt-2">
+            <div className="flex justify-between items-end gap-2 flex-wrap mt-2">
               {/* price */}
               {game.price ? (
                 <p className="text-lg font-bold text-white text-center flex items-end gap-2">
