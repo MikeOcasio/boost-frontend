@@ -323,7 +323,7 @@ const AllGamesContent = ({ searchParams, router }) => {
           </Link>
         </p>
       ) : (
-        games.length > 0 && (
+        games?.length > 0 && (
           <div className="space-y-6">
             <div className="flex flex-wrap items-center gap-4">
               <input
