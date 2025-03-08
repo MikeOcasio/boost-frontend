@@ -52,14 +52,14 @@ export const HomeGameCarousel = ({ data }) => {
           showIndicators={false}
           centerMode={true}
           showThumbs={false}
+          showArrows={false}
           centerSlidePercentage={centerSlidePercentage}
         >
-          {data?.map((game, index) => (
+          {data?.map((game) => (
             <div key={game.id} className="flex justify-center w-full h-full">
               <div
                 className={clsx(
-                  "h-full w-full duration-500 ease-in-out scale-90 flex-1",
-                  index === currentIndex && "scale-95"
+                  "h-full w-full duration-500 ease-in-out scale-90 flex-1"
                 )}
               >
                 <GameCard game={game} />

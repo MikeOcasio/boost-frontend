@@ -18,10 +18,20 @@ export const fetchAllGames = async ({ page, get_all = false }) => {
 };
 
 // fetch search products
-export const fetchSearchProducts = async ({ searchTerm, page }) => {
+export const fetchSearchProducts = async ({
+  searchTerm,
+  page,
+  category_id,
+  platform_id,
+  attribute_id,
+}) => {
   try {
     const { data } = await axios.get(
-      `${apiUrl}/api/products?page=${page}&per_page=48&search=${searchTerm}`
+      `${apiUrl}/api/products?page=${page || ""}&per_page=48&search=${
+        searchTerm || ""
+      }&category_id=${category_id || ""}&platform_id=${
+        platform_id || ""
+      }&attribute_id=${attribute_id || ""}`
     );
 
     return data;

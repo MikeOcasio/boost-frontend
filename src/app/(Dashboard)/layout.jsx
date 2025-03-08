@@ -13,6 +13,7 @@ import { Footer } from "@/components/Footer";
 import { useUserStore } from "@/store/use-user";
 import { fetchCurrentUser } from "@/lib/actions/user-actions";
 import { Button } from "@/components/Button";
+import VerifyAppStatus from "@/components/verify-app-status";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
@@ -104,6 +105,7 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <>
+      <VerifyAppStatus />
       {/* Background */}
       <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
       <Navbar />

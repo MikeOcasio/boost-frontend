@@ -17,6 +17,7 @@ export const QrCodeDialog = ({
   password,
   dialogData,
   rememberMe,
+  maintenance = false,
 }) => {
   const [passCodeScreen, setPassCodeScreen] = useState(false);
   const [verificationMethod, setVerificationMethod] = useState("email");
@@ -196,6 +197,7 @@ export const QrCodeDialog = ({
               password={password}
               dialogData={dialogData}
               rememberMe={rememberMe}
+              maintenance={maintenance}
             />
           )}
         </DialogPanel>

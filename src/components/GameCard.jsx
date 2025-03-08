@@ -35,7 +35,7 @@ const GameCard = ({ game, searchTerm, primary_color, secondary_color }) => {
       >
         <div
           className={clsx(
-            "flex overflow-hidden flex-col justify-between w-full md:min-w-[350px] h-[500px] rounded-md bg-CardPlum p-4 md:p-6 shadow-xl drop-shadow-xl hover:border-Gold gap-4 relative group"
+            "flex overflow-hidden flex-col justify-between w-full min-w-[300px] h-[500px] rounded-md bg-CardPlum p-4 md:p-6 shadow-xl drop-shadow-xl hover:border-Gold gap-4 relative group"
           )}
         >
           {game.most_popular && (
@@ -77,36 +77,37 @@ const GameCard = ({ game, searchTerm, primary_color, secondary_color }) => {
           />
 
           {/* <div className="flex items-center gap-2 flex-wrap w-full text-xs -mt-2">
-          <span className="bg-white/10 px-2 rounded-md flex-1 text-center min-w-fit">
-            {highlightMatch(game.category?.name, searchTerm)}
-          </span>
+            <span className="bg-white/10 px-2 rounded-md flex-1 text-center min-w-fit">
+              {highlightMatch(game.category?.name, searchTerm)}
+            </span>
 
-          {game.platforms?.map((platform) => (
-            <p
-              key={platform.id}
-              className="bg-black/20 px-2 rounded-md flex-1 text-center"
-            >
-              {highlightMatch(platform.name, searchTerm)}
-            </p>
-          ))}
-        </div> */}
+            {game.platforms?.map((platform) => (
+              <p
+                key={platform.id}
+                className="bg-black/20 px-2 rounded-md flex-1 text-center"
+              >
+                {highlightMatch(platform.name, searchTerm)}
+              </p>
+            ))}
+          </div> */}
 
           {/* <p className="text-xs text-white/70 font-semibold text-center">
-              {game.tag_line?.length > 50
-                ? highlightMatch(game.tag_line, searchTerm).slice(0, 50) + "..."
-                : highlightMatch(game.tag_line, searchTerm)}
-            </p> */}
+            {game.tag_line?.length > 50
+              ? highlightMatch(game.tag_line, searchTerm).slice(0, 50) + "..."
+              : highlightMatch(game.tag_line, searchTerm)}
+          </p> */}
 
           <div className="relative mt-auto flex flex-col gap-3">
             <p className="text-xl md:text-2xl font-bold leading-6 text-white capitalize text-left">
               {game.name?.length > 50
-                ? highlightMatch(game.name, searchTerm).slice(0, 50) + "..."
+                ? highlightMatch(game.name, searchTerm).slice(0, 50)
                 : highlightMatch(game.name, searchTerm)}
+              {game.name?.length > 50 && " ..."}
             </p>
 
             <ul
               role="list"
-              className="space-y-1 text-sm text-left leading-6 text-white/90 px-2"
+              className="space-y-1 text-sm text-left leading-6 text-white/90 px-2 max-h-[220px] overflow-auto"
             >
               {game.features?.slice(0, 4).map((feature, index) => (
                 <li key={index} className="flex gap-x-3">
@@ -118,8 +119,9 @@ const GameCard = ({ game, searchTerm, primary_color, secondary_color }) => {
                     className={clsx("font-bold", index === 0 && "text-Gold")}
                   >
                     {feature?.length > 40
-                      ? highlightMatch(feature, searchTerm).slice(0, 40) + "..."
+                      ? highlightMatch(feature, searchTerm).slice(0, 40)
                       : highlightMatch(feature, searchTerm)}
+                    {feature?.length > 40 && " ..."}
                   </span>
                 </li>
               ))}

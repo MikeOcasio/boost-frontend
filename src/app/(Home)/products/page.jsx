@@ -115,30 +115,50 @@ const GamesPage = ({ searchParams, router }) => {
       })
       .filter((game) => (filter.mostPopular ? game.most_popular : true))
       .filter((game) => (filter.active ? game.is_active : true))
-      .filter((game) =>
-        filter.category ? game.category_id === Number(filter.category) : true
-      )
-      .filter((game) =>
-        filter.platform
-          ? game.platforms.some(
-              (platform) => platform.id === Number(filter.platform)
-            )
-          : true
-      )
-      .filter((game) =>
-        filter.attribute
-          ? game.prod_attr_cats.some(
-              (item) => item.id === Number(filter.attribute)
-            )
-          : true
-      )
+      .filter((game) => {
+        if (filter.category) {
+          const params = new URLSearchParams(searchParams.toString());
+          params.set("category_id", filter.category);
+          params.set("category_name", filter.categoryName);
+          router.replace(`/products?${params.toString()}`);
+          return game.category_id === Number(filter.category);
+        } else {
+          return true;
+        }
+      })
+      .filter((game) => {
+        if (filter.platform) {
+          const params = new URLSearchParams(searchParams.toString());
+          params.set("platform_id", filter.platform);
+          params.set("platform_name", filter.platformName);
+          router.replace(`/products?${params.toString()}`);
+          return game.platforms.some(
+            (platform) => platform.id === Number(filter.platform)
+          );
+        } else {
+          return true;
+        }
+      })
+      .filter((game) => {
+        if (filter.attribute) {
+          const params = new URLSearchParams(searchParams.toString());
+          params.set("attribute_id", filter.attribute);
+          params.set("attribute_name", filter.attributeName);
+          router.replace(`/products?${params.toString()}`);
+          return game.prod_attr_cats.some(
+            (item) => item.id === Number(filter.attribute)
+          );
+        } else {
+          return true;
+        }
+      })
       .filter((game) =>
         filter.minPrice ? game.price >= Number(filter.minPrice) : true
       )
       .filter((game) =>
         filter.maxPrice ? game.price <= Number(filter.maxPrice) : true
       );
-  }, [games, searchTerm, filter]);
+  }, [searchTerm, games, filter, searchParams, router]);
 
   // Apply sorting based on filter.sortBy
   const sortedGames = [...filteredGames].sort((a, b) => {
@@ -158,76 +178,172 @@ const GamesPage = ({ searchParams, router }) => {
 
   const debouncedSearch = useMemo(
     () =>
-      debounce(async (term, page) => {
-        if (term.length > 0) {
-          setLoading(true);
+      debounce(async (func_params) => {
+        const {
+          term,
+          page,
+          category_id,
+          platform_id,
+          attribute_id,
+          attribute_name,
+          platform_name,
+          category_name,
+        } = func_params;
 
-          try {
-            const result = await fetchSearchProducts({
-              searchTerm: term,
-              page: page || 1,
-            });
+        const normalizedTerm = term?.trim();
 
-            if (result.error) {
-              setError(true);
-              toast.error(result.error);
-            } else {
-              setGames(result.products);
-              setTotalPages(result?.meta?.total_pages);
-
-              // Update URL with search params
-              const params = new URLSearchParams(searchParams.toString());
-              params.set("search", term);
-              params.set("page", page.toString());
-
-              router.replace(
-                `/products${params.toString() ? `?${params.toString()}` : ""}`
-              );
-            }
-          } catch (error) {
-            setError(true);
-            toast.error("Search error!");
-          } finally {
-            setLoading(false);
-            setSearchMode(false);
-          }
-        } else {
-          // If search term is empty, load all games
+        if (
+          !page &&
+          !normalizedTerm &&
+          !category_id &&
+          !platform_id &&
+          !attribute_id
+        ) {
+          setLoading(false);
           loadGames(currentPage);
 
-          // Remove search param from URL
           const params = new URLSearchParams(searchParams.toString());
           params.delete("search");
           router.replace(
             `/products${params.toString() ? `?${params.toString()}` : ""}`
           );
+          return;
         }
-      }, 2000),
+
+        // Update URL first
+        const params = new URLSearchParams(searchParams.toString());
+        if (normalizedTerm) params.set("search", normalizedTerm);
+        if (page) params.set("page", String(page));
+        if (category_id) params.set("category_id", category_id);
+        if (platform_id) params.set("platform_id", platform_id);
+        if (attribute_id) params.set("attribute_id", attribute_id);
+        if (category_name) params.set("category_name", category_name);
+        if (platform_name) params.set("platform_name", platform_name);
+        if (attribute_name) params.set("attribute_name", attribute_name);
+
+        try {
+          // Replace URL without triggering a new search
+          await router.replace(
+            `/products${params.toString() ? `?${params.toString()}` : ""}`
+          );
+
+          const result = await fetchSearchProducts({
+            searchTerm: normalizedTerm || "",
+            page: page || 1,
+            category_id,
+            platform_id,
+            attribute_id,
+          });
+
+          if (result.error) {
+            setError(true);
+            toast.error(result.error);
+          } else {
+            setGames(result.products);
+            setTotalPages(result?.meta?.total_pages);
+          }
+        } catch (error) {
+          setError(true);
+          toast.error("Search error!");
+        } finally {
+          setLoading(false);
+          setSearchMode(false);
+        }
+      }, 800),
     [currentPage, loadGames, router, searchParams]
   );
 
+  // Update the useEffect to handle URL params on load
   useEffect(() => {
-    const searchQuery = searchParams.get("search") || "";
+    const loadWithParams = async () => {
+      const searchQuery = searchParams.get("search") || "";
+      const category_id = searchParams.get("category_id") || "";
+      const category_name = searchParams.get("category_name") || "";
+      const platform_id = searchParams.get("platform_id") || "";
+      const platform_name = searchParams.get("platform_name") || "";
+      const attribute_id = searchParams.get("attribute_id") || "";
+      const attribute_name = searchParams.get("attribute_name") || "";
 
-    if (searchQuery && searchTerm !== searchQuery) {
-      setSearchTerm(searchQuery);
-      debouncedSearch(searchQuery, currentPage);
-    } else if (!searchQuery) {
-      loadGames(currentPage);
-    }
+      if (searchQuery && searchTerm !== searchQuery) {
+        setSearchTerm(searchQuery);
+      }
+
+      // Update filter state with URL params
+      setFilter((prev) => ({
+        ...prev,
+        category: category_id,
+        categoryName: category_name,
+        platform: platform_id,
+        platformName: platform_name,
+        attribute: attribute_id,
+        attributeName: attribute_name,
+      }));
+
+      if (
+        searchQuery ||
+        category_id ||
+        platform_id ||
+        attribute_id ||
+        currentPage > 1
+      ) {
+        await debouncedSearch({
+          term: searchQuery,
+          page: currentPage,
+          category_id,
+          platform_id,
+          attribute_id,
+          category_name,
+          platform_name,
+          attribute_name,
+        });
+      } else if (
+        !searchQuery &&
+        !category_id &&
+        !platform_id &&
+        !attribute_id
+      ) {
+        router.replace(`/products`);
+        await loadGames(currentPage);
+      }
+    };
+
+    loadWithParams();
     // don't add searchTerm it wont allow to search
-  }, [currentPage, loadGames, searchParams, debouncedSearch]); // eslint-disable-line
+  }, [currentPage, loadGames, debouncedSearch, router]); // eslint-disable-line
 
   // Handle search input change
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
-    setLoading(true);
 
-    // Cancel any scheduled debounce
-    debouncedSearch.cancel();
+    // Only show loading and trigger search for non-empty terms
+    if (term?.trim()) {
+      setLoading(true);
 
-    debouncedSearch(term, 1);
+      // Get current filter values
+      const { category, platform, attribute } = filter;
+
+      // Cancel any pending debounced searches
+      debouncedSearch.cancel();
+
+      // Trigger new search with current filters
+      debouncedSearch({
+        term,
+        page: 1,
+        category_id: category,
+        platform_id: platform,
+        attribute_id: attribute,
+      });
+    } else {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("search");
+      router.replace(
+        `/products${params.toString() ? `?${params.toString()}` : ""}`
+      );
+      // Cancel any pending searches for empty terms
+      debouncedSearch.cancel();
+      loadGames(currentPage);
+    }
   };
 
   const handlePageChange = (page) => {
@@ -238,19 +354,44 @@ const GamesPage = ({ searchParams, router }) => {
     // Update URL with new page
     const params = new URLSearchParams(searchParams.toString());
     const currentSearchTerm = searchParams.get("search");
+    const {
+      category,
+      platform,
+      attribute,
+      categoryName,
+      platformName,
+      attributeName,
+    } = filter;
 
     params.set("page", page.toString());
-    router.replace(
-      `/products${params.toString() ? `?${params.toString()}` : ""}`
-    );
+    category && params.set("category_id", category);
+    platform && params.set("platform_id", platform);
+    attribute && params.set("attribute_id", attribute);
+    categoryName && params.set("category_name", categoryName);
+    platformName && params.set("platform_name", platformName);
+    attributeName && params.set("attribute_name", attributeName);
 
-    if (currentSearchTerm) {
-      debouncedSearch(currentSearchTerm, page);
-    }
+    router.push(`/products${params.toString() ? `?${params.toString()}` : ""}`);
+
+    debouncedSearch({
+      term: currentSearchTerm || "",
+      page,
+      category_id: category,
+      platform_id: platform,
+      attribute_id: attribute,
+    });
   };
 
   const handleSearchButton = () => {
-    debouncedSearch(searchTerm, 1);
+    const { category, platform, attribute } = filter;
+
+    debouncedSearch({
+      term: searchTerm,
+      page: 1,
+      category_id: category,
+      platform_id: platform,
+      attribute_id: attribute,
+    });
     setSearchMode(false);
   };
 
@@ -307,7 +448,14 @@ const GamesPage = ({ searchParams, router }) => {
                       searchTerm !== searchParams.get("search")
                     ) {
                       debouncedSearch.cancel(); // Cancel any scheduled debounce
-                      debouncedSearch(searchTerm, 1); // execute search immediately
+
+                      debouncedSearch({
+                        term: searchTerm,
+                        page: 1,
+                        category_id: filter.category,
+                        platform_id: filter.platform,
+                        attribute_id: filter.attribute,
+                      }); // execute search immediately
                     }
                   }
                 }}
@@ -357,37 +505,68 @@ const GamesPage = ({ searchParams, router }) => {
                     {filter.category && (
                       <FilterButton
                         label={filter.categoryName}
-                        onRemove={() =>
+                        onRemove={() => {
                           setFilter({
                             ...filter,
                             category: "",
                             categoryName: "",
-                          })
-                        }
+                          });
+
+                          const params = new URLSearchParams(
+                            searchParams.toString()
+                          );
+                          params.delete("category_id");
+                          params.delete("category_name");
+                          router.replace(
+                            `/products${
+                              params.toString() ? `?${params.toString()}` : ""
+                            }`
+                          );
+                        }}
                       />
                     )}
                     {filter.platform && (
                       <FilterButton
                         label={filter.platformName}
-                        onRemove={() =>
+                        onRemove={() => {
                           setFilter({
                             ...filter,
                             platform: "",
                             platformName: "",
-                          })
-                        }
+                          });
+                          const params = new URLSearchParams(
+                            searchParams.toString()
+                          );
+                          params.delete("platform_id");
+                          params.delete("platform_name");
+                          router.replace(
+                            `/products${
+                              params.toString() ? `?${params.toString()}` : ""
+                            }`
+                          );
+                        }}
                       />
                     )}
                     {filter.attribute && (
                       <FilterButton
                         label={filter.attributeName}
-                        onRemove={() =>
+                        onRemove={() => {
                           setFilter({
                             ...filter,
                             attribute: "",
                             attributeName: "",
-                          })
-                        }
+                          });
+                          const params = new URLSearchParams(
+                            searchParams.toString()
+                          );
+                          params.delete("attribute_id");
+                          params.delete("attribute_name");
+                          router.replace(
+                            `/products${
+                              params.toString() ? `?${params.toString()}` : ""
+                            }`
+                          );
+                        }}
                       />
                     )}
                     {filter.sortBy && (
@@ -434,7 +613,7 @@ const GamesPage = ({ searchParams, router }) => {
                 (value) => value && value !== "mostPopular"
               ) &&
               mostPopularGames?.length > 0 && (
-                <div className="space-y-2 bg-Gold/10 pb-4 rounded-lg border border-white/10 hover:border-Gold/20">
+                <div className="bg-Gold/10 pb-4 rounded-lg border border-white/10 hover:border-Gold/20">
                   <p className="text-sm font-semibold m-4 mb-0">
                     Most Popular products
                   </p>

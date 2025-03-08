@@ -226,7 +226,12 @@ export const SearchFilter = ({ filter, setFilter }) => {
               }
               className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
             >
-              <option value="" className="bg-neutral-800" unselectable="on">
+              <option
+                value=""
+                className="bg-neutral-800"
+                unselectable="on"
+                disabled
+              >
                 Select Platform
               </option>
 
@@ -255,7 +260,12 @@ export const SearchFilter = ({ filter, setFilter }) => {
               }
               className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
             >
-              <option value="" className="bg-neutral-800" unselectable="on">
+              <option
+                value=""
+                className="bg-neutral-800"
+                unselectable="on"
+                disabled
+              >
                 Select Category
               </option>
               {categories?.map(
@@ -286,7 +296,12 @@ export const SearchFilter = ({ filter, setFilter }) => {
               }
               className="p-2 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
             >
-              <option value="" className="bg-neutral-800" unselectable="on">
+              <option
+                value=""
+                className="bg-neutral-800"
+                unselectable="on"
+                disabled
+              >
                 Select Attribute
               </option>
 

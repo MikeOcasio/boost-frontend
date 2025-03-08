@@ -55,6 +55,7 @@ export const loginUser = async ({
   password,
   rememberMe,
   passcode = null,
+  maintenance = false,
 }) => {
   try {
     const { data } = await axios.post(`${apiUrl}/users/sign_in`, {
@@ -63,6 +64,7 @@ export const loginUser = async ({
         password,
         remember_me: rememberMe,
         otp_attempt: passcode,
+        under_construction: maintenance,
       },
     });
 

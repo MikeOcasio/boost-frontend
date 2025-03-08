@@ -5,6 +5,18 @@ export const useUserStore = create((set) => ({
   userToken:
     typeof window !== "undefined" ? localStorage.getItem("jwtToken") : null,
 
+  maintenanceToken:
+    typeof window !== "undefined"
+      ? localStorage.getItem("maintenanceToken")
+      : null,
+
+  setMaintenanceToken: (token) => {
+    if (token) {
+      localStorage.setItem("maintenanceToken", token);
+    }
+    set({ maintenanceToken: token });
+  },
+
   setUserToken: (token) => {
     if (token) {
       localStorage.setItem("jwtToken", token);
@@ -18,7 +30,9 @@ export const useUserStore = create((set) => ({
 
   removeToken: () => {
     localStorage.removeItem("jwtToken");
+    localStorage.removeItem("maintenanceToken");
     set({ userToken: null });
     set({ user: null });
+    set({ maintenanceToken: null });
   },
 }));

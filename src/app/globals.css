@@ -49,8 +49,11 @@ input[type="number"] {
 
 /* Removing the default appearance */
 .thumb,
-.thumb::-webkit-slider-thumb {
+.thumb::-webkit-slider-thumb,
+.thumb::-moz-range-thumb {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -75,7 +78,26 @@ input[type="number"] {
   position: relative;
 }
 
-/* scrollbar like apple */
+/* For Firefox browsers */
+.thumb::-moz-range-thumb {
+  background-color: #f1f5f7;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 1px 1px #ced4da;
+  cursor: pointer;
+  height: 18px;
+  width: 18px;
+  margin-top: 4px;
+  pointer-events: all;
+  position: relative;
+}
+
+/* Scrollbar styling */
+* {
+  scrollbar-color: rgba(194, 141, 4, 0.7) rgba(0, 0, 0, 0.1);
+}
+
+/* For Webkit browsers */
 ::-webkit-scrollbar {
   width: 8px;
 }

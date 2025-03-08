@@ -11,8 +11,9 @@ export const PassCodeScreen = ({
   password,
   dialogData,
   rememberMe,
+  maintenance = false,
 }) => {
-  const { setUserToken } = useUserStore();
+  const { setUserToken, setMaintenanceToken } = useUserStore();
   const router = useRouter();
 
   const inputRefs = useRef([]);
@@ -55,12 +56,16 @@ export const PassCodeScreen = ({
         email,
         password,
         rememberMe,
+        maintenance,
       });
 
       if (response.error) {
         toast.error(response.error);
       } else {
+        console.log("response", response);
+
         await setUserToken(response.token);
+        maintenance && (await setMaintenanceToken(response.maintenance_token));
 
         toast.success("Passcode verified successfully!");
         setPassCodeScreen(false);
