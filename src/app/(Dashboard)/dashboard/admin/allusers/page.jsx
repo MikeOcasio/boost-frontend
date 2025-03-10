@@ -214,7 +214,7 @@ const AllUsers = () => {
 
               {/* deleted users list */}
               {showDeletedUsers && (
-                <div className="flex flex-wrap gap-4 justify-between">
+                <div className="flex flex-wrap gap-6 justify-between">
                   {filteredUsers?.map(
                     (user, index) =>
                       user.deleted_at && (
@@ -223,7 +223,7 @@ const AllUsers = () => {
                           disabled={user?.deleted_at}
                           onClick={() => editUser(user)}
                           className={clsx(
-                            "flex justify-between flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30 gap-2 disabled:cursor-not-allowed",
+                            "flex justify-between flex-1 min-w-fit flex-wrap-reverse rounded-2xl p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30 gap-2 disabled:cursor-not-allowed",
                             user?.deleted_at &&
                               "bg-red-500/20 hover:bg-red-500/30",
                             user?.locked_by_admin &&
@@ -235,7 +235,7 @@ const AllUsers = () => {
                           }}
                         >
                           <div className="flex flex-wrap gap-4">
-                            <div className="flex max-w-[200px] w-fit mx-auto bg-white/10 rounded-lg p-2">
+                            <div className="flex max-w-[200px] w-fit mx-auto bg-white/10 rounded-xl p-2">
                               {user.image_url ? (
                                 <Image
                                   src={user.image_url || "/logo.svg"}
@@ -391,7 +391,7 @@ const AllUsers = () => {
               )}
 
               {/* all users list */}
-              <div className="flex flex-wrap gap-4 justify-between">
+              <div className="flex flex-wrap gap-6 justify-between">
                 {!loading &&
                   !error &&
                   filteredUsers?.map(
@@ -402,7 +402,7 @@ const AllUsers = () => {
                           disabled={user?.deleted_at}
                           onClick={() => editUser(user)}
                           className={clsx(
-                            "flex justify-between flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30 gap-2 disabled:cursor-not-allowed",
+                            "flex justify-between flex-1 min-w-fit flex-wrap-reverse rounded-2xl p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30 gap-2 disabled:cursor-not-allowed",
                             user?.deleted_at &&
                               "bg-red-500/20 hover:bg-red-500/30",
                             user?.locked_by_admin &&
@@ -414,7 +414,7 @@ const AllUsers = () => {
                           }}
                         >
                           <div className="flex flex-wrap gap-4">
-                            <div className="flex max-w-[200px] w-fit mx-auto bg-white/10 rounded-lg p-2">
+                            <div className="flex max-w-[200px] w-fit mx-auto bg-white/10 rounded-xl p-2">
                               {user.image_url ? (
                                 <Image
                                   src={user.image_url || "/logo.svg"}

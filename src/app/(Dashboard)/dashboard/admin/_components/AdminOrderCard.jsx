@@ -56,7 +56,7 @@ export const AdminOrderCard = ({
   }, [order]);
 
   return (
-    <div className="flex-1 min-w-fit space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20">
+    <div className="flex-1 min-w-fit space-y-4 rounded-2xl border border-white/10 p-4 bg-white/10 hover:border-white/20">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">
           Order #{highlightMatch(order.internal_id, searchTerm)}

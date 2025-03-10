@@ -52,7 +52,7 @@ const OrderGraveyardPage = () => {
   }, []);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <p className="font-bold text-2xl">
         Orders Graveyard ({graveyardOrders?.length})
       </p>

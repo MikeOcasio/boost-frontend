@@ -439,7 +439,7 @@ const AllGamesContent = ({ searchParams, router }) => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-6">
               {!loading && !error && filteredGames?.length < 1 ? (
                 <p className="text-center w-full">No games found!</p>
               ) : (

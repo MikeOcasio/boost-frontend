@@ -213,7 +213,7 @@ const AccountPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap gap-4 justify-between items-center">
+      <div className="flex flex-wrap gap-4 justify-between items-center relative">
         <h1 className="text-2xl font-semibold flex gap-2 items-center">
           {user?.first_name}&apos;s Account
           {(user.role === "admin" ||
@@ -229,7 +229,7 @@ const AccountPage = () => {
           type="button"
           onClick={handleEdit}
           className={clsx(
-            "flex flex-wrap gap-2 items-center rounded-lg p-2 hover:bg-white/10 border border-white/10",
+            "fixed right-6 flex flex-wrap gap-2 items-center rounded-lg backdrop-blur-xl p-2 bg-white/10 hover:bg-white/20 border border-white/10",
             isEditing && "bg-Gold/80 hover:bg-Gold/60"
           )}
         >
@@ -262,8 +262,8 @@ const AccountPage = () => {
       )}
 
       {user && (
-        <div className="flex flex-col gap-4 max-w-3xl mx-auto">
-          <div className="flex flex-wrap gap-4">
+        <div className="flex flex-col gap-6 mx-auto">
+          <div className="flex flex-wrap gap-6">
             {/* user image */}
             {isEditing ? (
               <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">

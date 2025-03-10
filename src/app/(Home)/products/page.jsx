@@ -235,6 +235,8 @@ const GamesPage = ({ searchParams, router }) => {
             attribute_id,
           });
 
+          console.log("result", result);
+
           if (result.error) {
             setError(true);
             toast.error(result.error);

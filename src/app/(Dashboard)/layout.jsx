@@ -14,6 +14,10 @@ import { useUserStore } from "@/store/use-user";
 import { fetchCurrentUser } from "@/lib/actions/user-actions";
 import { Button } from "@/components/Button";
 import VerifyAppStatus from "@/components/verify-app-status";
+import useSidebarStore from "@/store/use-sidebar";
+import Backdrop from "@/template-components/layout/Backdrop";
+import AppHeader from "@/template-components/layout/AppHeader";
+import AppSidebar from "@/template-components/layout/AppSidebar";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
@@ -21,6 +25,15 @@ const DashboardLayout = ({ children }) => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const { isExpanded, isHovered, isMobileOpen } = useSidebarStore();
+
+  // Dynamic class for main content margin based on sidebar state
+  const mainContentMargin = isMobileOpen
+    ? "ml-0"
+    : isExpanded || isHovered
+    ? "lg:ml-[290px]"
+    : "lg:ml-[90px]";
 
   const handleUserFetch = useCallback(async () => {
     try {
@@ -104,16 +117,33 @@ const DashboardLayout = ({ children }) => {
   }
 
   return (
-    <>
+    <div className="min-h-screen xl:flex">
+      {/* Sidebar and Backdrop */}
+      <AppSidebar />
+      <Backdrop />
+
+      {/* Verify App Status is the website under maintenance or not */}
       <VerifyAppStatus />
+
       {/* Background */}
       <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
-      <Navbar />
-      <div className="relative z-10 mt-28 min-h-[90vh] max-w-7xl mx-auto p-4 text-white">
-        {children}
+
+      {/* Main Content Area */}
+      <div
+        className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
+      >
+        {/* Header */}
+        <AppHeader />
+
+        {/* Page Content */}
+        <div className="relative z-10 mt-2 min-h-[90vh] max-w-7xl mx-auto p-6 text-white">
+          {/* <Navbar /> */}
+          {children}
+        </div>
+        {/* Footer */}
+        <Footer />
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

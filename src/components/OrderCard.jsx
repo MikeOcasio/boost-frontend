@@ -59,7 +59,7 @@ const OrderCard = ({ order, loadOrders, searchTerm }) => {
   return (
     <div
       onClick={() => setDialogOpen(true)}
-      className="flex-1 min-w-fit space-y-4 rounded-lg border border-white/10 p-4 bg-white/10 hover:border-white/20"
+      className="flex-1 min-w-fit space-y-4 rounded-2xl border border-white/10 p-4 bg-white/10 hover:border-white/20"
     >
       <div className="flex justify-between items-center gap-2 flex-wrap-reverse">
         <h3 className="text-lg font-semibold">

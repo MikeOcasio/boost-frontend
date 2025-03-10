@@ -154,7 +154,7 @@ export const NewOrderDialog = ({ dialogOpen, onClose, loadOrders }) => {
     >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="w-full max-w-2xl rounded-lg bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
+        <DialogPanel className="w-full max-w-2xl rounded-2xl border-white/10 border bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
           <button
             onClick={handleClosed}
             className="rounded-lg hover:bg-white/10 absolute right-0 top-0 m-4"

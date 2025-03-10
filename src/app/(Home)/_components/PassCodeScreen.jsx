@@ -62,8 +62,6 @@ export const PassCodeScreen = ({
       if (response.error) {
         toast.error(response.error);
       } else {
-        console.log("response", response);
-
         await setUserToken(response.token);
         maintenance && (await setMaintenanceToken(response.maintenance_token));
 

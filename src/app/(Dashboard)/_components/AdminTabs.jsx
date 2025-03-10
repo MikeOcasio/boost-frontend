@@ -50,7 +50,7 @@ const AdminTabs = () => {
   ];
 
   return (
-    <div className="bg-gray-500/10 rounded-lg p-2 w-full space-y-2">
+    <div className="bg-gray-500/10 rounded-2xl p-2 w-full space-y-2">
       <p className="text-xs">Control Tabs</p>
       <div className="flex flex-wrap gap-2 items-center">
         {adminNav.map((item, index) => (

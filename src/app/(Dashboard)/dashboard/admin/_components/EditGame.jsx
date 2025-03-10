@@ -493,10 +493,6 @@ export const EditGame = ({ data, setData, isSubProduct, parentData }) => {
                 </option>
               ))}
             </Select>
-            <BiChevronDown
-              className="group absolute top-1 right-4 size-8 fill-white/60"
-              aria-hidden="true"
-            />
           </div>
         </Field>
       </div>

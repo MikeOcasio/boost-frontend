@@ -283,7 +283,7 @@ export const PlatformDialog = ({
     >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="w-full max-w-xl rounded-lg bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
+        <DialogPanel className="w-full max-w-xl rounded-2xl border-white/10 border bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
           <button
             type="button"
             onClick={handleClosed}

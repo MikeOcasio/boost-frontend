@@ -21,7 +21,7 @@ const highlightMatch = (text, searchTerm) => {
 export const AdminGameCard = ({ game, searchTerm }) => {
   return (
     <div
-      className="relative flex flex-col gap-4 p-4 rounded-lg overflow-hidden border border-white/10 hover:border-white/20"
+      className="relative flex flex-col gap-4 p-4 rounded-2xl overflow-hidden border border-white/10 hover:border-white/20"
       style={{ backgroundColor: game.secondary_color + 20 }}
     >
       {/* Background image */}

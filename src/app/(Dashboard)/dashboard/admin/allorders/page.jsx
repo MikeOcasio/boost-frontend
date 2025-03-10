@@ -264,7 +264,7 @@ const AllOrders = () => {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-6">
                 {sortedOrders?.map((order, index) => (
                   <AdminOrderCard
                     key={index}

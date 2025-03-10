@@ -74,7 +74,7 @@ export default function RootLayout({ children }) {
             easing="ease"
             speed={200}
             shadow="0 0 10px #C28D04,0 0 5px #C28D04"
-            zIndex={1600}
+            zIndex={999999}
           />
           <Toaster position="bottom-right" reverseOrder={false} />
 

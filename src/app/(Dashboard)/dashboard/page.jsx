@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
 
 import OrdersGraveyardCard from "../_components/OrdersGraveyardCard";
-import AdminTabs from "../_components/AdminTabs";
+
 import { useUserStore } from "@/store/use-user";
 import OrderCard from "@/components/OrderCard";
 import {
@@ -125,9 +125,6 @@ const UserDashboard = () => {
         )}
       </h2>
 
-      {/* Admin tab*/}
-      {(user.role === "admin" || user.role === "dev") && <AdminTabs />}
-
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 
       {error && (
@@ -178,8 +175,8 @@ const UserDashboard = () => {
             </div>
           )}
 
-          <div className="flex flex-wrap gap-4">
-            {graveyardOrders?.map((order, index) => (
+          <div className="flex flex-wrap gap-6">
+            {graveyardOrders?.slice(0, 10).map((order, index) => (
               <OrdersGraveyardCard
                 key={index}
                 order={order}
@@ -195,7 +192,7 @@ const UserDashboard = () => {
       {!loading && !error && orders?.length < 1 ? (
         <p className="text-center w-full">No orders have been created yet!</p>
       ) : (
-        <div className="flex flex-col gap-y-4">
+        <div className="flex flex-col gap-y-6">
           {orders?.length && (
             <div className="flex justify-between items-center flex-wrap gap-2">
               <h2 className="text-lg font-semibold">Recent Orders</h2>
@@ -208,8 +205,8 @@ const UserDashboard = () => {
             </div>
           )}
 
-          <div className="space-y-4">
-            {orders?.map((order, index) => (
+          <div className="space-y-6">
+            {orders?.slice(0, 10).map((order, index) => (
               <OrderCard key={index} order={order} loadOrders={loadOrders} />
             ))}
           </div>

@@ -124,7 +124,7 @@ const PromotionsPage = () => {
       ) : (
         promotions?.length > 0 && (
           <>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-6">
               <input
                 type="text"
                 autoFocus
@@ -135,7 +135,7 @@ const PromotionsPage = () => {
               />
             </div>
 
-            <div className="flex flex-wrap gap-4 justify-between">
+            <div className="flex flex-wrap gap-6 justify-between">
               {!loading && !error && promotions?.length < 1 ? (
                 <p className="text-center w-full">
                   No promotions have been added yet!
@@ -145,7 +145,7 @@ const PromotionsPage = () => {
                   <button
                     key={index}
                     onClick={() => editPromotion(promo)}
-                    className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
+                    className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-2xl p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
                   >
                     <div className="space-y-2 text-start">
                       <p className="text-xs font-semibold">
