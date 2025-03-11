@@ -2,6 +2,7 @@
 
 import { fetchAllSkillmasters } from "@/lib/actions/skillmasters-action";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BiLoader } from "react-icons/bi";
 import { BsTrophyFill } from "react-icons/bs";
@@ -103,14 +104,12 @@ const SkillMasters = () => {
           centerSlidePercentage={centerSlidePercentage}
         >
           {completedSkillmasters
-            .concat(completedSkillmasters)
-            .concat(completedSkillmasters)
-            .concat(completedSkillmasters)
             .sort(() => Math.random() - 0.5)
             ?.map((master) => (
-              <div
+              <Link
                 key={master.id}
-                className="flex flex-wrap flex-1 max-w-[600px] min-w-fit mx-2 gap-4 border border-white/10 h-full relative group overflow-hidden rounded-2xl p-4"
+                href={`/skillmasters/${master.id}`}
+                className="flex flex-col flex-1 max-w-[600px] min-w-fit mx-2 gap-4 border border-white/10 h-full relative group overflow-hidden rounded-2xl p-4"
               >
                 <Image
                   src="/skillmasters/skillmaster-bg.jpg"
@@ -192,7 +191,7 @@ const SkillMasters = () => {
                     </p>
                   </div>
                 )}
-              </div>
+              </Link>
             ))}
         </Carousel>
       )}
