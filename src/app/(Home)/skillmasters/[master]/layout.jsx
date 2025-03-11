@@ -1,5 +1,3 @@
-import { fetchSkillmasterById } from "@/lib/actions/user-actions";
-
 // METADATA
 export async function generateMetadata({ params }) {
   return {

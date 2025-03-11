@@ -94,7 +94,7 @@ const GameCategoriesPage = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 justify-between items-center">
         <h1 className="text-xl font-semibold">
-          All Game Categories ({categories?.length})
+          All Games ({categories?.length})
         </h1>
 
         <button
@@ -128,7 +128,7 @@ const GameCategoriesPage = () => {
       ) : (
         categories?.length > 0 && (
           <>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-6">
               <input
                 type="text"
                 autoFocus
@@ -139,7 +139,7 @@ const GameCategoriesPage = () => {
               />
             </div>
 
-            <div className="flex flex-wrap gap-4 justify-between items-center">
+            <div className="flex flex-wrap gap-6 justify-between items-center">
               {!loading && !error && categories?.length < 1 ? (
                 <p className="text-center w-full">
                   No categories have been added yet!
@@ -149,7 +149,7 @@ const GameCategoriesPage = () => {
                   <button
                     key={index}
                     onClick={() => editCategory(category)}
-                    className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-lg p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
+                    className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-2xl p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
                   >
                     <div className="flex flex-col gap-2 items-start">
                       <p className="text-lg font-semibold break-all">

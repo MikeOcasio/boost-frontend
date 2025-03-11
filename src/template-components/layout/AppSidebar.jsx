@@ -42,42 +42,22 @@ const navItems = [
   },
   {
     icon: <TbLayoutDashboard />,
-    name: "Dashboard Page",
+    name: "Dashboard",
     path: "/dashboard",
   },
   {
     icon: <GridIcon />,
-    name: "Dashboard",
+    name: "Admin",
     subItems: [
+      {
+        name: "Games",
+        path: "/dashboard/admin/game_categories",
+        icon: <MdCategory size={22} color="white" />,
+      },
       {
         name: "Products",
         path: "/dashboard/admin/allgames",
         icon: <GiConsoleController size={22} color="white" />,
-      },
-      {
-        name: "Users",
-        path: "/dashboard/admin/allusers",
-        icon: <BsFillPeopleFill size={22} color="white" />,
-      },
-      {
-        name: "Skillmasters Applications",
-        path: "/dashboard/admin/skillmaster-applications",
-        icon: <MdEmojiPeople size={22} color="white" />,
-      },
-      {
-        name: "Orders",
-        path: "/dashboard/admin/allorders",
-        icon: <BiReceipt size={22} color="white" />,
-      },
-      {
-        name: "Products Categories",
-        path: "/dashboard/admin/product_attribute_categories",
-        icon: <MdCategory size={22} color="white" />,
-      },
-      {
-        name: "Products Attributes",
-        path: "/dashboard/admin/product_attribute_categories",
-        icon: <CgAttribution size={22} color="white" />,
       },
       {
         name: "Platforms",
@@ -88,6 +68,26 @@ const navItems = [
         name: "Promotions",
         path: "/dashboard/admin/promotions",
         icon: <BiSolidOffer size={22} color="white" />,
+      },
+      {
+        name: "Orders",
+        path: "/dashboard/admin/allorders",
+        icon: <BiReceipt size={22} color="white" />,
+      },
+      {
+        name: "Skillmasters Applications",
+        path: "/dashboard/admin/skillmaster-applications",
+        icon: <MdEmojiPeople size={22} color="white" />,
+      },
+      {
+        name: "Products Attributes",
+        path: "/dashboard/admin/product_attribute_categories",
+        icon: <CgAttribution size={22} color="white" />,
+      },
+      {
+        name: "Users",
+        path: "/dashboard/admin/allusers",
+        icon: <BsFillPeopleFill size={22} color="white" />,
       },
     ],
   },
@@ -114,7 +114,7 @@ const navItems = [
       },
       {
         icon: <BiWallet size={22} color="white" />,
-        name: "Wallet",
+        name: "My Wallet",
         path: "/dashboard/wallet",
       },
       {

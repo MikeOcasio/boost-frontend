@@ -59,10 +59,6 @@ export default function Home() {
         </div>
 
         <div className="flex h-full flex-col items-center justify-center">
-          <h1 className="text-center font-title lg:text-8xl text-[12vw] tracking-widest text-gray-300 drop-shadow-[0_15px_3px_rgba(0,0,0,0.6)]">
-            RAVENBOOST
-          </h1>
-
           <Image
             src="/homeHero.png"
             height={800}
@@ -73,7 +69,7 @@ export default function Home() {
             className="h-[50vh] w-auto md:scale-105 object-contain drop-shadow-[0_30px_5px_rgba(0,0,0,0.5)]"
           />
 
-          <p className="mx-auto max-w-[80%] text-center lg:text-3xl text-lg font-medium leading-6 text-gray-300">
+          <p className="mx-auto max-w-[80%] text-center lg:text-3xl text-lg font-medium leading-6">
             Boost Your Game, Your Way! Choose your dream team and leave the rest
             to us.
           </p>
