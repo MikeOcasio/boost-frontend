@@ -193,10 +193,10 @@ export const fetchProductByAttribute = async (attributeId) => {
 };
 
 // get product by categories
-export const fetchProductByCategories = async (categoryId) => {
+export const fetchProductByCategories = async ({ categoryId, page }) => {
   try {
     const { data } = await axios.get(
-      `${apiUrl}/api/categories/${categoryId}/products`
+      `${apiUrl}/api/products/by_category/${categoryId}?page=${page}&per_page=48`
     );
 
     return data;

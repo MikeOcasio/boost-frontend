@@ -10,7 +10,6 @@ import {
   fetchProductByAttribute,
   fetchProductByCategories,
 } from "@/lib/actions/products-action";
-import RelatedGameCard from "./RelatedGameCard";
 import GameCard from "@/components/GameCard";
 
 const Badges = ({
@@ -32,13 +31,13 @@ const Badges = ({
 
     try {
       setLoading(true);
-      const result = await fetchProductByCategories(categoryId);
+      const result = await fetchProductByCategories({ categoryId, page: 1 });
       if (result.error) {
         setError(true);
         toast.error(result.error);
       } else {
         // Filter out the current game from the categories list
-        const filteredCategories = result.filter(
+        const filteredCategories = result.products.filter(
           (game) => game.id !== currentGameId
         );
 

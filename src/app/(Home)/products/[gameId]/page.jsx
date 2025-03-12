@@ -15,9 +15,6 @@ import { useCartStore } from "@/store/use-cart";
 import { SliderQty } from "../_components/SliderQty";
 import { SubProductsList } from "../_components/SubProductsList";
 import Breadcrumb from "@/template-components/ui/breadcrumb/Breadcrumb";
-import TrustBox from "@/components/TrustBox";
-import Head from "next/head";
-import Script from "next/script";
 
 const GamePage = ({ params }) => {
   const router = useRouter();
@@ -238,7 +235,7 @@ const GamePage = ({ params }) => {
     { label: "Products", href: "/products" },
     {
       label: game?.category?.name,
-      href: `/products/?search=${game?.category?.name}`,
+      href: `/products/categories/${game?.category_id}`,
     },
     ...(game?.parent_id
       ? [
@@ -315,10 +312,6 @@ const GamePage = ({ params }) => {
 
               <div className="relative z-10 flex flex-col gap-4 flex-1 max-w-3xl">
                 <Breadcrumb items={breadcrumbItems} variant="chevron" />
-
-                {/* <p className="text-xs -mb-4 font-semibold">
-                  {game.category.name}
-                </p> */}
 
                 <h3 className="text-2xl font-bold">{game.name}</h3>
                 <p className="text-lg text-white/80">{game.tag_line}</p>
