@@ -15,6 +15,9 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose, IoCopy } from "react-icons/io5";
 import { BiLoader, BiTrash } from "react-icons/bi";
+import Image from "next/image";
+import { BiUpload } from "react-icons/bi";
+import { IoMdClose } from "react-icons/io";
 
 import {
   addCategory,
@@ -36,6 +39,7 @@ export const CategoryDialog = ({
       name: "",
       description: "",
       is_active: true,
+      image: null,
     };
   }
 
@@ -53,7 +57,8 @@ export const CategoryDialog = ({
     return (
       category.name === dialogData?.name &&
       category.description === dialogData?.description &&
-      category.is_active === dialogData?.is_active
+      category.is_active === dialogData?.is_active &&
+      category.image === dialogData?.image
     );
   };
 
@@ -138,7 +143,7 @@ export const CategoryDialog = ({
     >
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="w-full max-w-md rounded-2xl border-white/10 border bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
+        <DialogPanel className="w-full max-w-2xl rounded-2xl border-white/10 border bg-Plum/50 backdrop-blur-lg p-6 space-y-4 relative">
           <button
             onClick={handleClosed}
             className="rounded-lg hover:bg-white/10 absolute right-0 top-0 m-4"
@@ -154,7 +159,7 @@ export const CategoryDialog = ({
             {/* id */}
             {category.id && (
               <button
-                onClick={(e) => {
+                onClick={() => {
                   navigator.clipboard.writeText(category.id);
 
                   toast.success("Copied to clipboard!");
@@ -195,6 +200,61 @@ export const CategoryDialog = ({
                   setCategory({ ...category, description: e.target.value })
                 }
               />
+            </Field>
+
+            {/* Category Image Field */}
+            <Field className="flex flex-col gap-1 w-full bg-white/10 p-4 rounded-lg border border-white/10 hover:border-white/20">
+              <Label className="text-sm">Category Image</Label>
+              <div className="flex flex-wrap gap-4 flex-1">
+                {category?.image && (
+                  <div className="group relative cursor-pointer">
+                    <Image
+                      src={category.image}
+                      alt="Category image"
+                      width={200}
+                      height={200}
+                      priority
+                      className="rounded-lg bg-white/10 p-2"
+                    />
+                    <IoMdClose
+                      className="h-8 w-8 group-hover:opacity-100 opacity-0 absolute top-0 right-0 p-2 m-2 hover:bg-black rounded-lg border border-white/10 bg-black/80"
+                      onClick={() => setCategory({ ...category, image: null })}
+                    />
+                  </div>
+                )}
+                <div className="flex flex-col gap-2 flex-1 min-w-fit">
+                  <label
+                    htmlFor="category-image"
+                    className="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-800/10 border-gray-600 hover:border-gray-500"
+                  >
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <BiUpload className="h-8 w-8 text-gray-500" />
+                      <p className="mb-2 text-sm text-gray-500">
+                        Click or drag and drop your image here
+                      </p>
+                    </div>
+                    <input
+                      id="category-image"
+                      type="file"
+                      accept="image/*"
+                      className="absolute border h-full w-full opacity-0"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setCategory({
+                              ...category,
+                              image: reader.result,
+                            });
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
             </Field>
 
             {/* Active Status Switch */}

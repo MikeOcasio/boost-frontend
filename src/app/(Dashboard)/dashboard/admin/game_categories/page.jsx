@@ -8,6 +8,7 @@ import clsx from "clsx";
 
 import { CategoryDialog } from "../_components/CategoryDialog";
 import { fetchCategories } from "@/lib/actions/categories-actions";
+import Image from "next/image";
 
 // Helper function to highlight matching terms
 const highlightMatch = (text, searchTerm) => {
@@ -149,8 +150,16 @@ const GameCategoriesPage = () => {
                   <button
                     key={index}
                     onClick={() => editCategory(category)}
-                    className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-2xl p-2 px-4 bg-gray-500/20 hover:bg-gray-500/30"
+                    className="flex justify-between items-end flex-1 min-w-fit flex-wrap-reverse rounded-2xl p-4 bg-gray-500/20 hover:bg-gray-500/30 relative overflow-hidden group"
                   >
+                    <Image
+                      src={category.image || "/images/shape/grid-01.svg"}
+                      alt={category.name}
+                      fill
+                      className="absolute top-0 left-0 w-full h-full object-cover -z-20 opacity-70 group-hover:scale-125 transition-all duration-500"
+                    />
+                    <div className="absolute left-0 bottom-0 w-full h-[100%] bg-gradient-to-t from-black to-transparent rounded-lg -z-10" />
+
                     <div className="flex flex-col gap-2 items-start">
                       <p className="text-lg font-semibold break-all">
                         {highlightMatch(category.name, searchTerm)}

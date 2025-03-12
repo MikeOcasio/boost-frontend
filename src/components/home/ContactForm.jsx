@@ -10,7 +10,7 @@ export const ContactForm = () => {
   const [agreed, setAgreed] = useState(false);
 
   return (
-    <div className="pb-12 lg:mx-auto lg:max-w-7xl">
+    <div className="pb-12 lg:mx-auto lg:max-w-[1920px]">
       {/* Contact Us Title */}
       <div className="ml-auto w-64 bg-skillsMaster bg-contain bg-no-repeat">
         <h1 className="pr-20 pt-[.7rem] text-right font-title text-4xl tracking-widest">

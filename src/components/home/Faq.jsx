@@ -8,7 +8,7 @@ export const Faq = () => {
   const [currentDesc, setCurrentDesc] = useState(0);
 
   return (
-    <div className="mt-14 lg:mt-20 lg:mx-auto lg:max-w-7xl">
+    <div className="mt-14 lg:mt-20 lg:mx-auto lg:max-w-[1920px]">
       <div className="h-16 w-56 bg-howItWorks bg-contain bg-no-repeat">
         <h1 className="pl-20 pt-2 font-title text-4xl tracking-widest">FAQ</h1>
       </div>

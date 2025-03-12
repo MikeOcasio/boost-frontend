@@ -79,7 +79,7 @@ const AdminLayout = ({ children }) => {
   // Handle unauthorized access
   if (!user || (user.role !== "admin" && user.role !== "dev")) {
     return (
-      <div className="max-w-7xl mx-auto p-4 space-y-6 text-center">
+      <div className="max-w-[1920px] mx-auto p-4 space-y-6 text-center">
         <Image
           src="/404.gif"
           alt="Admin Logo"

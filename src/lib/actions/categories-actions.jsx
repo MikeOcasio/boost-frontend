@@ -56,6 +56,7 @@ export const updateCategory = async (categoryData) => {
         name: categoryData.name,
         description: categoryData.description,
         is_active: categoryData.is_active,
+        image: categoryData.image,
       },
       {
         headers: {

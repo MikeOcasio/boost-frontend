@@ -12,6 +12,7 @@ import { IoWarning } from "react-icons/io5";
 import { fetchPlatforms } from "@/lib/actions/platforms-action";
 import { fetchCategories } from "@/lib/actions/categories-actions";
 import { fetchAttribute } from "@/lib/actions/attributes-action";
+import useCategoriesStore from "@/store/use-catogries";
 
 export const SearchFilter = ({ filter, setFilter }) => {
   const [categories, setCategories] = useState(null);
@@ -21,22 +22,33 @@ export const SearchFilter = ({ filter, setFilter }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  const {
+    setLoading: setStoreLoading,
+    setError: setStoreError,
+    setCategories: setStoreCategories,
+  } = useCategoriesStore();
+
   const loadCategories = useCallback(async () => {
     try {
       setLoading(true);
+      setStoreLoading(true);
       const result = await fetchCategories();
       if (result.error) {
         setError(true);
+        setStoreError(true);
         toast.error(result.error);
       }
       setCategories(result);
+      setStoreCategories(result);
     } catch (error) {
       setError(true);
+      setStoreError(true);
       toast.error("Failed to load categories");
     } finally {
       setLoading(false);
+      setStoreLoading(false);
     }
-  }, []);
+  }, [setStoreCategories, setStoreError, setStoreLoading]);
 
   const loadAttribute = useCallback(async () => {
     try {

@@ -336,7 +336,7 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4">
+    <div className="pt-24 max-w-[1920px] mx-auto min-h-screen space-y-6 p-4">
       <p className="text-center text-4xl font-title sm:text-5xl">Checkout</p>
 
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}

@@ -156,7 +156,7 @@ const MaintenanceLoginModal = ({ isOpen, onClose }) => {
             Maintenance Login
           </DialogTitle>
 
-          <div className="mt-16 max-w-7xl mx-auto p-4 flex flex-1 flex-col justify-center gap-6">
+          <div className="mt-16 max-w-[1920px] mx-auto p-4 flex flex-1 flex-col justify-center gap-6">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
               <Image
                 alt="Raven Boost"

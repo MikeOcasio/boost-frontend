@@ -18,6 +18,8 @@ import PaginationWithIcon from "@/template-components/ui/pagination/PaginationWi
 import { useRouter, useSearchParams } from "next/navigation";
 import { debounce } from "lodash";
 import Link from "next/link";
+import CategoriesTab from "./_components/categories-tab";
+import CategoriesSidebar from "./_components/categories-sidebar";
 
 // Wrapper to pass searchParams
 const GamesPageWrapper = () => {
@@ -398,7 +400,7 @@ const GamesPage = ({ searchParams, router }) => {
   };
 
   return (
-    <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4 overflow-hidden text-white">
+    <div className="pt-24 max-w-[1920px] mx-auto min-h-screen space-y-6 p-4 overflow-hidden text-white">
       {/* Background */}
       <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
 
@@ -465,7 +467,7 @@ const GamesPage = ({ searchParams, router }) => {
                 className="flex-1 min-w-fit p-2 z-20 rounded-lg bg-white/10 border border-white/10 hover:border-white/20"
               />
 
-              {/* cover foreground */}
+              {/* cover foreground when search */}
               {searchMode && (
                 <div className="fixed top-0 left-0 w-screen h-screen bg-white/10 backdrop-blur-lg z-10" />
               )}
@@ -608,6 +610,12 @@ const GamesPage = ({ searchParams, router }) => {
                 )}
               </div>
             </div>
+
+            {/* categories tab */}
+            <CategoriesTab />
+
+            {/* categories sidebar */}
+            <CategoriesSidebar />
 
             {/* hide most popular tab while searching and filter applied */}
             {!searchTerm &&

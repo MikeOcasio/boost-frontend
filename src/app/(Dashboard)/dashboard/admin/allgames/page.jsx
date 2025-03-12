@@ -285,7 +285,7 @@ const AllGamesContent = ({ searchParams, router }) => {
     return <div>You are not authorized to view this page</div>;
 
   return (
-    <div className="space-y-6 mx-auto max-w-7xl">
+    <div className="space-y-6 mx-auto max-w-[1920px]">
       <div className="flex flex-wrap gap-4 justify-between items-center">
         <h2 className="text-center text-lg font-semibold">
           All Products ({totalProducts})

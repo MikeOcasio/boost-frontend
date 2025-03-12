@@ -136,7 +136,7 @@ const DashboardLayout = ({ children }) => {
         <AppHeader />
 
         {/* Page Content */}
-        <div className="relative z-10 mt-2 min-h-[90vh] max-w-7xl mx-auto p-6 text-white">
+        <div className="relative z-10 mt-2 min-h-[90vh] max-w-[1920px] mx-auto p-6 text-white">
           {/* <Navbar /> */}
           {children}
         </div>

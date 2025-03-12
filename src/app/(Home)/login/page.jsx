@@ -127,7 +127,7 @@ export default function Login() {
   };
 
   return (
-    <div className="mt-16 max-w-7xl mx-auto min-h-screen p-4 flex flex-1 flex-col justify-center gap-6">
+    <div className="mt-16 max-w-[1920px] mx-auto min-h-screen p-4 flex flex-1 flex-col justify-center gap-6">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <Image
           alt="Raven Boost"

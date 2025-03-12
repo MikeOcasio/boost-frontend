@@ -6,7 +6,7 @@ import { steps } from "@/lib/data";
 
 export default function HomePageAboutArea() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
+    <div className="mx-auto max-w-[1920px] px-4 py-20 lg:px-8">
       <div className="mx-auto text-base leading-7">
         <div className="flex justify-end">
           <Image

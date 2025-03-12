@@ -87,7 +87,7 @@ export default function Home() {
         />
       </div>
 
-      <div className="mx-auto px-4 lg:max-w-7xl lg:-mt-[110vh] -mt-[90vh]">
+      <div className="mx-auto px-4 lg:max-w-[1920px] lg:-mt-[110vh] -mt-[90vh]">
         {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 
         {error && (

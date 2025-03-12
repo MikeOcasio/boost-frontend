@@ -5,7 +5,7 @@ import { BsDiscord } from "react-icons/bs";
 
 const SupportPage = () => {
   return (
-    <div className="pt-24 max-w-7xl mx-auto min-h-screen space-y-6 p-4 flex items-center justify-center">
+    <div className="pt-24 max-w-[1920px] mx-auto min-h-screen space-y-6 p-4 flex items-center justify-center">
       <div className="mx-auto w-full lg:w-[60%] bg-gradient-to-r from-CardPlum/50 to-CardGold/50 p-6 backdrop-blur-xl flex flex-col items-center justify-center rounded-2xl">
         <p className="text-center text-xl font-bold">
           Send your query on Discord we are here to help you!

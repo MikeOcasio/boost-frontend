@@ -65,7 +65,7 @@ const SkillMasters = () => {
     (master) => master.image_url && master.bio && master.platforms.length > 0
   );
   return (
-    <div className="relative mx-auto mt-14 lg:mt-20 max-w-7xl text-right">
+    <div className="relative mx-auto mt-14 lg:mt-20 max-w-[1920px] text-right">
       <div className="absolute right-0 h-36 w-64 bg-skillsMaster bg-contain bg-no-repeat">
         <h1 className="pr-12 pt-[.7rem] font-title text-4xl tracking-widest">
           Skill Masters
