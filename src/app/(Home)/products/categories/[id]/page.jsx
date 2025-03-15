@@ -9,6 +9,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
+import CategoriesSidebar from "../../_components/categories-sidebar";
+import { fetchCategories } from "@/lib/actions/categories-actions";
+import useCategoriesStore from "@/store/use-catogries";
 
 const CategoryGamesPage = ({ params }) => {
   const categoryId = params.id;
@@ -26,6 +29,34 @@ const CategoryGamesPage = ({ params }) => {
     const page = Number(searchParams.get("page")) || 1;
     setCurrentPage(page);
   }, [searchParams]);
+
+  const {
+    setLoading: setStoreLoading,
+    setError: setStoreError,
+    setCategories: setStoreCategories,
+  } = useCategoriesStore();
+
+  const loadCategories = useCallback(async () => {
+    try {
+      setStoreLoading(true);
+      const result = await fetchCategories();
+      if (result.error) {
+        setStoreError(true);
+        toast.error(result.error);
+      }
+
+      setStoreCategories(result);
+    } catch (error) {
+      setStoreError(true);
+      toast.error("Failed to load categories");
+    } finally {
+      setStoreLoading(false);
+    }
+  }, [setStoreCategories, setStoreError, setStoreLoading]);
+
+  useEffect(() => {
+    loadCategories;
+  }, [loadCategories]);
 
   const loadCategoriesProducts = useCallback(
     async (page) => {
@@ -131,14 +162,21 @@ const CategoryGamesPage = ({ params }) => {
 
       <Breadcrumb items={breadcrumbItems} variant="chevron" />
 
-      <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-        {!loading && !error && productCategories.length < 1 ? (
-          <p className="text-center w-full">No products found!</p>
-        ) : (
-          productCategories?.map(
-            (game) => game?.is_active && <GameCard key={game.id} game={game} />
-          )
-        )}
+      <div className="flex">
+        {/* categories sidebar */}
+
+        <CategoriesSidebar />
+
+        <div className="space-y-6 p-4 pt-0 overflow-hidden flex-1 grid grid-cols-1 gap-12 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          {!loading && !error && productCategories.length < 1 ? (
+            <p className="text-center w-full">No products found!</p>
+          ) : (
+            productCategories?.map(
+              (game) =>
+                game?.is_active && <GameCard key={game.id} game={game} />
+            )
+          )}
+        </div>
       </div>
 
       {/* Pagination */}

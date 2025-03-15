@@ -159,15 +159,15 @@ export function Header() {
         isScrollDown ? "-translate-y-full" : "translate-y-0"
       )}
     >
-      <div className="lg:rounded-xl flex px-4 md:px-8 justify-between items-center bg-gradient-to-r from-Plum/60 to-Gold/60 max-w-[1920px] w-full mx-auto backdrop-blur-sm">
+      <div className="lg:rounded-xl flex px-4 md:px-8 py-2 justify-between items-center bg-gradient-to-r from-Plum/90 to-Gold/60 max-w-[1920px] w-full mx-auto backdrop-blur-xl">
         <Link href="/">
           <Image
-            src="/logo.svg"
+            src="/ravenboost-logo.PNG"
             height={150}
-            width={150}
+            width={200}
             alt="RavenBoost"
             priority
-            className="h-full w-16"
+            className="h-full w-full"
           />
         </Link>
 

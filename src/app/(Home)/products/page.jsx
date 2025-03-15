@@ -614,52 +614,57 @@ const GamesPage = ({ searchParams, router }) => {
             {/* categories tab */}
             <CategoriesTab />
 
-            {/* categories sidebar */}
-            <CategoriesSidebar />
+            <div className="flex min-h-screen">
+              {/* categories sidebar */}
 
-            {/* hide most popular tab while searching and filter applied */}
-            {!searchTerm &&
-              !Object.values(filter).some(
-                (value) => value && value !== "mostPopular"
-              ) &&
-              mostPopularGames?.length > 0 && (
-                <div className="bg-Gold/10 pb-4 rounded-lg border border-white/10 hover:border-Gold/20">
-                  <p className="text-sm font-semibold m-4 mb-0">
-                    Most Popular products
-                  </p>
+              <CategoriesSidebar />
 
-                  {!loading && !error && mostPopularGames?.length < 1 ? (
+              <div className="space-y-6 p-4 pt-0 overflow-hidden flex-1">
+                {/* hide most popular tab while searching and filter applied */}
+                {!searchTerm &&
+                  !Object.values(filter).some(
+                    (value) => value && value !== "mostPopular"
+                  ) &&
+                  mostPopularGames?.length > 0 && (
+                    <div className="bg-Gold/10 pb-4 rounded-lg border border-white/10 hover:border-Gold/20">
+                      <p className="text-sm font-semibold m-4 mb-0">
+                        Most Popular products
+                      </p>
+
+                      {!loading && !error && mostPopularGames?.length < 1 ? (
+                        <p className="text-center w-full">No products found!</p>
+                      ) : (
+                        <HomeGameCarousel data={mostPopularGames} />
+                      )}
+                    </div>
+                  )}
+
+                <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                  {!loading && !error && filteredGames.length < 1 ? (
                     <p className="text-center w-full">No products found!</p>
                   ) : (
-                    <HomeGameCarousel data={mostPopularGames} />
+                    sortedGames?.map((game) => {
+                      const parentProducts = sortedGames.filter(
+                        (g) => !g?.parent_id
+                      );
+                      const showAllProducts = parentProducts?.length < 5;
+
+                      return (
+                        game?.is_active &&
+                        (searchTerm.length > 0 ||
+                          showAllProducts ||
+                          !game?.parent_id) && (
+                          <GameCard
+                            key={game.id}
+                            game={game}
+                            searchTerm={searchTerm}
+                          />
+                        )
+                      );
+                    })
                   )}
                 </div>
-              )}
-
-            <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-              {!loading && !error && filteredGames.length < 1 ? (
-                <p className="text-center w-full">No products found!</p>
-              ) : (
-                sortedGames?.map((game) => {
-                  const parentProducts = sortedGames.filter(
-                    (g) => !g?.parent_id
-                  );
-                  const showAllProducts = parentProducts?.length < 5;
-
-                  return (
-                    game?.is_active &&
-                    (searchTerm.length > 0 ||
-                      showAllProducts ||
-                      !game?.parent_id) && (
-                      <GameCard
-                        key={game.id}
-                        game={game}
-                        searchTerm={searchTerm}
-                      />
-                    )
-                  );
-                })
-              )}
+              </div>
             </div>
 
             {/* Pagination */}
