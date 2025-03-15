@@ -111,12 +111,21 @@ export function Navbar() {
       <div className="lg:rounded-xl flex px-4 md:px-8 justify-between items-center bg-gradient-to-r from-Plum/60 to-Gold/60 backdrop-blur-sm max-w-[1600px] w-full mx-auto">
         <Link href="/">
           <Image
+            src="/full-logo.png"
+            height={150}
+            width={200}
+            alt="RavenBoost"
+            priority
+            className="h-full w-full hidden lg:block"
+          />
+
+          <Image
             src="/logo.svg"
             height={150}
             width={150}
             priority
             alt="RavenBoost"
-            className="h-full w-16"
+            className="h-full w-16 lg:hidden"
           />
         </Link>
 

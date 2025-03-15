@@ -132,11 +132,12 @@ const AppHeader = () => {
 
           <Link href="/" className="lg:hidden">
             <Image
-              width={154}
-              height={32}
-              src="/logo.svg"
-              alt="Logo"
-              className="h-14 w-14"
+              src="/full-logo.png"
+              height={150}
+              width={200}
+              alt="RavenBoost"
+              priority
+              className="h-full w-full"
             />
           </Link>
 

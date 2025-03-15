@@ -391,7 +391,14 @@ const AppSidebar = () => {
       >
         <Link href="/">
           {isExpanded || isHovered || isMobileOpen ? (
-            <Image src="/logo.svg" alt="Logo" width={60} height={60} />
+            <Image
+              src="/full-logo.png"
+              height={150}
+              width={200}
+              alt="RavenBoost"
+              priority
+              className="h-full w-full hidden lg:block"
+            />
           ) : (
             <Image src="/logo.svg" alt="Logo" width={60} height={60} />
           )}

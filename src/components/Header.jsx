@@ -162,12 +162,21 @@ export function Header() {
       <div className="lg:rounded-xl flex px-4 md:px-8 py-2 justify-between items-center bg-gradient-to-r from-Plum/90 to-Gold/60 max-w-[1920px] w-full mx-auto backdrop-blur-xl">
         <Link href="/">
           <Image
-            src="/ravenboost-logo.PNG"
+            src="/full-logo.png"
             height={150}
             width={200}
             alt="RavenBoost"
             priority
-            className="h-full w-full"
+            className="h-full w-full hidden lg:block"
+          />
+
+          <Image
+            src="/logo.svg"
+            height={150}
+            width={150}
+            priority
+            alt="RavenBoost"
+            className="h-full w-16 lg:hidden"
           />
         </Link>
 
