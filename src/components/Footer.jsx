@@ -14,7 +14,7 @@ function SocialLink({ icon: Icon, ...props }) {
 export function Footer() {
   return (
     <footer className="z-10 p-4 backdrop-blur-xl text-white space-y-2">
-      <div className="flex flex-wrap w-full items-center justify-center md:justify-between bg-gradient-to-r from-Plum/50 to-Gold/50 p-4 px-6 backdrop-blur-xl gap-4 rounded-xl">
+      <div className="flex flex-wrap w-full items-center justify-center md:justify-between bg-gradient-to-r from-Plum/20 to-Gold/20 border border-white/10 p-4 px-6 backdrop-blur-xl gap-4 rounded-xl">
         <div className="flex flex-wrap gap-6">
           <h2 className="font-bold">Follow Us</h2>
           <SocialLink

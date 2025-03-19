@@ -1,22 +1,16 @@
 "use client";
 
-import { Switch } from "@headlessui/react";
-import { useState } from "react";
 import Image from "next/image";
 import { BsDiscord } from "react-icons/bs";
 import Link from "next/link";
 
 export const ContactForm = () => {
-  const [agreed, setAgreed] = useState(false);
-
   return (
     <div className="pb-12 lg:mx-auto lg:max-w-[1920px]">
       {/* Contact Us Title */}
-      <div className="ml-auto w-64 bg-skillsMaster bg-contain bg-no-repeat">
-        <h1 className="pr-20 pt-[.7rem] text-right font-title text-4xl tracking-widest">
-          Contact Us
-        </h1>
-      </div>
+      <h1 className="font-title text-4xl tracking-widest text-center p-4 rounded-3xl w-fit mx-auto mb-8">
+        Contact Us
+      </h1>
 
       {/* Main Container for Form and Image */}
       <div className="my-8 mx-4 flex flex-col lg:flex-row-reverse rounded-3xl shadow-2xl overflow-hidden">

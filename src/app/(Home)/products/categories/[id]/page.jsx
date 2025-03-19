@@ -12,6 +12,7 @@ import { IoWarning } from "react-icons/io5";
 import CategoriesSidebar from "../../_components/categories-sidebar";
 import { fetchCategories } from "@/lib/actions/categories-actions";
 import useCategoriesStore from "@/store/use-catogries";
+import BackgroundPattern from "@/components/background-pattern";
 
 const CategoryGamesPage = ({ params }) => {
   const categoryId = params.id;
@@ -137,7 +138,7 @@ const CategoryGamesPage = ({ params }) => {
   return (
     <div className="pt-24 max-w-[1920px] mx-auto min-h-screen space-y-6 p-4 overflow-hidden text-white">
       {/* Background */}
-      <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
+      <BackgroundPattern />
 
       <h2 className="text-center text-4xl font-title text-white sm:text-5xl">
         {productCategories?.length > 0 && productCategories[0].category?.name}{" "}

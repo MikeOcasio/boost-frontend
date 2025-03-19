@@ -7,20 +7,7 @@ import { apiUrl } from "../api-url";
 // get all skillmasters
 export const fetchAllSkillmasters = async () => {
   try {
-    const sessionToken = await getSessionToken();
-
-    if (!sessionToken) {
-      return { error: "No token found. Please login again." };
-    }
-
-    const { data } = await axios.get(
-      `${apiUrl}/users/member-data/skillmasters`,
-      {
-        headers: {
-          Authorization: `Bearer ${sessionToken}`,
-        },
-      }
-    );
+    const { data } = await axios.get(`${apiUrl}/users/skillmasters`);
 
     return data;
   } catch (error) {
@@ -36,18 +23,8 @@ export const fetchAllSkillmasters = async () => {
 // get skillmaster by id
 export const fetchSkillmasterById = async (skillmasterId) => {
   try {
-    const sessionToken = await getSessionToken();
-    if (!sessionToken) {
-      return { error: "No token found. Please login again." };
-    }
-
     const { data } = await axios.get(
-      `${apiUrl}/users/member-data/:id/skillmasters/${skillmasterId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${sessionToken}`,
-        },
-      }
+      `${apiUrl}/users/skillmasters/${skillmasterId}`
     );
 
     return data;

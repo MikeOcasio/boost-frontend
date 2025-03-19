@@ -1,15 +1,14 @@
-import { Akronim } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "react-hot-toast";
+import { Press_Start_2P } from "next/font/google";
 
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const akronim = Akronim({
-  subsets: ["latin"],
+const press_start_2P = Press_Start_2P({
   weight: "400",
-  display: "swap",
-  variable: "--font-akronim",
+  variable: "--font-press_start_2P",
+  subsets: ["latin"],
 });
 
 export const metadata = {
@@ -55,7 +54,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`antialiased ${akronim.variable}`}
+      className={`${press_start_2P.variable} font-play antialiased`}
       suppressHydrationWarning
     >
       <body className="bg-RussianViolet">

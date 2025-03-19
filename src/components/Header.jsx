@@ -30,6 +30,7 @@ import { CartButton } from "./CartButton";
 import { useUserStore } from "@/store/use-user";
 import { logoutSession } from "@/lib/actions/user-actions";
 import { fetchCurrentUser } from "@/lib/actions/user-actions";
+import HeaderSearchHome from "./header-search-home";
 
 const resourcesData = [
   {
@@ -159,7 +160,7 @@ export function Header() {
         isScrollDown ? "-translate-y-full" : "translate-y-0"
       )}
     >
-      <div className="lg:rounded-xl flex px-4 md:px-8 py-2 justify-between items-center bg-gradient-to-r from-Plum/90 to-Gold/60 max-w-[1920px] w-full mx-auto backdrop-blur-xl">
+      <div className="lg:rounded-xl flex px-4 md:px-8 py-2 justify-between items-center bg-gradient-to-r border border-white/10 from-Plum/20 to-Gold/20 max-w-[1920px] w-full mx-auto backdrop-blur-xl">
         <Link href="/">
           <Image
             src="/full-logo.png"
@@ -190,6 +191,9 @@ export function Header() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
+          {/* search input tab */}
+          <HeaderSearchHome />
+
           {resources.map((item, index) =>
             item.name === "Dashboard" ? (
               <div key={index} className="text-right">
@@ -273,7 +277,7 @@ export function Header() {
                 className="text-lg font-semibold"
                 key={index}
               >
-                <div className="group relative flex items-center gap-x-2 rounded-lg p-2 hover:bg-Plum/30">
+                <div className="group relative flex items-center gap-x-2 rounded-lg p-2 hover:bg-Plum/30 border border-transparent hover:border-white/10">
                   {item.name}
                 </div>
               </Link>

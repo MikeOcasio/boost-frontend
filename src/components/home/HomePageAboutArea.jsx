@@ -19,11 +19,10 @@ export default function HomePageAboutArea() {
         </div>
 
         {/* steps how it works */}
-        <div className="mt-4 h-16 w-64 bg-howItWorks bg-contain bg-no-repeat">
-          <h1 className="pl-12 pt-[.7rem] font-title text-4xl tracking-widest">
-            How It Works
-          </h1>
-        </div>
+
+        <h1 className="font-title text-4xl tracking-widest text-center p-4 rounded-3xl w-fit mx-auto mb-8">
+          How It Works
+        </h1>
         <div className="lg:mt-16 mt-4 w-full">
           {steps.map((step, index) => (
             <div

@@ -170,7 +170,7 @@ const AppSidebar = () => {
     <ul className="flex flex-col gap-4">
       {navItems.map(
         (nav, index) =>
-          (nav?.name !== "Dashboard" || isAdminOrDev) &&
+          (nav?.name !== "Admin" || isAdminOrDev) &&
           (nav?.name !== "Orders Graveyard" || isAdminorDevOrSkillmaster) && (
             <li key={nav.name}>
               {nav.subItems ? (
@@ -237,6 +237,7 @@ const AppSidebar = () => {
                   </Link>
                 )
               )}
+
               {nav.subItems && (isExpanded || isHovered || isMobileOpen) && (
                 <div
                   ref={(el) => {
@@ -252,53 +253,57 @@ const AppSidebar = () => {
                   }}
                 >
                   <ul className="mt-2 space-y-1 ml-6">
-                    {nav.subItems.map((subItem) => (
-                      <li key={subItem.name}>
-                        <Link
-                          href={subItem.path}
-                          className={`menu-dropdown-item ${
-                            isActive(subItem.path)
-                              ? "menu-dropdown-item-active"
-                              : "menu-dropdown-item-inactive"
-                          }`}
-                        >
-                          <span
-                            className={`${
-                              isActive(nav.path)
-                                ? "menu-item-icon-active"
-                                : "menu-item-icon-inactive"
-                            }`}
-                          >
-                            {subItem.icon}
-                          </span>
-                          {subItem.name}
-                          <span className="flex items-center gap-1 ml-auto">
-                            {subItem.new && (
+                    {nav.subItems.map(
+                      (subItem) =>
+                        (subItem.name !== "Rewards" ||
+                          isAdminorDevOrSkillmaster) && (
+                          <li key={subItem.name}>
+                            <Link
+                              href={subItem.path}
+                              className={`menu-dropdown-item ${
+                                isActive(subItem.path)
+                                  ? "menu-dropdown-item-active"
+                                  : "menu-dropdown-item-inactive"
+                              }`}
+                            >
                               <span
-                                className={`ml-auto ${
-                                  isActive(subItem.path)
-                                    ? "menu-dropdown-badge-active"
-                                    : "menu-dropdown-badge-inactive"
-                                } menu-dropdown-badge `}
+                                className={`${
+                                  isActive(nav.path)
+                                    ? "menu-item-icon-active"
+                                    : "menu-item-icon-inactive"
+                                }`}
                               >
-                                new
+                                {subItem.icon}
                               </span>
-                            )}
-                            {subItem.pro && (
-                              <span
-                                className={`ml-auto ${
-                                  isActive(subItem.path)
-                                    ? "menu-dropdown-badge-active"
-                                    : "menu-dropdown-badge-inactive"
-                                } menu-dropdown-badge `}
-                              >
-                                pro
+                              {subItem.name}
+                              <span className="flex items-center gap-1 ml-auto">
+                                {subItem.new && (
+                                  <span
+                                    className={`ml-auto ${
+                                      isActive(subItem.path)
+                                        ? "menu-dropdown-badge-active"
+                                        : "menu-dropdown-badge-inactive"
+                                    } menu-dropdown-badge `}
+                                  >
+                                    new
+                                  </span>
+                                )}
+                                {subItem.pro && (
+                                  <span
+                                    className={`ml-auto ${
+                                      isActive(subItem.path)
+                                        ? "menu-dropdown-badge-active"
+                                        : "menu-dropdown-badge-inactive"
+                                    } menu-dropdown-badge `}
+                                  >
+                                    pro
+                                  </span>
+                                )}
                               </span>
-                            )}
-                          </span>
-                        </Link>
-                      </li>
-                    ))}
+                            </Link>
+                          </li>
+                        )
+                    )}
                   </ul>
                 </div>
               )}

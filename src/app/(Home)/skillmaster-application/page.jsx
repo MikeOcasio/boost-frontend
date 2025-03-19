@@ -1,5 +1,6 @@
 "use client";
 
+import BackgroundPattern from "@/components/background-pattern";
 import { createSkillmasterApplication } from "@/lib/actions/skillmasters-action";
 import { fetchCurrentUser } from "@/lib/actions/user-actions";
 import { useUserStore } from "@/store/use-user";
@@ -140,7 +141,7 @@ const SkillmasterApplicationPage = () => {
   return (
     <div className="pt-24 max-w-[1920px] mx-auto min-h-[96vh] space-y-6 p-4 flex items-center justify-center">
       {/* Background */}
-      <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
+      <BackgroundPattern />
 
       <div className="flex-col relative w-full">
         <p className="text-center text-xl font-bold">

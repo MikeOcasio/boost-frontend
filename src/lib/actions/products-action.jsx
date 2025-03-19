@@ -17,6 +17,17 @@ export const fetchAllGames = async ({ page, get_all = false }) => {
   }
 };
 
+// most popular games
+export const fetchMostPopularGames = async () => {
+  try {
+    const { data } = await axios.get(`${apiUrl}/api/products/most_popular`);
+
+    return data;
+  } catch (error) {
+    return { error: "Failed to fetch most popular games. Please try again!" };
+  }
+};
+
 // fetch search products
 export const fetchSearchProducts = async ({
   searchTerm,

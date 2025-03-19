@@ -8,8 +8,6 @@ import { IoWarning } from "react-icons/io5";
 const CategoriesSidebar = () => {
   const { categories, isLoading, error } = useCategoriesStore();
 
-  console.log("categories games", categories);
-
   if (isLoading) {
     return (
       <BiLoader className="h-8 w-8 animate-spin mx-auto hidden xl:block" />

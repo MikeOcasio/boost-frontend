@@ -7,7 +7,8 @@ import { VscDebugBreakpointLog } from "react-icons/vsc";
 // Helper function to highlight matching terms
 const highlightMatch = (text, searchTerm) => {
   if (!searchTerm) return text; // If no search term, return the original text
-  const regex = new RegExp(`(${searchTerm})`, "gi"); // Case-insensitive match
+  const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escape special characters
+  const regex = new RegExp(`(${escapedTerm})`, "gi"); // Case-insensitive match
   const parts = text?.split(regex); // Split the text into matching and non-matching parts
 
   return parts.map((part, index) =>

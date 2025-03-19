@@ -9,9 +9,9 @@ export const Faq = () => {
 
   return (
     <div className="mt-14 lg:mt-20 lg:mx-auto lg:max-w-[1920px]">
-      <div className="h-16 w-56 bg-howItWorks bg-contain bg-no-repeat">
-        <h1 className="pl-20 pt-2 font-title text-4xl tracking-widest">FAQ</h1>
-      </div>
+      <h1 className="font-title text-4xl tracking-widest text-center p-4 rounded-3xl w-fit mx-auto mb-8">
+        FAQ
+      </h1>
 
       <div className="bg-CardPlum/50 border-Gold border-t-2 border-l-2 border-r-[12px] border-b-[12px] lg:p-12 py-8 px-2 md:px-4 md:rounded-[3rem] rounded-3xl flex lg:space-x-6 w-full flex-col-reverse lg:flex-row shadow-2xl backdrop-blur-xl gap-4">
         {/* right faq questions */}

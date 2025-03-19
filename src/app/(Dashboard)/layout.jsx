@@ -18,6 +18,7 @@ import useSidebarStore from "@/store/use-sidebar";
 import Backdrop from "@/template-components/layout/Backdrop";
 import AppHeader from "@/template-components/layout/AppHeader";
 import AppSidebar from "@/template-components/layout/AppSidebar";
+import BackgroundPattern from "@/components/background-pattern";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
@@ -126,7 +127,7 @@ const DashboardLayout = ({ children }) => {
       <VerifyAppStatus />
 
       {/* Background */}
-      <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
+      <BackgroundPattern />
 
       {/* Main Content Area */}
       <div

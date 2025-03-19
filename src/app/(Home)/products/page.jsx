@@ -20,6 +20,8 @@ import { debounce } from "lodash";
 import Link from "next/link";
 import CategoriesTab from "./_components/categories-tab";
 import CategoriesSidebar from "./_components/categories-sidebar";
+import Breadcrumb from "@/template-components/ui/breadcrumb/Breadcrumb";
+import BackgroundPattern from "@/components/background-pattern";
 
 // Wrapper to pass searchParams
 const GamesPageWrapper = () => {
@@ -399,14 +401,27 @@ const GamesPage = ({ searchParams, router }) => {
     setSearchMode(false);
   };
 
+  const breadcrumbItems = [
+    {
+      label: "Home",
+      href: "/",
+    },
+    {
+      label: "Products",
+      href: "/products",
+    },
+  ];
+
   return (
     <div className="pt-24 max-w-[1920px] mx-auto min-h-screen space-y-6 p-4 overflow-hidden text-white">
       {/* Background */}
-      <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
+      <BackgroundPattern />
 
       <h2 className="text-center text-4xl font-title text-white sm:text-5xl">
         Products
       </h2>
+
+      <Breadcrumb items={breadcrumbItems} variant="chevron" />
 
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 

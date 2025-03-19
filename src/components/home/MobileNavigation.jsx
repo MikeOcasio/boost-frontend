@@ -9,6 +9,7 @@ import { BiCross, BiLoader, BiPowerOff } from "react-icons/bi";
 import { IoMenu } from "react-icons/io5";
 
 import { CartButton } from "../CartButton";
+import HeaderSearchHome from "../header-search-home";
 
 function MobileNavItem({ href, children }) {
   return (
@@ -28,9 +29,14 @@ export const MobileNavigation = ({
 }) => {
   return (
     <Popover>
-      <PopoverButton>
-        <IoMenu className="h-8 w-8" />
-      </PopoverButton>
+      <div className="flex items-center justify-between gap-4">
+        {/* search input tab */}
+        <HeaderSearchHome />
+
+        <PopoverButton>
+          <IoMenu className="h-8 w-8" />
+        </PopoverButton>
+      </div>
 
       <PopoverBackdrop
         transition

@@ -532,3 +532,25 @@ export const doesUserExist = async (email) => {
     };
   }
 };
+
+// get user reward points
+export const getUserRewardPoints = async () => {
+  try {
+    const sessionToken = await getSessionToken();
+    if (!sessionToken) {
+      return { error: "No token found. Please login again." };
+    }
+
+    const { data } = await axios.get(`${apiUrl}/api/user_rewards`, {
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch user reward points:", error);
+
+    return { error: "Failed to fetch user reward points. Please try again!" };
+  }
+};

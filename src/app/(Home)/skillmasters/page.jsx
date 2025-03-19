@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 
 import { useRouter } from "next/navigation";
 import { fetchAllSkillmasters } from "@/lib/actions/skillmasters-action";
+import BackgroundPattern from "@/components/background-pattern";
 
 const SkillMastersPage = () => {
   const [skillMasters, setSkillMasters] = useState([]);
@@ -86,7 +87,7 @@ const SkillMastersPage = () => {
   return (
     <div className="pt-24 max-w-[1920px] mx-auto min-h-screen space-y-6 p-4">
       {/* Background */}
-      <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
+      <BackgroundPattern />
 
       <h2 className="text-center text-4xl font-title sm:text-5xl">
         SKILL MASTERS

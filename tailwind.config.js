@@ -156,7 +156,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        title: ["var(--font-akronim)"],
+        title: ["var(--font-press_start_2P)"],
       },
 
       // template style

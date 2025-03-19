@@ -12,6 +12,7 @@ import { EmbededFrame } from "../_components/EmbededFrame";
 import { PiGameControllerFill } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 import { fetchSkillmasterById } from "@/lib/actions/skillmasters-action";
+import BackgroundPattern from "@/components/background-pattern";
 
 const MasterPage = ({ params }) => {
   const [skillMaster, setSkillMaster] = useState(null);
@@ -32,6 +33,7 @@ const MasterPage = ({ params }) => {
 
     try {
       const result = await fetchSkillmasterById(params.master);
+
       if (result.error) {
         setError(true);
         toast.error(result.error);
@@ -80,7 +82,7 @@ const MasterPage = ({ params }) => {
   return (
     <div className="relative pt-24 max-w-[1920px] mx-auto min-h-screen space-y-6 p-4">
       {/* Background */}
-      <div className="fixed top-0 left-0 w-full h-full bg-[url('/dashboard-bg.svg')] bg-repeat bg-contain opacity-5 blur-sm -z-20" />
+      <BackgroundPattern />
 
       {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 

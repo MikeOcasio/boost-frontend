@@ -21,6 +21,7 @@ const SkillMasters = () => {
     setError(false);
     try {
       const result = await fetchAllSkillmasters();
+
       if (result.error) {
         setError(true);
       } else {
@@ -66,11 +67,9 @@ const SkillMasters = () => {
   );
   return (
     <div className="relative mx-auto mt-14 lg:mt-20 max-w-[1920px] text-right">
-      <div className="absolute right-0 h-36 w-64 bg-skillsMaster bg-contain bg-no-repeat">
-        <h1 className="pr-12 pt-[.7rem] font-title text-4xl tracking-widest">
-          Skill Masters
-        </h1>
-      </div>
+      <h1 className="font-title text-4xl tracking-widest text-center p-4 rounded-3xl w-fit mx-auto mb-8">
+        Skill Masters
+      </h1>
 
       <div className="h-20" />
 
