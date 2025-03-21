@@ -11,6 +11,7 @@ import { BiLoader } from "react-icons/bi";
 import { IoWarning } from "react-icons/io5";
 import toast from "react-hot-toast";
 import BackgroundPattern from "@/components/background-pattern";
+import ReviewSection from "@/components/review-section";
 
 export default function Home() {
   const [data, setData] = useState(null);
@@ -44,6 +45,33 @@ export default function Home() {
   useEffect(() => {
     loadGames();
   }, []);
+
+  const reviews = [
+    {
+      name: "Alex Thompson",
+      comment:
+        "Raven Boost transformed my gaming experience! I went from struggling in ranked matches to confidently climbing the ladder. Their boosters are not just skilled, they're also great teachers who shared valuable tips along the way.",
+      rating: 5,
+    },
+    {
+      name: "Sarah Chen",
+      comment:
+        "As a working parent with limited gaming time, Raven Boost helped me achieve my gaming goals without the endless grind. Professional, fast, and most importantly, they kept my account completely secure.",
+      rating: 5,
+    },
+    {
+      name: "Marcus Rodriguez",
+      comment:
+        "Initially skeptical about boosting services, but Raven Boost changed my mind completely. Their communication was transparent, progress updates were regular, and the results exceeded my expectations. Worth every penny!",
+      rating: 5,
+    },
+    {
+      name: "Emily Parker",
+      comment:
+        "What sets Raven Boost apart is their attention to detail. They didn't just help me reach my desired rank - they ensured I learned better gameplay strategies along the way. Now I can maintain my rank with confidence!",
+      rating: 5,
+    },
+  ];
 
   return (
     <div className="mt-10 text-white overflow-x-clip">
@@ -80,7 +108,7 @@ export default function Home() {
 
       <div className="h-screen w-full sticky top-0 -z-10"></div>
 
-      <div className="mx-auto px-4 lg:max-w-[1920px] lg:-mt-[110vh] -mt-[90vh]">
+      <div className="mx-auto px-4 lg:max-w-[1920px] -mt-[110vh]">
         {loading && <BiLoader className="h-8 w-8 animate-spin mx-auto" />}
 
         {error && (
@@ -99,6 +127,14 @@ export default function Home() {
       </div>
 
       <HomePageAboutArea />
+
+      <ReviewSection
+        type="home"
+        title="What Our Customers Say"
+        subtitle="Read trusted reviews from our customers"
+        data={reviews}
+        onReviewSubmit={() => {}}
+      />
 
       <ContactForm />
     </div>

@@ -8,7 +8,7 @@ export const Faq = () => {
   const [currentDesc, setCurrentDesc] = useState(0);
 
   return (
-    <div className="mt-14 lg:mt-20 lg:mx-auto lg:max-w-[1920px]">
+    <div className="mt-20 lg:mx-auto lg:max-w-7xl">
       <h1 className="font-title text-4xl tracking-widest text-center p-4 rounded-3xl w-fit mx-auto mb-8">
         FAQ
       </h1>
@@ -51,7 +51,7 @@ export const Faq = () => {
             width={500}
             height={500}
             alt="shiny purple and gold controllers with keyboard"
-            className="absolute -bottom-10 -right-10 z-10 hidden lg:block drop-shadow-[-10px_20px_8px_rgba(0,0,0,0.5)]"
+            className="absolute h-[400px] w-[400px] -bottom-20 -right-10 z-10 hidden lg:block drop-shadow-[-10px_20px_8px_rgba(0,0,0,0.5)]"
           />
         </div>
       </div>

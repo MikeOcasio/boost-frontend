@@ -3,13 +3,10 @@
 import { useEffect, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-
 import GameCard from "../GameCard";
-import clsx from "clsx";
 
 export const HomeGameCarousel = ({ data }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [centerSlidePercentage, setCenterSlidePercentage] = useState(100); // Default for small screens
+  const [centerSlidePercentage, setCenterSlidePercentage] = useState(45); // Default for small screens
 
   useEffect(() => {
     // Adjust slides displayed based on screen size
@@ -35,10 +32,6 @@ export const HomeGameCarousel = ({ data }) => {
     };
   }, []);
 
-  const handleChange = (index) => {
-    setCurrentIndex(index);
-  };
-
   return (
     <div>
       {data?.length && (
@@ -46,7 +39,6 @@ export const HomeGameCarousel = ({ data }) => {
           autoPlay={true}
           infiniteLoop={data.length > 1}
           emulateTouch={true}
-          onChange={handleChange}
           interval={3000}
           showStatus={false}
           showIndicators={false}
@@ -56,14 +48,8 @@ export const HomeGameCarousel = ({ data }) => {
           centerSlidePercentage={centerSlidePercentage}
         >
           {data?.map((game) => (
-            <div key={game.id} className="flex justify-center w-full h-full">
-              <div
-                className={clsx(
-                  "h-full w-full duration-500 ease-in-out scale-90 flex-1"
-                )}
-              >
-                <GameCard game={game} />
-              </div>
+            <div key={game.id} className="scale-90">
+              <GameCard game={game} />
             </div>
           ))}
         </Carousel>

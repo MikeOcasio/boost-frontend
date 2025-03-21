@@ -17,8 +17,6 @@ const RewardPage = () => {
     try {
       const res = await getUserRewardPoints();
 
-      console.log(res);
-
       if (res.error) {
         setError(true);
       } else {
@@ -60,7 +58,7 @@ const RewardPage = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto">
       <h1 className="text-2xl font-bold">Reward Points</h1>
 
       {reward && (

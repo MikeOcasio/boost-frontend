@@ -541,4 +541,5 @@ input[type="number"] {
 
 .font-title {
   padding: 12px 0;
+  position: relative;
 }

@@ -16,7 +16,7 @@ const CategoriesSidebar = () => {
 
   if (error) {
     return (
-      <p className="w-fit bg-red-500/50 p-4 rounded-lg mx-auto items-center justify-center gap-2 hidden xl:flex">
+      <p className="w-fit bg-red-500/50 p-4 h-fit rounded-lg mx-auto items-center justify-center gap-2 hidden xl:flex">
         <IoWarning className="h-5 w-5 mr-2" />
         Failed to load games. Please reload the page!
       </p>
