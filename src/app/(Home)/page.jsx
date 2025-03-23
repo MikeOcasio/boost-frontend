@@ -78,7 +78,16 @@ export default function Home() {
       <div className="h-screen w-full">
         <BackgroundPattern />
 
-        <div className="flex h-[80%] flex-col items-center justify-center">
+        <div className="flex min-h-[85%] flex-col items-center justify-center">
+          <Image
+            src="/home-hero.png"
+            height={1920}
+            width={1080}
+            quality={100}
+            priority
+            alt="group of video game characters"
+            className="2xl:h-[70vh] h-fit w-full object-contain drop-shadow-[0_30px_5px_rgba(0,0,0,0.5)] hidden md:block"
+          />
           <Image
             src="/rb-home-minimal.png"
             height={1920}
@@ -86,23 +95,15 @@ export default function Home() {
             quality={100}
             priority
             alt="group of video game characters"
-            className="h-[50vh] w-auto object-contain drop-shadow-[0_30px_5px_rgba(0,0,0,0.5)]"
+            className="h-full scale-150 w-full object-contain drop-shadow-[0_30px_5px_rgba(0,0,0,0.5)] md:hidden"
           />
 
-          {/* <Image
-            src="/homeHero.png"
-            height={1920}
-            width={1080}
-            quality={100}
-            priority
-            alt="group of video game characters"
-            className="h-[50vh] w-auto md:scale-105 object-contain drop-shadow-[0_30px_5px_rgba(0,0,0,0.5)]"
-          /> */}
-
-          <p className="mx-auto max-w-[80%] text-center lg:text-3xl text-lg font-medium leading-6">
-            Boost Your Game, Your Way! Choose your dream team and leave the rest
-            to us.
-          </p>
+          <div className="px-4">
+            <p className="mx-auto font-title max-w-4xl text-center lg:!text-2xl !text-lg font-medium !tracking-tighter !leading-10">
+              Boost Your Game, Your Way! Choose your dream team and leave the
+              rest to us.
+            </p>
+          </div>
         </div>
       </div>
 
